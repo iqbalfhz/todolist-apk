@@ -38,6 +38,15 @@ class FakeApi implements ApiTransport {
   /// Profil yang dibalas `GET /me` dan `PATCH /me`.
   Map<String, dynamic>? me;
 
+  /// Ruang yang dibalas `GET /spaces`.
+  List<Map<String, dynamic>> spaces = [];
+
+  /// Kode yang dibalas `POST /invitations`.
+  String invitationCode = 'K7M2QX';
+
+  /// Ruang Bersama yang dibalas `POST /invitations/accept`.
+  Map<String, dynamic>? acceptedSpace;
+
   final List<Responder> _scripted = [];
 
   /// Dipanggil tepat sebelum setiap request dijawab.
@@ -86,8 +95,9 @@ class FakeApi implements ApiTransport {
     requests.add(request);
     onRequest?.call(request);
 
-    // Beri kesempatan kode lain berjalan, seperti request sungguhan.
-    await Future<void>.delayed(Duration.zero);
+    // Beri kesempatan kode lain berjalan, seperti request sungguhan. Cukup satu mikrotugas,
+    // supaya tes widget tidak perlu memajukan jam palsu.
+    await Future<void>.value();
 
     if (_scripted.isNotEmpty) return _scripted.removeAt(0)(request);
     return handle(request);
@@ -103,8 +113,44 @@ class FakeApi implements ApiTransport {
     }
 
     if (segments.first == 'me') {
-      me = {...?me, ...?request.body, 'updated_at': stamp()};
+      if (request.method == 'PATCH') me = {...?me, ...?request.body, 'updated_at': stamp()};
       return ApiResponse(status: 200, body: {'data': me});
+    }
+
+    if (segments.first == 'spaces') return ApiResponse(status: 200, body: {'data': spaces});
+
+    if (segments.first == 'devices') {
+      return ApiResponse(status: 201, body: {'data': request.body});
+    }
+
+    if (segments.first == 'invitations') {
+      if (segments.length > 1) {
+        final space = acceptedSpace;
+        if (space == null) {
+          throw apiError(422, ApiErrorCode.invitationInvalid, message: 'Kode tidak berlaku, minta kode baru.');
+        }
+        spaces = [...spaces, space];
+        return ApiResponse(status: 201, body: {'data': space});
+      }
+      return ApiResponse(
+        status: 200,
+        body: {
+          'data': {
+            'code': invitationCode,
+            'expires_at': _now().add(const Duration(hours: 48)).toUtc().toIso8601String(),
+          },
+        },
+      );
+    }
+
+    if (segments.first == 'auth') {
+      if (segments[1] == 'logout') return const ApiResponse(status: 204);
+      return ApiResponse(
+        status: 200,
+        body: {
+          'data': {'token': '1|token-palsu', 'user': me},
+        },
+      );
     }
 
     final resource = segments[0];

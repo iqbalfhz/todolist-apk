@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:todolist/core/database/app_database.dart';
 import 'package:todolist/core/database/entity_type.dart';
@@ -252,6 +253,8 @@ class MemoryKeyValueStore implements KeyValueStore {
 /// Akun dengan database di memori, API palsu, jam palsu, dan timer manual.
 class Harness {
   Harness({bool autoFlush = false}) {
+    // Setiap tes membuka database di memori sendiri; itu disengaja.
+    driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     api = FakeApi(now: clock.call);
     account = Account(
       userId: meId,
