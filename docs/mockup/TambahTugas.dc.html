@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Tambah tugas</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{opacity:0.9}
+button{font:inherit}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: {{t.bg}}; color: {{t.text}};">
+
+  <div aria-hidden="true" style="padding: 24px 20px 0 20px; display: flex; flex-direction: column; gap: 12px;">
+    <span style="font-size: 24px; font-weight: 700;">Tugas</span>
+    <div style="height: 52px; border-radius: 16px; background: {{t.soft}};"></div>
+    <div style="height: 200px; border-radius: 20px; background: {{t.surface}}; border: 1px solid {{t.line}};"></div>
+    <div style="height: 150px; border-radius: 20px; background: {{t.surface}}; border: 1px solid {{t.line}};"></div>
+  </div>
+  <div aria-hidden="true" style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; background: {{t.scrim}};"></div>
+
+  <section role="dialog" aria-label="Tugas baru" style="position: absolute; left: 0; right: 0; bottom: 0; box-sizing: border-box; padding: 12px 20px 24px 20px; background: {{t.surface}}; border-radius: 28px 28px 0 0; display: flex; flex-direction: column; gap: 14px;">
+    <div style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: {{t.line}};"></div>
+
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h1 style="margin: 0; font-size: 18px; font-weight: 700;">Tugas baru</h1>
+      <a href="Tugas.dc.html" aria-label="Tutup" style="width: 44px; height: 44px; border-radius: 22px; display: flex; align-items: center; justify-content: center; color: {{t.muted}};">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+      </a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <label for="judul-tugas" style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Mau mengerjakan apa?</label>
+      <input id="judul-tugas" type="text" value="{{judul}}" onChange="{{onJudul}}" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1.5px solid {{t.primary}}; background: {{t.surface}}; color: {{t.text}}; font-size: 16px; font-weight: 600; outline: none;">
+    </div>
+
+    <div role="group" aria-labelledby="label-kapan" style="display: flex; flex-direction: column; gap: 6px;">
+      <span id="label-kapan" style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Kapan?</span>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <sc-for list="{{kapanList}}" as="c" hint-placeholder-count="3">
+          <button type="button" aria-pressed="{{c.pressed}}" onClick="{{c.pick}}" style="{{c.style}}">
+            <sc-if value="{{c.calendar}}" hint-placeholder-val="{{ false }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg></sc-if>
+            {{c.label}}
+          </button>
+        </sc-for>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" aria-pressed="true" style="height: 44px; padding: 0 16px; border-radius: 22px; border: 1.5px solid {{t.primary}}; background: {{t.soft}}; color: {{t.text}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>17.00</button>
+        <button type="button" aria-pressed="false" style="height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; font-size: 14px; font-weight: 500; cursor: pointer;">Tanpa jam</button>
+      </div>
+    </div>
+
+    <div role="group" aria-labelledby="label-siapa" style="display: flex; flex-direction: column; gap: 6px;">
+      <span id="label-siapa" style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Siapa?</span>
+      <div style="display: flex; gap: 8px;">
+        <sc-for list="{{siapaList}}" as="s" hint-placeholder-count="3">
+          <button type="button" aria-pressed="{{s.pressed}}" onClick="{{s.pick}}" style="{{s.style}}"><span style="{{s.dot}}"></span>{{s.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <button type="button" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;">
+      <span style="width: 10px; height: 10px; border-radius: 5px; background: {{t.sw2}};"></span>
+      <span style="flex-grow: 1; font-size: 15px; font-weight: 600;">Belanja</span>
+      <span style="font-size: 13px; color: {{t.muted}};">Daftar bersama</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+    </button>
+
+    <label style="min-height: 44px; display: flex; align-items: center; gap: 10px; cursor: pointer;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 22V4a1 1 0 0 1 1-1h11l-2 4 2 4H5"></path></svg>
+      <span style="flex-grow: 1; font-size: 15px; font-weight: 500;">Tandai penting</span>
+      <input type="checkbox" role="switch" checked="{{penting}}" onChange="{{onPenting}}" style="width: 44px; height: 26px; accent-color: {{t.primary}}; cursor: pointer;">
+    </label>
+
+    <a href="Tugas.dc.html" style="height: 52px; border-radius: 26px; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700;">Simpan</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Mawar","Anggrek"],"default":"Mawar","section":"Tema"},"gelap":{"editor":"boolean","default":false,"section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { judul: 'Beli galon', kapan: 'Besok', siapa: 'Pasangan', penting: false };
+  }
+  tokens(tema, gelap) {
+    var anggrek = tema === 'Anggrek';
+    var sw = anggrek ? { sw1: '#CF679C', sw2: '#CA4189', sw3: '#DD799F' } : { sw1: '#ECB1C7', sw2: '#D54B7E', sw3: '#E38BB3' };
+    var t;
+    if (gelap) {
+      t = { bg: '#1E1519', surface: '#2A1F24', soft: anggrek ? '#3A2434' : '#3B2530', line: '#43343B', text: '#F5E9EE', muted: '#BBA6AF', primary: anggrek ? '#DD799F' : '#E38BB3', onPrimary: '#1E1519', link: anggrek ? '#DD799F' : '#E38BB3', brand: anggrek ? '#DD799F' : '#E38BB3', accent: anggrek ? '#CF679C' : '#ECB1C7', track: anggrek ? '#482C3E' : '#4A2E3B', warn: '#F0B45C', ok: '#7FD3A0', p2: '#A9A3F0', scrim: 'rgba(0, 0, 0, 0.55)' };
+    } else if (anggrek) {
+      t = { bg: '#F9EEF4', surface: '#FFFFFF', soft: '#F3DCE9', line: '#EBD3E0', text: '#2B1A22', muted: '#6E5A63', primary: '#CA4189', onPrimary: '#FFFFFF', link: '#A3326C', brand: '#CA4189', accent: '#CF679C', track: '#F1D7E5', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    } else {
+      t = { bg: '#FCF3F7', surface: '#FFFFFF', soft: '#F9E4EC', line: '#EFD9E2', text: '#2B1A22', muted: '#6E5A63', primary: '#CB2F69', onPrimary: '#FFFFFF', link: '#B42A5E', brand: '#D54B7E', accent: '#E38BB3', track: '#F6DCE6', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    }
+    return Object.assign(t, sw);
+  }
+  chipStyle(t, on) {
+    var base = 'height: 44px; padding: 0 16px; border-radius: 22px; font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer; color: ' + t.text + '; ';
+    return on ? base + 'border: 1.5px solid ' + t.primary + '; background: ' + t.soft + '; font-weight: 600;' : base + 'border: 1px solid ' + t.line + '; background: ' + t.surface + '; font-weight: 500;';
+  }
+  renderVals() {
+    var self = this;
+    var t = this.tokens(this.props.tema ?? 'Mawar', this.props.gelap ?? false);
+    var kapanList = ['Hari ini', 'Besok', 'Pilih tanggal'].map(function (label) {
+      var on = self.state.kapan === label;
+      return { label: label, pressed: on ? 'true' : 'false', calendar: label === 'Pilih tanggal', style: self.chipStyle(t, on), pick: function () { self.setState({ kapan: label }); } };
+    });
+    var dots = { 'Aku': [t.brand], 'Pasangan': [t.p2], 'Kita': [t.brand, t.p2] };
+    var siapaList = ['Aku', 'Pasangan', 'Kita'].map(function (label) {
+      var on = self.state.siapa === label;
+      var c = dots[label];
+      var dot = c.length > 1
+        ? 'width: 14px; height: 8px; border-radius: 4px; background: linear-gradient(90deg, ' + c[0] + ' 50%, ' + c[1] + ' 50%);'
+        : 'width: 8px; height: 8px; border-radius: 4px; background: ' + c[0] + ';';
+      return { label: label, pressed: on ? 'true' : 'false', dot: dot, style: self.chipStyle(t, on), pick: function () { self.setState({ siapa: label }); } };
+    });
+    return {
+      t: t,
+      judul: this.state.judul,
+      onJudul: function (e) { self.setState({ judul: e.target.value }); },
+      penting: this.state.penting,
+      onPenting: function (e) { self.setState({ penting: e.target.checked }); },
+      kapanList: kapanList,
+      siapaList: siapaList
+    };
+  }
+}
+</script>
+</body>
+</html>

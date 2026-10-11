@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Tanggal penting</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{opacity:0.9}
+button{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: {{t.bg}}; color: {{t.text}};">
+
+  <div style="padding: 24px 20px 0 20px; display: flex; flex-direction: column; gap: 12px;">
+
+    <header style="display: flex; align-items: center; gap: 4px;">
+      <a href="Main.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+      </a>
+      <h1 style="margin: 0; font-size: 20px; font-weight: 700; flex-grow: 1;">Tanggal penting</h1>
+      <span style="font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: {{t.soft}};">v0.2</span>
+    </header>
+
+    <section aria-label="Bersama sejak" style="background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px; padding: 16px; display: flex; align-items: center; gap: 14px;">
+      <span style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 28px; background: {{t.soft}}; color: {{t.brand}}; display: flex; align-items: center; justify-content: center;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"></path></svg>
+      </span>
+      <span style="display: flex; flex-direction: column; gap: 2px;">
+        <span style="font-size: 13px; color: {{t.muted}};">Bersama sejak 20 Okt 2023</span>
+        <span style="font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">1.084 hari</span>
+        <span style="font-size: 13px; font-weight: 600; color: {{t.link}};">Hari jadi ke-3 tinggal 12 hari lagi</span>
+      </span>
+    </section>
+
+    <h2 style="margin: 4px 0 0 0; font-size: 15px; font-weight: 700;">Akan datang</h2>
+    <ul style="list-style: none; margin: 0; padding: 0 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px;">
+      <li style="min-height: 72px; display: flex; align-items: center; gap: 12px;">
+        <span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: {{t.soft}}; color: {{t.brand}}; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"></path></svg></span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; font-weight: 600;">Hari jadi ke-3</span><span style="font-size: 12px; color: {{t.muted}};">Sel, 20 Okt · Ruang Bersama</span></span>
+        <span style="font-size: 15px; font-weight: 700;">12 hari</span>
+      </li>
+      <li style="min-height: 72px; display: flex; align-items: center; gap: 12px; border-top: 1px solid {{t.line}};">
+        <span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: {{t.soft}}; color: {{t.p2}}; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9 3 11 5 12 8c1-3 3-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; font-weight: 600;">Ulang tahun Pasangan</span><span style="display: flex; align-items: center; gap: 4px; font-size: 12px; color: {{t.muted}};">Sel, 17 Nov ·<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Pribadi, untuk kejutan</span></span>
+        <span style="font-size: 15px; font-weight: 700;">40 hari</span>
+      </li>
+      <li style="min-height: 72px; display: flex; align-items: center; gap: 12px; border-top: 1px solid {{t.line}};">
+        <span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 20px; background: {{t.soft}}; color: {{t.brand}}; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4" rx="1"></rect><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"></path><path d="M7.5 8a2.5 2.5 0 0 1 0-5C9 3 11 5 12 8c1-3 3-5 4.5-5a2.5 2.5 0 0 1 0 5"></path></svg></span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 1px;"><span style="font-size: 15px; font-weight: 600;">Ulang tahunmu</span><span style="font-size: 12px; color: {{t.muted}};">Sel, 2 Mar · Ruang Bersama</span></span>
+        <span style="font-size: 15px; font-weight: 700;">145 hari</span>
+      </li>
+    </ul>
+
+    <h2 style="margin: 4px 0 0 0; font-size: 15px; font-weight: 700;">Pengingat</h2>
+    <section aria-label="Pengaturan pengingat" style="background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px;">
+      <div role="group" aria-label="Kapan diingatkan" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <sc-for list="{{hari}}" as="h" hint-placeholder-count="4">
+          <button type="button" aria-pressed="{{h.pressed}}" onClick="{{h.toggle}}" style="{{h.style}}">{{h.label}}</button>
+        </sc-for>
+      </div>
+      <a href="#" style="min-height: 44px; display: flex; align-items: center; gap: 10px; border-top: 1px solid {{t.line}};">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        <span style="flex-grow: 1; font-size: 14px; font-weight: 600;">Jam kirim</span>
+        <span style="font-size: 14px; color: {{t.muted}};">08.00</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </a>
+    </section>
+
+    <p style="margin: 0; display: flex; gap: 6px; font-size: 12px; line-height: 17px; color: {{t.muted}};"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink: 0; margin-top: 1px;"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></svg>Simpan di Ruang Pribadi kalau ingin menyiapkan kejutan; pasanganmu tidak akan melihatnya.</p>
+  </div>
+
+  <button type="button" style="position: absolute; left: 20px; right: 20px; bottom: 24px; height: 52px; border: 0; border-radius: 26px; background: {{t.primary}}; color: {{t.onPrimary}}; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>Tambah tanggal
+  </button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Mawar","Anggrek"],"default":"Mawar","section":"Tema"},"gelap":{"editor":"boolean","default":false,"section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pilih: { 'H-30': false, 'H-7': true, 'H-1': true, 'Hari H': true } };
+  }
+  tokens(tema, gelap) {
+    var anggrek = tema === 'Anggrek';
+    var sw = anggrek ? { sw1: '#CF679C', sw2: '#CA4189', sw3: '#DD799F' } : { sw1: '#ECB1C7', sw2: '#D54B7E', sw3: '#E38BB3' };
+    var t;
+    if (gelap) {
+      t = { bg: '#1E1519', surface: '#2A1F24', soft: anggrek ? '#3A2434' : '#3B2530', line: '#43343B', text: '#F5E9EE', muted: '#BBA6AF', primary: anggrek ? '#DD799F' : '#E38BB3', onPrimary: '#1E1519', link: anggrek ? '#DD799F' : '#E38BB3', brand: anggrek ? '#DD799F' : '#E38BB3', accent: anggrek ? '#CF679C' : '#ECB1C7', track: anggrek ? '#482C3E' : '#4A2E3B', warn: '#F0B45C', ok: '#7FD3A0', p2: '#A9A3F0', scrim: 'rgba(0, 0, 0, 0.55)' };
+    } else if (anggrek) {
+      t = { bg: '#F9EEF4', surface: '#FFFFFF', soft: '#F3DCE9', line: '#EBD3E0', text: '#2B1A22', muted: '#6E5A63', primary: '#CA4189', onPrimary: '#FFFFFF', link: '#A3326C', brand: '#CA4189', accent: '#CF679C', track: '#F1D7E5', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    } else {
+      t = { bg: '#FCF3F7', surface: '#FFFFFF', soft: '#F9E4EC', line: '#EFD9E2', text: '#2B1A22', muted: '#6E5A63', primary: '#CB2F69', onPrimary: '#FFFFFF', link: '#B42A5E', brand: '#D54B7E', accent: '#E38BB3', track: '#F6DCE6', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    }
+    return Object.assign(t, sw);
+  }
+  renderVals() {
+    var self = this;
+    var t = this.tokens(this.props.tema ?? 'Mawar', this.props.gelap ?? false);
+    var hari = ['H-30', 'H-7', 'H-1', 'Hari H'].map(function (label) {
+      var on = !!self.state.pilih[label];
+      var base = 'height: 44px; padding: 0 16px; border-radius: 22px; font-size: 14px; cursor: pointer; color: ' + t.text + '; ';
+      return {
+        label: label,
+        pressed: on ? 'true' : 'false',
+        style: on ? base + 'border: 1.5px solid ' + t.primary + '; background: ' + t.soft + '; font-weight: 600;' : base + 'border: 1px solid ' + t.line + '; background: ' + t.surface + '; font-weight: 500;',
+        toggle: function () { var p = Object.assign({}, self.state.pilih); p[label] = !p[label]; self.setState({ pilih: p }); }
+      };
+    });
+    return { t: t, hari: hari };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Pengaturan dan tema</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{opacity:0.85}
+button{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: {{t.bg}}; color: {{t.text}};">
+
+  <div style="padding: 24px 20px 0 20px; display: flex; flex-direction: column; gap: 10px;">
+
+    <header style="display: flex; align-items: center; gap: 4px;">
+      <a href="Main.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+      </a>
+      <h1 style="margin: 0; font-size: 20px; font-weight: 700;">Pengaturan</h1>
+    </header>
+
+    <section aria-label="Akun dan ruang" style="background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px; padding: 4px 16px;">
+      <a href="Profil.dc.html" style="min-height: 64px; display: flex; align-items: center; gap: 12px;">
+        <span style="position: relative; width: 44px; height: 44px; flex-shrink: 0;">
+          <span style="width: 44px; height: 44px; border-radius: 22px; box-sizing: border-box; border: 2px solid {{t.brand}}; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; color: {{t.brand}};"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg></span>
+          <span style="position: absolute; right: -2px; bottom: -2px; width: 20px; height: 20px; border-radius: 10px; box-sizing: border-box; border: 2px solid {{t.surface}}; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg></span>
+        </span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">Profil</span><span style="font-size: 12px; color: {{t.muted}};">Foto, nama, tanggal lahir, warna diri</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </a>
+      <a href="Pairing.dc.html" style="min-height: 60px; display: flex; align-items: center; gap: 12px; border-top: 1px solid {{t.line}};">
+        <span style="width: 40px; height: 40px; border-radius: 20px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"></circle><path d="M2.5 20a6.5 6.5 0 0 1 13 0"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"></path></svg></span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">Ruang Bersama</span><span style="font-size: 12px; color: {{t.muted}};">Kamu dan pasangan · 2 anggota</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </a>
+      <a href="TanggalPenting.dc.html" style="min-height: 60px; display: flex; align-items: center; gap: 12px; border-top: 1px solid {{t.line}};">
+        <span style="width: 40px; height: 40px; border-radius: 20px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; color: {{t.brand}};"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7z"></path></svg></span>
+        <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">Tanggal penting</span><span style="font-size: 12px; color: {{t.muted}};">Ulang tahun dan anniversary · v0.2</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </a>
+    </section>
+
+    <h2 style="margin: 6px 0 0 0; font-size: 15px; font-weight: 700;">Tema</h2>
+    <div role="group" aria-label="Pilih tema warna" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px;">
+      <sc-for list="{{themes}}" as="th" hint-placeholder-count="2">
+        <button type="button" aria-pressed="{{th.pressed}}" onClick="{{th.pick}}" style="{{th.card}}">
+          <span style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+            <span style="display: flex;">
+              <span style="width: 24px; height: 24px; border-radius: 12px; box-sizing: border-box; border: 2px solid {{t.surface}}; {{th.s1}}"></span>
+              <span style="width: 24px; height: 24px; margin-left: -6px; border-radius: 12px; box-sizing: border-box; border: 2px solid {{t.surface}}; {{th.s2}}"></span>
+              <span style="width: 24px; height: 24px; margin-left: -6px; border-radius: 12px; box-sizing: border-box; border: 2px solid {{t.surface}}; {{th.s3}}"></span>
+            </span>
+            <sc-if value="{{th.on}}" hint-placeholder-val="{{ false }}">
+              <span style="width: 22px; height: 22px; border-radius: 11px; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg></span>
+            </sc-if>
+          </span>
+          <span style="display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 700;">{{th.name}}</span><span style="font-size: 12px; color: {{t.muted}};">{{th.code}}</span></span>
+        </button>
+      </sc-for>
+    </div>
+    <div role="group" aria-label="Mode tampilan" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 16px; background: {{t.soft}};">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+        <button type="button" aria-pressed="{{m.pressed}}" onClick="{{m.pick}}" style="{{m.style}}">{{m.label}}</button>
+      </sc-for>
+    </div>
+
+    <h2 style="margin: 6px 0 0 0; font-size: 15px; font-weight: 700;">Notifikasi</h2>
+    <ul style="list-style: none; margin: 0; padding: 0 16px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px;">
+      <sc-for list="{{notifs}}" as="n" hint-placeholder-count="3">
+        <li style="{{n.rowStyle}}">
+          <label style="min-height: 56px; display: flex; align-items: center; gap: 12px; cursor: pointer;">
+            <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">{{n.label}}</span><span style="font-size: 12px; color: {{t.muted}};">{{n.desc}}</span></span>
+            <input type="checkbox" role="switch" checked="{{n.checked}}" onChange="{{n.toggle}}" style="width: 44px; height: 26px; accent-color: {{t.primary}}; cursor: pointer;">
+          </label>
+        </li>
+      </sc-for>
+    </ul>
+
+    <section aria-label="Lainnya" style="background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px; padding: 0 16px; margin-top: 6px;">
+      <a href="#" style="min-height: 56px; display: flex; align-items: center; gap: 12px;">
+        <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">Mata uang</span><span style="font-size: 12px; color: {{t.muted}};">Rupiah (IDR)</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </a>
+      <a href="#" style="min-height: 56px; display: flex; align-items: center; gap: 12px; border-top: 1px solid {{t.line}};">
+        <span style="flex-grow: 1; display: flex; flex-direction: column;"><span style="font-size: 15px; font-weight: 600;">Backup dan ekspor</span><span style="font-size: 12px; color: {{t.muted}};">Tersimpan otomatis di server · ekspor di v1.0</span></span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </a>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Mawar","Anggrek"],"default":"Mawar","section":"Tema"},"gelap":{"editor":"boolean","default":false,"section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { tema: null, mode: null, n: { tugas: true, aktivitas: true, setoran: true } };
+  }
+  tokens(tema, gelap) {
+    var anggrek = tema === 'Anggrek';
+    var sw = anggrek ? { sw1: '#CF679C', sw2: '#CA4189', sw3: '#DD799F' } : { sw1: '#ECB1C7', sw2: '#D54B7E', sw3: '#E38BB3' };
+    var t;
+    if (gelap) {
+      t = { bg: '#1E1519', surface: '#2A1F24', soft: anggrek ? '#3A2434' : '#3B2530', line: '#43343B', text: '#F5E9EE', muted: '#BBA6AF', primary: anggrek ? '#DD799F' : '#E38BB3', onPrimary: '#1E1519', link: anggrek ? '#DD799F' : '#E38BB3', brand: anggrek ? '#DD799F' : '#E38BB3', accent: anggrek ? '#CF679C' : '#ECB1C7', track: anggrek ? '#482C3E' : '#4A2E3B', warn: '#F0B45C', ok: '#7FD3A0', p2: '#A9A3F0', scrim: 'rgba(0, 0, 0, 0.55)' };
+    } else if (anggrek) {
+      t = { bg: '#F9EEF4', surface: '#FFFFFF', soft: '#F3DCE9', line: '#EBD3E0', text: '#2B1A22', muted: '#6E5A63', primary: '#CA4189', onPrimary: '#FFFFFF', link: '#A3326C', brand: '#CA4189', accent: '#CF679C', track: '#F1D7E5', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    } else {
+      t = { bg: '#FCF3F7', surface: '#FFFFFF', soft: '#F9E4EC', line: '#EFD9E2', text: '#2B1A22', muted: '#6E5A63', primary: '#CB2F69', onPrimary: '#FFFFFF', link: '#B42A5E', brand: '#D54B7E', accent: '#E38BB3', track: '#F6DCE6', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    }
+    return Object.assign(t, sw);
+  }
+  renderVals() {
+    var self = this;
+    var tema = this.state.tema ?? this.props.tema ?? 'Mawar';
+    var mode = this.state.mode ?? ((this.props.gelap ?? false) ? 'Gelap' : 'Terang');
+    var t = this.tokens(tema, mode === 'Gelap');
+    var themes = [
+      { name: 'Mawar', code: 'Palet C · D · I', c: ['#ECB1C7', '#D54B7E', '#E38BB3'] },
+      { name: 'Anggrek', code: 'Palet H · G · E', c: ['#CF679C', '#CA4189', '#DD799F'] }
+    ].map(function (x) {
+      var on = x.name === tema;
+      var card = 'border-radius: 16px; padding: 12px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 10px; min-height: 92px; box-sizing: border-box; background: ' + t.surface + '; color: ' + t.text + '; ' + (on ? 'border: 2px solid ' + t.primary + ';' : 'border: 1px solid ' + t.line + '; padding: 13px;');
+      return { name: x.name, code: x.code, on: on, pressed: on ? 'true' : 'false', card: card, s1: 'background: ' + x.c[0] + ';', s2: 'background: ' + x.c[1] + ';', s3: 'background: ' + x.c[2] + ';', pick: function () { self.setState({ tema: x.name }); } };
+    });
+    var modes = [
+      { key: 'Terang', label: 'Terang' },
+      { key: 'Gelap', label: 'Gelap' },
+      { key: 'Sistem', label: 'Ikuti sistem' }
+    ].map(function (x) {
+      var on = mode === x.key;
+      var style = 'height: 44px; border: 0; border-radius: 12px; font-size: 14px; cursor: pointer; color: ' + t.text + '; ' + (on ? 'background: ' + t.surface + '; font-weight: 700;' : 'background: transparent; font-weight: 500;');
+      return { label: x.label, pressed: on ? 'true' : 'false', style: style, pick: function () { self.setState({ mode: x.key }); } };
+    });
+    var notifs = [
+      { key: 'tugas', label: 'Pengingat tugas', desc: 'Saat tenggat tiba' },
+      { key: 'aktivitas', label: 'Aktivitas pasangan', desc: 'Titipan baru dan tugas selesai' },
+      { key: 'setoran', label: 'Setoran tabungan', desc: 'Setoran baru dan target tercapai' }
+    ].map(function (x, i) {
+      return {
+        label: x.label,
+        desc: x.desc,
+        checked: self.state.n[x.key],
+        rowStyle: i > 0 ? 'border-top: 1px solid ' + t.line + ';' : '',
+        toggle: function (e) { var n = Object.assign({}, self.state.n); n[x.key] = e.target.checked; self.setState({ n: n }); }
+      };
+    });
+    return { t: t, themes: themes, modes: modes, notifs: notifs };
+  }
+}
+</script>
+</body>
+</html>

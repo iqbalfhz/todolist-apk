@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Ajak pasangan</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{opacity:0.85}
+button{font:inherit}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: {{t.bg}}; color: {{t.text}};">
+
+  <div style="padding: 24px 20px 0 20px; display: flex; flex-direction: column;">
+
+    <header style="display: flex; align-items: center;">
+      <a href="Pengaturan.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+      </a>
+    </header>
+
+    <div aria-hidden="true" style="margin-top: 8px; height: 96px; display: flex; align-items: center; justify-content: center;">
+      <span style="width: 80px; height: 80px; border-radius: 40px; background: {{t.soft}}; border: 3px solid {{t.brand}}; box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: {{t.brand}};">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      </span>
+      <span style="width: 32px; height: 32px; margin: 0 -8px; z-index: 1; border-radius: 16px; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>
+      </span>
+      <span style="width: 80px; height: 80px; border-radius: 40px; background: {{t.soft}}; border: 3px solid {{t.p2}}; box-sizing: border-box; display: flex; align-items: center; justify-content: center; color: {{t.p2}};">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      </span>
+    </div>
+
+    <h1 style="margin: 16px 0 0 0; font-size: 22px; font-weight: 700; text-align: center; letter-spacing: -0.2px;">Pakai berdua, lebih ringan</h1>
+    <p style="margin: 6px 0 0 0; font-size: 14px; line-height: 20px; color: {{t.muted}}; text-align: center;">Ajak pasanganmu masuk ke Ruang Bersama. Kode berlaku 48 jam dan hanya bisa dipakai sekali.</p>
+
+    <section aria-label="Kode undanganmu" style="margin-top: 20px; background: {{t.surface}}; border: 1px solid {{t.line}}; border-radius: 20px; padding: 8px 16px 16px 16px; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Kode undanganmu</span>
+        <button type="button" style="height: 44px; padding: 0 4px; border: 0; background: transparent; color: {{t.link}}; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>Salin</button>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px;">
+        <span style="height: 52px; border-radius: 12px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">K</span>
+        <span style="height: 52px; border-radius: 12px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">7</span>
+        <span style="height: 52px; border-radius: 12px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">P</span>
+        <span style="height: 52px; border-radius: 12px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">2</span>
+        <span style="height: 52px; border-radius: 12px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">Q</span>
+        <span style="height: 52px; border-radius: 12px; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">M</span>
+      </div>
+    </section>
+
+    <button type="button" style="margin-top: 12px; height: 52px; border: 0; border-radius: 26px; background: {{t.primary}}; color: {{t.onPrimary}}; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"></path></svg>Bagikan lewat WhatsApp
+    </button>
+
+    <div aria-hidden="true" style="margin-top: 20px; display: flex; align-items: center; gap: 12px;">
+      <span style="flex-grow: 1; height: 1px; background: {{t.line}};"></span>
+      <span style="font-size: 13px; color: {{t.muted}};">atau</span>
+      <span style="flex-grow: 1; height: 1px; background: {{t.line}};"></span>
+    </div>
+
+    <label for="kode-pasangan" style="margin-top: 20px; font-size: 15px; font-weight: 600;">Punya kode dari pasangan?</label>
+    <div style="margin-top: 8px; display: flex; gap: 8px;">
+      <input id="kode-pasangan" type="text" maxlength="6" autocapitalize="characters" placeholder="Contoh: K7P2QM" style="flex-grow: 1; min-width: 0; height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; font-size: 16px; font-weight: 600; letter-spacing: 2px;">
+      <button type="button" style="height: 52px; padding: 0 20px; border-radius: 14px; border: 1.5px solid {{t.primary}}; background: {{t.surface}}; color: {{t.link}}; font-size: 15px; font-weight: 700; cursor: pointer;">Gabung</button>
+    </div>
+
+    <a href="Main.dc.html" style="margin-top: 12px; align-self: center; height: 44px; padding: 0 12px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: {{t.muted}};">Nanti saja</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Mawar","Anggrek"],"default":"Mawar","section":"Tema"},"gelap":{"editor":"boolean","default":false,"section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  tokens(tema, gelap) {
+    var anggrek = tema === 'Anggrek';
+    var sw = anggrek ? { sw1: '#CF679C', sw2: '#CA4189', sw3: '#DD799F' } : { sw1: '#ECB1C7', sw2: '#D54B7E', sw3: '#E38BB3' };
+    var t;
+    if (gelap) {
+      t = { bg: '#1E1519', surface: '#2A1F24', soft: anggrek ? '#3A2434' : '#3B2530', line: '#43343B', text: '#F5E9EE', muted: '#BBA6AF', primary: anggrek ? '#DD799F' : '#E38BB3', onPrimary: '#1E1519', link: anggrek ? '#DD799F' : '#E38BB3', brand: anggrek ? '#DD799F' : '#E38BB3', accent: anggrek ? '#CF679C' : '#ECB1C7', track: anggrek ? '#482C3E' : '#4A2E3B', warn: '#F0B45C', ok: '#7FD3A0', p2: '#A9A3F0', scrim: 'rgba(0, 0, 0, 0.55)' };
+    } else if (anggrek) {
+      t = { bg: '#F9EEF4', surface: '#FFFFFF', soft: '#F3DCE9', line: '#EBD3E0', text: '#2B1A22', muted: '#6E5A63', primary: '#CA4189', onPrimary: '#FFFFFF', link: '#A3326C', brand: '#CA4189', accent: '#CF679C', track: '#F1D7E5', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    } else {
+      t = { bg: '#FCF3F7', surface: '#FFFFFF', soft: '#F9E4EC', line: '#EFD9E2', text: '#2B1A22', muted: '#6E5A63', primary: '#CB2F69', onPrimary: '#FFFFFF', link: '#B42A5E', brand: '#D54B7E', accent: '#E38BB3', track: '#F6DCE6', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    }
+    return Object.assign(t, sw);
+  }
+  renderVals() {
+    return { t: this.tokens(this.props.tema ?? 'Mawar', this.props.gelap ?? false) };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Profil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{opacity:0.9}
+button{font:inherit}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; position: relative; overflow: hidden; font-family: 'Plus Jakarta Sans', sans-serif; background: {{t.bg}}; color: {{t.text}};">
+
+  <div style="padding: 24px 20px 0 20px; display: flex; flex-direction: column;">
+
+    <header style="display: flex; align-items: center; gap: 4px;">
+      <a href="Pengaturan.dc.html" aria-label="Kembali" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
+      </a>
+      <h1 style="margin: 0; font-size: 20px; font-weight: 700;">Profil</h1>
+    </header>
+
+    <div style="margin-top: 16px; align-self: center; position: relative; width: 112px; height: 112px;">
+      <span style="width: 112px; height: 112px; border-radius: 56px; box-sizing: border-box; border: 3px solid {{t.brand}}; background: {{t.soft}}; display: flex; align-items: center; justify-content: center; color: {{t.brand}};">
+        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>
+      </span>
+      <button type="button" aria-label="Ubah foto profil" style="position: absolute; right: -4px; bottom: -4px; width: 44px; height: 44px; border-radius: 22px; box-sizing: border-box; border: 3px solid {{t.bg}}; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+      </button>
+    </div>
+
+    <div style="margin-top: 14px; display: flex; justify-content: center; gap: 8px;">
+      <button type="button" style="height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>Kamera</button>
+      <button type="button" style="height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="9" cy="10" r="2"></circle><path d="m21 16-5-5L5 20"></path></svg>Galeri</button>
+    </div>
+    <p style="margin: 8px 0 0 0; font-size: 12px; line-height: 17px; color: {{t.muted}}; text-align: center;">Foto dipotong persegi dan hanya terlihat oleh anggota Ruang Bersama.</p>
+
+    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 6px;">
+      <label for="nama-panggilan" style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Nama panggilan</label>
+      <input id="nama-panggilan" type="text" placeholder="Nama yang dilihat pasangan" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; font-size: 16px;">
+    </div>
+
+    <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Email</span>
+      <span style="height: 44px; display: flex; align-items: center; font-size: 15px; color: {{t.muted}};">nama@email.com</span>
+    </div>
+
+    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">
+      <span id="label-lahir" style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Tanggal lahir</span>
+      <button type="button" aria-labelledby="label-lahir" style="height: 52px; box-sizing: border-box; padding: 0 14px; border-radius: 14px; border: 1px solid {{t.line}}; background: {{t.surface}}; color: {{t.text}}; font-size: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer;">2 Maret<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg></button>
+      <span style="font-size: 12px; color: {{t.muted}};">Dipakai untuk pengingat ulang tahun. Tahun lahir boleh dikosongkan.</span>
+    </div>
+
+    <div role="group" aria-labelledby="label-warna" style="margin-top: 18px; display: flex; flex-direction: column; gap: 8px;">
+      <span id="label-warna" style="font-size: 13px; font-weight: 600; color: {{t.muted}};">Warna diri (penanda tugasmu)</span>
+      <div style="display: flex; gap: 6px;">
+        <sc-for list="{{warna}}" as="w" hint-placeholder-count="6">
+          <button type="button" aria-label="{{w.label}}" aria-pressed="{{w.pressed}}" onClick="{{w.pick}}" style="{{w.ring}}"><span style="{{w.dot}}"></span></button>
+        </sc-for>
+      </div>
+    </div>
+
+    <a href="Pengaturan.dc.html" style="margin-top: 24px; height: 52px; border-radius: 26px; background: {{t.primary}}; color: {{t.onPrimary}}; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700;">Simpan</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"tema":{"editor":"enum","options":["Mawar","Anggrek"],"default":"Mawar","section":"Tema"},"gelap":{"editor":"boolean","default":false,"section":"Tema"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { warna: 'Mawar' };
+  }
+  tokens(tema, gelap) {
+    var anggrek = tema === 'Anggrek';
+    var sw = anggrek ? { sw1: '#CF679C', sw2: '#CA4189', sw3: '#DD799F' } : { sw1: '#ECB1C7', sw2: '#D54B7E', sw3: '#E38BB3' };
+    var t;
+    if (gelap) {
+      t = { bg: '#1E1519', surface: '#2A1F24', soft: anggrek ? '#3A2434' : '#3B2530', line: '#43343B', text: '#F5E9EE', muted: '#BBA6AF', primary: anggrek ? '#DD799F' : '#E38BB3', onPrimary: '#1E1519', link: anggrek ? '#DD799F' : '#E38BB3', brand: anggrek ? '#DD799F' : '#E38BB3', accent: anggrek ? '#CF679C' : '#ECB1C7', track: anggrek ? '#482C3E' : '#4A2E3B', warn: '#F0B45C', ok: '#7FD3A0', p2: '#A9A3F0', scrim: 'rgba(0, 0, 0, 0.55)' };
+    } else if (anggrek) {
+      t = { bg: '#F9EEF4', surface: '#FFFFFF', soft: '#F3DCE9', line: '#EBD3E0', text: '#2B1A22', muted: '#6E5A63', primary: '#CA4189', onPrimary: '#FFFFFF', link: '#A3326C', brand: '#CA4189', accent: '#CF679C', track: '#F1D7E5', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    } else {
+      t = { bg: '#FCF3F7', surface: '#FFFFFF', soft: '#F9E4EC', line: '#EFD9E2', text: '#2B1A22', muted: '#6E5A63', primary: '#CB2F69', onPrimary: '#FFFFFF', link: '#B42A5E', brand: '#D54B7E', accent: '#E38BB3', track: '#F6DCE6', warn: '#9A5B00', ok: '#2E7D4F', p2: '#5B57A6', scrim: 'rgba(43, 26, 34, 0.45)' };
+    }
+    return Object.assign(t, sw);
+  }
+  renderVals() {
+    var self = this;
+    var t = this.tokens(this.props.tema ?? 'Mawar', this.props.gelap ?? false);
+    var warna = [
+      { name: 'Mawar', hex: '#CB2F69' },
+      { name: 'Ungu', hex: '#5B57A6' },
+      { name: 'Toska', hex: '#2E7D73' },
+      { name: 'Bata', hex: '#B4541F' },
+      { name: 'Biru', hex: '#3567B5' },
+      { name: 'Lavender', hex: '#8A4FA0' }
+    ].map(function (w) {
+      var on = self.state.warna === w.name;
+      return {
+        label: 'Warna ' + w.name,
+        pressed: on ? 'true' : 'false',
+        ring: 'width: 44px; height: 44px; border-radius: 22px; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; background: transparent; box-sizing: border-box; border: ' + (on ? '2px solid ' + t.text : '2px solid transparent') + ';',
+        dot: 'width: 30px; height: 30px; border-radius: 15px; background: ' + w.hex + ';',
+        pick: function () { self.setState({ warna: w.name }); }
+      };
+    });
+    return { t: t, warna: warna };
+  }
+}
+</script>
+</body>
+</html>
