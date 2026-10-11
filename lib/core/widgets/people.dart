@@ -199,7 +199,7 @@ class TaskCheckButton extends StatelessWidget {
                 scale: done ? 1 : 0,
                 duration: duration,
                 curve: Curves.easeOutBack,
-                child: Icon(Symbols.check_rounded, size: AppDimens.checkIcon, color: palette.onPrimary, weight: 700),
+                child: Icon(Symbols.check_rounded, size: AppDimens.checkIcon, color: palette.onPrimary),
               ),
             ),
           ),

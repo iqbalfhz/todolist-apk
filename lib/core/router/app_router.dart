@@ -64,7 +64,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       // Tab bawah v0.1. Detail tugas dan detail tabungan tetap menampilkan tab bawah.
       StatefulShellRoute.indexedStack(
-        builder: (_, _, navigationShell) => MainShell(navigationShell: navigationShell),
+        builder: (_, state, navigationShell) => MainShell(location: state.uri.path, navigationShell: navigationShell),
         branches: [
           StatefulShellBranch(
             routes: [GoRoute(path: Routes.home, builder: (_, _) => const HomeScreen())],

@@ -30,9 +30,14 @@ String dueText(AppLocalizations l10n, TaskItem item) {
   final when = time == null ? day : l10n.dueWithTime(day, formatClock(time));
   if (!item.isOverdue) return when;
 
-  // Di tengah kalimat, "Kemarin" dan "Hari ini" ditulis dengan huruf kecil.
-  final relative = daysBetween(item.today, date).abs() <= 1;
-  return l10n.dueOverdue(relative ? when[0].toLowerCase() + when.substring(1) : when);
+  return l10n.dueOverdue(_midSentence(when, date, today: item.today));
+}
+
+/// Di tengah kalimat, "Kemarin", "Hari ini", dan "Besok" ditulis dengan huruf kecil;
+/// nama hari seperti "Sen, 5 Okt" tetap.
+String _midSentence(String label, String date, {required String today}) {
+  final relative = daysBetween(today, date).abs() <= 1;
+  return relative ? label[0].toLowerCase() + label.substring(1) : label;
 }
 
 /// "Diselesaikan Sari, 12.40"; untuk hari lain memakai tanggalnya.
@@ -43,7 +48,9 @@ String completedText(AppLocalizations l10n, TaskItem item, Household household, 
   final by = item.task.completedBy;
   final who = by == null || by == household.me.id ? l10n.labelYou : household.nameOf(by) ?? l10n.labelPartner;
   final wall = clock.wallClock(completedAt, item.space.timezone);
-  final when = item.completedToday ? formatClock(wall.time) : dayLabel(l10n, wall.date, today: item.today);
+  final when = item.completedToday
+      ? formatClock(wall.time)
+      : _midSentence(dayLabel(l10n, wall.date, today: item.today), wall.date, today: item.today);
 
   return l10n.taskCompletedBy(who, when);
 }

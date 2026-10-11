@@ -62,7 +62,7 @@ class ColorPicker extends StatelessWidget {
                       decoration: BoxDecoration(color: context.personColor(key), shape: BoxShape.circle),
                       // Pilihan tidak hanya ditandai warna cincin.
                       child: key == selected
-                          ? Icon(Symbols.check_rounded, size: AppDimens.iconSm, color: palette.surface, weight: 700)
+                          ? Icon(Symbols.check_rounded, size: AppDimens.iconSm, color: palette.surface)
                           : null,
                     ),
                   ),

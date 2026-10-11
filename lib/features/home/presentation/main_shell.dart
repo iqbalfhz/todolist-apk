@@ -52,14 +52,15 @@ class AppScaffold extends StatelessWidget {
 ///
 /// Liburan (v0.2) dan Kenangan (v0.3) disembunyikan sampai rilisnya.
 class MainShell extends StatelessWidget {
-  const MainShell({super.key, required this.navigationShell});
+  const MainShell({super.key, required this.location, required this.navigationShell});
 
+  /// Alamat layar yang sedang tampil, misalnya `/tugas`.
+  final String location;
   final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final location = GoRouterState.of(context).uri.path;
     // Tombol + mengambang hanya di Beranda dan Tugas.
     final showFab = location == Routes.home || location == Routes.tasks;
 
@@ -80,14 +81,14 @@ class MainShell extends StatelessWidget {
               child: FloatingActionButton(
                 tooltip: l10n.addTask,
                 onPressed: () => showAddTaskSheet(context, dueToday: location == Routes.home),
-                child: const Icon(Symbols.add_rounded, size: AppDimens.fabIcon, weight: 600),
+                child: const Icon(Symbols.add_rounded, size: AppDimens.fabIcon),
               ),
             )
           : null,
       bottomNavigationBar: _NavBar(
         currentIndex: navigationShell.currentIndex,
-        // Mengetuk tab yang sedang aktif kembali ke layar pertamanya.
-        onTap: (index) => navigationShell.goBranch(index, initialLocation: index == navigationShell.currentIndex),
+        // Tab selalu membuka layar utamanya, bukan detail yang terakhir dibuka di tab itu.
+        onTap: (index) => navigationShell.goBranch(index, initialLocation: true),
       ),
     );
   }

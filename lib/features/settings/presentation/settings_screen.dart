@@ -335,12 +335,7 @@ class _ThemeCard extends ConsumerWidget {
                           width: AppDimens.checkCircle,
                           height: AppDimens.checkCircle,
                           decoration: BoxDecoration(color: palette.primary, shape: BoxShape.circle),
-                          child: Icon(
-                            Symbols.check_rounded,
-                            size: AppDimens.checkIcon,
-                            color: palette.onPrimary,
-                            weight: 700,
-                          ),
+                          child: Icon(Symbols.check_rounded, size: AppDimens.checkIcon, color: palette.onPrimary),
                         ),
                     ],
                   ),

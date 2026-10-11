@@ -201,7 +201,6 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
                     partner == null ? Symbols.add_rounded : Symbols.check_rounded,
                     size: AppDimens.iconMd,
                     color: palette.onPrimary,
-                    weight: 700,
                   ),
                 ),
               ],
