@@ -160,6 +160,7 @@ class _NavItem extends StatelessWidget {
     final color = selected ? palette.link : palette.muted;
 
     return Semantics(
+      container: true,
       button: true,
       selected: selected,
       label: label,

@@ -30,15 +30,46 @@ abstract interface class ApiTransport {
   });
 }
 
+/// Mengamati hasil setiap request, apa pun pengirimnya, untuk dua hal yang berlaku
+/// di seluruh app: banner offline dan sesi yang berakhir.
+class ObservedTransport implements ApiTransport {
+  const ObservedTransport(this.inner, {this.onReachability, this.onUnauthenticated});
+
+  final ApiTransport inner;
+
+  /// Dipanggil setiap request selesai: `true` kalau server menjawab dengan benar.
+  final void Function(bool reachable)? onReachability;
+
+  /// Dipanggil saat server membalas 401: token HP ini tidak berlaku lagi.
+  final void Function()? onUnauthenticated;
+
+  @override
+  Future<ApiResponse> send(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    Map<String, dynamic>? query,
+    ApiUpload? upload,
+  }) async {
+    try {
+      final response = await inner.send(method, path, body: body, query: query, upload: upload);
+      onReachability?.call(true);
+      return response;
+    } on NetworkFailure {
+      onReachability?.call(false);
+      rethrow;
+    } on ApiError catch (error) {
+      // Server menjawab, hanya saja menolak.
+      onReachability?.call(true);
+      if (error.code == ApiErrorCode.unauthenticated) onUnauthenticated?.call();
+      rethrow;
+    }
+  }
+}
+
 /// [ApiTransport] di atas dio.
 class DioApiTransport implements ApiTransport {
-  DioApiTransport({
-    required String baseUrl,
-    required String? Function() token,
-    this.onUnauthenticated,
-    this.onReachability,
-    Dio? dio,
-  }) : _dio = dio ?? Dio() {
+  DioApiTransport({required String baseUrl, required String? Function() token, Dio? dio}) : _dio = dio ?? Dio() {
     _dio.options
       ..baseUrl = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/'
       ..connectTimeout = const Duration(seconds: 10)
@@ -56,12 +87,6 @@ class DioApiTransport implements ApiTransport {
   }
 
   final Dio _dio;
-
-  /// Dipanggil saat server membalas 401: token HP ini tidak berlaku lagi.
-  final void Function()? onUnauthenticated;
-
-  /// Dipanggil setiap request selesai: `true` kalau server menjawab dengan benar.
-  final void Function(bool reachable)? onReachability;
 
   @override
   Future<ApiResponse> send(
@@ -84,7 +109,6 @@ class DioApiTransport implements ApiTransport {
         ),
       );
     } on DioException catch (error) {
-      onReachability?.call(false);
       throw NetworkFailure(detail: error.message ?? error.type.name);
     }
 
@@ -94,10 +118,8 @@ class DioApiTransport implements ApiTransport {
     if (status >= 200 && status < 300) {
       // 204 tidak punya body. 2xx lain wajib JSON; halaman login Wi-Fi publik pun membalas 200.
       if (status != 204 && json == null) {
-        onReachability?.call(false);
         throw NetworkFailure(status: status, detail: 'Balasan bukan JSON');
       }
-      onReachability?.call(true);
       return ApiResponse(status: status, body: json);
     }
 
@@ -106,13 +128,10 @@ class DioApiTransport implements ApiTransport {
     // 404 atau 502 tanpa JSON (misalnya dari proxy saat deploy) dan semua 5xx
     // diperlakukan sebagai gangguan sementara, bukan jawaban API.
     if (json == null || code == null || status >= 500 || code == ApiErrorCode.serverError) {
-      onReachability?.call(false);
       throw NetworkFailure(status: status, detail: json?['message'] as String?);
     }
 
-    onReachability?.call(true);
-
-    final error = ApiError(
+    throw ApiError(
       status: status,
       code: code,
       message: json['message'] as String? ?? '',
@@ -121,10 +140,6 @@ class DioApiTransport implements ApiTransport {
       current: json['current'] as Map<String, dynamic>?,
       retryAfter: _retryAfter(response.headers.value('retry-after')),
     );
-
-    if (code == ApiErrorCode.unauthenticated) onUnauthenticated?.call();
-
-    throw error;
   }
 
   FormData _formData(ApiUpload upload) => FormData.fromMap({

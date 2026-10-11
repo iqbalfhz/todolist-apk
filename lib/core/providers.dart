@@ -44,10 +44,16 @@ class ConnectivityController extends Notifier<Connectivity> {
 
 final connectivityProvider = NotifierProvider<ConnectivityController, Connectivity>(ConnectivityController.new);
 
+/// Klien HTTP ke API. Ditimpa di tes dengan API palsu.
+final httpTransportProvider = Provider<ApiTransport>(
+  (ref) => DioApiTransport(baseUrl: Env.apiBaseUrl, token: () => ref.read(sessionProvider).token),
+);
+
+/// Klien API yang dipakai seluruh app: [httpTransportProvider] ditambah pengamatan
+/// untuk banner offline dan sesi yang berakhir.
 final apiTransportProvider = Provider<ApiTransport>((ref) {
-  return DioApiTransport(
-    baseUrl: Env.apiBaseUrl,
-    token: () => ref.read(sessionProvider).token,
+  return ObservedTransport(
+    ref.watch(httpTransportProvider),
     // 401 hanya berarti token tidak berlaku lagi, jadi selalu aman dianggap "keluar".
     onUnauthenticated: () => unawaited(ref.read(sessionProvider.notifier).signOut(expired: true)),
     onReachability: (reachable) => ref.read(connectivityProvider.notifier).report(reachable: reachable),
@@ -56,12 +62,18 @@ final apiTransportProvider = Provider<ApiTransport>((ref) {
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) => AuthRepository(ref.watch(apiTransportProvider)));
 
+/// Cara membuka akun untuk sebuah ID pengguna. Ditimpa di tes dengan database di memori.
+final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
+  final api = ref.watch(apiTransportProvider);
+  return (userId) => Account(userId: userId, db: AppDatabase.forAccount(userId), api: api);
+});
+
 /// Akun yang sedang masuk, atau `null`. Akun lain di HP yang sama membuka database yang berbeda.
 final accountProvider = Provider<Account?>((ref) {
   final userId = ref.watch(sessionProvider.select((session) => session.userId));
   if (userId == null) return null;
 
-  final account = Account(userId: userId, db: AppDatabase.forAccount(userId), api: ref.watch(apiTransportProvider));
+  final account = ref.watch(accountFactoryProvider)(userId);
   ref.onDispose(account.dispose);
   return account;
 });
@@ -87,32 +99,32 @@ final nowProvider = NotifierProvider<NowTicker, DateTime>(NowTicker.new);
 // ------------------------------------------------------------------ data dari cache lokal
 
 final profileProvider = StreamProvider<User?>(
-  (ref) => ref.watch(accountProvider)?.profile.watch() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.profile.watch() ?? Stream.value(null),
 );
 
 final spacesProvider = StreamProvider<List<Space>>(
-  (ref) => ref.watch(accountProvider)?.spaces.watchAll() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.spaces.watchAll() ?? Stream.value(const []),
 );
 
 /// Daftar yang belum dihapus, termasuk yang diarsipkan.
 final taskListsProvider = StreamProvider<List<TaskList>>(
-  (ref) => ref.watch(accountProvider)?.lists.watchAll() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.lists.watchAll() ?? Stream.value(const []),
 );
 
 /// Tugas yang belum dihapus, termasuk yang daftarnya diarsipkan.
 final tasksProvider = StreamProvider<List<Task>>(
-  (ref) => ref.watch(accountProvider)?.tasks.watchAll() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.tasks.watchAll() ?? Stream.value(const []),
 );
 
 final goalsProvider = StreamProvider<List<SavingsGoal>>(
-  (ref) => ref.watch(accountProvider)?.savings.watchGoals() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.savings.watchGoals() ?? Stream.value(const []),
 );
 
 final entriesProvider = StreamProvider<List<SavingsEntry>>(
-  (ref) => ref.watch(accountProvider)?.savings.watchEntries() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.savings.watchEntries() ?? Stream.value(const []),
 );
 
 /// Jumlah perubahan yang belum terkirim ke server.
 final pendingCountProvider = StreamProvider<int>(
-  (ref) => ref.watch(accountProvider)?.outbox.watchPendingCount() ?? const Stream.empty(),
+  (ref) => ref.watch(accountProvider)?.outbox.watchPendingCount() ?? Stream.value(0),
 );

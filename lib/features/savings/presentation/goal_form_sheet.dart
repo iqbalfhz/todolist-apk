@@ -27,6 +27,7 @@ Future<String?> showCurrencyPicker(BuildContext context, {required String title,
         children: [
           for (final currency in supportedCurrencies)
             Semantics(
+              container: true,
               button: true,
               selected: currency.code == selected,
               child: InkWell(

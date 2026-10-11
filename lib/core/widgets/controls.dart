@@ -119,6 +119,7 @@ class AppFilterChip extends StatelessWidget {
     );
 
     return Semantics(
+      container: true,
       button: true,
       selected: selected,
       child: Padding(
@@ -194,6 +195,7 @@ class SegmentedControl<T> extends StatelessWidget {
               if (index > 0) const SizedBox(width: AppDimens.segmentPadding),
               Expanded(
                 child: Semantics(
+                  container: true,
                   button: true,
                   selected: segment.value == selected,
                   child: Material(

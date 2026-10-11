@@ -52,8 +52,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     if (!confirmed || !mounted) return;
 
+    final container = ProviderScope.containerOf(context, listen: false);
     setState(() => _loggingOut = true);
-    await signOut(ref);
+    await signOut(container);
   }
 
   @override
@@ -281,6 +282,7 @@ class _ThemeCard extends ConsumerWidget {
     final swatches = AppPalette.swatchesOf(name);
 
     return Semantics(
+      container: true,
       button: true,
       selected: selected,
       child: Material(

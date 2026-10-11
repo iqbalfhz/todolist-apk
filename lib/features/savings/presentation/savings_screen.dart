@@ -82,6 +82,7 @@ class _SavingsScreenState extends ConsumerState<SavingsScreen> {
           Align(
             alignment: Alignment.centerLeft,
             child: Semantics(
+              container: true,
               button: true,
               expanded: _showArchived,
               child: InkWell(

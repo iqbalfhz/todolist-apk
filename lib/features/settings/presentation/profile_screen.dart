@@ -65,6 +65,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Future<void> _pickPhoto(ImageSource source) async {
     final l10n = context.l10n;
     final palette = context.palette;
+    final light = Theme.of(context).brightness == Brightness.light;
     final messenger = ScaffoldMessenger.of(context);
     final account = ref.read(accountProvider);
     if (account == null || _photoBusy) return;
@@ -84,6 +85,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             toolbarWidgetColor: palette.text,
             backgroundColor: palette.bg,
             activeControlsWidgetColor: palette.primary,
+            statusBarLight: light,
+            navBarLight: light,
             initAspectRatio: CropAspectRatioPreset.square,
             aspectRatioPresets: const [CropAspectRatioPreset.square],
             lockAspectRatio: true,

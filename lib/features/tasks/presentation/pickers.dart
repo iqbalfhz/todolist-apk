@@ -26,6 +26,7 @@ class ListPickerField extends StatelessWidget {
     );
 
     return Semantics(
+      container: true,
       button: true,
       label: l10n.addTaskPickList,
       child: Material(
@@ -80,6 +81,7 @@ Future<TaskList?> showListPicker(
       children: [
         for (final list in lists)
           Semantics(
+            container: true,
             button: true,
             selected: list.id == selectedId,
             child: InkWell(

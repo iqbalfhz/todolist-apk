@@ -88,6 +88,7 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
     if (_busy || !_validate()) return;
 
     final l10n = context.l10n;
+    final container = ProviderScope.containerOf(context, listen: false);
     final auth = ref.read(authRepositoryProvider);
     final deviceName = ref.read(deviceInfoProvider).name;
     setState(() => _busy = true);
@@ -104,7 +105,7 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
           : await auth.login(email: _email.text, password: _password.text, deviceName: deviceName);
 
       // Layar berikutnya ditentukan router begitu sesi berubah.
-      await completeSignIn(ref, result);
+      await completeSignIn(container, result);
     } on ApiError catch (error) {
       if (!mounted) return;
       // Pesan error diambil dari `message` balasan API.

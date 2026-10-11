@@ -104,6 +104,7 @@ class _HeaderAvatars extends StatelessWidget {
     final partner = household.partner;
 
     return Semantics(
+      container: true,
       button: true,
       label: context.l10n.homeOpenSettings,
       child: InkWell(

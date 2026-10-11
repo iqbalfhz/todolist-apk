@@ -150,6 +150,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     return Align(
       alignment: Alignment.centerLeft,
       child: Semantics(
+        container: true,
         button: true,
         expanded: _showDone,
         child: InkWell(
@@ -230,6 +231,7 @@ class _ListCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Semantics(
+            container: true,
             button: true,
             label: l10n.manageList(list.name),
             child: InkWell(

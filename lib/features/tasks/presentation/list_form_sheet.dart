@@ -33,6 +33,7 @@ class ColorPicker extends StatelessWidget {
       children: [
         for (final key in PersonColors.keys)
           Semantics(
+            container: true,
             button: true,
             selected: key == selected,
             label: l10n.colorSemantic(colorName(l10n, key)),

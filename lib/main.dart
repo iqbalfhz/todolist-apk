@@ -34,6 +34,8 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
+      // Provider di app ini hanya membaca cache lokal; kegagalannya tidak diulang otomatis.
+      retry: (_, _) => null,
       overrides: [
         bootstrapProvider.overrideWithValue(bootstrap),
         keyValueStoreProvider.overrideWithValue(storage),

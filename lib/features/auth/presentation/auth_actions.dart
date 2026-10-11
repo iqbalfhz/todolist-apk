@@ -22,10 +22,13 @@ Future<String?> deviceTimezone() async {
 /// Setelah daftar, sync ini penuh (database lokal masih kosong). Saat masuk lagi di
 /// HP yang sama, sync melanjutkan kursor yang tersimpan, jadi data yang dihapus
 /// pasangan selama itu ikut terhapus di HP.
-Future<void> completeSignIn(WidgetRef ref, AuthResult result) async {
-  await ref.read(sessionProvider.notifier).signIn(userId: result.user.id, token: result.token);
+///
+/// Menerima [ProviderContainer], bukan `WidgetRef`: begitu sesi berubah, router
+/// mengganti layar pemanggilnya, dan `ref` milik layar itu tidak bisa dipakai lagi.
+Future<void> completeSignIn(ProviderContainer container, AuthResult result) async {
+  await container.read(sessionProvider.notifier).signIn(userId: result.user.id, token: result.token);
 
-  final account = ref.read(accountProvider);
+  final account = container.read(accountProvider);
   if (account == null) return;
 
   await account.profile.save(result.user);
@@ -35,16 +38,14 @@ Future<void> completeSignIn(WidgetRef ref, AuthResult result) async {
 
 /// Keluar: cabut token di server, hapus token FCM di HP apa pun hasilnya, lalu hapus token dari HP.
 /// Database lokal akun (termasuk antrean yang belum terkirim) tetap tersimpan.
-Future<void> signOut(WidgetRef ref) async {
-  final account = ref.read(accountProvider);
-  final push = ref.read(pushServiceProvider);
-  final auth = ref.read(authRepositoryProvider);
-  final session = ref.read(sessionProvider.notifier);
+Future<void> signOut(ProviderContainer container) async {
+  final account = container.read(accountProvider);
+  final push = container.read(pushServiceProvider);
 
   final fcmToken = await account?.store.meta(MetaKeys.deviceToken) ?? await push.token();
 
-  await auth.logout(fcmToken: fcmToken);
+  await container.read(authRepositoryProvider).logout(fcmToken: fcmToken);
   await push.deleteToken();
   await account?.store.setMeta(MetaKeys.deviceToken, null);
-  await session.signOut();
+  await container.read(sessionProvider.notifier).signOut();
 }

@@ -50,7 +50,12 @@ class Account {
   late final ProfileRepository profile;
   late final SpaceRepository spaces;
 
+  bool _disposed = false;
+
+  /// Aman dipanggil lebih dari sekali.
   Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
     outbox.dispose();
     sync.dispose();
     await db.close();
