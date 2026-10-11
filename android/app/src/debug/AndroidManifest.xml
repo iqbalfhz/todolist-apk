@@ -4,4 +4,7 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- HTTP tanpa TLS hanya untuk build debug, supaya bisa memanggil API lokal
+         (http://127.0.0.1:8000 lewat adb reverse). Staging dan produksi selalu HTTPS. -->
+    <application android:usesCleartextTraffic="true"/>
 </manifest>
