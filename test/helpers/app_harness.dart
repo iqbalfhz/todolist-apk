@@ -30,40 +30,51 @@ Future<void> prepareAppTests() async {
 }
 
 /// Jalankan app sungguhan di atas akun palsu [harness], dengan layar seukuran mockup (390 × 844).
+///
+/// Kalau [signedIn] dimatikan, app mulai dari layar Masuk; akun [harness] baru dibuka
+/// setelah berhasil masuk.
 Future<ProviderContainer> pumpApp(
   WidgetTester tester,
   Harness harness, {
+  bool signedIn = true,
   bool notificationsDone = true,
   bool pairingDone = true,
+  MemoryKeyValueStore? storage,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
 
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        bootstrapProvider.overrideWithValue(
-          Bootstrap(
-            token: '1|token-palsu',
-            userId: meId,
-            notificationsOnboarded: notificationsDone,
-            pairingOnboarded: pairingDone,
-          ),
+  final container = ProviderContainer(
+    retry: (_, _) => null,
+    overrides: [
+      bootstrapProvider.overrideWithValue(
+        Bootstrap(
+          token: signedIn ? '1|token-palsu' : null,
+          userId: signedIn ? meId : null,
+          notificationsOnboarded: notificationsDone,
+          pairingOnboarded: pairingDone,
         ),
-        keyValueStoreProvider.overrideWithValue(MemoryKeyValueStore()),
-        apiTransportProvider.overrideWithValue(harness.api),
-        accountProvider.overrideWithValue(harness.account),
-        spaceClockProvider.overrideWithValue(SpaceClock(now: harness.clock.call)),
-      ],
-      child: const TodoApp(),
-    ),
+      ),
+      keyValueStoreProvider.overrideWithValue(storage ?? MemoryKeyValueStore()),
+      httpTransportProvider.overrideWithValue(harness.api),
+      accountFactoryProvider.overrideWithValue((_) => harness.account),
+      spaceClockProvider.overrideWithValue(SpaceClock(now: harness.clock.call)),
+    ],
   );
+  _container = container;
+
+  // Antrean dan sync akun palsu ikut lewat klien API milik app, seperti di app sungguhan.
+  harness.transport.inner = container.read(apiTransportProvider);
+
+  await tester.pumpWidget(UncontrolledProviderScope(container: container, child: const TodoApp()));
   await settle(tester);
 
-  return ProviderScope.containerOf(tester.element(find.byType(TodoApp)));
+  return container;
 }
+
+ProviderContainer? _container;
 
 /// Biarkan kueri database, permintaan ke API palsu, dan animasi selesai.
 Future<void> settle(WidgetTester tester) async {
@@ -73,9 +84,12 @@ Future<void> settle(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-/// Bongkar app sebelum database ditutup, supaya tidak ada kueri yang tertinggal.
+/// Bongkar app sebelum database ditutup, supaya tidak ada kueri atau timer yang tertinggal.
 Future<void> disposeApp(WidgetTester tester, Harness harness) async {
   await tester.pumpWidget(const SizedBox.shrink());
+  _container?.dispose();
+  _container = null;
+  // Beri waktu drift membereskan langganan stream yang baru dilepas.
   await tester.pump(const Duration(seconds: 1));
   await harness.dispose();
 }

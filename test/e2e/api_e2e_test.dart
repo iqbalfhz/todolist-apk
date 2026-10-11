@@ -29,11 +29,14 @@ import 'package:todolist/features/tasks/domain/task_list.dart';
 /// Satu HP: token, klien API sungguhan, dan database lokal di memori.
 class Device {
   Device(this.baseUrl) {
-    api = DioApiTransport(baseUrl: baseUrl, token: () => token, onUnauthenticated: () => unauthenticated++);
+    api = ObservedTransport(
+      DioApiTransport(baseUrl: baseUrl, token: () => token),
+      onUnauthenticated: () => unauthenticated++,
+    );
   }
 
   final String baseUrl;
-  late final DioApiTransport api;
+  late final ApiTransport api;
   late Account account;
   late User user;
   String? token;

@@ -47,6 +47,9 @@ class FakeApi implements ApiTransport {
   /// Ruang Bersama yang dibalas `POST /invitations/accept`.
   Map<String, dynamic>? acceptedSpace;
 
+  /// Selama menyala, semua request gagal seperti HP tanpa koneksi.
+  bool offline = false;
+
   final List<Responder> _scripted = [];
 
   /// Dipanggil tepat sebelum setiap request dijawab.
@@ -99,6 +102,7 @@ class FakeApi implements ApiTransport {
     // supaya tes widget tidak perlu memajukan jam palsu.
     await Future<void>.value();
 
+    if (offline) throw const NetworkFailure();
     if (_scripted.isNotEmpty) return _scripted.removeAt(0)(request);
     return handle(request);
   }

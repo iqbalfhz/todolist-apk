@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
+import 'package:todolist/core/api/api_error.dart';
+import 'package:todolist/core/api/api_transport.dart';
 import 'package:todolist/core/database/app_database.dart';
 import 'package:todolist/core/database/entity_type.dart';
 import 'package:todolist/core/session/account.dart';
@@ -250,16 +252,34 @@ class MemoryKeyValueStore implements KeyValueStore {
   }
 }
 
+/// Pengirim yang bisa dialihkan. Mula-mula langsung ke API palsu; di tes widget dialihkan
+/// ke klien API milik app, supaya banner offline dan sesi yang berakhir ikut teruji.
+class SwitchableTransport implements ApiTransport {
+  SwitchableTransport(this.inner);
+
+  ApiTransport inner;
+
+  @override
+  Future<ApiResponse> send(
+    String method,
+    String path, {
+    Map<String, dynamic>? body,
+    Map<String, dynamic>? query,
+    ApiUpload? upload,
+  }) => inner.send(method, path, body: body, query: query, upload: upload);
+}
+
 /// Akun dengan database di memori, API palsu, jam palsu, dan timer manual.
 class Harness {
   Harness({bool autoFlush = false}) {
     // Setiap tes membuka database di memori sendiri; itu disengaja.
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     api = FakeApi(now: clock.call);
+    transport = SwitchableTransport(api);
     account = Account(
       userId: meId,
       db: AppDatabase(NativeDatabase.memory()),
-      api: api,
+      api: transport,
       now: clock.call,
       createTimer: timers.create,
       autoFlush: autoFlush,
@@ -269,6 +289,7 @@ class Harness {
   final TestClock clock = TestClock();
   final ManualTimers timers = ManualTimers();
   late final FakeApi api;
+  late final SwitchableTransport transport;
   late final Account account;
 
   /// Isi cache seolah baru selesai sync: profil, dua ruang, dan satu daftar di Ruang Bersama.
