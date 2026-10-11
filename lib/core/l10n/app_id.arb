@@ -1,0 +1,485 @@
+{
+  "@@locale": "id",
+
+  "commonSave": "Simpan",
+  "commonCancel": "Batal",
+  "commonDelete": "Hapus",
+  "commonClose": "Tutup",
+  "commonBack": "Kembali",
+  "commonUndo": "Urungkan",
+  "commonRetry": "Coba lagi",
+  "commonContinue": "Lanjut",
+  "commonSkip": "Lewati",
+  "commonLater": "Nanti saja",
+  "commonSeeAll": "Lihat semua",
+  "commonShowLess": "Tampilkan lebih sedikit",
+  "commonEdit": "Ubah",
+  "commonOptions": "Opsi lainnya",
+  "commonOk": "Oke",
+
+  "labelMe": "Aku",
+  "labelPartner": "Pasangan",
+  "labelUs": "Kita",
+  "labelShared": "Bersama",
+  "labelPersonal": "Pribadi",
+  "labelYou": "kamu",
+
+  "navHome": "Beranda",
+  "navTasks": "Tugas",
+  "navSavings": "Tabungan",
+  "navLabel": "Navigasi utama",
+
+  "offlineBanner": "Sedang offline. Perubahanmu aman dan dikirim saat online.",
+  "updateBanner": "Versi app ini sudah tertinggal. Perbarui app supaya perubahanmu terkirim.",
+  "needsConnection": "Butuh koneksi internet. Coba lagi saat online.",
+  "genericError": "Ada yang tidak beres. Coba lagi sebentar lagi.",
+  "sessionExpired": "Sesi kamu sudah berakhir. Silakan masuk lagi.",
+
+  "loginTitle": "Masuk",
+  "loginSubtitle": "Senang melihatmu lagi.",
+  "registerTitle": "Daftar",
+  "registerSubtitle": "Buat akun untuk mulai mencatat berdua.",
+  "fieldEmail": "Email",
+  "fieldEmailHint": "nama@email.com",
+  "fieldPassword": "Kata sandi",
+  "fieldPasswordHint": "Minimal 8 karakter",
+  "fieldName": "Nama panggilan",
+  "fieldNameHint": "Nama yang dilihat pasangan",
+  "loginButton": "Masuk",
+  "registerButton": "Daftar",
+  "loginNoAccount": "Belum punya akun?",
+  "registerHasAccount": "Sudah punya akun?",
+  "showPassword": "Tampilkan kata sandi",
+  "hidePassword": "Sembunyikan kata sandi",
+  "errorEmailInvalid": "Tulis email yang benar, misalnya nama@email.com.",
+  "errorPasswordRequired": "Kata sandi belum diisi.",
+  "errorPasswordShort": "Kata sandi minimal 8 karakter.",
+  "errorNameRequired": "Nama panggilan belum diisi.",
+  "errorNameLong": "Paling banyak 50 karakter.",
+
+  "notifTitle": "Biar tidak ada yang terlewat",
+  "notifBody": "Notifikasi memberi tahu saat tenggat tiba, saat pasangan menitipkan tugas, dan saat ada setoran baru. Kamu bisa mengaturnya kapan saja di Pengaturan.",
+  "notifAllow": "Izinkan notifikasi",
+  "notifAllowed": "Notifikasi sudah diizinkan.",
+  "notifDenied": "Notifikasi belum diizinkan. Kamu bisa menyalakannya nanti dari pengaturan HP.",
+  "notifOpenSettings": "Buka pengaturan notifikasi",
+  "batteryTitle": "Supaya pengingat tetap sampai",
+  "batteryBody": "HP {brand} sering menghentikan app di latar belakang untuk menghemat baterai, jadi pengingat bisa telat. Matikan penghematan baterai untuk app ini:",
+  "@batteryBody": {
+    "placeholders": {
+      "brand": {"type": "String"}
+    }
+  },
+  "batteryStepsXiaomi": "1. Buka Pengaturan > Aplikasi > Kelola aplikasi, lalu pilih app ini.\n2. Ketuk Penghemat baterai, lalu pilih Tanpa batasan.\n3. Nyalakan Mulai otomatis.",
+  "batteryStepsOppo": "1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih app ini, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan app ini.",
+  "batteryStepsVivo": "1. Buka Pengaturan > Baterai > Konsumsi daya tinggi di latar belakang.\n2. Nyalakan untuk app ini.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan app ini.",
+  "batteryStepsRealme": "1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih app ini, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan app ini.",
+  "batteryNote": "Nama menunya bisa sedikit berbeda di HP-mu.",
+  "batteryOpen": "Buka pengaturan baterai",
+  "batteryOpenFailed": "Pengaturan baterai tidak bisa dibuka dari sini. Buka lewat Pengaturan HP.",
+
+  "greetingMorning": "Selamat pagi!",
+  "greetingNoon": "Selamat siang!",
+  "greetingAfternoon": "Selamat sore!",
+  "greetingNight": "Selamat malam!",
+  "homeOpenSettings": "Buka Pengaturan",
+  "homeTodayTitle": "Tugas hari ini",
+  "homeTodayProgress": "{done} dari {total} beres",
+  "@homeTodayProgress": {
+    "placeholders": {
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "homeTodayEmpty": "Belum ada tugas hari ini. Santai dulu, atau tambah yang baru.",
+  "homeTodayAllDone": "Beres semua! Hari ini kalian keren.",
+  "homeTodayAllDoneSolo": "Beres semua! Hari ini kamu keren.",
+  "homeTodayFilterEmpty": "Tidak ada tugas hari ini untuk pilihan ini.",
+  "homeSavingsTitle": "Tabungan",
+  "homeSavingsEmpty": "Belum ada target tabungan. Mulai dari satu target dulu.",
+  "homeSavingsCreate": "Buat target",
+  "filterAll": "Semua",
+  "filterPeopleLabel": "Filter penanggung jawab",
+  "addTask": "Tambah tugas",
+  "percent": "{value}%",
+  "@percent": {
+    "placeholders": {
+      "value": {"type": "int"}
+    }
+  },
+
+  "tasksTitle": "Tugas",
+  "tasksNewList": "Buat daftar baru",
+  "statusLabel": "Status tugas",
+  "statusAll": "Semua tugas",
+  "statusOpen": "Belum selesai",
+  "statusDone": "Selesai",
+  "peopleAll": "Semua orang",
+  "tasksDoneCount": "Selesai ({count})",
+  "@tasksDoneCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "listSpaceCount": "{space} · {count}",
+  "@listSpaceCount": {
+    "placeholders": {
+      "space": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "tasksEmptyList": "Belum ada tugas di daftar ini.",
+  "tasksEmptyFiltered": "Tidak ada tugas untuk pilihan ini.",
+  "tasksEmptyDone": "Belum ada tugas yang selesai.",
+  "taskMarkDone": "Tandai selesai: {title}",
+  "@taskMarkDone": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "taskMarkUndone": "Batalkan selesai: {title}",
+  "@taskMarkUndone": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "taskCompletedSnack": "Tugas selesai.",
+  "taskDeletedSnack": "Tugas dihapus.",
+  "dueToday": "Hari ini",
+  "dueTomorrow": "Besok",
+  "dueYesterday": "Kemarin",
+  "dueNone": "Tanpa tenggat",
+  "dueWithTime": "{day}, {time}",
+  "@dueWithTime": {
+    "placeholders": {
+      "day": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "dueOverdue": "Terlewat · {when}",
+  "@dueOverdue": {
+    "placeholders": {
+      "when": {"type": "String"}
+    }
+  },
+  "dueImportant": "Penting",
+  "taskCompletedBy": "Diselesaikan {who}, {when}",
+  "@taskCompletedBy": {
+    "placeholders": {
+      "who": {"type": "String"},
+      "when": {"type": "String"}
+    }
+  },
+  "manageList": "Kelola daftar {name}",
+  "@manageList": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "addTaskTitle": "Tugas baru",
+  "addTaskWhat": "Mau mengerjakan apa?",
+  "addTaskWhen": "Kapan?",
+  "addTaskWho": "Siapa?",
+  "addTaskPickDate": "Pilih tanggal",
+  "addTaskPickTime": "Pilih jam",
+  "addTaskNoTime": "Tanpa jam",
+  "addTaskImportant": "Tandai penting",
+  "addTaskListShared": "Daftar bersama",
+  "addTaskListPersonal": "Daftar pribadi",
+  "addTaskPickList": "Pilih daftar",
+  "errorTitleRequired": "Tulis dulu apa yang mau dikerjakan.",
+  "errorTitleLong": "Judul paling banyak 200 karakter.",
+
+  "taskDetailTitle": "Detail tugas",
+  "taskNotesLabel": "Catatan",
+  "taskNotesHint": "Tambahkan catatan kalau perlu",
+  "taskListLabel": "Daftar",
+  "taskDelete": "Hapus tugas",
+  "taskClearDate": "Hapus tenggat",
+  "taskGone": "Tugas ini sudah tidak ada.",
+  "taskAutosaved": "Perubahan tersimpan otomatis.",
+  "errorNotesLong": "Catatan paling banyak 5.000 karakter.",
+
+  "listsManageTitle": "Kelola daftar",
+  "listNew": "Daftar baru",
+  "listEdit": "Ubah daftar",
+  "listNameLabel": "Nama daftar",
+  "listNameHint": "Misalnya Belanja",
+  "listEmojiLabel": "Emoji (opsional)",
+  "listEmojiHint": "Ketik satu emoji",
+  "listColorLabel": "Warna",
+  "spaceWhereLabel": "Simpan di mana?",
+  "listArchive": "Arsipkan",
+  "listUnarchive": "Keluarkan dari arsip",
+  "listArchivedSection": "Diarsipkan",
+  "listDelete": "Hapus daftar",
+  "listDeleteConfirmTitle": "Hapus daftar {name}?",
+  "@listDeleteConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "listDeleteConfirmBody": "{count, plural, =0{Daftar ini belum berisi tugas.} other{{count} tugas di dalamnya ikut terhapus.}}",
+  "@listDeleteConfirmBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "listLastActive": "Setiap ruang harus punya minimal satu daftar aktif.",
+  "listReorderHint": "Tahan lalu geser untuk mengurutkan.",
+  "listReorderHandle": "Geser untuk mengurutkan {name}",
+  "@listReorderHandle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "errorListNameRequired": "Nama daftar belum diisi.",
+  "errorEmojiInvalid": "Isi dengan satu emoji saja.",
+  "colorMawar": "Mawar",
+  "colorUngu": "Ungu",
+  "colorToska": "Toska",
+  "colorBata": "Bata",
+  "colorBiru": "Biru",
+  "colorLavender": "Lavender",
+  "colorSemantic": "Warna {name}",
+  "@colorSemantic": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "savingsTitle": "Tabungan",
+  "savingsNewGoal": "Tambah target",
+  "savingsEmpty": "Belum ada target tabungan. Buat satu, lalu catat setoran pertama kalian.",
+  "savingsEmptySolo": "Belum ada target tabungan. Buat satu, lalu catat setoran pertamamu.",
+  "savingsArchivedCount": "Diarsipkan ({count})",
+  "@savingsArchivedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "savingsOf": "{saved} dari {target}",
+  "@savingsOf": {
+    "placeholders": {
+      "saved": {"type": "String"},
+      "target": {"type": "String"}
+    }
+  },
+  "savingsFrom": "dari {target}",
+  "@savingsFrom": {
+    "placeholders": {
+      "target": {"type": "String"}
+    }
+  },
+  "savingsCollected": "terkumpul",
+  "savingsRemaining": "Sisa {amount}",
+  "@savingsRemaining": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "savingsTargetDate": "Target {date}",
+  "@savingsTargetDate": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "savingsWeekly": "Perlu {amount} per minggu",
+  "@savingsWeekly": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "savingsDeposit": "Setor",
+  "savingsMonthly": "Setoran per bulan",
+  "savingsMonthlySemantic": "{month}: {amount}",
+  "@savingsMonthlySemantic": {
+    "placeholders": {
+      "month": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+  "savingsHistory": "Riwayat tabungan",
+  "savingsHistoryEmpty": "Belum ada setoran. Ketuk Setor untuk mencatat yang pertama.",
+  "savingsHistoryWho": "{who} · {note}",
+  "@savingsHistoryWho": {
+    "placeholders": {
+      "who": {"type": "String"},
+      "note": {"type": "String"}
+    }
+  },
+  "savingsAchieved": "{name} tercapai. Selamat, kalian berhasil!",
+  "@savingsAchieved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "savingsAchievedSolo": "{name} tercapai. Selamat, kamu berhasil!",
+  "@savingsAchievedSolo": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "goalMenuArchive": "Arsipkan",
+  "goalMenuUnarchive": "Keluarkan dari arsip",
+  "goalDeleteConfirmTitle": "Hapus target {name}?",
+  "@goalDeleteConfirmTitle": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "goalDeleteConfirmBody": "{count, plural, =0{Target ini belum punya setoran.} other{{count} setoran di dalamnya ikut terhapus.}}",
+  "@goalDeleteConfirmBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "goalGone": "Target ini sudah tidak ada.",
+  "goalFormNew": "Target baru",
+  "goalFormEdit": "Ubah target",
+  "goalNameLabel": "Menabung untuk apa?",
+  "goalNameHint": "Misalnya Dana Liburan",
+  "goalAmountLabel": "Berapa targetnya?",
+  "goalCurrencyLabel": "Mata uang",
+  "goalCurrencyLocked": "Mata uang hanya bisa dipilih saat target dibuat.",
+  "goalDateLabel": "Mau tercapai kapan? (opsional)",
+  "goalDatePick": "Pilih tanggal",
+  "goalDateClear": "Hapus tanggal",
+  "errorAmountRequired": "Isi nominalnya dulu, lebih dari 0.",
+  "errorAmountTooLarge": "Nominalnya terlalu besar.",
+  "errorGoalNameRequired": "Nama target belum diisi.",
+  "depositTitle": "Setor tabungan",
+  "depositEditTitle": "Ubah setoran",
+  "depositAmountLabel": "Berapa?",
+  "depositDateLabel": "Kapan?",
+  "depositNoteLabel": "Catatan (opsional)",
+  "depositNoteHint": "Misalnya sisa gajian",
+  "depositDelete": "Hapus setoran",
+  "depositDeleteConfirm": "Hapus setoran {amount}?",
+  "@depositDeleteConfirm": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "errorNoteLong": "Catatan paling banyak 200 karakter.",
+
+  "pairingTitle": "Pakai berdua, lebih ringan",
+  "pairingBody": "Ajak pasanganmu masuk ke Ruang Bersama. Kode berlaku 48 jam dan hanya bisa dipakai sekali.",
+  "pairingYourCode": "Kode undanganmu",
+  "pairingCopy": "Salin",
+  "pairingCopied": "Kode disalin.",
+  "pairingShare": "Bagikan lewat WhatsApp",
+  "pairingShareText": "Yuk pakai app to-do ini berdua. Masukkan kode {code} di layar Ajak pasangan. Kode berlaku sampai {expires}.",
+  "@pairingShareText": {
+    "placeholders": {
+      "code": {"type": "String"},
+      "expires": {"type": "String"}
+    }
+  },
+  "pairingExpires": "Berlaku sampai {when}",
+  "@pairingExpires": {
+    "placeholders": {
+      "when": {"type": "String"}
+    }
+  },
+  "pairingOr": "atau",
+  "pairingHaveCode": "Punya kode dari pasangan?",
+  "pairingCodeHint": "Contoh: K7P2QM",
+  "pairingJoin": "Gabung",
+  "pairingCodeLoadFailed": "Kode belum bisa diambil. Periksa koneksimu, lalu coba lagi.",
+  "pairingJoined": "Kalian sudah terhubung. Ruang Bersama siap dipakai.",
+  "pairingCodeSemantic": "Kode undangan {code}",
+  "@pairingCodeSemantic": {
+    "placeholders": {
+      "code": {"type": "String"}
+    }
+  },
+  "pairedTitle": "Ruang Bersama",
+  "pairedBody": "Kamu dan {name} berbagi tugas dan tabungan di sini.",
+  "@pairedBody": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "pairedSince": "Bersama sejak {date}",
+  "@pairedSince": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "pairedYou": "{name} (kamu)",
+  "@pairedYou": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+
+  "settingsTitle": "Pengaturan",
+  "settingsProfile": "Profil",
+  "settingsProfileSub": "Foto, nama, tanggal lahir, warna diri",
+  "settingsSharedSpace": "Ruang Bersama",
+  "settingsSharedSpacePaired": "Kamu dan pasangan · 2 anggota",
+  "settingsSharedSpaceUnpaired": "Belum berpasangan · ajak pasanganmu",
+  "settingsTheme": "Tema",
+  "settingsThemePick": "Pilih tema warna",
+  "settingsModePick": "Mode tampilan",
+  "themeMawar": "Mawar",
+  "themeMawarCode": "Palet C · D · I",
+  "themeAnggrek": "Anggrek",
+  "themeAnggrekCode": "Palet H · G · E",
+  "modeLight": "Terang",
+  "modeDark": "Gelap",
+  "modeSystem": "Ikuti sistem",
+  "settingsNotifications": "Notifikasi",
+  "notifTaskReminders": "Pengingat tugas",
+  "notifTaskRemindersSub": "Saat tenggat tiba",
+  "notifPartnerActivity": "Aktivitas pasangan",
+  "notifPartnerActivitySub": "Titipan baru dan tugas selesai",
+  "notifSavingsActivity": "Setoran tabungan",
+  "notifSavingsActivitySub": "Setoran baru dan target tercapai",
+  "settingsCurrency": "Mata uang",
+  "settingsCurrencySheet": "Mata uang untuk target baru",
+  "settingsBackup": "Backup dan ekspor",
+  "settingsBackupSub": "Tersimpan otomatis di server · ekspor di v1.0",
+  "settingsBackupInfo": "Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.",
+  "settingsLogout": "Keluar",
+  "logoutConfirmTitle": "Keluar dari akun ini?",
+  "logoutConfirmBody": "Kamu bisa masuk lagi kapan saja.",
+  "logoutPendingBody": "{count, plural, other{Masih ada {count} perubahan yang belum terkirim. Perubahan itu tetap tersimpan di HP ini dan baru dikirim saat kamu masuk lagi.}}",
+  "@logoutPendingBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+
+  "profileTitle": "Profil",
+  "profileChangePhoto": "Ubah foto profil",
+  "profileCamera": "Kamera",
+  "profileGallery": "Galeri",
+  "profileRemovePhoto": "Hapus foto",
+  "profilePhotoNote": "Foto dipotong persegi dan hanya terlihat oleh anggota Ruang Bersama.",
+  "profileBirthDate": "Tanggal lahir",
+  "profileBirthDateHelp": "Dipakai untuk pengingat ulang tahun. Tahun lahir boleh dikosongkan.",
+  "profileBirthDateEmpty": "Belum diisi",
+  "profileColor": "Warna diri (penanda tugasmu)",
+  "profileSaved": "Profil disimpan.",
+  "profilePhotoUpdated": "Foto profil diperbarui.",
+  "profilePhotoRemoved": "Foto profil dihapus.",
+  "profilePhotoFailed": "Foto belum bisa diproses. Coba lagi saat online.",
+  "profileCropTitle": "Potong foto",
+  "birthDay": "Tanggal",
+  "birthMonth": "Bulan",
+  "birthYear": "Tahun (opsional)",
+  "birthInvalid": "Tanggal itu tidak ada di kalender.",
+  "birthClear": "Hapus tanggal lahir",
+
+  "outboxRelocated": "Daftarnya sudah tidak tersedia, jadi tugas dipindah ke {list}.",
+  "@outboxRelocated": {
+    "placeholders": {
+      "list": {"type": "String"}
+    }
+  },
+  "notifTapMissingTask": "Tugas itu belum tersedia di HP ini.",
+  "notifTapMissingGoal": "Target itu belum tersedia di HP ini."
+}

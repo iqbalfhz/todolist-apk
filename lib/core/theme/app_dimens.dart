@@ -105,6 +105,9 @@ abstract final class AppDimens {
 
   // Grafik setoran per bulan.
   static const double chartHeight = 96;
+
+  /// Ruang untuk nama bulan di bawah batang dan nominal di atasnya.
+  static const double chartLabelSpace = 44;
   static const double chartBarWidth = 32;
   static const double chartBarRadiusTop = 8;
   static const double chartBarRadiusBottom = 4;
