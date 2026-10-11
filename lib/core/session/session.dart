@@ -28,15 +28,20 @@ class Bootstrap {
     final token = await storage.read(StorageKeys.token);
     final userId = await storage.read(StorageKeys.userId);
     final signedIn = token != null && userId != null;
+    final device = await platform.info();
+
+    // Layar Izin notifikasi dilewati kalau tidak ada yang perlu dilakukan di HP ini:
+    // izin tidak perlu diminta (sebelum Android 13) dan mereknya tidak butuh panduan baterai.
+    final nothingToAsk = !device.needsNotificationPermission && device.batteryGuideBrand == null;
 
     return Bootstrap(
       token: signedIn ? token : null,
       userId: signedIn ? userId : null,
       themeName: await storage.read(StorageKeys.themeName),
       themeMode: await storage.read(StorageKeys.themeMode),
-      notificationsOnboarded: await storage.read(StorageKeys.notificationsOnboarded) != null,
+      notificationsOnboarded: nothingToAsk || await storage.read(StorageKeys.notificationsOnboarded) != null,
       pairingOnboarded: signedIn && await storage.read(StorageKeys.pairingOnboarded(userId)) != null,
-      device: await platform.info(),
+      device: device,
     );
   }
 }

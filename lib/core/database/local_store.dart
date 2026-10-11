@@ -19,6 +19,12 @@ abstract final class MetaKeys {
 
   /// Profil sendiri (sumber user) sebagai JSON.
   static const String profile = 'profile';
+
+  /// Daftar yang terakhir dipakai di lembar Tambah tugas.
+  static const String lastListId = 'last_list_id';
+
+  /// Token FCM yang terakhir didaftarkan lewat `POST /devices`.
+  static const String deviceToken = 'device_token';
 }
 
 /// Satu-satunya pintu ke cache lokal.
