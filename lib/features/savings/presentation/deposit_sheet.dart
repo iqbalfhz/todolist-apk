@@ -113,6 +113,7 @@ class _DepositSheetState extends ConsumerState<DepositSheet> {
 
     return AppSheet(
       title: entry == null ? l10n.depositTitle : l10n.depositEditTitle,
+      footer: PrimaryButton(label: l10n.commonSave, onPressed: _save),
       children: [
         LabeledField(
           label: l10n.depositAmountLabel,
@@ -150,7 +151,6 @@ class _DepositSheetState extends ConsumerState<DepositSheet> {
             },
           ),
         ),
-        PrimaryButton(label: l10n.commonSave, onPressed: _save),
         if (entry != null)
           TextButton.icon(
             onPressed: () => _delete(entry),

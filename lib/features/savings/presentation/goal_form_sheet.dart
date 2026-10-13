@@ -211,6 +211,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
 
     return AppSheet(
       title: _editing ? l10n.goalFormEdit : l10n.goalFormNew,
+      footer: PrimaryButton(label: l10n.commonSave, onPressed: () => _save(household, currency)),
       children: [
         LabeledField(
           label: l10n.goalNameLabel,
@@ -292,7 +293,6 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
               Text(l10n.labelPersonal, style: text.small),
             ],
           ),
-        PrimaryButton(label: l10n.commonSave, onPressed: () => _save(household, currency)),
       ],
     );
   }

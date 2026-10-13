@@ -209,6 +209,7 @@ class _ListFormSheetState extends ConsumerState<ListFormSheet> {
 
     return AppSheet(
       title: _editing ? l10n.listEdit : l10n.listNew,
+      footer: PrimaryButton(label: l10n.commonSave, onPressed: () => _save(household)),
       children: [
         LabeledField(
           label: l10n.listNameLabel,
@@ -245,7 +246,6 @@ class _ListFormSheetState extends ConsumerState<ListFormSheet> {
               ],
             ),
           ),
-        PrimaryButton(label: l10n.commonSave, onPressed: () => _save(household)),
         if (list != null)
           Row(
             children: [

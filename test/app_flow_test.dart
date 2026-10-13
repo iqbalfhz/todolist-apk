@@ -76,6 +76,35 @@ void main() {
 
       await disposeApp(tester, h);
     });
+
+    testWidgets('keyboard terbuka: tombol Simpan tetap terlihat walau isi lembar lebih tinggi dari layar', (
+      tester,
+    ) async {
+      const keyboard = 320.0;
+      final h = Harness();
+      await h.seed();
+      await pumpApp(tester, h);
+
+      tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
+      await tester.tap(find.byType(FloatingActionButton));
+      await settle(tester);
+
+      // Dibuka dari Beranda, "Hari ini" sudah terpilih, jadi baris jam ikut tampil
+      // dan isi lembar lebih tinggi dari ruang di atas keyboard.
+      expect(find.text('Pilih jam'), findsOneWidget);
+
+      final save = tester.getRect(find.widgetWithText(FilledButton, 'Simpan'));
+      expect(save.bottom, lessThanOrEqualTo(tester.view.physicalSize.height - keyboard));
+
+      await tester.enterText(find.byType(TextField), 'Siram tanaman');
+      await tester.tap(find.text('Simpan'));
+      await settle(tester);
+
+      expect(find.text('Tugas baru'), findsNothing);
+      expect(payloadOf((await h.ops()).single), containsPair('title', 'Siram tanaman'));
+
+      await disposeApp(tester, h);
+    });
   });
 
   group('centang dan Urungkan', () {

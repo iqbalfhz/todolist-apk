@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -62,53 +64,74 @@ class PageBody extends StatelessWidget {
 }
 
 /// Isi lembar bawah: pegangan 40 × 4, judul 18 Bold, tombol tutup, lalu isinya.
+///
+/// [footer] (tombol utama, misalnya Simpan) tidak ikut bergulir, supaya selalu
+/// terlihat di atas keyboard walaupun isinya lebih tinggi dari layar.
 class AppSheet extends StatelessWidget {
-  const AppSheet({super.key, required this.title, required this.children});
+  const AppSheet({super.key, required this.title, required this.children, this.footer});
 
   final String title;
   final List<Widget> children;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
+    // Beri ruang untuk bilah navigasi sistem (nol selama keyboard terbuka).
+    final bottom = math.max(AppDimens.gap24, MediaQuery.paddingOf(context).bottom + AppDimens.gap12);
 
     return Padding(
       // Naik bersama keyboard.
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(AppDimens.pageSide, AppDimens.gap12, AppDimens.pageSide, AppDimens.gap24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: AppDimens.sheetHandleWidth,
-                height: AppDimens.sheetHandleHeight,
-                decoration: BoxDecoration(
-                  color: palette.line,
-                  borderRadius: BorderRadius.circular(AppDimens.sheetHandleHeight / 2),
-                ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Flexible(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                AppDimens.pageSide,
+                AppDimens.gap12,
+                AppDimens.pageSide,
+                footer == null ? bottom : AppDimens.gap14,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: AppDimens.sheetHandleWidth,
+                      height: AppDimens.sheetHandleHeight,
+                      decoration: BoxDecoration(
+                        color: palette.line,
+                        borderRadius: BorderRadius.circular(AppDimens.sheetHandleHeight / 2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimens.gap14),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Semantics(header: true, child: Text(title, style: context.text.sheetTitle)),
+                      ),
+                      AppIconButton(
+                        icon: Symbols.close_rounded,
+                        label: context.l10n.commonClose,
+                        color: palette.muted,
+                        iconSize: AppDimens.iconLg,
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                    ],
+                  ),
+                  for (final child in children) ...[const SizedBox(height: AppDimens.gap14), child],
+                ],
               ),
             ),
-            const SizedBox(height: AppDimens.gap14),
-            Row(
-              children: [
-                Expanded(
-                  child: Semantics(header: true, child: Text(title, style: context.text.sheetTitle)),
-                ),
-                AppIconButton(
-                  icon: Symbols.close_rounded,
-                  label: context.l10n.commonClose,
-                  color: palette.muted,
-                  iconSize: AppDimens.iconLg,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            for (final child in children) ...[const SizedBox(height: AppDimens.gap14), child],
-          ],
-        ),
+          ),
+          if (footer != null)
+            Padding(padding: EdgeInsets.fromLTRB(AppDimens.pageSide, 0, AppDimens.pageSide, bottom), child: footer),
+        ],
       ),
     );
   }

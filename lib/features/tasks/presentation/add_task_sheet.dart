@@ -175,6 +175,7 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
 
     return AppSheet(
       title: l10n.addTaskTitle,
+      footer: PrimaryButton(label: l10n.commonSave, onPressed: _saving ? null : () => _save(list, household, today)),
       children: [
         LabeledField(
           label: l10n.addTaskWhat,
@@ -257,7 +258,6 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
           value: _important,
           onChanged: (value) => setState(() => _important = value),
         ),
-        PrimaryButton(label: l10n.commonSave, onPressed: _saving ? null : () => _save(list, household, today)),
       ],
     );
   }
