@@ -7,6 +7,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/app.dart';
 import 'package:todolist/core/database/entity_type.dart';
+import 'package:todolist/core/notifications/push_service.dart';
+import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/time/space_clock.dart';
@@ -32,7 +34,7 @@ Future<void> prepareAppTests() async {
 /// Jalankan app sungguhan di atas akun palsu [harness], dengan layar seukuran mockup (390 × 844).
 ///
 /// Kalau [signedIn] dimatikan, app mulai dari layar Masuk; akun [harness] baru dibuka
-/// setelah berhasil masuk.
+/// setelah berhasil masuk. [device] dan [push] menggantikan info HP dan layanan notifikasi.
 Future<ProviderContainer> pumpApp(
   WidgetTester tester,
   Harness harness, {
@@ -40,6 +42,10 @@ Future<ProviderContainer> pumpApp(
   bool notificationsDone = true,
   bool pairingDone = true,
   MemoryKeyValueStore? storage,
+  DeviceInfo device = DeviceInfo.unknown,
+  PushService? push,
+  String? themeName,
+  String? themeMode,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
@@ -53,14 +59,18 @@ Future<ProviderContainer> pumpApp(
         Bootstrap(
           token: signedIn ? '1|token-palsu' : null,
           userId: signedIn ? meId : null,
+          themeName: themeName,
+          themeMode: themeMode,
           notificationsOnboarded: notificationsDone,
           pairingOnboarded: pairingDone,
+          device: device,
         ),
       ),
       keyValueStoreProvider.overrideWithValue(storage ?? MemoryKeyValueStore()),
       httpTransportProvider.overrideWithValue(harness.api),
       accountFactoryProvider.overrideWithValue((_) => harness.account),
       spaceClockProvider.overrideWithValue(SpaceClock(now: harness.clock.call)),
+      if (push != null) pushServiceProvider.overrideWithValue(push),
     ],
   );
   _container = container;

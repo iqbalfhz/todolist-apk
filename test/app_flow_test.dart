@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/core/database/entity_type.dart';
 import 'package:todolist/core/queue/outbox.dart';
@@ -102,6 +103,119 @@ void main() {
 
       expect(find.text('Tugas baru'), findsNothing);
       expect(payloadOf((await h.ops()).single), containsPair('title', 'Siram tanaman'));
+
+      await disposeApp(tester, h);
+    });
+  });
+
+  group('Beranda', () {
+    testWidgets('tanggal dan sapaan mengikuti zona waktu ruang, sama seperti "Tugas hari ini"', (tester) async {
+      final h = Harness();
+      await h.seed();
+      // 23.30 UTC tanggal 8 sudah 06.30 tanggal 9 di Asia/Jakarta.
+      h.clock.now = DateTime.utc(2026, 10, 8, 23, 30);
+      await h.account.store.write(EntityType.task, taskJson(dueDate: '2026-10-09'), serverUpdatedAt: t0);
+      await pumpApp(tester, h);
+
+      expect(find.text('Jumat, 9 Oktober'), findsOneWidget);
+      expect(find.text('Selamat pagi!'), findsOneWidget);
+      expect(find.text('0 dari 1 beres'), findsOneWidget);
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('tugas terlewat yang penting tetap menampilkan tanda Penting', (tester) async {
+      final h = Harness();
+      await h.seed();
+      await h.account.store.write(EntityType.task, taskJson(dueDate: '2026-10-06', priority: 3), serverUpdatedAt: t0);
+      await pumpApp(tester, h);
+
+      expect(find.textContaining(RegExp(r'^.?.?Terlewat · Sel, 6 Okt · Belanja · .?.?Penting$')), findsOneWidget);
+
+      await disposeApp(tester, h);
+    });
+  });
+
+  group('detail tugas', () {
+    const secondTaskId = '01m4dh1yn0t6cdn39q4f091896';
+
+    Future<void> openDetail(WidgetTester tester, GoRouter router, String id) async {
+      router.go(Routes.task(id));
+      await settle(tester);
+      expect(find.text('Detail tugas'), findsOneWidget);
+    }
+
+    testWidgets('ketikan tersimpan 1 detik setelah berhenti mengetik, tanpa tombol Simpan', (tester) async {
+      final h = Harness();
+      await h.seed(withTask: true);
+      final container = await pumpApp(tester, h);
+      await openDetail(tester, container.read(routerProvider), taskId);
+
+      await tester.enterText(find.byType(TextField).first, 'Beli galon dua');
+      await tester.pump(const Duration(milliseconds: 900));
+      expect(await h.ops(), isEmpty);
+
+      await tester.pump(const Duration(milliseconds: 200));
+      await settle(tester);
+
+      // Hanya kolom yang berubah yang dikirim.
+      final op = (await h.ops()).single;
+      expect(op.method, 'PATCH');
+      expect(payloadOf(op), {'title': 'Beli galon dua'});
+      expect(find.text('Simpan'), findsNothing);
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('app masuk ke latar belakang: ketikan langsung ditulis ke antrean', (tester) async {
+      final h = Harness();
+      await h.seed(withTask: true);
+      final container = await pumpApp(tester, h);
+      await openDetail(tester, container.read(routerProvider), taskId);
+
+      await tester.enterText(find.byType(TextField).at(1), 'Yang 19 liter');
+      // Keadaan pertama yang dilewati saat app meninggalkan layar.
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      addTearDown(() => tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed));
+      // Jauh sebelum jeda mengetik 1 detik habis.
+      for (var i = 0; i < 4; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+
+      expect(payloadOf((await h.ops()).single), {'notes': 'Yang 19 liter'});
+
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await settle(tester);
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('pindah langsung ke tugas lain: isian ikut berganti, ketikan lama tersimpan ke tugas lama', (
+      tester,
+    ) async {
+      final h = Harness();
+      await h.seed(withTask: true);
+      final second = taskJson(id: secondTaskId, title: 'Bayar listrik', notes: 'Token 100 ribu');
+      await h.account.store.write(EntityType.task, second, serverUpdatedAt: t0);
+      h.api.rows['tasks']![secondTaskId] = second;
+      final container = await pumpApp(tester, h);
+      final router = container.read(routerProvider);
+      await openDetail(tester, router, taskId);
+
+      await tester.enterText(find.byType(TextField).first, 'Beli galon dua');
+
+      // Seperti ketukan notifikasi untuk tugas lain selagi masih mengetik.
+      await openDetail(tester, router, secondTaskId);
+
+      expect(find.widgetWithText(TextField, 'Bayar listrik'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'Token 100 ribu'), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 2));
+      await settle(tester);
+
+      final op = (await h.ops()).single;
+      expect(op.entityId, taskId);
+      expect(payloadOf(op), {'title': 'Beli galon dua'});
+      expect((await h.local(EntityType.task, secondTaskId))!['title'], 'Bayar listrik');
 
       await disposeApp(tester, h);
     });
