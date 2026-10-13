@@ -91,8 +91,11 @@ class _NotificationPermissionScreenState extends ConsumerState<NotificationPermi
               onPressed: _asking ? null : _ask,
             ),
           if (_granted == true)
-            Center(
-              child: StatusText(text: l10n.notifAllowed, icon: Symbols.check_circle_rounded, color: palette.ok),
+            // Di dalam kartu: `ok` di atas `bg` Anggrek terang kontrasnya di bawah 4.5:1.
+            AppCard(
+              child: Center(
+                child: StatusText(text: l10n.notifAllowed, icon: Symbols.check_circle_rounded, color: palette.ok),
+              ),
             ),
           if (_granted == false) ...[
             const SizedBox(height: AppDimens.gap12),
