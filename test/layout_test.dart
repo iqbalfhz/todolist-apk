@@ -5,6 +5,7 @@ import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
+import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
 import 'package:todolist/features/savings/presentation/savings_screen.dart';
 import 'package:todolist/features/tasks/presentation/list_form_sheet.dart';
@@ -59,6 +60,7 @@ void main() {
     await open();
     tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
     await settle(tester);
+    expect(find.byType(AppSheet), findsOneWidget, reason: 'lembar bawahnya tidak terbuka');
     await scrollThrough(tester);
 
     container.read(routerProvider).routerDelegate.navigatorKey.currentState!.pop();
@@ -105,7 +107,11 @@ void main() {
       });
 
       await visit(tester, container, Routes.goal(tripGoalId));
-      await tester.scrollUntilVisible(find.text('Setor'), -100, scrollable: find.byType(Scrollable).first);
+      // Kembali ke atas: tombol Setor harus benar-benar tampil sebelum diketuk.
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 4000), warnIfMissed: false);
+      await settle(tester);
+      await tester.ensureVisible(find.text('Setor'));
+      await settle(tester);
       await withSheet(tester, container, () => tester.tap(find.text('Setor')));
       await visit(tester, container, Routes.goal(achievedGoalId));
 
