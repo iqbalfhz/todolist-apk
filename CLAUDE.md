@@ -8,7 +8,7 @@ App to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pri
 
 ## Kondisi repo (per 13 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` (daftar, undangan, tugas, tabungan, sync dua HP, keluar) lulus terhadap API Laravel lokal. Build debug sudah dicoba di emulator Android 16 terhadap API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
@@ -126,7 +126,8 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - Unit test untuk antrean dan sync dengan API palsu: urutan kirim, aturan gabung, jeda Urungkan, perlindungan kolom tertunda, dan penanganan tiap `code` error.
 - Widget test untuk alur utama: tambah cepat, centang dan Urungkan, setor tabungan, masukkan kode undangan.
 - Tata letak (`test/layout_test.dart`): setiap layar dan lembar bawah dirender pada huruf 1,3× dan 2× serta layar 360 × 640; isi yang meluap membuat tesnya gagal. Layar baru ditambahkan ke sana.
-- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya.
+- Klien HTTP (`test/core/api_transport_test.dart`): pemilahan error dari tabel Error di kontrak, terhadap server lokal sementara.
+- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya. Fitur atau layar baru ditambahkan juga ke `ui_e2e_test.dart`.
 
 ## Git
 
