@@ -98,13 +98,14 @@ void main() {
       );
       expect(today.isForToday, isTrue);
       expect(today.isOverdue, isFalse);
-      expect(completedText(l10n, today, household, clock), 'Diselesaikan Sari, 12.40');
+      // Sama seperti di mockup: pasangan disebut dengan labelnya, bukan namanya.
+      expect(completedText(l10n, today, household, clock), 'Diselesaikan Pasangan, 12.40');
 
       final yesterday = one(
         taskJson(dueDate: '2026-10-07', completedAt: '2026-10-07T05:40:00.000000Z', completedBy: meId),
       );
       expect(yesterday.isForToday, isFalse);
-      expect(completedText(l10n, yesterday, household, clock), 'Diselesaikan kamu, kemarin');
+      expect(completedText(l10n, yesterday, household, clock), 'Diselesaikan Aku, kemarin');
     });
 
     test('"hari ini" mengikuti zona waktu ruang: pukul 23.30 UTC sudah tanggal 9 di Jakarta', () {
@@ -184,12 +185,11 @@ void main() {
       expect(assigneeIdsFor(Assignee.us, solo), [meId], reason: 'tanpa pasangan, hanya diri sendiri');
     });
 
-    test('rumah tangga: pasangan, warna, dan nama', () {
+    test('rumah tangga: pasangan dan warna', () {
       expect(household.isPaired, isTrue);
       expect(household.partner!.name, 'Sari');
       expect(household.colorOf(partnerId), 'ungu');
       expect(household.colorOf(meId), 'mawar');
-      expect(household.nameOf(partnerId), 'Sari');
       expect(household.timezoneOf(sharedSpaceId), 'Asia/Jakarta');
       expect(solo.isPaired, isFalse);
       expect(solo.partner, isNull);

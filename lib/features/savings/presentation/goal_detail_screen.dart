@@ -414,7 +414,8 @@ class _EntryRow extends StatelessWidget {
     final l10n = context.l10n;
     final text = context.text;
     final mine = entry.userId == null || entry.userId == household.me.id;
-    final who = mine ? l10n.labelMe : household.nameOf(entry.userId) ?? l10n.labelPartner;
+    // Label yang sama seperti di chip penanggung jawab: "Aku" atau "Pasangan · sisa gajian".
+    final who = mine ? l10n.labelMe : l10n.labelPartner;
     final note = entry.note;
 
     return InkWell(

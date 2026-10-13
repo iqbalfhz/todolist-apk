@@ -70,9 +70,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get labelPersonal => 'Pribadi';
 
   @override
-  String get labelYou => 'kamu';
-
-  @override
   String get navHome => 'Beranda';
 
   @override

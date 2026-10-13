@@ -211,12 +211,6 @@ abstract class AppLocalizations {
   /// **'Pribadi'**
   String get labelPersonal;
 
-  /// No description provided for @labelYou.
-  ///
-  /// In id, this message translates to:
-  /// **'kamu'**
-  String get labelYou;
-
   /// No description provided for @navHome.
   ///
   /// In id, this message translates to:

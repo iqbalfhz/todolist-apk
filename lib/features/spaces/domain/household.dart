@@ -35,12 +35,6 @@ class Household {
     if (userId == null || userId == me.id) return me.color;
     return partner?.id == userId ? partner!.color : me.color;
   }
-
-  /// Nama panggilan seseorang, atau `null` kalau bukan anggota yang dikenal.
-  String? nameOf(String? userId) {
-    if (userId == me.id) return me.name;
-    return partner?.id == userId ? partner!.name : null;
-  }
 }
 
 /// `null` selama profil atau daftar ruang belum terbaca dari cache.

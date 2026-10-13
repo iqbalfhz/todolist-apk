@@ -40,13 +40,16 @@ String _midSentence(String label, String date, {required String today}) {
   return relative ? label[0].toLowerCase() + label.substring(1) : label;
 }
 
-/// "Diselesaikan Sari, 12.40"; untuk hari lain memakai tanggalnya.
+/// "Diselesaikan Pasangan, 12.40"; untuk hari lain memakai tanggalnya.
+///
+/// Orangnya disebut dengan label yang sama seperti di chip penanggung jawab
+/// (Aku atau Pasangan), bukan dengan namanya.
 String completedText(AppLocalizations l10n, TaskItem item, Household household, SpaceClock clock) {
   final completedAt = item.task.completedAt;
   if (completedAt == null) return '';
 
   final by = item.task.completedBy;
-  final who = by == null || by == household.me.id ? l10n.labelYou : household.nameOf(by) ?? l10n.labelPartner;
+  final who = by == null || by == household.me.id ? l10n.labelMe : l10n.labelPartner;
   final wall = clock.wallClock(completedAt, item.space.timezone);
   final when = item.completedToday
       ? formatClock(wall.time)
