@@ -8,6 +8,7 @@ import 'package:todolist/core/database/entity_type.dart';
 import 'package:todolist/core/queue/outbox.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
+import 'package:todolist/features/tasks/presentation/add_task_sheet.dart';
 
 import 'helpers/app_harness.dart';
 import 'helpers/fixtures.dart';
@@ -74,6 +75,39 @@ void main() {
       final payload = payloadOf((await h.ops()).single);
       expect(payload, containsPair('assignee_ids', [partnerId]));
       expect(payload, containsPair('priority', 3));
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('daftar bawaan selalu daftar aktif pertama di Ruang Bersama, bukan yang terakhir dipakai', (
+      tester,
+    ) async {
+      final h = Harness();
+      await h.seed();
+      final other = listJson(id: otherListId, name: 'Rumah', color: 'biru', position: 2048);
+      await h.account.store.write(EntityType.list, other, serverUpdatedAt: t0);
+      await pumpApp(tester, h);
+      final inSheet = find.byType(AddTaskSheet);
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await settle(tester);
+      expect(find.descendant(of: inSheet, matching: find.text('Belanja')), findsOneWidget);
+
+      // Kali ini sengaja memilih daftar lain.
+      await tester.tap(find.text('Daftar bersama'));
+      await settle(tester);
+      await tester.tap(find.text('Rumah').last);
+      await settle(tester);
+      await tester.enterText(find.byType(TextField), 'Ganti lampu');
+      await tester.tap(find.text('Simpan'));
+      await settle(tester);
+      expect(payloadOf((await h.ops()).single), containsPair('task_list_id', otherListId));
+
+      // Kontrak: tambah cepat masuk ke daftar aktif dengan `position` terkecil di ruang yang dipilih.
+      await tester.tap(find.byType(FloatingActionButton));
+      await settle(tester);
+      expect(find.descendant(of: inSheet, matching: find.text('Belanja')), findsOneWidget);
+      expect(find.descendant(of: inSheet, matching: find.text('Rumah')), findsNothing);
 
       await disposeApp(tester, h);
     });

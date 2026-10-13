@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
-import '../../../core/database/local_store.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/providers.dart';
 import '../../../core/theme/app_theme.dart';
@@ -46,16 +45,6 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
   void initState() {
     super.initState();
     if (widget.dueToday) _dayOffset = 0;
-    _restoreLastList();
-  }
-
-  /// Daftar yang terakhir dipakai menjadi pilihan awal.
-  Future<void> _restoreLastList() async {
-    final lastId = await ref.read(accountProvider)?.store.meta(MetaKeys.lastListId);
-    if (!mounted || lastId == null || _listId != null) return;
-
-    final lists = ref.read(activeListsProvider) ?? const <TaskList>[];
-    if (lists.any((list) => list.id == lastId)) setState(() => _listId = lastId);
   }
 
   @override
@@ -68,7 +57,8 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
     final chosen = lists.where((list) => list.id == _listId).firstOrNull;
     if (chosen != null) return chosen;
 
-    // Bawaan: daftar aktif pertama di Ruang Bersama kalau ada, selain itu di Ruang Pribadi.
+    // Bawaan sesuai kontrak: daftar aktif pertama (`position` terkecil) di Ruang Bersama
+    // kalau ada, selain itu di Ruang Pribadi.
     final space = household.shared ?? household.personal;
     return (space == null ? null : firstActiveList(lists, space.id)) ?? lists.firstOrNull;
   }
@@ -141,7 +131,6 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
       assigneeIds: assigneeIdsFor(shared ? _assignee : Assignee.me, household),
       important: _important,
     );
-    await account.store.setMeta(MetaKeys.lastListId, list.id);
 
     if (mounted) Navigator.of(context).pop();
   }
