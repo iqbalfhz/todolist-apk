@@ -1,6 +1,6 @@
 # CLAUDE.md — mobile (Flutter)
 
-App to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pribadi dan Ruang Bersama. Pengguna awal: pemilik repo dan pasangannya, keduanya Android. v0.1 sampai v0.3 hanya untuk Android. Semua teks di layar berbahasa Indonesia.
+**Denly Days**, app to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pribadi dan Ruang Bersama. Nama paket Dart tetap `todolist`. Pengguna awal: pemilik repo dan pasangannya, keduanya Android. v0.1 sampai v0.3 hanya untuk Android. Semua teks di layar berbahasa Indonesia.
 
 **Sumber kebenaran API: `docs/kontrak-api.md`.** Baca sebelum menyentuh model, API client, database lokal, antrean, sync, atau notifikasi. Kalau kode dan kontrak berbeda, ikuti kontrak lalu tanyakan. Backend ada di repo `api` (Laravel).
 
@@ -13,7 +13,7 @@ Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, ca
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
 - **Firebase belum dikonfigurasi.** `lib/firebase_options.dart` masih berupa pengganti yang melempar error, jadi push dinonaktifkan: app tetap jalan, tetapi token FCM tidak didaftarkan. `flutterfire configure --project=todolist-cb119` menimpa file itu dan membuat `android/app/google-services.json`. Sesudah itu baru bisa diuji: pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi di HP sungguhan. Di tes, bagian itu memakai layanan notifikasi palsu.
-- **`applicationId` masih `com.example.todolist`** dan nama app di HP masih `todolist` (`android/app/build.gradle.kts`, `AndroidManifest.xml`). Tetapkan sebelum mendaftarkan app Android di Firebase, karena ID itu ikut terdaftar di sana.
+- **`applicationId` masih `com.example.todolist`** (`android/app/build.gradle.kts`). Tetapkan sebelum mendaftarkan app Android di Firebase, karena ID itu ikut terdaftar di sana.
 - **Build rilis masih ditandatangani kunci debug.** Buat keystore sebelum membagikan APK rilis.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
@@ -46,6 +46,7 @@ Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tang
 - fl_chart (statistik tabungan), share_plus (bagikan kode undangan)
 - material_symbols_icons (ikon)
 - flutter_localizations + intl (ARB, `id_ID`), flutter_timezone + timezone
+- flutter_launcher_icons (hanya alat pengembangan) untuk ikon app
 
 ## Perintah
 
@@ -53,6 +54,7 @@ Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tang
 - `dart run build_runner build --delete-conflicting-outputs` — setelah mengubah model freezed atau tabel drift
 - `flutter analyze` dan `flutter test` — sebelum commit
 - `dart format .` — format kode
+- `powershell -ExecutionPolicy Bypass -File tool/make_adaptive_icon_foreground.ps1` lalu `dart run flutter_launcher_icons` — setelah mengganti logo di `assets/icon/app_icon.png`. Yang pertama membuat latar depan ikon adaptif (logo dengan tepi diperluas, supaya tidak terpotong di ikon bulat); pengaturannya di `flutter_launcher_icons.yaml`, dan bagian iOS sengaja dimatikan di sana.
 
 ## Konfigurasi
 
