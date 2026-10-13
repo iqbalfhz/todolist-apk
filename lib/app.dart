@@ -24,7 +24,7 @@ class TodoApp extends ConsumerWidget {
     final choice = ref.watch(themeProvider);
 
     return MaterialApp.router(
-      title: 'todolist',
+      title: 'Denly Days',
       debugShowCheckedModeBanner: false,
       routerConfig: ref.watch(routerProvider),
       scaffoldMessengerKey: scaffoldMessengerKey,

@@ -442,25 +442,25 @@ abstract class AppLocalizations {
   /// No description provided for @batteryStepsXiaomi.
   ///
   /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Aplikasi > Kelola aplikasi, lalu pilih app ini.\n2. Ketuk Penghemat baterai, lalu pilih Tanpa batasan.\n3. Nyalakan Mulai otomatis.'**
+  /// **'1. Buka Pengaturan > Aplikasi > Kelola aplikasi, lalu pilih Denly Days.\n2. Ketuk Penghemat baterai, lalu pilih Tanpa batasan.\n3. Nyalakan Mulai otomatis.'**
   String get batteryStepsXiaomi;
 
   /// No description provided for @batteryStepsOppo.
   ///
   /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih app ini, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan app ini.'**
+  /// **'1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih Denly Days, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan Denly Days.'**
   String get batteryStepsOppo;
 
   /// No description provided for @batteryStepsVivo.
   ///
   /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Baterai > Konsumsi daya tinggi di latar belakang.\n2. Nyalakan untuk app ini.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan app ini.'**
+  /// **'1. Buka Pengaturan > Baterai > Konsumsi daya tinggi di latar belakang.\n2. Nyalakan untuk Denly Days.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan Denly Days.'**
   String get batteryStepsVivo;
 
   /// No description provided for @batteryStepsRealme.
   ///
   /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih app ini, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan app ini.'**
+  /// **'1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih Denly Days, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan Denly Days.'**
   String get batteryStepsRealme;
 
   /// No description provided for @batteryNote.
@@ -1348,7 +1348,7 @@ abstract class AppLocalizations {
   /// No description provided for @pairingShareText.
   ///
   /// In id, this message translates to:
-  /// **'Yuk pakai app to-do ini berdua. Masukkan kode {code} di layar Ajak pasangan. Kode berlaku sampai {expires}.'**
+  /// **'Yuk pakai Denly Days berdua. Masukkan kode {code} di layar Ajak pasangan. Kode berlaku sampai {expires}.'**
   String pairingShareText(String code, String expires);
 
   /// No description provided for @pairingExpires.

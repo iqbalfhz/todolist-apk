@@ -6,7 +6,7 @@
     <!-- allowBackup dimatikan: kunci flutter_secure_storage tidak ikut pulih dari backup,
          jadi token yang dipulihkan tidak akan bisa dibaca. -->
     <application
-        android:label="todolist"
+        android:label="Denly Days"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false">
