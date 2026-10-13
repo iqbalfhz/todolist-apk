@@ -138,8 +138,15 @@ class AppSheet extends StatelessWidget {
 }
 
 /// Buka lembar bawah dengan radius atas 28 dan latar redup `scrim`.
-Future<T?> showAppSheet<T>(BuildContext context, {required WidgetBuilder builder}) =>
-    showModalBottomSheet<T>(context: context, isScrollControlled: true, useSafeArea: true, builder: builder);
+///
+/// Selalu di navigator utama, supaya lembar yang dibuka dari dalam tab ikut menutupi tab bawah.
+Future<T?> showAppSheet<T>(BuildContext context, {required WidgetBuilder builder}) => showModalBottomSheet<T>(
+  context: context,
+  isScrollControlled: true,
+  useSafeArea: true,
+  useRootNavigator: true,
+  builder: builder,
+);
 
 /// Dialog konfirmasi untuk tindakan yang tidak bisa diurungkan.
 Future<bool> confirmDialog(

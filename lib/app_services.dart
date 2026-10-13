@@ -156,6 +156,9 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     final taskId = message.taskId;
     final goalId = message.goalId;
 
+    // Lembar bawah atau dialog yang masih terbuka ditutup, supaya layar tujuan terlihat.
+    router.routerDelegate.navigatorKey.currentState?.popUntil((route) => route is! PopupRoute);
+
     if (message.isAboutTask && taskId != null) {
       if (await _exists(account, EntityType.task, taskId)) return router.go(Routes.task(taskId));
       router.go(Routes.tasks);
