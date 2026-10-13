@@ -5,7 +5,9 @@
 //   E2E_API_URL=http://127.0.0.1:8000/api/v1 flutter test test/e2e
 //
 // Jalankan hanya ke API lokal dengan database khusus tes: tes ini mendaftarkan akun baru.
-// Batas server 5 pendaftaran per menit, jadi jangan dijalankan lebih dari dua kali semenit.
+// Sekali jalan memakai tiga permintaan daftar dan batas server 5 per menit, jadi beri jeda
+// satu menit sebelum menjalankannya lagi. Kalau terlalu cepat, tes "email yang sudah
+// terdaftar" gagal karena dibalas 429.
 
 import 'dart:io';
 
