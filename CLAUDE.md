@@ -6,6 +6,22 @@ App to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pri
 
 **Sumber kebenaran layar: `docs/layar.md`** (daftar layar, isi, dan navigasi) dan mockup HTML di `docs/mockup/`. Baca sebelum membuat atau mengubah layar.
 
+## Kondisi repo (per 13 Oktober 2026)
+
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` (daftar, undangan, tugas, tabungan, sync dua HP, keluar) lulus terhadap API Laravel lokal. Build debug sudah dicoba di emulator Android 16 terhadap API lokal.
+
+Belum beres; semuanya butuh keputusan atau akses pemilik:
+
+- **Firebase belum dikonfigurasi.** `lib/firebase_options.dart` masih berupa pengganti yang melempar error, jadi push dinonaktifkan: app tetap jalan, tetapi token FCM tidak didaftarkan. `flutterfire configure --project=todolist-cb119` menimpa file itu dan membuat `android/app/google-services.json`. Sesudah itu baru bisa diuji: pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi di HP sungguhan. Di tes, bagian itu memakai layanan notifikasi palsu.
+- **`applicationId` masih `com.example.todolist`** dan nama app di HP masih `todolist` (`android/app/build.gradle.kts`, `AndroidManifest.xml`). Tetapkan sebelum mendaftarkan app Android di Firebase, karena ID itu ikut terdaftar di sana.
+- **Build rilis masih ditandatangani kunci debug.** Buat keystore sebelum membagikan APK rilis.
+- `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
+- Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
+- Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
+- `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
+
+Perbarui atau hapus butir di atas begitu selesai dikerjakan.
+
 ## Cakupan v0.1 (yang sedang dibangun)
 
 - Masuk, daftar, izin notifikasi, dan panduan baterai
@@ -15,14 +31,14 @@ App to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pri
 
 Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tanggal penting (v0.2), Kenangan (v0.3), ekspor data dan hapus akun (v1.0), iOS.
 
-**Belum final:** bagian "Perubahan dari rancangan awal" dan "Masih terbuka" di akhir kontrak belum semuanya disetujui pemilik. Kalau ada yang ditolak, kontrak dan file ini diperbarui.
+**Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
 ## Stack
 
-- Flutter stable, Dart 3, Material 3
+- Flutter stable, Dart 3, Material 3. Material diimpor dari paket `material_ui` (`package:material_ui/material_ui.dart`), bukan `package:flutter/material.dart`: go_router 18 dan cached_network_image 4 memakai `material_ui`, dan tipe kedua pustaka itu berbeda (`ThemeData`, `Scaffold`, dan lainnya tidak saling dikenali), jadi kode app harus konsisten memakai `material_ui`.
 - Riverpod untuk state, go_router untuk routing dan deep link dari notifikasi
 - dio untuk HTTP, dengan interceptor token dan retry
-- drift (SQLite) untuk cache lokal dan antrean (outbox)
+- drift (SQLite) untuk cache lokal dan antrean (outbox); `drift_flutter` membuka file database di HP
 - freezed + json_serializable untuk model
 - flutter_secure_storage untuk token (jangan SharedPreferences)
 - firebase_messaging + flutter_local_notifications
@@ -109,6 +125,8 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 
 - Unit test untuk antrean dan sync dengan API palsu: urutan kirim, aturan gabung, jeda Urungkan, perlindungan kolom tertunda, dan penanganan tiap `code` error.
 - Widget test untuk alur utama: tambah cepat, centang dan Urungkan, setor tabungan, masukkan kode undangan.
+- Tata letak (`test/layout_test.dart`): setiap layar dan lembar bawah dirender pada huruf 1,3× dan 2× serta layar 360 × 640; isi yang meluap membuat tesnya gagal. Layar baru ditambahkan ke sana.
+- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya.
 
 ## Git
 
