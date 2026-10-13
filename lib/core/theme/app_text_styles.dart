@@ -28,6 +28,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
     required this.chipSelected,
     required this.amount,
     required this.caption,
+    required this.captionMedium,
     required this.captionStrong,
     required this.link,
     required this.label,
@@ -78,6 +79,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       chipSelected: style(14, semiBold),
       amount: style(14, bold),
       caption: style(13, regular, color: palette.muted),
+      captionMedium: style(13, medium, color: palette.muted),
       captionStrong: style(13, semiBold),
       link: style(13, semiBold, color: palette.link),
       label: style(13, semiBold, color: palette.muted),
@@ -147,6 +149,9 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   /// Keterangan — 13 Regular.
   final TextStyle caption;
 
+  /// Tanggal di kepala Beranda — 13 Medium.
+  final TextStyle captionMedium;
+
   /// Keterangan yang ditekankan ("Sisa Rp3.500.000") — 13 SemiBold.
   final TextStyle captionStrong;
 
@@ -202,6 +207,7 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       chipSelected: mix(chipSelected, other.chipSelected),
       amount: mix(amount, other.amount),
       caption: mix(caption, other.caption),
+      captionMedium: mix(captionMedium, other.captionMedium),
       captionStrong: mix(captionStrong, other.captionStrong),
       link: mix(link, other.link),
       label: mix(label, other.label),

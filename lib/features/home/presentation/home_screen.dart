@@ -59,7 +59,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final greeting = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(formatWeekdayLong(header.date), style: text.caption),
+        Text(formatWeekdayLong(header.date), style: text.captionMedium),
         const SizedBox(height: AppDimens.gap2),
         Semantics(header: true, child: Text(_greeting(l10n, header.hour), style: text.homeTitle)),
       ],

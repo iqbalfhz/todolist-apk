@@ -11,6 +11,7 @@ import '../../../core/l10n/l10n.dart';
 import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session.dart';
+import '../../../core/sync/sync_actions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/utils/validators.dart';
@@ -143,6 +144,8 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
     return AppScaffold(
       child: PageBody(
+        // Pengundang menarik layar ini untuk melihat apakah pasangannya sudah bergabung.
+        onRefresh: () => refreshFromServer(ref),
         children: [
           ScreenHeader(onBack: onboarding ? null : _back),
           if (household == null)
