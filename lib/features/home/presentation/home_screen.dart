@@ -31,28 +31,37 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   PersonFilter _person = PersonFilter.all;
 
-  String _greeting(AppLocalizations l10n, DateTime now) => switch (now.hour) {
+  String _greeting(AppLocalizations l10n, int hour) => switch (hour) {
     >= 4 && < 11 => l10n.greetingMorning,
     >= 11 && < 15 => l10n.greetingNoon,
     >= 15 && < 19 => l10n.greetingAfternoon,
     _ => l10n.greetingNight,
   };
 
+  /// Tanggal dan jam untuk kepala layar, di zona waktu yang sama dengan "Tugas hari ini".
+  ({DateTime date, int hour}) _headerTime(DateTime now, Household? household) {
+    final space = household?.shared ?? household?.personal;
+    if (space == null) return (date: now, hour: now.hour);
+
+    final wall = ref.watch(spaceClockProvider).wallClock(now, space.timezone);
+    return (date: parseYmd(wall.date), hour: int.parse(wall.time.substring(0, 2)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final text = context.text;
-    final now = ref.watch(nowProvider);
     final household = ref.watch(householdProvider);
     final items = ref.watch(taskItemsProvider);
     final goals = ref.watch(goalProgressProvider);
+    final header = _headerTime(ref.watch(nowProvider), household);
 
     final greeting = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(formatWeekdayLong(now), style: text.caption),
+        Text(formatWeekdayLong(header.date), style: text.caption),
         const SizedBox(height: AppDimens.gap2),
-        Semantics(header: true, child: Text(_greeting(l10n, now), style: text.homeTitle)),
+        Semantics(header: true, child: Text(_greeting(l10n, header.hour), style: text.homeTitle)),
       ],
     );
 

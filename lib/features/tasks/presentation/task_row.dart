@@ -88,24 +88,37 @@ class TaskRow extends ConsumerWidget {
 
     final due = dueText(l10n, item);
     final suffix = showListName ? ' · ${item.list.name}' : '';
+    final overdue = item.isOverdue;
+    final color = overdue ? palette.warn : palette.muted;
+    // Status tidak hanya mengandalkan warna: "Terlewat" selalu ditemani ikon.
+    final leading = overdue
+        ? Symbols.error_rounded
+        : showListName && item.task.dueTime != null
+        ? Symbols.schedule_rounded
+        : null;
 
-    if (item.isOverdue) {
-      return StatusText(text: '$due$suffix', icon: Symbols.error_rounded, color: palette.warn);
-    }
+    InlineSpan icon(IconData data) => WidgetSpan(
+      alignment: PlaceholderAlignment.middle,
+      child: Icon(data, size: AppDimens.iconXs, color: color),
+    );
 
-    return Wrap(
-      crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppDimens.gap4,
-      children: [
-        if (showListName && item.task.dueTime != null)
-          Icon(Symbols.schedule_rounded, size: AppDimens.iconXs, color: palette.muted),
-        Text('$due$suffix', style: text.caption),
-        if (item.task.isImportant) ...[
-          Text('·', style: text.caption),
-          Icon(Symbols.flag_rounded, size: AppDimens.iconXs, color: palette.muted),
-          Text(l10n.dueImportant, style: text.caption),
+    // Satu paragraf, supaya ikon tidak pernah terpisah baris dari teksnya.
+    return Text.rich(
+      TextSpan(
+        children: [
+          if (leading != null) ...[icon(leading), const TextSpan(text: _nbsp)],
+          TextSpan(text: '$due$suffix'),
+          if (item.task.isImportant) ...[
+            const TextSpan(text: ' · '),
+            icon(Symbols.flag_rounded),
+            TextSpan(text: '$_nbsp${l10n.dueImportant}'),
+          ],
         ],
-      ],
+      ),
+      style: overdue ? text.captionStrong.copyWith(color: color) : text.caption,
     );
   }
+
+  /// Spasi yang tidak memutus baris.
+  static const String _nbsp = ' ';
 }
