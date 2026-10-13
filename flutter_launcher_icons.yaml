@@ -1,0 +1,22 @@
+# Ikon app Denly Days. Sumbernya assets/icon/app_icon.png (1024 x 1024, tanpa transparansi).
+# Setelah mengganti logo:
+#   powershell -ExecutionPolicy Bypass -File tool/make_adaptive_icon_foreground.ps1
+#   dart run flutter_launcher_icons
+
+flutter_launcher_icons:
+  image_path: "assets/icon/app_icon.png"
+
+  # Android: ikon biasa (di bawah Android 8) dan ikon adaptif (Android 8+).
+  android: true
+  min_sdk_android: 24
+  adaptive_icon_background: "#FDCF59"
+  # Logo dengan tepi yang diperluas, supaya telinga beruang tidak terpotong di launcher yang
+  # ikonnya bulat. Inset bawaan (16%) membuat gambar ini pas memenuhi bentuk ikon.
+  adaptive_icon_foreground: "assets/icon/app_icon_foreground.png"
+
+  # iOS belum dibangun. Dimatikan juga karena flutter_launcher_icons 0.14.4 ikut mengubah
+  # ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS di
+  # ios/Runner.xcodeproj/project.pbxproj dari YES menjadi nama ikon. Kalau dinyalakan nanti,
+  # periksa baris itu sesudah menjalankan alat ini.
+  ios: false
+  remove_alpha_ios: true
