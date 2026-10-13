@@ -43,6 +43,10 @@ String? _redirect(Ref ref, GoRouterState state) {
 
 bool _fromHome(GoRouterState state) => state.uri.queryParameters[Routes.fromParam] == Routes.fromHome;
 
+/// Layar detail diberi kunci per ID. Tanpa itu, pindah langsung dari satu detail ke detail lain
+/// (misalnya lewat ketukan notifikasi) memakai ulang isian milik data sebelumnya.
+ValueKey<String> _detailKey(GoRouterState state) => ValueKey(state.pathParameters['id']!);
+
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefresh(ref);
   ref.onDispose(refresh.dispose);
@@ -78,8 +82,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(path: 'daftar', builder: (_, _) => const ManageListsScreen()),
                   GoRoute(
                     path: ':id',
-                    builder: (_, state) =>
-                        TaskDetailScreen(taskId: state.pathParameters['id']!, fromHome: _fromHome(state)),
+                    builder: (_, state) => TaskDetailScreen(
+                      key: _detailKey(state),
+                      taskId: state.pathParameters['id']!,
+                      fromHome: _fromHome(state),
+                    ),
                   ),
                 ],
               ),
@@ -93,8 +100,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: ':id',
-                    builder: (_, state) =>
-                        GoalDetailScreen(goalId: state.pathParameters['id']!, fromHome: _fromHome(state)),
+                    builder: (_, state) => GoalDetailScreen(
+                      key: _detailKey(state),
+                      goalId: state.pathParameters['id']!,
+                      fromHome: _fromHome(state),
+                    ),
                   ),
                 ],
               ),
