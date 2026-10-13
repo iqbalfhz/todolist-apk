@@ -86,8 +86,9 @@ class TaskRow extends ConsumerWidget {
       return Text(completedText(l10n, item, household, ref.watch(spaceClockProvider)), style: text.caption);
     }
 
-    final due = dueText(l10n, item);
     final suffix = showListName ? ' · ${item.list.name}' : '';
+    // Titik pemisah selalu menempel di belakang kata sebelumnya, tidak pernah mengawali baris.
+    final caption = '${dueText(l10n, item)}$suffix'.replaceAll(' · ', '$_nbsp· ');
     final overdue = item.isOverdue;
     final color = overdue ? palette.warn : palette.muted;
     // Status tidak hanya mengandalkan warna: "Terlewat" selalu ditemani ikon.
@@ -97,25 +98,43 @@ class TaskRow extends ConsumerWidget {
         ? Symbols.schedule_rounded
         : null;
 
-    InlineSpan icon(IconData data) => WidgetSpan(
-      alignment: PlaceholderAlignment.middle,
-      child: Icon(data, size: AppDimens.iconXs, color: color),
-    );
+    final style = overdue ? text.captionStrong.copyWith(color: color) : text.caption;
 
-    // Satu paragraf, supaya ikon tidak pernah terpisah baris dari teksnya.
+    Widget icon(IconData data) => Icon(data, size: AppDimens.iconXs, color: color);
+
+    // Satu paragraf yang mengalir. Tanda "Penting" satu kotak utuh: baris boleh putus
+    // di sekitar WidgetSpan, jadi ikon dan labelnya tidak boleh berupa dua span.
     return Text.rich(
       TextSpan(
         children: [
-          if (leading != null) ...[icon(leading), const TextSpan(text: _nbsp)],
-          TextSpan(text: '$due$suffix'),
+          if (leading != null) ...[
+            WidgetSpan(alignment: PlaceholderAlignment.middle, child: icon(leading)),
+            const TextSpan(text: _nbsp),
+          ],
+          TextSpan(text: caption),
           if (item.task.isImportant) ...[
-            const TextSpan(text: ' · '),
-            icon(Symbols.flag_rounded),
-            TextSpan(text: '$_nbsp${l10n.dueImportant}'),
+            const TextSpan(text: '$_nbsp· '),
+            WidgetSpan(
+              alignment: PlaceholderAlignment.middle,
+              // Isi WidgetSpan sudah ikut diperbesar bersama paragrafnya; tanpa ini teksnya
+              // diperbesar dua kali saat huruf sistem diperbesar.
+              child: MediaQuery.withNoTextScaling(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icon(Symbols.flag_rounded),
+                    const SizedBox(width: AppDimens.gap4),
+                    Flexible(
+                      child: Text(l10n.dueImportant, style: style, maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ],
       ),
-      style: overdue ? text.captionStrong.copyWith(color: color) : text.caption,
+      style: style,
     );
   }
 

@@ -19,6 +19,14 @@ extension AppThemeContext on BuildContext {
 
   /// "Kurangi gerakan" di pengaturan sistem.
   bool get reduceMotion => MediaQuery.disableAnimationsOf(this);
+
+  /// Pembesaran huruf sistem (1 = bawaan), untuk menata ulang bagian yang tidak muat
+  /// berdampingan saat hurufnya besar. Diukur pada ukuran paragraf karena pembesaran
+  /// di Android 14+ tidak sama untuk setiap ukuran huruf.
+  double get textScale {
+    final base = text.body.fontSize!;
+    return MediaQuery.textScalerOf(this).scale(base) / base;
+  }
 }
 
 /// Satu [ThemeData] untuk setiap kombinasi tema dan mode.

@@ -53,7 +53,12 @@ class ProgressRing extends StatelessWidget {
       dimension: AppDimens.ring,
       child: CustomPaint(
         painter: _RingPainter(fraction: fraction.clamp(0, 1).toDouble(), track: palette.track, fill: palette.brand),
-        child: Center(child: child),
+        child: Padding(
+          // Isi menempati persegi di dalam lingkaran dalam, dan mengecil kalau tidak muat
+          // (huruf sistem diperbesar), supaya tidak pernah menimpa cincin.
+          padding: const EdgeInsets.all(AppDimens.ringStroke * 2),
+          child: FittedBox(fit: BoxFit.scaleDown, child: child),
+        ),
       ),
     );
   }

@@ -130,7 +130,10 @@ void main() {
       await h.account.store.write(EntityType.task, taskJson(dueDate: '2026-10-06', priority: 3), serverUpdatedAt: t0);
       await pumpApp(tester, h);
 
-      expect(find.textContaining(RegExp(r'^.?.?Terlewat · Sel, 6 Okt · Belanja · .?.?Penting$')), findsOneWidget);
+      // Pemisahnya memakai spasi yang tidak memutus baris.
+      final caption = find.textContaining(RegExp(r'Terlewat\s· Sel, 6 Okt\s· Belanja'));
+      expect(caption, findsOneWidget);
+      expect(find.descendant(of: caption, matching: find.text('Penting')), findsOneWidget);
 
       await disposeApp(tester, h);
     });

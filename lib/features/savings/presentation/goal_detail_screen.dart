@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -197,6 +199,9 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
 class _SummaryCard extends StatelessWidget {
   const _SummaryCard({required this.progress, required this.paired});
 
+  /// Di atas pembesaran huruf ini, cincin dan rinciannya tidak lagi muat berdampingan.
+  static const double _sideBySideMaxTextScale = 1.3;
+
   final GoalProgress progress;
   final bool paired;
 
@@ -208,44 +213,53 @@ class _SummaryCard extends StatelessWidget {
     final goal = progress.goal;
     final weekly = progress.weeklyNeed;
 
+    final ring = ProgressRing(
+      fraction: progress.fraction,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(l10n.percent(progress.percent), style: text.homeTitle),
+          Text(l10n.savingsCollected, style: text.small),
+        ],
+      ),
+    );
+
+    final details = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Nominal tidak pernah terpotong di tengah angka: mengecil kalau tidak muat.
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(formatMoney(progress.saved, goal.currency), style: text.amountLarge, maxLines: 1),
+        ),
+        Text(l10n.savingsFrom(formatMoney(goal.targetAmount, goal.currency)), style: text.caption),
+        const SizedBox(height: AppDimens.gap6),
+        Text(l10n.savingsRemaining(formatMoney(progress.remaining, goal.currency)), style: text.captionStrong),
+        if (goal.targetDate != null)
+          Text(l10n.savingsTargetDate(formatDateMedium(goal.targetDate!)), style: text.caption),
+        // Hanya kalau target punya tanggal yang belum lewat.
+        if (weekly != null) Text(l10n.savingsWeekly(formatMoney(weekly, goal.currency)), style: text.caption),
+      ],
+    );
+
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              ProgressRing(
-                fraction: progress.fraction,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(l10n.percent(progress.percent), style: text.homeTitle),
-                    Text(l10n.savingsCollected, style: text.small),
-                  ],
-                ),
-              ),
-              const SizedBox(width: AppDimens.gap16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(formatMoney(progress.saved, goal.currency), style: text.amountLarge),
-                    Text(l10n.savingsFrom(formatMoney(goal.targetAmount, goal.currency)), style: text.caption),
-                    const SizedBox(height: AppDimens.gap6),
-                    Text(
-                      l10n.savingsRemaining(formatMoney(progress.remaining, goal.currency)),
-                      style: text.captionStrong,
-                    ),
-                    if (goal.targetDate != null)
-                      Text(l10n.savingsTargetDate(formatDateMedium(goal.targetDate!)), style: text.caption),
-                    // Hanya kalau target punya tanggal yang belum lewat.
-                    if (weekly != null)
-                      Text(l10n.savingsWeekly(formatMoney(weekly, goal.currency)), style: text.caption),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          // Huruf sistem diperbesar: cincin pindah ke atas, supaya nominal mendapat lebar penuh.
+          if (context.textScale > _sideBySideMaxTextScale) ...[
+            Center(child: ring),
+            const SizedBox(height: AppDimens.gap12),
+            details,
+          ] else
+            Row(
+              children: [
+                ring,
+                const SizedBox(width: AppDimens.gap16),
+                Expanded(child: details),
+              ],
+            ),
           if (progress.isAchieved) ...[
             const SizedBox(height: AppDimens.gap12),
             const RowDivider(),
@@ -288,6 +302,10 @@ class _Celebration extends StatelessWidget {
 class _MonthlyChart extends StatelessWidget {
   const _MonthlyChart({required this.progress});
 
+  /// Label grafik berhenti membesar di sini: lima batang tidak punya ruang untuk label yang lebih besar.
+  /// Nominal lengkapnya tetap terbaca di riwayat dan oleh pembaca layar.
+  static const double _maxTextScale = 1.3;
+
   final GoalProgress progress;
 
   @override
@@ -298,6 +316,9 @@ class _MonthlyChart extends StatelessWidget {
     final currency = progress.goal.currency;
     final months = progress.monthlyTotals();
     final highest = months.fold<int>(0, (max, month) => month.amount > max ? month.amount : max);
+    // Ruang label ikut membesar bersama hurufnya, supaya tidak terpotong.
+    final scale = math.min(context.textScale, _maxTextScale);
+    final labelSpace = AppDimens.chartLabelSpace * scale;
 
     final summary = [
       for (final month in months)
@@ -308,60 +329,63 @@ class _MonthlyChart extends StatelessWidget {
       label: summary,
       child: ExcludeSemantics(
         child: SizedBox(
-          height: AppDimens.chartHeight + AppDimens.chartLabelSpace,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              // Ruang di atas batang tertinggi untuk label nominalnya.
-              maxY: highest == 0 ? 1 : highest * 1.3,
-              barTouchData: const BarTouchData(enabled: false),
-              gridData: const FlGridData(show: false),
-              borderData: FlBorderData(show: false),
-              titlesData: FlTitlesData(
-                leftTitles: const AxisTitles(),
-                rightTitles: const AxisTitles(),
-                topTitles: const AxisTitles(),
-                bottomTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: AppDimens.chartLabelSpace / 2,
-                    getTitlesWidget: (value, meta) {
-                      final month = months[value.toInt()];
-                      return SideTitleWidget(
-                        meta: meta,
-                        space: AppDimens.gap4,
-                        child: Text(
-                          formatMonthShort(month.year, month.month),
-                          style: month.isCurrent ? text.smallStrong : text.small,
-                        ),
-                      );
-                    },
+          height: AppDimens.chartHeight + labelSpace,
+          child: MediaQuery.withClampedTextScaling(
+            maxScaleFactor: _maxTextScale,
+            child: BarChart(
+              BarChartData(
+                alignment: BarChartAlignment.spaceAround,
+                // Ruang di atas batang tertinggi untuk label nominalnya.
+                maxY: highest == 0 ? 1 : highest * (1 + 0.3 * scale),
+                barTouchData: const BarTouchData(enabled: false),
+                gridData: const FlGridData(show: false),
+                borderData: FlBorderData(show: false),
+                titlesData: FlTitlesData(
+                  leftTitles: const AxisTitles(),
+                  rightTitles: const AxisTitles(),
+                  topTitles: const AxisTitles(),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: labelSpace / 2,
+                      getTitlesWidget: (value, meta) {
+                        final month = months[value.toInt()];
+                        return SideTitleWidget(
+                          meta: meta,
+                          space: AppDimens.gap4,
+                          child: Text(
+                            formatMonthShort(month.year, month.month),
+                            style: month.isCurrent ? text.smallStrong : text.small,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
+                barGroups: [
+                  for (final (index, month) in months.indexed)
+                    BarChartGroupData(
+                      x: index,
+                      barRods: [
+                        BarChartRodData(
+                          toY: month.amount.toDouble(),
+                          width: AppDimens.chartBarWidth,
+                          color: month.isCurrent ? palette.brand : palette.accent,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(AppDimens.chartBarRadiusTop),
+                            bottom: Radius.circular(AppDimens.chartBarRadiusBottom),
+                          ),
+                          label: BarChartRodLabel(
+                            show: month.amount > 0,
+                            text: formatMoneyCompact(month.amount, currency),
+                            style: month.isCurrent ? text.axisStrong : text.axis,
+                            offset: const Offset(0, AppDimens.gap4),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
               ),
-              barGroups: [
-                for (final (index, month) in months.indexed)
-                  BarChartGroupData(
-                    x: index,
-                    barRods: [
-                      BarChartRodData(
-                        toY: month.amount.toDouble(),
-                        width: AppDimens.chartBarWidth,
-                        color: month.isCurrent ? palette.brand : palette.accent,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(AppDimens.chartBarRadiusTop),
-                          bottom: Radius.circular(AppDimens.chartBarRadiusBottom),
-                        ),
-                        label: BarChartRodLabel(
-                          show: month.amount > 0,
-                          text: formatMoneyCompact(month.amount, currency),
-                          style: month.isCurrent ? text.axisStrong : text.axis,
-                          offset: const Offset(0, AppDimens.gap4),
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
             ),
           ),
         ),
