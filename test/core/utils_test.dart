@@ -55,6 +55,16 @@ void main() {
       expect(formatMoneyCompact(0, 'IDR'), '0');
     });
 
+    test('format ringkas: nominal di dekat batas satuan naik ke satuan berikutnya', () {
+      expect(formatMoneyCompact(999499, 'IDR'), '999 rb');
+      expect(formatMoneyCompact(999500, 'IDR'), '1,0 jt');
+      expect(formatMoneyCompact(999900000, 'IDR'), '999,9 jt');
+      expect(formatMoneyCompact(999950000, 'IDR'), '1,0 M');
+      expect(formatMoneyCompact(250000000, 'IDR'), '250,0 jt');
+      // Dua desimal: 1.500,00 dolar disimpan sebagai 150000 sen.
+      expect(formatMoneyCompact(150000, 'USD'), '2 rb');
+    });
+
     test('membaca isian nominal', () {
       expect(parseMoneyInput('150.000', 'IDR'), 150000);
       expect(parseMoneyInput('Rp 6.500.000', 'IDR'), 6500000);

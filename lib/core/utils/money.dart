@@ -21,9 +21,10 @@ String formatMoneyCompact(int amount, String currencyCode) {
   final major = amount / currency.unitsPerMajor;
   final oneDecimal = NumberFormat('0.0', _locale);
 
-  if (major >= 1e12) return '${oneDecimal.format(major / 1e12)} T';
-  if (major >= 1e9) return '${oneDecimal.format(major / 1e9)} M';
-  if (major >= 1e6) return '${oneDecimal.format(major / 1e6)} jt';
+  // Batasnya tepat di titik pembulatan, supaya 999.500 menjadi "1,0 jt", bukan "1000 rb".
+  if (major >= 999.95e9) return '${oneDecimal.format(major / 1e12)} T';
+  if (major >= 999.95e6) return '${oneDecimal.format(major / 1e9)} M';
+  if (major >= 999.5e3) return '${oneDecimal.format(major / 1e6)} jt';
   if (major >= 1e3) return '${NumberFormat('0', _locale).format(major / 1e3)} rb';
   return NumberFormat(currency.decimals == 0 ? '0' : '0.00', _locale).format(major);
 }
