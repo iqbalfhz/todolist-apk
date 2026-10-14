@@ -12,7 +12,7 @@ Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, ca
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
-- **Firebase belum dikonfigurasi.** `lib/firebase_options.dart` masih berupa pengganti yang melempar error, jadi push dinonaktifkan: app tetap jalan, tetapi token FCM tidak didaftarkan. `flutterfire configure --project=todolist-cb119 --platforms=android` mendaftarkan app Android `id.my.iqbalfhz.denlydays` di Firebase, menimpa file itu, dan membuat `android/app/google-services.json`. Sesudah itu baru bisa diuji: pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi di HP sungguhan. Di tes, bagian itu memakai layanan notifikasi palsu.
+- **Push belum dicoba di HP sungguhan.** Firebase sudah dikonfigurasi (lihat Konfigurasi), tetapi pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi baru diuji dengan layanan notifikasi palsu.
 - **Build rilis masih ditandatangani kunci debug.** Buat keystore sebelum membagikan APK rilis.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
@@ -60,7 +60,7 @@ Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tang
 - `env/dev.json`, `env/staging.json`, `env/prod.json` berisi `API_BASE_URL`, dibaca lewat `String.fromEnvironment`.
 - HP lewat kabel USB ke API lokal: `adb reverse tcp:8000 tcp:8000`, lalu `API_BASE_URL` = `http://127.0.0.1:8000/api/v1`. Emulator: `http://10.0.2.2:8000/api/v1`.
 - HTTP tanpa TLS hanya diizinkan di build debug (`android/app/src/debug/AndroidManifest.xml`); staging dan produksi selalu HTTPS.
-- Firebase disiapkan dengan `flutterfire configure` (menghasilkan `lib/firebase_options.dart` dan `google-services.json`).
+- Firebase: proyek `todolist-cb119`, hanya app Android `id.my.iqbalfhz.denlydays`. `lib/firebase_options.dart`, `android/app/google-services.json`, dan `firebase.json` dibuat oleh `dart pub global run flutterfire_cli:flutterfire configure --project=todolist-cb119 --platforms=android --android-package-name=id.my.iqbalfhz.denlydays --out=lib/firebase_options.dart --yes` (butuh `firebase login`). Jalankan ulang hanya kalau app di Firebase berubah.
 
 ## Struktur (feature-first)
 
