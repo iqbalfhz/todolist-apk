@@ -13,7 +13,6 @@ Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, ca
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
 - **Push belum dicoba di HP sungguhan.** Firebase sudah dikonfigurasi (lihat Konfigurasi), tetapi pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi baru diuji dengan layanan notifikasi palsu.
-- **Kunci rilis belum dibuat.** Build rilis berhenti sampai kunci dan `android/key.properties` ada (lihat Konfigurasi).
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
@@ -61,7 +60,7 @@ Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tang
 - HP lewat kabel USB ke API lokal: `adb reverse tcp:8000 tcp:8000`, lalu `API_BASE_URL` = `http://127.0.0.1:8000/api/v1`. Emulator: `http://10.0.2.2:8000/api/v1`.
 - HTTP tanpa TLS hanya diizinkan di build debug (`android/app/src/debug/AndroidManifest.xml`); staging dan produksi selalu HTTPS.
 - Firebase: proyek `todolist-cb119`, hanya app Android `id.my.iqbalfhz.denlydays`. `lib/firebase_options.dart`, `android/app/google-services.json`, dan `firebase.json` dibuat oleh `dart pub global run flutterfire_cli:flutterfire configure --project=todolist-cb119 --platforms=android --android-package-name=id.my.iqbalfhz.denlydays --out=lib/firebase_options.dart --yes` (butuh `firebase login`). Jalankan ulang hanya kalau app di Firebase berubah.
-- Tanda tangan rilis: kuncinya `denlydays.jks` (alias `denlydays`) di luar repo, dibuat sekali dengan `keytool -genkeypair -v -keystore <folder>\denlydays.jks -keyalg RSA -keysize 2048 -validity 10000 -alias denlydays -dname "CN=Denly Days, C=ID"`. `android/key.properties` berisi `storeFile`, `storePassword`, `keyAlias`, dan `keyPassword`. Berkas itu dan semua `.jks` tidak masuk git. Tanpa `key.properties`, build rilis berhenti dengan pesan; build debug tetap jalan. Kunci dan kata sandinya harus dicadangkan: pembaruan app hanya bisa dipasang di atas versi lama kalau ditandatangani kunci yang sama.
+- Tanda tangan rilis: kuncinya `denlydays.jks` (alias `denlydays`) di luar repo, di laptop pemilik `C:\Users\LOQ\Documents\Kunci\denlydays.jks`, dibuat sekali dengan `keytool -genkeypair -v -keystore <folder>\denlydays.jks -keyalg RSA -keysize 2048 -validity 10000 -alias denlydays -dname "CN=Denly Days, C=ID"`. `android/key.properties` berisi `storeFile`, `storePassword`, `keyAlias`, dan `keyPassword`. Berkas itu dan semua `.jks` tidak masuk git. Tanpa `key.properties`, build rilis berhenti dengan pesan; build debug tetap jalan. Kunci dan kata sandinya harus dicadangkan: pembaruan app hanya bisa dipasang di atas versi lama kalau ditandatangani kunci yang sama.
 
 ## Struktur (feature-first)
 
