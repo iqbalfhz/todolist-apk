@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "878969336009",
+    "project_id": "todolist-cb119",
+    "storage_bucket": "todolist-cb119.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878969336009:android:f22cefc318980290621d18",
+        "android_client_info": {
+          "package_name": "id.my.iqbalfhz.denlydays"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBq36f6ic7q861N2ojHEianbSe6E0fli98"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
