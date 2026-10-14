@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -5,6 +7,18 @@ plugins {
     // END: FlutterFire Configuration
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Kunci rilis dibaca dari android/key.properties. Berkas itu dan berkas .jks tidak masuk git.
+val releaseKeyFile = rootProject.file("key.properties")
+val releaseKey = Properties().apply {
+    if (releaseKeyFile.exists()) releaseKeyFile.inputStream().use { load(it) }
+}
+
+// Tanpa kunci, build rilis dihentikan di sini; kalau tidak, Gradle diam-diam membuat APK tanpa
+// tanda tangan.
+if (!releaseKeyFile.exists() && gradle.startParameter.taskNames.any { it.contains("Release") }) {
+    throw GradleException("Kunci rilis belum ada: buat android/key.properties (lihat CLAUDE.md).")
 }
 
 android {
@@ -36,11 +50,18 @@ android {
         multiDexEnabled = true
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = releaseKey.getProperty("storeFile")?.let { file(it) }
+            storePassword = releaseKey.getProperty("storePassword")
+            keyAlias = releaseKey.getProperty("keyAlias")
+            keyPassword = releaseKey.getProperty("keyPassword")
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
