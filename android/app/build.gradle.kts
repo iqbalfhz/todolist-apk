@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.todolist"
+    namespace = "id.my.iqbalfhz.denlydays"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -17,8 +17,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.todolist"
+        // ID app di HP dan di Firebase. Kalau diganti, HP menganggapnya app lain dan
+        // app Android di Firebase harus didaftarkan ulang.
+        applicationId = "id.my.iqbalfhz.denlydays"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
