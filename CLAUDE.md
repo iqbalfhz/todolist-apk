@@ -1,19 +1,18 @@
 # CLAUDE.md — mobile (Flutter)
 
-**Denly Days**, app to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pribadi dan Ruang Bersama. Nama paket Dart tetap `todolist`. Pengguna awal: pemilik repo dan pasangannya, keduanya Android. v0.1 sampai v0.3 hanya untuk Android. Semua teks di layar berbahasa Indonesia.
+**Denly Days**, app to-do untuk berdua: tugas, tabungan, liburan, dan kenangan, dengan Ruang Pribadi dan Ruang Bersama. Nama paket Dart tetap `todolist`; ID app Android `id.my.iqbalfhz.denlydays`. Pengguna awal: pemilik repo dan pasangannya, keduanya Android. v0.1 sampai v0.3 hanya untuk Android. Semua teks di layar berbahasa Indonesia.
 
 **Sumber kebenaran API: `docs/kontrak-api.md`.** Baca sebelum menyentuh model, API client, database lokal, antrean, sync, atau notifikasi. Kalau kode dan kontrak berbeda, ikuti kontrak lalu tanyakan. Backend ada di repo `api` (Laravel).
 
 **Sumber kebenaran layar: `docs/layar.md`** (daftar layar, isi, dan navigasi) dan mockup HTML di `docs/mockup/`. Baca sebelum membuat atau mengubah layar.
 
-## Kondisi repo (per 13 Oktober 2026)
+## Kondisi repo (per 14 Oktober 2026)
 
 Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
-- **Firebase belum dikonfigurasi.** `lib/firebase_options.dart` masih berupa pengganti yang melempar error, jadi push dinonaktifkan: app tetap jalan, tetapi token FCM tidak didaftarkan. `flutterfire configure --project=todolist-cb119` menimpa file itu dan membuat `android/app/google-services.json`. Sesudah itu baru bisa diuji: pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi di HP sungguhan. Di tes, bagian itu memakai layanan notifikasi palsu.
-- **`applicationId` masih `com.example.todolist`** (`android/app/build.gradle.kts`). Tetapkan sebelum mendaftarkan app Android di Firebase, karena ID itu ikut terdaftar di sana.
+- **Firebase belum dikonfigurasi.** `lib/firebase_options.dart` masih berupa pengganti yang melempar error, jadi push dinonaktifkan: app tetap jalan, tetapi token FCM tidak didaftarkan. `flutterfire configure --project=todolist-cb119 --platforms=android` mendaftarkan app Android `id.my.iqbalfhz.denlydays` di Firebase, menimpa file itu, dan membuat `android/app/google-services.json`. Sesudah itu baru bisa diuji: pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi di HP sungguhan. Di tes, bagian itu memakai layanan notifikasi palsu.
 - **Build rilis masih ditandatangani kunci debug.** Buat keystore sebelum membagikan APK rilis.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
