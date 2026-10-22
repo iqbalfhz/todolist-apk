@@ -76,6 +76,8 @@ Plus Jakarta Sans, tebal 400, 500, 600, 700. Ukuran dalam dp (1 px di mockup = 1
 | Tautan, label isian | 13 SemiBold | "Lihat semua", "Nama panggilan" |
 | Keterangan kecil | 12 Regular; chip penanggung jawab 12 SemiBold | "Kamu dan pasangan · 2 anggota" |
 | Label sumbu grafik | 11 Regular | "1,0 jt" |
+| Hitung mundur besar (v0.2) | 28 Bold | "1.084 hari" di kartu Bersama sejak |
+| Hitung mundur (v0.2) | 20 Bold | "12 hari lagi" di kartu Tanggal penting Beranda |
 
 ## Bentuk dan jarak
 
@@ -92,6 +94,7 @@ Plus Jakarta Sans, tebal 400, 500, 600, 700. Ukuran dalam dp (1 px di mockup = 1
 | Tombol ikon | 44 × 44 |
 | FAB | 56 × 56, radius 18, 20 dari tepi kanan |
 | Avatar | 36 (kepala Beranda), 80 (Ajak pasangan), 112 (Profil) |
+| Lingkaran ikon | 40 (baris Pengaturan dan Akan datang), 56 dengan ikon 28 (kartu Bersama sejak) |
 | Bar progres | tinggi 6 sampai 8, bulat penuh, jalur `track`, isi `brand` |
 | Jarak antarelemen | 4, 6, 8, 10, 12, 16 |
 

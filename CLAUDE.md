@@ -6,13 +6,13 @@
 
 **Sumber kebenaran layar: `docs/layar.md`** (daftar layar, isi, dan navigasi) dan mockup HTML di `docs/mockup/`. Baca sebelum membuat atau mengubah layar.
 
-## Kondisi repo (per 14 Oktober 2026)
+## Kondisi repo (per 22 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting juga sudah dibangun. Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server). `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
-- **Push belum dicoba di HP sungguhan.** Firebase sudah dikonfigurasi (lihat Konfigurasi), tetapi pendaftaran perangkat (`POST /devices`), push yang sampai ke HP, dan ketukan notifikasi baru diuji dengan layanan notifikasi palsu.
+- Ketukan notifikasi dan pengingat tanggal penting (`special_date_reminder`) belum dicoba di HP sungguhan; di tes keduanya memakai layanan notifikasi palsu.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
@@ -20,14 +20,20 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
-## Cakupan v0.1 (yang sedang dibangun)
+## Cakupan
+
+v0.1:
 
 - Masuk, daftar, izin notifikasi, dan panduan baterai
 - Beranda, Tugas (daftar, tambah cepat, detail), Tabungan (target, setor, riwayat, statistik)
 - Ajak pasangan (kode undangan), Pengaturan (profil dan foto, tema, notifikasi, mata uang)
 - Cache lokal, antrean offline, sync, dan push notification
 
-Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tanggal penting (v0.2), Kenangan (v0.3), ekspor data dan hapus akun (v1.0), iOS.
+v0.2 yang sudah dibangun:
+
+- Tanggal penting: layar Pengaturan > Tanggal penting, koleksi sync `special_dates` dengan sync penuh sekali, hitung mundur dan kartu ucapan hari H di Beranda, ulang tahun anggota dari `birth_date`, switch `special_dates`, dan push `special_date_reminder` (ketuk membuka Beranda)
+
+Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2, kontraknya belum ada), Kenangan (v0.3), ekspor data dan hapus akun (v1.0), iOS.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
@@ -68,7 +74,7 @@ Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2), Tang
 lib/
   core/        api client, database lokal (drift), antrean, sync, tema, router, l10n
   features/
-    auth/  spaces/  tasks/  savings/  home/  settings/   (v0.2: trips/, v0.3: memories/)
+    auth/  spaces/  tasks/  savings/  special_dates/  home/  settings/   (v0.2: trips/, v0.3: memories/)
       data/          sumber data + repository
       domain/        model (freezed)
       presentation/  layar dan widget
@@ -101,16 +107,16 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 
 - Satu sync pada satu waktu. Kirim dulu operasi yang bisa dikirim, lalu tetap tarik data.
 - Halaman pertama `GET /sync?since=...`; berikutnya `?cursor=<next_cursor>` sampai `has_more` false. Simpan `server_time` dari halaman terakhir.
-- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong; sifatnya hanya menambah dan memperbarui.
+- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`); sifatnya hanya menambah dan memperbarui.
 - Saat menerapkan baris: tanpa foreign key check; kolom dengan operasi tertunda tidak ditimpa; baris dengan DELETE tertunda tidak muncul lagi; baris yang lebih tua dari salinan lokal diabaikan.
 - Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda.
 - Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, dan push yang masuk saat app terbuka.
 
 ### Notifikasi
 
-- Dua channel Android: `pengingat` (penting, bersuara) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
+- Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas dan tanggal penting) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
 - Minta izin notifikasi (Android 13+) dengan penjelasan, plus panduan mematikan optimasi baterai untuk merek seperti Xiaomi, Oppo, Vivo, dan Realme.
-- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat.
+- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda.
 
 ## UI
 
