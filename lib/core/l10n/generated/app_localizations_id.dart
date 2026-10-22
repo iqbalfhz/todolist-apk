@@ -256,6 +256,30 @@ class AppLocalizationsId extends AppLocalizations {
   String get homeSavingsCreate => 'Buat target';
 
   @override
+  String get homeDatesTitle => 'Tanggal penting';
+
+  @override
+  String get homeDatesEmpty => 'Belum ada tanggal penting. Simpan hari jadi atau ulang tahun supaya kalian diingatkan.';
+
+  @override
+  String get homeDatesAdd => 'Tambah tanggal';
+
+  @override
+  String homeDatesInDays(int count) {
+    return '$count hari lagi';
+  }
+
+  @override
+  String homeDatesGreeting(String title) {
+    return '$title. Selamat!';
+  }
+
+  @override
+  String homeDatesCaption(String title, String date) {
+    return '$title · $date';
+  }
+
+  @override
   String get filterAll => 'Semua';
 
   @override
@@ -780,6 +804,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsSharedSpaceUnpaired => 'Belum berpasangan · ajak pasanganmu';
 
   @override
+  String get settingsSpecialDates => 'Tanggal penting';
+
+  @override
+  String get settingsSpecialDatesSub => 'Ulang tahun dan anniversary';
+
+  @override
   String get settingsTheme => 'Tema';
 
   @override
@@ -829,6 +859,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get notifSavingsActivitySub => 'Setoran baru dan target tercapai';
+
+  @override
+  String get notifSpecialDates => 'Tanggal penting';
+
+  @override
+  String get notifSpecialDatesSub => 'H-7, H-1, dan hari H pukul 08.00';
 
   @override
   String get settingsCurrency => 'Mata uang';
@@ -925,6 +961,158 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get birthClear => 'Hapus tanggal lahir';
+
+  @override
+  String get datesTitle => 'Tanggal penting';
+
+  @override
+  String get datesToday => 'Hari ini';
+
+  @override
+  String get datesTomorrow => 'Besok';
+
+  @override
+  String datesDaysShort(int count) {
+    return '$count hari';
+  }
+
+  @override
+  String datesTogetherSince(String date) {
+    return 'Bersama sejak $date';
+  }
+
+  @override
+  String datesTogetherDays(String days) {
+    return '$days hari';
+  }
+
+  @override
+  String datesTogetherNextDays(String title, int count) {
+    return '$title tinggal $count hari lagi';
+  }
+
+  @override
+  String datesTogetherNextTomorrow(String title) {
+    return '$title besok';
+  }
+
+  @override
+  String datesTogetherNextToday(String title) {
+    return '$title hari ini';
+  }
+
+  @override
+  String get datesUpcoming => 'Akan datang';
+
+  @override
+  String get datesEmpty =>
+      'Belum ada tanggal penting. Simpan hari jadi atau ulang tahun orang tersayang, nanti kalian diingatkan.';
+
+  @override
+  String get datesBirthdayMine => 'Ulang tahunmu';
+
+  @override
+  String datesBirthdayOf(String name) {
+    return 'Ulang tahun $name';
+  }
+
+  @override
+  String datesOrdinal(String title, int count) {
+    return '$title ke-$count';
+  }
+
+  @override
+  String get datesInShared => 'Ruang Bersama';
+
+  @override
+  String get datesInPrivate => 'Pribadi, untuk kejutan';
+
+  @override
+  String datesRowSemantic(String title, String date, String countdown) {
+    return '$title, $date, $countdown';
+  }
+
+  @override
+  String get datesBirthdayMissing => 'Tanggal lahirmu belum diisi';
+
+  @override
+  String get datesBirthdayMissingSub => 'Isi di Profil supaya pasanganmu diingatkan.';
+
+  @override
+  String get datesReminders => 'Pengingat';
+
+  @override
+  String get datesRemindersSwitch => 'Kirim pengingat';
+
+  @override
+  String get datesRemindersNote =>
+      'Ulang tahun kalian diambil dari Profil dan hanya diingatkan ke pasangan, supaya tetap jadi kejutan.';
+
+  @override
+  String get datesPrivacyNote =>
+      'Simpan di Ruang Pribadi kalau ingin menyiapkan kejutan; pasanganmu tidak akan melihatnya.';
+
+  @override
+  String get datesAdd => 'Tambah tanggal';
+
+  @override
+  String get dateSheetNew => 'Tanggal baru';
+
+  @override
+  String get dateSheetEdit => 'Ubah tanggal';
+
+  @override
+  String get dateTypeLabel => 'Jenis apa?';
+
+  @override
+  String get dateTypeBirthday => 'Ulang tahun';
+
+  @override
+  String get dateTypeAnniversary => 'Anniversary';
+
+  @override
+  String get dateTypeOther => 'Lainnya';
+
+  @override
+  String get dateTitleLabel => 'Apa namanya?';
+
+  @override
+  String get dateTitleHintBirthday => 'Misalnya Ulang tahun Ibu';
+
+  @override
+  String get dateTitleHintAnniversary => 'Misalnya Hari jadi kita';
+
+  @override
+  String get dateTitleHintOther => 'Misalnya Hari pernikahan';
+
+  @override
+  String get dateWhenLabel => 'Kapan?';
+
+  @override
+  String get dateWhenPick => 'Pilih tanggal';
+
+  @override
+  String get dateWhenHelp => 'Tahun boleh dikosongkan. Kalau diisi, kalian bisa melihat ini yang ke berapa.';
+
+  @override
+  String get dateWherePrivateHelp => 'Pasanganmu tidak akan melihat tanggal ini.';
+
+  @override
+  String get dateDelete => 'Hapus tanggal';
+
+  @override
+  String dateDeleteConfirmTitle(String title) {
+    return 'Hapus $title?';
+  }
+
+  @override
+  String get dateDeleteConfirmBody => 'Pengingatnya ikut berhenti.';
+
+  @override
+  String get errorDateTitleRequired => 'Nama tanggal belum diisi.';
+
+  @override
+  String get errorDateRequired => 'Pilih tanggalnya dulu.';
 
   @override
   String outboxRelocated(String list) {

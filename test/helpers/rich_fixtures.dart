@@ -23,6 +23,9 @@ const String tripGoalId = '01m4djq1w0ystkpbz7mqd22k3a';
 /// Target yang sudah tercapai.
 const String achievedGoalId = '01m4djq1w0ystkpbz7mqd22k3c';
 
+/// Tanggal penting berjudul panjang yang jatuh hari ini (kartu ucapan di Beranda).
+const String longDateId = '01m4dm2k70z5bq7rn3xw8c4v5a';
+
 String _taskId(int n) => '01m4dh1yn0t6cdn39q4f09189$n';
 
 String _goalId(String suffix) => '01m4djq1w0ystkpbz7mqd22k3$suffix';
@@ -38,9 +41,29 @@ extension RichHarness on Harness {
     await store.write(EntityType.me, userJson());
     api
       ..me = userJson()
-      ..spaces = [personalSpaceJson(), sharedSpaceJson()];
+      ..spaces = [personalSpaceJson(), sharedSpaceJson(partnerBirthDate: '1999-11-17')];
     await put(EntityType.space, personalSpaceJson());
-    await put(EntityType.space, sharedSpaceJson());
+    await put(EntityType.space, sharedSpaceJson(partnerBirthDate: '1999-11-17'));
+
+    final dates = [
+      specialDateJson(date: '2023-10-20'),
+      specialDateJson(
+        id: longDateId,
+        type: 'other',
+        title: 'Peringatan hari pertama kami pindah ke rumah baru',
+        date: '2021-10-08',
+      ),
+      specialDateJson(
+        id: '01m4dm2k70z5bq7rn3xw8c4v5b',
+        spaceId: personalSpaceId,
+        type: 'birthday',
+        title: 'Ulang tahun Ibu',
+        date: '--12-01',
+      ),
+    ];
+    for (final date in dates) {
+      await put(EntityType.specialDate, date);
+    }
 
     final lists = [
       listJson(id: shoppingListId),

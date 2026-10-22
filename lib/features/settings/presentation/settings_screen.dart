@@ -96,6 +96,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     minHeight: AppDimens.rowMinHeightTall,
                     onTap: () => context.push(Routes.pairing),
                   ),
+                  const RowDivider(),
+                  _NavRow(
+                    leading: Container(
+                      width: AppDimens.iconCircle,
+                      height: AppDimens.iconCircle,
+                      decoration: BoxDecoration(color: palette.soft, shape: BoxShape.circle),
+                      child: Icon(Symbols.favorite_rounded, size: AppDimens.iconLg, color: palette.brand),
+                    ),
+                    title: l10n.settingsSpecialDates,
+                    subtitle: l10n.settingsSpecialDatesSub,
+                    minHeight: AppDimens.rowMinHeightTall,
+                    onTap: () => context.push(Routes.specialDates),
+                  ),
                 ],
               ),
             ),
@@ -354,7 +367,7 @@ class _ThemeCard extends ConsumerWidget {
   }
 }
 
-/// Tiga switch yang memetakan `notification_prefs`.
+/// Switch yang memetakan `notification_prefs`.
 class _NotificationSwitches extends ConsumerWidget {
   const _NotificationSwitches({required this.prefs});
 
@@ -389,6 +402,13 @@ class _NotificationSwitches extends ConsumerWidget {
             subtitle: l10n.notifSavingsActivitySub,
             value: prefs.savingsActivity,
             onChanged: (value) => save(prefs.copyWith(savingsActivity: value)),
+          ),
+          const RowDivider(),
+          SwitchRow(
+            title: l10n.notifSpecialDates,
+            subtitle: l10n.notifSpecialDatesSub,
+            value: prefs.specialDates,
+            onChanged: (value) => save(prefs.copyWith(specialDates: value)),
           ),
         ],
       ),

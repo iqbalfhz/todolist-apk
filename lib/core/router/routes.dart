@@ -12,6 +12,7 @@ abstract final class Routes {
 
   static const String settings = '/pengaturan';
   static const String profile = '/pengaturan/profil';
+  static const String specialDates = '/pengaturan/tanggal-penting';
 
   /// Parameter kueri penanda layar asal, supaya tombol kembali pulang ke Beranda.
   static const String fromParam = 'dari';

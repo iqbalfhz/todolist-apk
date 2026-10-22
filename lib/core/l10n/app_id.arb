@@ -97,6 +97,28 @@
   "homeSavingsTitle": "Tabungan",
   "homeSavingsEmpty": "Belum ada target tabungan. Mulai dari satu target dulu.",
   "homeSavingsCreate": "Buat target",
+  "homeDatesTitle": "Tanggal penting",
+  "homeDatesEmpty": "Belum ada tanggal penting. Simpan hari jadi atau ulang tahun supaya kalian diingatkan.",
+  "homeDatesAdd": "Tambah tanggal",
+  "homeDatesInDays": "{count} hari lagi",
+  "@homeDatesInDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "homeDatesGreeting": "{title}. Selamat!",
+  "@homeDatesGreeting": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "homeDatesCaption": "{title} · {date}",
+  "@homeDatesCaption": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
   "filterAll": "Semua",
   "filterPeopleLabel": "Filter penanggung jawab",
   "addTask": "Tambah tugas",
@@ -420,6 +442,8 @@
   "settingsSharedSpace": "Ruang Bersama",
   "settingsSharedSpacePaired": "Kamu dan pasangan · 2 anggota",
   "settingsSharedSpaceUnpaired": "Belum berpasangan · ajak pasanganmu",
+  "settingsSpecialDates": "Tanggal penting",
+  "settingsSpecialDatesSub": "Ulang tahun dan anniversary",
   "settingsTheme": "Tema",
   "settingsThemePick": "Pilih tema warna",
   "settingsModePick": "Mode tampilan",
@@ -437,6 +461,8 @@
   "notifPartnerActivitySub": "Titipan baru dan tugas selesai",
   "notifSavingsActivity": "Setoran tabungan",
   "notifSavingsActivitySub": "Setoran baru dan target tercapai",
+  "notifSpecialDates": "Tanggal penting",
+  "notifSpecialDatesSub": "H-7, H-1, dan hari H pukul 08.00",
   "settingsCurrency": "Mata uang",
   "settingsCurrencySheet": "Mata uang untuk target baru",
   "settingsBackup": "Backup dan ekspor",
@@ -472,6 +498,105 @@
   "birthYear": "Tahun (opsional)",
   "birthInvalid": "Tanggal itu tidak ada di kalender.",
   "birthClear": "Hapus tanggal lahir",
+
+  "datesTitle": "Tanggal penting",
+  "datesToday": "Hari ini",
+  "datesTomorrow": "Besok",
+  "datesDaysShort": "{count} hari",
+  "@datesDaysShort": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "datesTogetherSince": "Bersama sejak {date}",
+  "@datesTogetherSince": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "datesTogetherDays": "{days} hari",
+  "@datesTogetherDays": {
+    "placeholders": {
+      "days": {"type": "String"}
+    }
+  },
+  "datesTogetherNextDays": "{title} tinggal {count} hari lagi",
+  "@datesTogetherNextDays": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "datesTogetherNextTomorrow": "{title} besok",
+  "@datesTogetherNextTomorrow": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "datesTogetherNextToday": "{title} hari ini",
+  "@datesTogetherNextToday": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "datesUpcoming": "Akan datang",
+  "datesEmpty": "Belum ada tanggal penting. Simpan hari jadi atau ulang tahun orang tersayang, nanti kalian diingatkan.",
+  "datesBirthdayMine": "Ulang tahunmu",
+  "datesBirthdayOf": "Ulang tahun {name}",
+  "@datesBirthdayOf": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "datesOrdinal": "{title} ke-{count}",
+  "@datesOrdinal": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "count": {"type": "int"}
+    }
+  },
+  "datesInShared": "Ruang Bersama",
+  "datesInPrivate": "Pribadi, untuk kejutan",
+  "datesRowSemantic": "{title}, {date}, {countdown}",
+  "@datesRowSemantic": {
+    "placeholders": {
+      "title": {"type": "String"},
+      "date": {"type": "String"},
+      "countdown": {"type": "String"}
+    }
+  },
+  "datesBirthdayMissing": "Tanggal lahirmu belum diisi",
+  "datesBirthdayMissingSub": "Isi di Profil supaya pasanganmu diingatkan.",
+  "datesReminders": "Pengingat",
+  "datesRemindersSwitch": "Kirim pengingat",
+  "datesRemindersNote": "Ulang tahun kalian diambil dari Profil dan hanya diingatkan ke pasangan, supaya tetap jadi kejutan.",
+  "datesPrivacyNote": "Simpan di Ruang Pribadi kalau ingin menyiapkan kejutan; pasanganmu tidak akan melihatnya.",
+  "datesAdd": "Tambah tanggal",
+
+  "dateSheetNew": "Tanggal baru",
+  "dateSheetEdit": "Ubah tanggal",
+  "dateTypeLabel": "Jenis apa?",
+  "dateTypeBirthday": "Ulang tahun",
+  "dateTypeAnniversary": "Anniversary",
+  "dateTypeOther": "Lainnya",
+  "dateTitleLabel": "Apa namanya?",
+  "dateTitleHintBirthday": "Misalnya Ulang tahun Ibu",
+  "dateTitleHintAnniversary": "Misalnya Hari jadi kita",
+  "dateTitleHintOther": "Misalnya Hari pernikahan",
+  "dateWhenLabel": "Kapan?",
+  "dateWhenPick": "Pilih tanggal",
+  "dateWhenHelp": "Tahun boleh dikosongkan. Kalau diisi, kalian bisa melihat ini yang ke berapa.",
+  "dateWherePrivateHelp": "Pasanganmu tidak akan melihat tanggal ini.",
+  "dateDelete": "Hapus tanggal",
+  "dateDeleteConfirmTitle": "Hapus {title}?",
+  "@dateDeleteConfirmTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "dateDeleteConfirmBody": "Pengingatnya ikut berhenti.",
+  "errorDateTitleRequired": "Nama tanggal belum diisi.",
+  "errorDateRequired": "Pilih tanggalnya dulu.",
 
   "outboxRelocated": "Daftarnya sudah tidak tersedia, jadi tugas dipindah ke {list}.",
   "@outboxRelocated": {

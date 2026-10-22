@@ -11,6 +11,7 @@ import '../../features/savings/presentation/savings_screen.dart';
 import '../../features/settings/presentation/profile_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/spaces/presentation/pairing_screen.dart';
+import '../../features/special_dates/presentation/special_dates_screen.dart';
 import '../../features/tasks/presentation/manage_lists_screen.dart';
 import '../../features/tasks/presentation/task_detail_screen.dart';
 import '../../features/tasks/presentation/tasks_screen.dart';
@@ -64,7 +65,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: Routes.settings,
         builder: (_, _) => const SettingsScreen(),
-        routes: [GoRoute(path: 'profil', builder: (_, _) => const ProfileScreen())],
+        routes: [
+          GoRoute(path: 'profil', builder: (_, _) => const ProfileScreen()),
+          GoRoute(path: 'tanggal-penting', builder: (_, _) => const SpecialDatesScreen()),
+        ],
       ),
       // Tab bawah v0.1. Detail tugas dan detail tabungan tetap menampilkan tab bawah.
       StatefulShellRoute.indexedStack(

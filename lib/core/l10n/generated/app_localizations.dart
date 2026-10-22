@@ -565,6 +565,42 @@ abstract class AppLocalizations {
   /// **'Buat target'**
   String get homeSavingsCreate;
 
+  /// No description provided for @homeDatesTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal penting'**
+  String get homeDatesTitle;
+
+  /// No description provided for @homeDatesEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada tanggal penting. Simpan hari jadi atau ulang tahun supaya kalian diingatkan.'**
+  String get homeDatesEmpty;
+
+  /// No description provided for @homeDatesAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah tanggal'**
+  String get homeDatesAdd;
+
+  /// No description provided for @homeDatesInDays.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} hari lagi'**
+  String homeDatesInDays(int count);
+
+  /// No description provided for @homeDatesGreeting.
+  ///
+  /// In id, this message translates to:
+  /// **'{title}. Selamat!'**
+  String homeDatesGreeting(String title);
+
+  /// No description provided for @homeDatesCaption.
+  ///
+  /// In id, this message translates to:
+  /// **'{title} · {date}'**
+  String homeDatesCaption(String title, String date);
+
   /// No description provided for @filterAll.
   ///
   /// In id, this message translates to:
@@ -1459,6 +1495,18 @@ abstract class AppLocalizations {
   /// **'Belum berpasangan · ajak pasanganmu'**
   String get settingsSharedSpaceUnpaired;
 
+  /// No description provided for @settingsSpecialDates.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal penting'**
+  String get settingsSpecialDates;
+
+  /// No description provided for @settingsSpecialDatesSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulang tahun dan anniversary'**
+  String get settingsSpecialDatesSub;
+
   /// No description provided for @settingsTheme.
   ///
   /// In id, this message translates to:
@@ -1560,6 +1608,18 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Setoran baru dan target tercapai'**
   String get notifSavingsActivitySub;
+
+  /// No description provided for @notifSpecialDates.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal penting'**
+  String get notifSpecialDates;
+
+  /// No description provided for @notifSpecialDatesSub.
+  ///
+  /// In id, this message translates to:
+  /// **'H-7, H-1, dan hari H pukul 08.00'**
+  String get notifSpecialDatesSub;
 
   /// No description provided for @settingsCurrency.
   ///
@@ -1734,6 +1794,264 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Hapus tanggal lahir'**
   String get birthClear;
+
+  /// No description provided for @datesTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal penting'**
+  String get datesTitle;
+
+  /// No description provided for @datesToday.
+  ///
+  /// In id, this message translates to:
+  /// **'Hari ini'**
+  String get datesToday;
+
+  /// No description provided for @datesTomorrow.
+  ///
+  /// In id, this message translates to:
+  /// **'Besok'**
+  String get datesTomorrow;
+
+  /// No description provided for @datesDaysShort.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} hari'**
+  String datesDaysShort(int count);
+
+  /// No description provided for @datesTogetherSince.
+  ///
+  /// In id, this message translates to:
+  /// **'Bersama sejak {date}'**
+  String datesTogetherSince(String date);
+
+  /// No description provided for @datesTogetherDays.
+  ///
+  /// In id, this message translates to:
+  /// **'{days} hari'**
+  String datesTogetherDays(String days);
+
+  /// No description provided for @datesTogetherNextDays.
+  ///
+  /// In id, this message translates to:
+  /// **'{title} tinggal {count} hari lagi'**
+  String datesTogetherNextDays(String title, int count);
+
+  /// No description provided for @datesTogetherNextTomorrow.
+  ///
+  /// In id, this message translates to:
+  /// **'{title} besok'**
+  String datesTogetherNextTomorrow(String title);
+
+  /// No description provided for @datesTogetherNextToday.
+  ///
+  /// In id, this message translates to:
+  /// **'{title} hari ini'**
+  String datesTogetherNextToday(String title);
+
+  /// No description provided for @datesUpcoming.
+  ///
+  /// In id, this message translates to:
+  /// **'Akan datang'**
+  String get datesUpcoming;
+
+  /// No description provided for @datesEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada tanggal penting. Simpan hari jadi atau ulang tahun orang tersayang, nanti kalian diingatkan.'**
+  String get datesEmpty;
+
+  /// No description provided for @datesBirthdayMine.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulang tahunmu'**
+  String get datesBirthdayMine;
+
+  /// No description provided for @datesBirthdayOf.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulang tahun {name}'**
+  String datesBirthdayOf(String name);
+
+  /// No description provided for @datesOrdinal.
+  ///
+  /// In id, this message translates to:
+  /// **'{title} ke-{count}'**
+  String datesOrdinal(String title, int count);
+
+  /// No description provided for @datesInShared.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Bersama'**
+  String get datesInShared;
+
+  /// No description provided for @datesInPrivate.
+  ///
+  /// In id, this message translates to:
+  /// **'Pribadi, untuk kejutan'**
+  String get datesInPrivate;
+
+  /// No description provided for @datesRowSemantic.
+  ///
+  /// In id, this message translates to:
+  /// **'{title}, {date}, {countdown}'**
+  String datesRowSemantic(String title, String date, String countdown);
+
+  /// No description provided for @datesBirthdayMissing.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal lahirmu belum diisi'**
+  String get datesBirthdayMissing;
+
+  /// No description provided for @datesBirthdayMissingSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Isi di Profil supaya pasanganmu diingatkan.'**
+  String get datesBirthdayMissingSub;
+
+  /// No description provided for @datesReminders.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingat'**
+  String get datesReminders;
+
+  /// No description provided for @datesRemindersSwitch.
+  ///
+  /// In id, this message translates to:
+  /// **'Kirim pengingat'**
+  String get datesRemindersSwitch;
+
+  /// No description provided for @datesRemindersNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulang tahun kalian diambil dari Profil dan hanya diingatkan ke pasangan, supaya tetap jadi kejutan.'**
+  String get datesRemindersNote;
+
+  /// No description provided for @datesPrivacyNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Simpan di Ruang Pribadi kalau ingin menyiapkan kejutan; pasanganmu tidak akan melihatnya.'**
+  String get datesPrivacyNote;
+
+  /// No description provided for @datesAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah tanggal'**
+  String get datesAdd;
+
+  /// No description provided for @dateSheetNew.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal baru'**
+  String get dateSheetNew;
+
+  /// No description provided for @dateSheetEdit.
+  ///
+  /// In id, this message translates to:
+  /// **'Ubah tanggal'**
+  String get dateSheetEdit;
+
+  /// No description provided for @dateTypeLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Jenis apa?'**
+  String get dateTypeLabel;
+
+  /// No description provided for @dateTypeBirthday.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulang tahun'**
+  String get dateTypeBirthday;
+
+  /// No description provided for @dateTypeAnniversary.
+  ///
+  /// In id, this message translates to:
+  /// **'Anniversary'**
+  String get dateTypeAnniversary;
+
+  /// No description provided for @dateTypeOther.
+  ///
+  /// In id, this message translates to:
+  /// **'Lainnya'**
+  String get dateTypeOther;
+
+  /// No description provided for @dateTitleLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Apa namanya?'**
+  String get dateTitleLabel;
+
+  /// No description provided for @dateTitleHintBirthday.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Ulang tahun Ibu'**
+  String get dateTitleHintBirthday;
+
+  /// No description provided for @dateTitleHintAnniversary.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Hari jadi kita'**
+  String get dateTitleHintAnniversary;
+
+  /// No description provided for @dateTitleHintOther.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Hari pernikahan'**
+  String get dateTitleHintOther;
+
+  /// No description provided for @dateWhenLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Kapan?'**
+  String get dateWhenLabel;
+
+  /// No description provided for @dateWhenPick.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih tanggal'**
+  String get dateWhenPick;
+
+  /// No description provided for @dateWhenHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Tahun boleh dikosongkan. Kalau diisi, kalian bisa melihat ini yang ke berapa.'**
+  String get dateWhenHelp;
+
+  /// No description provided for @dateWherePrivateHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Pasanganmu tidak akan melihat tanggal ini.'**
+  String get dateWherePrivateHelp;
+
+  /// No description provided for @dateDelete.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus tanggal'**
+  String get dateDelete;
+
+  /// No description provided for @dateDeleteConfirmTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus {title}?'**
+  String dateDeleteConfirmTitle(String title);
+
+  /// No description provided for @dateDeleteConfirmBody.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingatnya ikut berhenti.'**
+  String get dateDeleteConfirmBody;
+
+  /// No description provided for @errorDateTitleRequired.
+  ///
+  /// In id, this message translates to:
+  /// **'Nama tanggal belum diisi.'**
+  String get errorDateTitleRequired;
+
+  /// No description provided for @errorDateRequired.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih tanggalnya dulu.'**
+  String get errorDateRequired;
 
   /// No description provided for @outboxRelocated.
   ///

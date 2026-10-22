@@ -15,10 +15,14 @@ import '../../savings/domain/savings_views.dart';
 import '../../savings/presentation/goal_form_sheet.dart';
 import '../../spaces/domain/household.dart';
 import '../../spaces/presentation/member_avatar.dart';
+import '../../special_dates/domain/upcoming_dates.dart';
+import '../../special_dates/presentation/special_date_sheet.dart';
+import '../../special_dates/presentation/special_date_text.dart';
 import '../../tasks/domain/task_views.dart';
 import '../../tasks/presentation/task_row.dart';
 
-/// Beranda: sapaan, tugas hari ini (termasuk yang terlewat), dan target tabungan utama.
+/// Beranda: sapaan, tugas hari ini (termasuk yang terlewat), target tabungan utama,
+/// dan tanggal penting terdekat (v0.2).
 ///
 /// Semuanya dihitung dari cache lokal, jadi tetap cepat dan jalan saat offline.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -54,6 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final household = ref.watch(householdProvider);
     final items = ref.watch(taskItemsProvider);
     final goals = ref.watch(goalProgressProvider);
+    final upcoming = ref.watch(upcomingDatesProvider);
     final header = _headerTime(ref.watch(nowProvider), household);
 
     final greeting = Column(
@@ -65,7 +70,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ],
     );
 
-    if (household == null || items == null || goals == null) {
+    if (household == null || items == null || goals == null || upcoming == null) {
       return PageBody(
         children: [
           greeting,
@@ -97,6 +102,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         const SizedBox(height: AppDimens.gap12),
         _SavingsCard(goal: primaryGoal(goals)),
+        const SizedBox(height: AppDimens.gap12),
+        _SpecialDateCard(nearest: upcoming.nearest, currentYear: header.date.year),
       ],
     );
   }
@@ -291,6 +298,93 @@ class _SavingsCard extends StatelessWidget {
                       formatMoney(progress.goal.targetAmount, progress.goal.currency),
                     ),
                     style: text.caption,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tanggal penting terdekat: hitung mundur, atau kartu ucapan di hari H.
+class _SpecialDateCard extends StatelessWidget {
+  const _SpecialDateCard({required this.nearest, required this.currentYear});
+
+  /// `null` kalau belum ada tanggal penting atau ulang tahun yang diketahui.
+  final UpcomingDate? nearest;
+  final int currentYear;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final palette = context.palette;
+    final text = context.text;
+    final item = nearest;
+    void open() => context.push(Routes.specialDates);
+
+    return AppCard(
+      semanticLabel: l10n.homeDatesTitle,
+      padding: const EdgeInsets.fromLTRB(AppDimens.cardPadding, AppDimens.gap4, AppDimens.cardPadding, AppDimens.gap12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(l10n.homeDatesTitle, style: text.cardTitle)),
+              TextButton(
+                onPressed: open,
+                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                child: Text(l10n.commonSeeAll),
+              ),
+            ],
+          ),
+          if (item == null)
+            EmptyState(
+              message: l10n.homeDatesEmpty,
+              actionLabel: l10n.homeDatesAdd,
+              onAction: () => showSpecialDateSheet(context),
+            )
+          else
+            InkWell(
+              onTap: open,
+              child: Row(
+                children: [
+                  ExcludeSemantics(
+                    child: Container(
+                      width: AppDimens.iconCircle,
+                      height: AppDimens.iconCircle,
+                      decoration: BoxDecoration(color: palette.soft, shape: BoxShape.circle),
+                      child: Icon(
+                        item.isToday ? Symbols.celebration_rounded : typeIcon(item.type),
+                        size: AppDimens.iconLg,
+                        color: palette.brand,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppDimens.gap12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Hari H: kartu ucapan, misalnya "Hari jadi kita ke-3. Selamat!".
+                        Text(
+                          item.isToday
+                              ? l10n.homeDatesGreeting(upcomingTitle(l10n, item))
+                              : countdownLong(l10n, item.daysLeft),
+                          style: text.countdown,
+                        ),
+                        const SizedBox(height: AppDimens.gap2),
+                        Text(
+                          l10n.homeDatesCaption(
+                            item.isToday ? l10n.datesToday : upcomingTitle(l10n, item),
+                            upcomingDay(item, currentYear: currentYear),
+                          ),
+                          style: text.small,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

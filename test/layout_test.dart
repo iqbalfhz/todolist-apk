@@ -8,6 +8,8 @@ import 'package:todolist/core/router/routes.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
 import 'package:todolist/features/savings/presentation/savings_screen.dart';
+import 'package:todolist/features/special_dates/presentation/special_date_sheet.dart';
+import 'package:todolist/features/special_dates/presentation/special_dates_screen.dart';
 import 'package:todolist/features/tasks/presentation/list_form_sheet.dart';
 import 'package:todolist/features/tasks/presentation/manage_lists_screen.dart';
 
@@ -118,6 +120,18 @@ void main() {
       await visit(tester, container, Routes.settings);
       await visit(tester, container, Routes.profile);
       await visit(tester, container, Routes.pairing);
+
+      await visit(tester, container, Routes.specialDates);
+      await withSheet(tester, container, () async {
+        final date = container.read(specialDatesProvider).value!.firstWhere((date) => date.id == longDateId);
+        showSpecialDateSheet(tester.element(find.byType(SpecialDatesScreen)), date: date).ignore();
+      });
+      await withSheet(tester, container, () async {
+        await tester.tap(find.widgetWithText(FilledButton, 'Tambah tanggal'));
+        await settle(tester);
+        // Pilihan Pribadi menambah keterangan di bawahnya.
+        await tester.tap(find.text('Pribadi'));
+      });
 
       await disposeApp(tester, h);
     });

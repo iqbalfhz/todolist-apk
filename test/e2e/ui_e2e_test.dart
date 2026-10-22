@@ -35,6 +35,7 @@ import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/domain/user.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
+import 'package:todolist/features/special_dates/domain/special_date.dart';
 
 import '../helpers/app_harness.dart';
 import '../helpers/fake_push.dart';
@@ -130,7 +131,7 @@ void main() {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   });
 
-  testWidgets('seluruh fitur v0.1 lewat layar, terhadap API sungguhan', (tester) async {
+  testWidgets('seluruh fitur v0.1 dan Tanggal penting v0.2 lewat layar, terhadap API sungguhan', (tester) async {
     final semantics = tester.ensureSemantics();
     WidgetController.hitTestWarningShouldBeFatal = true;
     addTearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
@@ -563,6 +564,14 @@ void main() {
     await go(Routes.settings);
     await tap(find.text('Aktivitas pasangan'));
     await net();
+    // Switch keempat (v0.2) ada di bawah; daftar baru membangunnya setelah digulir.
+    await tester.scrollUntilVisible(
+      find.text('H-7, H-1, dan hari H pukul 08.00'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tap(find.text('H-7, H-1, dan hari H pukul 08.00'));
+    await net();
     await tap(find.text('Mata uang'));
     await tap(find.text('Dolar AS (USD)'));
     await net();
@@ -571,6 +580,7 @@ void main() {
       'task_reminders': true,
       'partner_activity': false,
       'savings_activity': true,
+      'special_dates': false,
     });
     expect(profile['default_currency'], 'USD');
     expect(find.text('Dolar AS (USD)'), findsOneWidget);
@@ -687,6 +697,82 @@ void main() {
     expect(find.text(r'+US$125,50'), findsOneWidget);
     expect(find.text('25%'), findsOneWidget);
 
+    // ---------------------------------------------------------------- tanggal penting (v0.2)
+
+    step('Tanggal penting: hari jadi di Ruang Bersama, dengan tahun');
+    await go(Routes.specialDates);
+    // Tanggal lahirku sudah diisi di Profil, jadi ulang tahunku langsung dihitung mundur.
+    expect(find.text('Ulang tahunmu'), findsOneWidget);
+    await tap(find.widgetWithText(FilledButton, 'Tambah tanggal'));
+    await tester.enterText(find.byType(TextField), 'Hari jadi kita');
+    await tap(find.text('Pilih tanggal'));
+    await tap(find.text('Januari'));
+    await tap(find.text('Februari').last);
+    await tester.enterText(find.byType(TextField).last, '2023');
+    await tap(find.widgetWithText(TextButton, 'Simpan'));
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final anniversary = await serverRow('special_dates', (row) => row['title'] == 'Hari jadi kita');
+    expect(anniversary['type'], 'anniversary');
+    expect(anniversary['date'], '2023-02-01');
+    expect(find.text('Bersama sejak 1 Feb 2023'), findsOneWidget);
+
+    step('Sampai ke HP pasangan bersama tanggal lahirku; pasangan menyiapkan kejutan di Ruang Pribadi');
+    await asPartner(() async {
+      await partner.syncNow();
+      final shared = await partner.sharedSpace();
+      final received = (await partner.account.dates.watchAll().first).singleWhere(
+        (date) => date.id == anniversary['id'],
+      );
+      expect(received.spaceId, shared.id);
+      expect(received.date, '2023-02-01');
+      expect(shared.members.firstWhere((member) => member.id != partner.user.id).birthDate, '--01-01');
+
+      final personal = (await partner.account.store.spaces()).firstWhere((space) => space.isPersonal);
+      await partner.account.dates.create(
+        spaceId: personal.id,
+        type: SpecialDateType.birthday,
+        title: 'Kejutan untuk Iqbal',
+        date: '--01-01',
+      );
+      await partner.account.profile.update(birthDate: '1999-11-17');
+      await partner.syncNow();
+    });
+
+    step('Ulang tahun pasangan dari profilnya tampil; tanggal pribadinya tidak');
+    await pullToRefresh();
+    expect(find.textContaining('Ulang tahun Sari ke-'), findsOneWidget);
+    expect(find.text('Kejutan untuk Iqbal'), findsNothing);
+    expect((await serverRows('special_dates')).where((row) => row['title'] == 'Kejutan untuk Iqbal'), isEmpty);
+
+    step('Beranda menghitung mundur tanggal terdekat');
+    await go(Routes.home);
+    expect(find.text('Tanggal penting'), findsOneWidget);
+    expect(find.textContaining(RegExp(r'^(\d+ hari lagi|Besok|.*Selamat!)$')), findsOneWidget);
+    await go(Routes.specialDates);
+
+    step('Ubah lalu hapus tanggal');
+    // Baris di "Akan datang"; kartu "Bersama sejak" juga menyebut namanya.
+    await tap(find.textContaining(RegExp(r'^Hari jadi kita ke-\d+$')));
+    await tester.enterText(find.byType(TextField), 'Hari jadi');
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+    expect((await serverRow('special_dates', (row) => row['id'] == anniversary['id']))['title'], 'Hari jadi');
+
+    await tap(find.textContaining(RegExp(r'^Hari jadi ke-\d+$')));
+    await tap(find.text('Hapus tanggal'));
+    expect(find.text('Hapus Hari jadi?'), findsOneWidget);
+    await tap(find.widgetWithText(TextButton, 'Hapus'));
+    await net();
+    expect((await serverRows('special_dates')).where((row) => row['id'] == anniversary['id']), isEmpty);
+    expect(find.text('Bersama sejak 1 Feb 2023'), findsNothing);
+
+    await asPartner(() async {
+      await partner.syncNow();
+      expect((await partner.account.dates.watchAll().first).map((date) => date.id), isNot(contains(anniversary['id'])));
+    });
+
     // ---------------------------------------------------------------- offline
 
     step('Offline: perubahan tersimpan di antrean, lalu terkirim saat online');
@@ -723,6 +809,12 @@ void main() {
 
     step('Keluar');
     await go(Routes.settings);
+    // Tombol Keluar ada di paling bawah; daftar baru membangunnya setelah digulir.
+    await tester.scrollUntilVisible(
+      find.widgetWithText(OutlinedButton, 'Keluar'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
     await tap(find.widgetWithText(OutlinedButton, 'Keluar'));
     expect(find.text('Keluar dari akun ini?'), findsOneWidget);
     expect(find.text('Kamu bisa masuk lagi kapan saja.'), findsOneWidget);

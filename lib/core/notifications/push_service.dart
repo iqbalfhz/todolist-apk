@@ -12,7 +12,7 @@ import '../../firebase_options.dart';
 /// Channel Android, dibuat saat app pertama dibuka. Keduanya bisa dimatikan
 /// terpisah dari pengaturan Android.
 abstract final class PushChannels {
-  /// Penting dan bersuara: pengingat tenggat.
+  /// Penting dan bersuara: pengingat tenggat dan tanggal penting.
   static const String reminders = 'pengingat';
 
   /// Normal: titipan, tugas selesai, setoran, dan pasangan bergabung.
@@ -26,7 +26,7 @@ class PushMessage {
   final String? title;
   final String? body;
 
-  /// `type` dan `space_id`, ditambah `task_id` atau `savings_goal_id`.
+  /// `type` dan `space_id`, ditambah `task_id`, `savings_goal_id`, `special_date_id`, atau `member_id`.
   final Map<String, String> data;
 
   String get type => data['type'] ?? '';
@@ -35,18 +35,29 @@ class PushMessage {
 
   String? get goalId => data['savings_goal_id'];
 
+  /// Tanggal penting yang diingatkan `special_date_reminder` (v0.2).
+  String? get specialDateId => _filled(data['special_date_id']);
+
+  /// Anggota yang berulang tahun, untuk `special_date_reminder` (v0.2).
+  String? get memberId => _filled(data['member_id']);
+
   bool get isAboutTask => type.startsWith('task_');
 
   bool get isAboutSavings => type.startsWith('savings_');
 
-  String get channel => type == 'task_reminder' ? PushChannels.reminders : PushChannels.activity;
+  String get channel =>
+      type == 'task_reminder' || type == 'special_date_reminder' ? PushChannels.reminders : PushChannels.activity;
 
   /// Kunci yang membuat notifikasi untuk hal yang sama menimpa yang lama.
   String get tag {
     if (taskId != null) return 'task-$taskId';
     if (goalId != null) return 'goal-$goalId';
+    if (specialDateId != null) return 'date-$specialDateId';
+    if (memberId != null) return 'birthday-$memberId';
     return 'space-${data['space_id'] ?? ''}';
   }
+
+  static String? _filled(String? value) => value == null || value.isEmpty ? null : value;
 
   /// ID angka notifikasi lokal, diturunkan dari [tag] (FNV-1a, 31 bit).
   int get localId {
@@ -173,7 +184,7 @@ class FirebasePushService implements PushService {
         const AndroidNotificationChannel(
           PushChannels.reminders,
           'Pengingat',
-          description: 'Pengingat saat tenggat tugas tiba.',
+          description: 'Pengingat saat tenggat tugas tiba dan menjelang tanggal penting.',
           importance: Importance.high,
         ),
       );

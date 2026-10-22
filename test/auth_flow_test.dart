@@ -170,7 +170,8 @@ void main() {
 
     await tester.tap(find.bySemanticsLabel('Buka Pengaturan'));
     await settle(tester);
-    await tester.ensureVisible(find.text('Keluar'));
+    // Tombol Keluar ada di paling bawah; daftar baru membangunnya setelah digulir.
+    await tester.scrollUntilVisible(find.text('Keluar'), 200, scrollable: find.byType(Scrollable).first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Keluar'));
     await settle(tester);

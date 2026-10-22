@@ -13,6 +13,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
     required this.screenTitle,
     required this.heroTitle,
     required this.amountLarge,
+    required this.countdownLarge,
+    required this.countdown,
     required this.sheetTitle,
     required this.cardTitle,
     required this.button,
@@ -60,6 +62,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       screenTitle: style(20, bold),
       heroTitle: style(22, bold, spacing: -0.2),
       amountLarge: style(22, bold, spacing: -0.3),
+      countdownLarge: style(28, bold, spacing: -0.5),
+      countdown: style(20, bold, spacing: -0.3),
       sheetTitle: style(18, bold),
       cardTitle: style(16, bold),
       button: style(16, bold),
@@ -103,6 +107,12 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
 
   /// Nominal besar — 22 Bold.
   final TextStyle amountLarge;
+
+  /// Jumlah hari di kartu "Bersama sejak" ("1.084 hari") — 28 Bold.
+  final TextStyle countdownLarge;
+
+  /// Hitung mundur di kartu Tanggal penting Beranda ("12 hari lagi") — 20 Bold.
+  final TextStyle countdown;
 
   /// Judul lembar bawah — 18 Bold.
   final TextStyle sheetTitle;
@@ -192,6 +202,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       screenTitle: mix(screenTitle, other.screenTitle),
       heroTitle: mix(heroTitle, other.heroTitle),
       amountLarge: mix(amountLarge, other.amountLarge),
+      countdownLarge: mix(countdownLarge, other.countdownLarge),
+      countdown: mix(countdown, other.countdown),
       sheetTitle: mix(sheetTitle, other.sheetTitle),
       cardTitle: mix(cardTitle, other.cardTitle),
       button: mix(button, other.button),

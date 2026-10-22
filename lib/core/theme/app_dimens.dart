@@ -58,6 +58,9 @@ abstract final class AppDimens {
   static const double rowMinHeightTall = 60;
   static const double rowMinHeightSettings = 56;
   static const double rowMinHeightHistory = 48;
+
+  /// Baris di daftar "Akan datang" Tanggal penting.
+  static const double rowMinHeightLarge = 72;
   static const double listHeaderHeight = 40;
 
   // Tugas.
@@ -91,6 +94,9 @@ abstract final class AppDimens {
 
   /// Lingkaran ikon di baris Pengaturan.
   static const double iconCircle = 40;
+
+  /// Lingkaran ikon di kartu "Bersama sejak".
+  static const double featureCircle = 56;
   static const double badge = 20;
 
   // Progres.
@@ -124,6 +130,9 @@ abstract final class AppDimens {
   static const double iconMd = 18;
   static const double iconLg = 20;
   static const double iconXl = 22;
+
+  /// Ikon di lingkaran [featureCircle].
+  static const double iconFeature = 28;
   static const double iconXxl = 34;
   static const double iconHero = 52;
 
