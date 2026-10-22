@@ -46,9 +46,10 @@ String formatMonthShort(int year, int month) => DateFormat('MMM', dateLocale).fo
 /// Jam 24 jam dengan titik: `17:00` menjadi "17.00".
 String formatClock(String hm) => hm.replaceAll(':', '.');
 
-/// Tanggal lahir dari kontrak: `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi.
-class BirthDate {
-  const BirthDate({this.year, required this.month, required this.day});
+/// Tanggal tahunan dari kontrak, dipakai `birth_date` dan tanggal penting:
+/// `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi.
+class AnnualDate {
+  const AnnualDate({this.year, required this.month, required this.day});
 
   final int? year;
   final int month;
@@ -59,12 +60,12 @@ class BirthDate {
 
   static final RegExp _pattern = RegExp(r'^(\d{4}|-)-(\d{2})-(\d{2})$');
 
-  static BirthDate? tryParse(String? value) {
+  static AnnualDate? tryParse(String? value) {
     if (value == null) return null;
     final match = _pattern.firstMatch(value);
     if (match == null) return null;
 
-    final date = BirthDate(
+    final date = AnnualDate(
       year: match.group(1) == '-' ? null : int.parse(match.group(1)!),
       month: int.parse(match.group(2)!),
       day: int.parse(match.group(3)!),
@@ -86,5 +87,28 @@ class BirthDate {
   String format() {
     final date = DateTime.utc(year ?? _yearWhenOmitted, month, day);
     return DateFormat(year == null ? 'd MMMM' : 'd MMMM y', dateLocale).format(date);
+  }
+
+  /// Hari jatuhnya tanggal ini pada [year] (`YYYY-MM-DD`). Sama dengan server,
+  /// 29 Februari jatuh pada 28 Februari di tahun biasa.
+  String inYear(int year) {
+    final leap = DateTime.utc(year, 2, 29).month == 2;
+    return toYmd(year, month, month == 2 && day == 29 && !leap ? 28 : day);
+  }
+
+  /// Hari jatuhnya berikutnya mulai [today]: tahun ini kalau belum lewat, selain itu tahun depan.
+  /// Tahunnya tidak dipakai, sama seperti pengingat di server.
+  String nextFrom(String today) {
+    final year = parseYmd(today).year;
+    final thisYear = inYear(year);
+    return daysBetween(today, thisYear) >= 0 ? thisYear : inYear(year + 1);
+  }
+
+  /// Ini yang ke berapa pada [occurrence], misalnya 3 untuk hari jadi ketiga.
+  /// `null` kalau tahunnya tidak diisi atau [occurrence] belum melewati tahun itu.
+  int? ordinalAt(String occurrence) {
+    if (year == null) return null;
+    final ordinal = parseYmd(occurrence).year - year!;
+    return ordinal >= 1 ? ordinal : null;
   }
 }

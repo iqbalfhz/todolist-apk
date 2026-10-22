@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -37,7 +36,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   bool _filled = false;
   String? _color;
-  BirthDate? _birthDate;
+  AnnualDate? _birthDate;
   bool _birthDateChanged = false;
   String? _nameError;
   bool _photoBusy = false;
@@ -174,10 +173,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     },
   );
 
-  Future<void> _editBirthDate(BirthDate? current) async {
-    final result = await showDialog<_BirthDateResult>(
-      context: context,
-      builder: (_) => _BirthDateDialog(initial: current),
+  Future<void> _editBirthDate(AnnualDate? current) async {
+    final l10n = context.l10n;
+    final result = await pickAnnualDate(
+      context,
+      title: l10n.profileBirthDate,
+      initial: current,
+      clearLabel: l10n.birthClear,
     );
     if (result == null || !mounted) return;
 
@@ -231,7 +233,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     final color = _color ?? me.color;
-    final birthDate = _birthDateChanged ? _birthDate : BirthDate.tryParse(me.birthDate);
+    final birthDate = _birthDateChanged ? _birthDate : AnnualDate.tryParse(me.birthDate);
 
     return AppScaffold(
       child: PageBody(
@@ -324,7 +326,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           LabeledField(
             label: l10n.profileBirthDate,
             help: l10n.profileBirthDateHelp,
-            child: _FieldButton(
+            child: FieldButton(
               label: birthDate?.format() ?? l10n.profileBirthDateEmpty,
               filled: birthDate != null,
               icon: Symbols.calendar_today_rounded,
@@ -340,170 +342,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           PrimaryButton(label: l10n.commonSave, onPressed: () => _save(me)),
         ],
       ),
-    );
-  }
-}
-
-/// Tombol berbentuk isian teks, untuk nilai yang dipilih lewat dialog.
-class _FieldButton extends StatelessWidget {
-  const _FieldButton({required this.label, required this.filled, required this.icon, required this.onTap});
-
-  final String label;
-  final bool filled;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-
-    return Material(
-      color: palette.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimens.fieldRadius),
-        side: BorderSide(color: palette.line, width: AppDimens.borderWidth),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: AppDimens.fieldHeight),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppDimens.fieldSidePadding),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(label, style: context.text.input.copyWith(color: filled ? palette.text : palette.muted)),
-                ),
-                Icon(icon, size: AppDimens.iconMd),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BirthDateResult {
-  const _BirthDateResult(this.value);
-
-  /// `null` berarti tanggal lahir dihapus.
-  final BirthDate? value;
-}
-
-/// Pilih tanggal lahir. Tahun boleh dikosongkan.
-class _BirthDateDialog extends StatefulWidget {
-  const _BirthDateDialog({this.initial});
-
-  final BirthDate? initial;
-
-  @override
-  State<_BirthDateDialog> createState() => _BirthDateDialogState();
-}
-
-class _BirthDateDialogState extends State<_BirthDateDialog> {
-  late int _day = widget.initial?.day ?? 1;
-  late int _month = widget.initial?.month ?? 1;
-  late final TextEditingController _year = TextEditingController(text: widget.initial?.year?.toString() ?? '');
-  String? _error;
-
-  @override
-  void dispose() {
-    _year.dispose();
-    super.dispose();
-  }
-
-  void _submit() {
-    final yearText = _year.text.trim();
-    final date = BirthDate(year: yearText.isEmpty ? null : int.tryParse(yearText), month: _month, day: _day);
-
-    // Dicek dengan kalender: 30 Februari ditolak, 29 Februari boleh tanpa tahun.
-    if ((yearText.isNotEmpty && date.year == null) || !date.isValid) {
-      return setState(() => _error = context.l10n.birthInvalid);
-    }
-    Navigator.of(context).pop(_BirthDateResult(date));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final text = context.text;
-
-    return AlertDialog(
-      title: Text(l10n.profileBirthDate),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: LabeledField(
-                    label: l10n.birthDay,
-                    child: DropdownButtonFormField<int>(
-                      initialValue: _day,
-                      style: text.input,
-                      items: [for (var day = 1; day <= 31; day++) DropdownMenuItem(value: day, child: Text('$day'))],
-                      onChanged: (day) => setState(() {
-                        _day = day ?? _day;
-                        _error = null;
-                      }),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: AppDimens.gap8),
-                Expanded(
-                  flex: 3,
-                  child: LabeledField(
-                    label: l10n.birthMonth,
-                    child: DropdownButtonFormField<int>(
-                      initialValue: _month,
-                      style: text.input,
-                      isExpanded: true,
-                      items: [
-                        for (var month = 1; month <= 12; month++)
-                          DropdownMenuItem(
-                            value: month,
-                            child: Text(DateFormat('MMMM', dateLocale).format(DateTime.utc(2000, month))),
-                          ),
-                      ],
-                      onChanged: (month) => setState(() {
-                        _month = month ?? _month;
-                        _error = null;
-                      }),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppDimens.gap12),
-            LabeledField(
-              label: l10n.birthYear,
-              child: TextField(
-                controller: _year,
-                style: text.input,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
-                decoration: InputDecoration(errorText: _error),
-                onChanged: (_) => setState(() => _error = null),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        if (widget.initial != null)
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(const _BirthDateResult(null)),
-            style: TextButton.styleFrom(foregroundColor: context.palette.danger),
-            child: Text(l10n.birthClear),
-          ),
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
-        TextButton(onPressed: _submit, child: Text(l10n.commonSave)),
-      ],
     );
   }
 }

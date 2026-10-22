@@ -121,24 +121,49 @@ void main() {
     });
 
     test('tanggal lahir: tahun boleh kosong', () {
-      final noYear = BirthDate.tryParse('--03-02')!;
+      final noYear = AnnualDate.tryParse('--03-02')!;
       expect(noYear.year, isNull);
       expect(noYear.format(), '2 Maret');
       expect(noYear.toContract(), '--03-02');
 
-      final withYear = BirthDate.tryParse('1998-03-02')!;
+      final withYear = AnnualDate.tryParse('1998-03-02')!;
       expect(withYear.format(), '2 Maret 1998');
       expect(withYear.toContract(), '1998-03-02');
     });
 
     test('tanggal lahir dicek dengan kalender, sama seperti server', () {
-      expect(BirthDate.tryParse('--02-29'), isNotNull);
-      expect(BirthDate.tryParse('--02-30'), isNull);
-      expect(BirthDate.tryParse('2001-02-29'), isNull);
-      expect(BirthDate.tryParse('2000-02-29'), isNotNull);
-      expect(BirthDate.tryParse('--13-01'), isNull);
-      expect(BirthDate.tryParse('03-02'), isNull);
-      expect(BirthDate.tryParse(null), isNull);
+      expect(AnnualDate.tryParse('--02-29'), isNotNull);
+      expect(AnnualDate.tryParse('--02-30'), isNull);
+      expect(AnnualDate.tryParse('2001-02-29'), isNull);
+      expect(AnnualDate.tryParse('2000-02-29'), isNotNull);
+      expect(AnnualDate.tryParse('--13-01'), isNull);
+      expect(AnnualDate.tryParse('03-02'), isNull);
+      expect(AnnualDate.tryParse(null), isNull);
+    });
+
+    test('tanggal tahunan: hari jatuhnya berikutnya, tahun ini kalau belum lewat', () {
+      final anniversary = AnnualDate.tryParse('2023-10-29')!;
+      expect(anniversary.nextFrom('2026-10-08'), '2026-10-29');
+      expect(anniversary.nextFrom('2026-10-29'), '2026-10-29', reason: 'hari H masih tahun ini');
+      expect(anniversary.nextFrom('2026-10-30'), '2027-10-29');
+
+      // Tahun yang belum tiba tidak memengaruhi hari jatuhnya, sama seperti pengingat di server.
+      expect(AnnualDate.tryParse('2030-01-05')!.nextFrom('2026-10-08'), '2027-01-05');
+    });
+
+    test('29 Februari jatuh pada 28 Februari di tahun biasa', () {
+      final leapDay = AnnualDate.tryParse('--02-29')!;
+      expect(leapDay.inYear(2026), '2026-02-28');
+      expect(leapDay.inYear(2028), '2028-02-29');
+      expect(leapDay.nextFrom('2026-03-01'), '2027-02-28');
+      expect(leapDay.nextFrom('2027-03-01'), '2028-02-29');
+    });
+
+    test('angka "ke-N" hanya kalau tahunnya diisi dan sudah lewat', () {
+      expect(AnnualDate.tryParse('2023-10-29')!.ordinalAt('2026-10-29'), 3);
+      expect(AnnualDate.tryParse('2026-10-29')!.ordinalAt('2026-10-29'), isNull);
+      expect(AnnualDate.tryParse('2030-10-29')!.ordinalAt('2026-10-29'), isNull);
+      expect(AnnualDate.tryParse('--10-29')!.ordinalAt('2026-10-29'), isNull);
     });
   });
 
