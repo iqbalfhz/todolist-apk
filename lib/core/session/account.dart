@@ -1,6 +1,7 @@
 import '../../features/auth/data/profile_repository.dart';
 import '../../features/savings/data/savings_repository.dart';
 import '../../features/spaces/data/space_repository.dart';
+import '../../features/special_dates/data/special_date_repository.dart';
 import '../../features/tasks/data/task_list_repository.dart';
 import '../../features/tasks/data/task_repository.dart';
 import '../api/api_transport.dart';
@@ -32,6 +33,7 @@ class Account {
     tasks = TaskRepository(writer: writer, userId: userId);
     lists = TaskListRepository(writer: writer, userId: userId);
     savings = SavingsRepository(writer: writer, userId: userId);
+    dates = SpecialDateRepository(writer: writer, userId: userId);
     profile = ProfileRepository(writer: writer, api: api, applier: applier, userId: userId);
     spaces = SpaceRepository(store: store, api: api, applier: applier);
   }
@@ -47,6 +49,7 @@ class Account {
   late final TaskRepository tasks;
   late final TaskListRepository lists;
   late final SavingsRepository savings;
+  late final SpecialDateRepository dates;
   late final ProfileRepository profile;
   late final SpaceRepository spaces;
 

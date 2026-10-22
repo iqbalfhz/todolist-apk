@@ -44,12 +44,14 @@ _NotificationPrefs _$NotificationPrefsFromJson(Map<String, dynamic> json) => _No
   taskReminders: json['task_reminders'] as bool? ?? true,
   partnerActivity: json['partner_activity'] as bool? ?? true,
   savingsActivity: json['savings_activity'] as bool? ?? true,
+  specialDates: json['special_dates'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$NotificationPrefsToJson(_NotificationPrefs instance) => <String, dynamic>{
   'task_reminders': instance.taskReminders,
   'partner_activity': instance.partnerActivity,
   'savings_activity': instance.savingsActivity,
+  'special_dates': instance.specialDates,
 };
 
 _Invitation _$InvitationFromJson(Map<String, dynamic> json) =>

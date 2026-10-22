@@ -103,7 +103,7 @@ class LocalWriter {
                   ..where(db.tasks.taskListId.equals(parentId)))
                 .map((row) => row.read(expression))
                 .getSingle();
-      case EntityType.space || EntityType.goal || EntityType.entry || EntityType.me:
+      case EntityType.space || EntityType.goal || EntityType.entry || EntityType.specialDate || EntityType.me:
         max = null;
     }
 

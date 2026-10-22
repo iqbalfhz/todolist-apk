@@ -218,6 +218,7 @@ class FakeApi implements ApiTransport {
       'created_by': 'server-user',
     },
     'savings-entries' => {'space_id': 'space-shared', 'user_id': 'server-user', 'type': 'deposit', 'note': null},
+    'special-dates' => {'created_by': 'server-user'},
     _ => {},
   };
 
@@ -228,6 +229,7 @@ class FakeApi implements ApiTransport {
     List<Map<String, dynamic>> tasks = const [],
     List<Map<String, dynamic>> savingsGoals = const [],
     List<Map<String, dynamic>> savingsEntries = const [],
+    List<Map<String, dynamic>> specialDates = const [],
     String? serverTime,
     String? nextCursor,
   }) => {
@@ -237,6 +239,7 @@ class FakeApi implements ApiTransport {
       'tasks': tasks,
       'savings_goals': savingsGoals,
       'savings_entries': savingsEntries,
+      'special_dates': specialDates,
     },
     'meta': {'server_time': serverTime ?? stamp(), 'has_more': nextCursor != null, 'next_cursor': nextCursor},
   };

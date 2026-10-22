@@ -32,13 +32,17 @@ abstract class User with _$User {
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 }
 
-/// Tiga kelompok preferensi notifikasi, sesuai switch di layar Pengaturan.
+/// Kelompok preferensi notifikasi, sesuai switch di layar Pengaturan.
 @freezed
 abstract class NotificationPrefs with _$NotificationPrefs {
   const factory NotificationPrefs({
     @Default(true) bool taskReminders,
     @Default(true) bool partnerActivity,
     @Default(true) bool savingsActivity,
+
+    /// Pengingat tanggal penting (v0.2). Bawaannya menyala, juga untuk akun yang
+    /// dibuat sebelum kunci ini ada.
+    @Default(true) bool specialDates,
   }) = _NotificationPrefs;
 
   factory NotificationPrefs.fromJson(Map<String, dynamic> json) => _$NotificationPrefsFromJson(json);

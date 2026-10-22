@@ -371,7 +371,9 @@ $InvitationCopyWith<$Res>? get invitation {
 /// @nodoc
 mixin _$NotificationPrefs {
 
- bool get taskReminders; bool get partnerActivity; bool get savingsActivity;
+ bool get taskReminders; bool get partnerActivity; bool get savingsActivity;/// Pengingat tanggal penting (v0.2). Bawaannya menyala, juga untuk akun yang
+/// dibuat sebelum kunci ini ada.
+ bool get specialDates;
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -385,20 +387,20 @@ $NotificationPrefsCopyWith<NotificationPrefs> get copyWith => _$NotificationPref
 @override
 bool operator ==(Object other) {
   final _this = this as NotificationPrefs;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationPrefs&&(identical(other.taskReminders, _this.taskReminders) || other.taskReminders == _this.taskReminders)&&(identical(other.partnerActivity, _this.partnerActivity) || other.partnerActivity == _this.partnerActivity)&&(identical(other.savingsActivity, _this.savingsActivity) || other.savingsActivity == _this.savingsActivity));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationPrefs&&(identical(other.taskReminders, _this.taskReminders) || other.taskReminders == _this.taskReminders)&&(identical(other.partnerActivity, _this.partnerActivity) || other.partnerActivity == _this.partnerActivity)&&(identical(other.savingsActivity, _this.savingsActivity) || other.savingsActivity == _this.savingsActivity)&&(identical(other.specialDates, _this.specialDates) || other.specialDates == _this.specialDates));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as NotificationPrefs;
-  return Object.hash(runtimeType,_this.taskReminders,_this.partnerActivity,_this.savingsActivity);
+  return Object.hash(runtimeType,_this.taskReminders,_this.partnerActivity,_this.savingsActivity,_this.specialDates);
 }
 
 @override
 String toString() {
   final _this = this as NotificationPrefs;
-  return 'NotificationPrefs(taskReminders: ${_this.taskReminders}, partnerActivity: ${_this.partnerActivity}, savingsActivity: ${_this.savingsActivity})';
+  return 'NotificationPrefs(taskReminders: ${_this.taskReminders}, partnerActivity: ${_this.partnerActivity}, savingsActivity: ${_this.savingsActivity}, specialDates: ${_this.specialDates})';
 }
 
 
@@ -409,7 +411,7 @@ abstract mixin class $NotificationPrefsCopyWith<$Res>  {
   factory $NotificationPrefsCopyWith(NotificationPrefs value, $Res Function(NotificationPrefs) _then) = _$NotificationPrefsCopyWithImpl;
 @useResult
 $Res call({
- bool taskReminders, bool partnerActivity, bool savingsActivity
+ bool taskReminders, bool partnerActivity, bool savingsActivity, bool specialDates
 });
 
 
@@ -426,11 +428,12 @@ class _$NotificationPrefsCopyWithImpl<$Res>
 
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,Object? specialDates = null,}) {
   return _then(NotificationPrefs(
 taskReminders: null == taskReminders ? _self.taskReminders : taskReminders // ignore: cast_nullable_to_non_nullable
 as bool,partnerActivity: null == partnerActivity ? _self.partnerActivity : partnerActivity // ignore: cast_nullable_to_non_nullable
 as bool,savingsActivity: null == savingsActivity ? _self.savingsActivity : savingsActivity // ignore: cast_nullable_to_non_nullable
+as bool,specialDates: null == specialDates ? _self.specialDates : specialDates // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -516,10 +519,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationPrefs() when $default != null:
-return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity);case _:
+return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates);case _:
   return orElse();
 
 }
@@ -537,10 +540,10 @@ return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity)
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationPrefs():
-return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity);case _:
+return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -557,10 +560,10 @@ return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity)
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationPrefs() when $default != null:
-return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity);case _:
+return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates);case _:
   return null;
 
 }
@@ -572,12 +575,15 @@ return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity)
 @JsonSerializable()
 
 class _NotificationPrefs implements NotificationPrefs {
-  const _NotificationPrefs({this.taskReminders = true, this.partnerActivity = true, this.savingsActivity = true});
+  const _NotificationPrefs({this.taskReminders = true, this.partnerActivity = true, this.savingsActivity = true, this.specialDates = true});
   factory _NotificationPrefs.fromJson(Map<String, dynamic> json) => _$NotificationPrefsFromJson(json);
 
 @override@JsonKey() final  bool taskReminders;
 @override@JsonKey() final  bool partnerActivity;
 @override@JsonKey() final  bool savingsActivity;
+/// Pengingat tanggal penting (v0.2). Bawaannya menyala, juga untuk akun yang
+/// dibuat sebelum kunci ini ada.
+@override@JsonKey() final  bool specialDates;
 
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
@@ -592,18 +598,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationPrefs&&(identical(other.taskReminders, taskReminders) || other.taskReminders == taskReminders)&&(identical(other.partnerActivity, partnerActivity) || other.partnerActivity == partnerActivity)&&(identical(other.savingsActivity, savingsActivity) || other.savingsActivity == savingsActivity));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationPrefs&&(identical(other.taskReminders, taskReminders) || other.taskReminders == taskReminders)&&(identical(other.partnerActivity, partnerActivity) || other.partnerActivity == partnerActivity)&&(identical(other.savingsActivity, savingsActivity) || other.savingsActivity == savingsActivity)&&(identical(other.specialDates, specialDates) || other.specialDates == specialDates));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,taskReminders,partnerActivity,savingsActivity);
+    return Object.hash(runtimeType,taskReminders,partnerActivity,savingsActivity,specialDates);
 }
 
 @override
 String toString() {
-    return 'NotificationPrefs(taskReminders: $taskReminders, partnerActivity: $partnerActivity, savingsActivity: $savingsActivity)';
+    return 'NotificationPrefs(taskReminders: $taskReminders, partnerActivity: $partnerActivity, savingsActivity: $savingsActivity, specialDates: $specialDates)';
 }
 
 
@@ -614,7 +620,7 @@ abstract mixin class _$NotificationPrefsCopyWith<$Res> implements $NotificationP
   factory _$NotificationPrefsCopyWith(_NotificationPrefs value, $Res Function(_NotificationPrefs) _then) = __$NotificationPrefsCopyWithImpl;
 @override @useResult
 $Res call({
- bool taskReminders, bool partnerActivity, bool savingsActivity
+ bool taskReminders, bool partnerActivity, bool savingsActivity, bool specialDates
 });
 
 
@@ -631,11 +637,12 @@ class __$NotificationPrefsCopyWithImpl<$Res>
 
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,Object? specialDates = null,}) {
   return _then(_NotificationPrefs(
 taskReminders: null == taskReminders ? _self.taskReminders : taskReminders // ignore: cast_nullable_to_non_nullable
 as bool,partnerActivity: null == partnerActivity ? _self.partnerActivity : partnerActivity // ignore: cast_nullable_to_non_nullable
 as bool,savingsActivity: null == savingsActivity ? _self.savingsActivity : savingsActivity // ignore: cast_nullable_to_non_nullable
+as bool,specialDates: null == specialDates ? _self.specialDates : specialDates // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

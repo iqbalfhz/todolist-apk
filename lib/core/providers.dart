@@ -7,6 +7,7 @@ import '../features/auth/domain/user.dart';
 import '../features/savings/domain/savings_entry.dart';
 import '../features/savings/domain/savings_goal.dart';
 import '../features/spaces/domain/space.dart';
+import '../features/special_dates/domain/special_date.dart';
 import '../features/tasks/domain/task.dart';
 import '../features/tasks/domain/task_list.dart';
 import 'api/api_transport.dart';
@@ -122,6 +123,11 @@ final goalsProvider = StreamProvider<List<SavingsGoal>>(
 
 final entriesProvider = StreamProvider<List<SavingsEntry>>(
   (ref) => ref.watch(accountProvider)?.savings.watchEntries() ?? Stream.value(const []),
+);
+
+/// Tanggal penting yang belum dihapus (v0.2).
+final specialDatesProvider = StreamProvider<List<SpecialDate>>(
+  (ref) => ref.watch(accountProvider)?.dates.watchAll() ?? Stream.value(const []),
 );
 
 /// Jumlah perubahan yang belum terkirim ke server.

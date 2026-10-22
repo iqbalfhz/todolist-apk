@@ -14,8 +14,11 @@ import 'row_applier.dart';
 /// - hanya satu sync berjalan pada satu waktu;
 /// - operasi antrean yang bisa dikirim dikirim dulu, lalu data tetap ditarik walau
 ///   masih ada yang menunggu jeda Urungkan atau coba ulang;
-/// - halaman pertama memakai `since` yang tersimpan (atau tanpa `since` kalau database
-///   lokal akun itu masih kosong), halaman berikutnya memakai `cursor` apa adanya;
+/// - halaman pertama memakai `since` yang tersimpan, halaman berikutnya memakai `cursor`
+///   apa adanya;
+/// - tanpa `since` (sync penuh) kalau database lokal akun itu masih kosong, atau sekali
+///   setelah app mengenal koleksi baru, supaya data yang dibuat pasangan selama app masih
+///   versi lama ikut sampai;
 /// - `server_time` disimpan setelah halaman terakhir sebagai `since` berikutnya.
 class SyncEngine {
   SyncEngine({
@@ -35,6 +38,10 @@ class SyncEngine {
 
   /// Jeda coba ulang saat server tidak terjangkau: 2, 4, 8 detik dan seterusnya, paling lama 5 menit.
   static const Duration maxBackoff = Duration(minutes: 5);
+
+  /// Versi daftar koleksi `GET /sync` yang dikenal app ini; naik setiap ada koleksi baru.
+  /// 1: v0.1. 2: `special_dates` (v0.2).
+  static const int collectionsVersion = 2;
 
   final Zone _zone = Zone.current;
 
@@ -94,7 +101,8 @@ class SyncEngine {
     var restarted = false;
 
     while (true) {
-      final since = await store.meta(MetaKeys.syncSince);
+      final known = int.tryParse(await store.meta(MetaKeys.syncCollections) ?? '') ?? 1;
+      final since = known < collectionsVersion ? null : await store.meta(MetaKeys.syncSince);
       String? cursor;
       String? serverTime;
 
@@ -126,6 +134,7 @@ class SyncEngine {
       }
 
       await store.setMeta(MetaKeys.syncSince, serverTime);
+      await store.setMeta(MetaKeys.syncCollections, '$collectionsVersion');
       return;
     }
   }

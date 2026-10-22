@@ -116,6 +116,26 @@ class SavingsEntries extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Tanggal penting (v0.2).
+@DataClassName('SpecialDateRow')
+class SpecialDates extends Table {
+  TextColumn get id => text()();
+  TextColumn get spaceId => text()();
+  TextColumn get type => text()();
+  TextColumn get title => text()();
+
+  /// `YYYY-MM-DD`, atau `--MM-DD` kalau tahunnya tidak diketahui.
+  TextColumn get date => text()();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+  TextColumn get deletedAt => text().nullable()();
+  TextColumn get serverUpdatedAt => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// Antrean operasi tulis yang belum sampai ke server, dikirim berurutan menurut `id`.
 @DataClassName('OutboxRow')
 class OutboxOps extends Table {
@@ -150,7 +170,7 @@ class MetaEntries extends Table {
   Set<Column<Object>> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Spaces, TaskLists, Tasks, SavingsGoals, SavingsEntries, OutboxOps, MetaEntries])
+@DriftDatabase(tables: [Spaces, TaskLists, Tasks, SavingsGoals, SavingsEntries, SpecialDates, OutboxOps, MetaEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
@@ -158,6 +178,14 @@ class AppDatabase extends _$AppDatabase {
   /// jadi antrean akun sebelumnya tidak terkirim atas nama akun baru.
   AppDatabase.forAccount(String userId) : super(driftDatabase(name: 'akun_$userId'));
 
+  /// 1: v0.1. 2: tabel tanggal penting (v0.2).
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) await migrator.createTable(specialDates);
+    },
+  );
 }

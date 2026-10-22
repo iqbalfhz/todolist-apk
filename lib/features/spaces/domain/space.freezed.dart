@@ -316,7 +316,9 @@ as DateTime?,
 /// @nodoc
 mixin _$SpaceMember {
 
- String get id; String get name; String get color; String? get avatarUrl; int get avatarVersion; String get role; DateTime get joinedAt;
+ String get id; String get name; String get color; String? get avatarUrl; int get avatarVersion;/// `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi (v0.2). Dipakai HP pasangan
+/// untuk menghitung mundur ulang tahun.
+ String? get birthDate; String get role; DateTime get joinedAt;
 /// Create a copy of SpaceMember
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -330,20 +332,20 @@ $SpaceMemberCopyWith<SpaceMember> get copyWith => _$SpaceMemberCopyWithImpl<Spac
 @override
 bool operator ==(Object other) {
   final _this = this as SpaceMember;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpaceMember&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.avatarUrl, _this.avatarUrl) || other.avatarUrl == _this.avatarUrl)&&(identical(other.avatarVersion, _this.avatarVersion) || other.avatarVersion == _this.avatarVersion)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SpaceMember&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.avatarUrl, _this.avatarUrl) || other.avatarUrl == _this.avatarUrl)&&(identical(other.avatarVersion, _this.avatarVersion) || other.avatarVersion == _this.avatarVersion)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.role, _this.role) || other.role == _this.role)&&(identical(other.joinedAt, _this.joinedAt) || other.joinedAt == _this.joinedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as SpaceMember;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.color,_this.avatarUrl,_this.avatarVersion,_this.role,_this.joinedAt);
+  return Object.hash(runtimeType,_this.id,_this.name,_this.color,_this.avatarUrl,_this.avatarVersion,_this.birthDate,_this.role,_this.joinedAt);
 }
 
 @override
 String toString() {
   final _this = this as SpaceMember;
-  return 'SpaceMember(id: ${_this.id}, name: ${_this.name}, color: ${_this.color}, avatarUrl: ${_this.avatarUrl}, avatarVersion: ${_this.avatarVersion}, role: ${_this.role}, joinedAt: ${_this.joinedAt})';
+  return 'SpaceMember(id: ${_this.id}, name: ${_this.name}, color: ${_this.color}, avatarUrl: ${_this.avatarUrl}, avatarVersion: ${_this.avatarVersion}, birthDate: ${_this.birthDate}, role: ${_this.role}, joinedAt: ${_this.joinedAt})';
 }
 
 
@@ -354,7 +356,7 @@ abstract mixin class $SpaceMemberCopyWith<$Res>  {
   factory $SpaceMemberCopyWith(SpaceMember value, $Res Function(SpaceMember) _then) = _$SpaceMemberCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String color, String? avatarUrl, int avatarVersion, String role, DateTime joinedAt
+ String id, String name, String color, String? avatarUrl, int avatarVersion, String? birthDate, String role, DateTime joinedAt
 });
 
 
@@ -371,14 +373,15 @@ class _$SpaceMemberCopyWithImpl<$Res>
 
 /// Create a copy of SpaceMember
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? color = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? role = null,Object? joinedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? color = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? birthDate = freezed,Object? role = null,Object? joinedAt = null,}) {
   return _then(SpaceMember(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,avatarVersion: null == avatarVersion ? _self.avatarVersion : avatarVersion // ignore: cast_nullable_to_non_nullable
-as int,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as int,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,joinedAt: null == joinedAt ? _self.joinedAt : joinedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -465,10 +468,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String color,  String? avatarUrl,  int avatarVersion,  String role,  DateTime joinedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String color,  String? avatarUrl,  int avatarVersion,  String? birthDate,  String role,  DateTime joinedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SpaceMember() when $default != null:
-return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVersion,_that.role,_that.joinedAt);case _:
+return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVersion,_that.birthDate,_that.role,_that.joinedAt);case _:
   return orElse();
 
 }
@@ -486,10 +489,10 @@ return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVers
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String color,  String? avatarUrl,  int avatarVersion,  String role,  DateTime joinedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String color,  String? avatarUrl,  int avatarVersion,  String? birthDate,  String role,  DateTime joinedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SpaceMember():
-return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVersion,_that.role,_that.joinedAt);case _:
+return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVersion,_that.birthDate,_that.role,_that.joinedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -506,10 +509,10 @@ return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVers
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String color,  String? avatarUrl,  int avatarVersion,  String role,  DateTime joinedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String color,  String? avatarUrl,  int avatarVersion,  String? birthDate,  String role,  DateTime joinedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SpaceMember() when $default != null:
-return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVersion,_that.role,_that.joinedAt);case _:
+return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVersion,_that.birthDate,_that.role,_that.joinedAt);case _:
   return null;
 
 }
@@ -521,7 +524,7 @@ return $default(_that.id,_that.name,_that.color,_that.avatarUrl,_that.avatarVers
 @JsonSerializable()
 
 class _SpaceMember implements SpaceMember {
-  const _SpaceMember({required this.id, required this.name, required this.color, this.avatarUrl, this.avatarVersion = 0, required this.role, required this.joinedAt});
+  const _SpaceMember({required this.id, required this.name, required this.color, this.avatarUrl, this.avatarVersion = 0, this.birthDate, required this.role, required this.joinedAt});
   factory _SpaceMember.fromJson(Map<String, dynamic> json) => _$SpaceMemberFromJson(json);
 
 @override final  String id;
@@ -529,6 +532,9 @@ class _SpaceMember implements SpaceMember {
 @override final  String color;
 @override final  String? avatarUrl;
 @override@JsonKey() final  int avatarVersion;
+/// `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi (v0.2). Dipakai HP pasangan
+/// untuk menghitung mundur ulang tahun.
+@override final  String? birthDate;
 @override final  String role;
 @override final  DateTime joinedAt;
 
@@ -545,18 +551,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpaceMember&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.avatarVersion, avatarVersion) || other.avatarVersion == avatarVersion)&&(identical(other.role, role) || other.role == role)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SpaceMember&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.color, color) || other.color == color)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.avatarVersion, avatarVersion) || other.avatarVersion == avatarVersion)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.role, role) || other.role == role)&&(identical(other.joinedAt, joinedAt) || other.joinedAt == joinedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,color,avatarUrl,avatarVersion,role,joinedAt);
+    return Object.hash(runtimeType,id,name,color,avatarUrl,avatarVersion,birthDate,role,joinedAt);
 }
 
 @override
 String toString() {
-    return 'SpaceMember(id: $id, name: $name, color: $color, avatarUrl: $avatarUrl, avatarVersion: $avatarVersion, role: $role, joinedAt: $joinedAt)';
+    return 'SpaceMember(id: $id, name: $name, color: $color, avatarUrl: $avatarUrl, avatarVersion: $avatarVersion, birthDate: $birthDate, role: $role, joinedAt: $joinedAt)';
 }
 
 
@@ -567,7 +573,7 @@ abstract mixin class _$SpaceMemberCopyWith<$Res> implements $SpaceMemberCopyWith
   factory _$SpaceMemberCopyWith(_SpaceMember value, $Res Function(_SpaceMember) _then) = __$SpaceMemberCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String color, String? avatarUrl, int avatarVersion, String role, DateTime joinedAt
+ String id, String name, String color, String? avatarUrl, int avatarVersion, String? birthDate, String role, DateTime joinedAt
 });
 
 
@@ -584,14 +590,15 @@ class __$SpaceMemberCopyWithImpl<$Res>
 
 /// Create a copy of SpaceMember
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? color = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? role = null,Object? joinedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? color = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? birthDate = freezed,Object? role = null,Object? joinedAt = null,}) {
   return _then(_SpaceMember(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
 as String,avatarUrl: freezed == avatarUrl ? _self.avatarUrl : avatarUrl // ignore: cast_nullable_to_non_nullable
 as String?,avatarVersion: null == avatarVersion ? _self.avatarVersion : avatarVersion // ignore: cast_nullable_to_non_nullable
-as int,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
+as int,birthDate: freezed == birthDate ? _self.birthDate : birthDate // ignore: cast_nullable_to_non_nullable
+as String?,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
 as String,joinedAt: null == joinedAt ? _self.joinedAt : joinedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

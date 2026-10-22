@@ -36,6 +36,10 @@ abstract class SpaceMember with _$SpaceMember {
     required String color,
     String? avatarUrl,
     @Default(0) int avatarVersion,
+
+    /// `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi (v0.2). Dipakai HP pasangan
+    /// untuk menghitung mundur ulang tahun.
+    String? birthDate,
     required String role,
     required DateTime joinedAt,
   }) = _SpaceMember;

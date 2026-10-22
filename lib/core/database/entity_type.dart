@@ -9,6 +9,9 @@ enum EntityType {
   goal(apiPath: 'savings-goals', syncKey: 'savings_goals'),
   entry(apiPath: 'savings-entries', syncKey: 'savings_entries'),
 
+  /// Tanggal penting (v0.2).
+  specialDate(apiPath: 'special-dates', syncKey: 'special_dates'),
+
   /// Profil sendiri; hanya `PATCH /me` yang lewat antrean.
   me(apiPath: 'me');
 
@@ -18,7 +21,7 @@ enum EntityType {
   final String? syncKey;
 
   /// Urutan penerapan satu halaman sync: induk dulu, baru anak.
-  static const List<EntityType> syncOrder = [space, list, task, goal, entry];
+  static const List<EntityType> syncOrder = [space, list, task, goal, entry, specialDate];
 
   /// Jenis anak yang ikut terhapus saat induknya dihapus, beserta kolom penunjuk induknya.
   (EntityType, String)? get child => switch (this) {

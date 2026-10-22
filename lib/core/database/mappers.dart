@@ -5,6 +5,7 @@ import 'package:drift/drift.dart';
 import '../../features/savings/domain/savings_entry.dart';
 import '../../features/savings/domain/savings_goal.dart';
 import '../../features/spaces/domain/space.dart';
+import '../../features/special_dates/domain/special_date.dart';
 import '../../features/tasks/domain/task.dart';
 import '../../features/tasks/domain/task_list.dart';
 import 'app_database.dart';
@@ -179,6 +180,33 @@ extension SavingsEntryRowMapper on SavingsEntryRow {
     deletedAt: _timeOrNull(deletedAt),
   );
 }
+
+extension SpecialDateRowMapper on SpecialDateRow {
+  SpecialDate toModel() => SpecialDate(
+    id: id,
+    spaceId: spaceId,
+    type: type,
+    title: title,
+    date: date,
+    createdBy: createdBy,
+    createdAt: _time(createdAt),
+    updatedAt: _time(updatedAt),
+    deletedAt: _timeOrNull(deletedAt),
+  );
+}
+
+SpecialDatesCompanion specialDateCompanion(SpecialDate date, {String? serverUpdatedAt}) => SpecialDatesCompanion(
+  id: Value(date.id),
+  spaceId: Value(date.spaceId),
+  type: Value(date.type),
+  title: Value(date.title),
+  date: Value(date.date),
+  createdBy: Value(date.createdBy),
+  createdAt: Value(_iso(date.createdAt)),
+  updatedAt: Value(_iso(date.updatedAt)),
+  deletedAt: Value(_isoOrNull(date.deletedAt)),
+  serverUpdatedAt: _serverStamp(serverUpdatedAt),
+);
 
 SavingsEntriesCompanion savingsEntryCompanion(SavingsEntry entry, {String? serverUpdatedAt}) => SavingsEntriesCompanion(
   id: Value(entry.id),

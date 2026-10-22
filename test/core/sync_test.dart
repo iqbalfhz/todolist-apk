@@ -3,6 +3,7 @@ import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/database/entity_type.dart';
 import 'package:todolist/core/database/local_store.dart';
 import 'package:todolist/core/queue/outbox.dart';
+import 'package:todolist/core/sync/sync_engine.dart';
 
 import '../helpers/fake_api.dart';
 import '../helpers/fixtures.dart';
@@ -32,6 +33,7 @@ void main() {
 
       expect(syncQueries(), [null]);
       expect(await h.account.store.meta(MetaKeys.syncSince), '2026-10-08T11:10:05.123456Z');
+      expect(await h.account.store.meta(MetaKeys.syncCollections), '${SyncEngine.collectionsVersion}');
       expect(await h.account.store.spaces(), hasLength(2));
       expect((await h.local(EntityType.task, taskId))!['title'], 'Beli galon');
       expect((await h.local(EntityType.goal, goalId))!['target_amount'], 10000000);
@@ -76,8 +78,38 @@ void main() {
       },
     );
 
+    test('app baru mengenal koleksi baru: sync penuh sekali, lalu kembali memakai since', () async {
+      // Database dari app versi sebelumnya: sudah pernah sync, tetapi belum mengenal special_dates.
+      // Tanggal yang dibuat pasangan selama itu sudah dilewati since, jadi harus ditarik ulang.
+      await h.account.store.setMeta(MetaKeys.syncSince, 'T-lama');
+      h.api.syncPages
+        ..add(h.api.syncPage(specialDates: [specialDateJson()], serverTime: 'T-1'))
+        ..add(h.api.syncPage(serverTime: 'T-2'));
+
+      await h.account.sync.sync();
+      await h.account.sync.sync();
+
+      expect(syncQueries(), [
+        null,
+        {'since': 'T-1'},
+      ]);
+      expect(await h.account.store.meta(MetaKeys.syncCollections), '${SyncEngine.collectionsVersion}');
+      expect((await h.local(EntityType.specialDate, specialDateId))!['title'], 'Hari jadi kita');
+    });
+
+    test('sync penuh sekali yang gagal diulang lagi sebagai sync penuh', () async {
+      await h.account.store.setMeta(MetaKeys.syncSince, 'T-lama');
+      h.api.failNext(const NetworkFailure());
+
+      expect(await h.account.sync.sync(), isFalse);
+      expect(await h.account.sync.sync(), isTrue);
+
+      expect(syncQueries(), [null, null]);
+    });
+
     test('cursor ditolak 422: sync diulang dari since yang tersimpan', () async {
       await h.account.store.setMeta(MetaKeys.syncSince, 'T-lama');
+      await h.account.store.setMeta(MetaKeys.syncCollections, '${SyncEngine.collectionsVersion}');
       h.api.syncPages.add(h.api.syncPage(serverTime: 'T-1', nextCursor: 'rusak'));
       h.api
         ..enqueue(h.api.handle)
@@ -150,6 +182,34 @@ void main() {
   });
 
   group('menerapkan baris', () {
+    test('tanggal penting dan tanggal lahir anggota ikut tersimpan; yang terhapus tidak tampil', () async {
+      final space = {
+        ...sharedSpaceJson(),
+        'members': [
+          memberJson(id: meId, name: 'Iqbal', color: 'mawar', role: 'owner'),
+          memberJson(id: partnerId, name: 'Sari', color: 'ungu', birthDate: '--11-17'),
+        ],
+      };
+      const removedId = '01m4dm2k70z5bq7rn3xw8c4v1f';
+      h.api.syncPages.add(
+        h.api.syncPage(
+          spaces: [space],
+          specialDates: [
+            specialDateJson(),
+            specialDateJson(id: removedId, title: 'Sudah dihapus', deletedAt: t1),
+          ],
+        ),
+      );
+
+      await h.account.sync.sync();
+
+      final shared = (await h.account.store.spaces()).single;
+      expect(shared.members.singleWhere((member) => member.id == partnerId).birthDate, '--11-17');
+      final visible = await h.account.store.watchSpecialDates().first;
+      expect([for (final date in visible) date.id], [specialDateId]);
+      expect((await h.local(EntityType.specialDate, removedId))!['deleted_at'], isNotNull);
+    });
+
     test('tanpa pengecekan foreign key: tugas boleh tiba sebelum daftarnya', () async {
       h.api.syncPages
         ..add(h.api.syncPage(tasks: [taskJson()], nextCursor: 'kursor-1'))

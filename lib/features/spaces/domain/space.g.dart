@@ -38,6 +38,7 @@ _SpaceMember _$SpaceMemberFromJson(Map<String, dynamic> json) => _SpaceMember(
   color: json['color'] as String,
   avatarUrl: json['avatar_url'] as String?,
   avatarVersion: (json['avatar_version'] as num?)?.toInt() ?? 0,
+  birthDate: json['birth_date'] as String?,
   role: json['role'] as String,
   joinedAt: DateTime.parse(json['joined_at'] as String),
 );
@@ -48,6 +49,7 @@ Map<String, dynamic> _$SpaceMemberToJson(_SpaceMember instance) => <String, dyna
   'color': instance.color,
   'avatar_url': instance.avatarUrl,
   'avatar_version': instance.avatarVersion,
+  'birth_date': instance.birthDate,
   'role': instance.role,
   'joined_at': instance.joinedAt.toIso8601String(),
 };

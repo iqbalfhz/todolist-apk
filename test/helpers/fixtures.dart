@@ -21,6 +21,7 @@ const String otherListId = '01m4dh0421zqexwxs1n4yw5jn3';
 const String taskId = '01m4dh1yn0t6cdn39q4f091895';
 const String goalId = '01m4djq1w0ystkpbz7mqd22k3n';
 const String entryId = '01m4dk06v0p3ew0dm0dk94s1k0';
+const String specialDateId = '01m4dm2k70z5bq7rn3xw8c4v1e';
 
 const String t0 = '2026-10-08T10:00:00.000000Z';
 const String t1 = '2026-10-08T10:30:00.000000Z';
@@ -35,7 +36,12 @@ Map<String, dynamic> userJson({String id = meId, String name = 'Iqbal', String c
   'locale': 'id',
   'default_currency': 'IDR',
   'birth_date': '--03-02',
-  'notification_prefs': {'task_reminders': true, 'partner_activity': true, 'savings_activity': true},
+  'notification_prefs': {
+    'task_reminders': true,
+    'partner_activity': true,
+    'savings_activity': true,
+    'special_dates': true,
+  },
   'avatar_url': null,
   'avatar_version': 0,
   'invitation': null,
@@ -48,17 +54,27 @@ Map<String, dynamic> memberJson({
   required String name,
   required String color,
   String role = 'member',
-}) => {'id': id, 'name': name, 'color': color, 'avatar_url': null, 'avatar_version': 0, 'role': role, 'joined_at': t0};
+  String? birthDate,
+}) => {
+  'id': id,
+  'name': name,
+  'color': color,
+  'avatar_url': null,
+  'avatar_version': 0,
+  'birth_date': birthDate,
+  'role': role,
+  'joined_at': t0,
+};
 
-Map<String, dynamic> sharedSpaceJson({String updatedAt = t0}) => {
+Map<String, dynamic> sharedSpaceJson({String updatedAt = t0, String? myBirthDate, String? partnerBirthDate}) => {
   'id': sharedSpaceId,
   'name': 'Ruang Bersama',
   'type': 'shared',
   'timezone': 'Asia/Jakarta',
   'owner_id': meId,
   'members': [
-    memberJson(id: meId, name: 'Iqbal', color: 'mawar', role: 'owner'),
-    memberJson(id: partnerId, name: 'Sari', color: 'ungu'),
+    memberJson(id: meId, name: 'Iqbal', color: 'mawar', role: 'owner', birthDate: myBirthDate),
+    memberJson(id: partnerId, name: 'Sari', color: 'ungu', birthDate: partnerBirthDate),
   ],
   'created_at': t0,
   'updated_at': updatedAt,
@@ -180,6 +196,27 @@ Map<String, dynamic> entryJson({
   'amount': amount,
   'entry_date': entryDate,
   'note': note,
+  'created_at': t0,
+  'updated_at': updatedAt,
+  'deleted_at': deletedAt,
+};
+
+/// Tanggal penting, sama dengan contoh di kontrak: hari jadi di Ruang Bersama.
+Map<String, dynamic> specialDateJson({
+  String id = specialDateId,
+  String spaceId = sharedSpaceId,
+  String type = 'anniversary',
+  String title = 'Hari jadi kita',
+  String date = '2023-10-29',
+  String? deletedAt,
+  String updatedAt = t0,
+}) => {
+  'id': id,
+  'space_id': spaceId,
+  'type': type,
+  'title': title,
+  'date': date,
+  'created_by': meId,
   'created_at': t0,
   'updated_at': updatedAt,
   'deleted_at': deletedAt,
