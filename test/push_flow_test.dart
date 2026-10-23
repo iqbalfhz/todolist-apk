@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/core/notifications/push_service.dart';
 import 'package:todolist/core/platform/device_platform.dart';
+import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/storage/key_value_store.dart';
 import 'package:todolist/features/auth/presentation/auth_actions.dart';
 
@@ -179,8 +180,6 @@ void main() {
 
       expect(find.text('Biar tidak ada yang terlewat'), findsOneWidget);
       expect(push.permissionRequests, 0);
-      // HP ini tidak butuh panduan baterai.
-      expect(find.text('Supaya pengingat tetap sampai'), findsNothing);
 
       await tester.tap(find.text('Izinkan notifikasi'));
       await settle(tester);
@@ -223,41 +222,40 @@ void main() {
       await disposeApp(tester, h);
     });
 
-    testWidgets('HP Xiaomi: panduan mematikan penghemat baterai ikut tampil', (tester) async {
-      // Kode native (`MainActivity.kt`) diganti: pertama berhasil membuka pengaturan, lalu gagal.
-      const channel = MethodChannel('todolist/device');
-      final calls = <String>[];
-      var opens = true;
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
-        calls.add(call.method);
-        return opens;
-      });
-      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
-
+    testWidgets('HP Xiaomi: cukup izin notifikasi, tanpa panduan penghemat baterai', (tester) async {
       final h = Harness();
       await h.seed();
-      await pumpApp(tester, h, push: FakePushService(granted: true), device: xiaomi, notificationsDone: false);
+      final push = FakePushService();
+      await pumpApp(tester, h, push: push, device: xiaomi, notificationsDone: false);
 
-      expect(find.text('Notifikasi sudah diizinkan.'), findsOneWidget);
-      expect(find.text('Supaya pengingat tetap sampai'), findsOneWidget);
-      expect(find.textContaining('HP Xiaomi sering menghentikan app'), findsOneWidget);
-      expect(find.textContaining('Nyalakan Mulai otomatis.'), findsOneWidget);
+      expect(find.text('Izinkan notifikasi'), findsOneWidget);
+      expect(find.textContaining('baterai'), findsNothing);
+      expect(find.textContaining('Mulai otomatis'), findsNothing);
 
-      const failed = 'Pengaturan baterai tidak bisa dibuka dari sini. Buka lewat Pengaturan HP.';
-      await tester.ensureVisible(find.text('Buka pengaturan baterai'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Buka pengaturan baterai'));
+      await tester.tap(find.text('Izinkan notifikasi'));
       await settle(tester);
-      expect(calls, ['openBatterySettings']);
-      expect(find.text(failed), findsNothing);
-
-      // HP yang tidak punya layar pengaturannya: pesannya menunjukkan jalan lain.
-      opens = false;
-      await tester.tap(find.text('Buka pengaturan baterai'));
+      await tester.tap(find.text('Lanjut'));
       await settle(tester);
-      expect(find.text(failed), findsOneWidget);
+      expect(find.text('Tugas hari ini'), findsOneWidget);
 
       await disposeApp(tester, h);
+    });
+
+    testWidgets('sebelum Android 13 izinnya tidak perlu diminta, jadi layarnya dilewati, juga di HP Xiaomi', (
+      tester,
+    ) async {
+      const channel = MethodChannel('todolist/device');
+      var device = {'manufacturer': 'Xiaomi', 'brand': 'Redmi', 'model': 'Redmi Note 10', 'sdkInt': 31};
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (_) async => device);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+
+      final android12 = await Bootstrap.load(MemoryKeyValueStore(), const DevicePlatform());
+      expect(android12.notificationsOnboarded, isTrue);
+
+      device = {...device, 'sdkInt': 34};
+      final android14 = await Bootstrap.load(MemoryKeyValueStore(), const DevicePlatform());
+      expect(android14.notificationsOnboarded, isFalse);
+      expect(android14.device.name, 'Xiaomi Redmi Note 10');
     });
   });
 }

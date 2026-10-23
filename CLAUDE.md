@@ -14,7 +14,8 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 
 - Ketukan notifikasi dan push pengingat v0.2 (`special_date_reminder`, `trip_reminder`, `savings_reminder`) belum dicoba di HP sungguhan; di tes semuanya memakai layanan notifikasi palsu.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
-- Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
+- Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, dan bagikan kode undangan.
+- Belum diuji: apakah notifikasi tetap sampai di HP Xiaomi (HyperOS) setelah app ditutup dari daftar app terbaru, dengan Mulai otomatis mati (keadaan bawaan di HP pemilik). Kalau tertahan, tambahkan satu tombol di Pengaturan > Notifikasi yang memunculkan dialog Android (Izinkan/Tolak) dan membuka langsung halaman Mulai otomatis; jangan kembali ke langkah manual.
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
 - `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
 
@@ -24,7 +25,7 @@ Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
 v0.1:
 
-- Masuk, daftar, izin notifikasi, dan panduan baterai
+- Masuk, daftar, dan izin notifikasi
 - Beranda, Tugas (daftar, tambah cepat, detail), Tabungan (target, setor, riwayat, statistik)
 - Ajak pasangan (kode undangan), Pengaturan (profil dan foto, tema, notifikasi, mata uang)
 - Cache lokal, antrean offline, sync, dan push notification
@@ -119,7 +120,7 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 ### Notifikasi
 
 - Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, dan hari setor) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
-- Minta izin notifikasi (Android 13+) dengan penjelasan, plus panduan mematikan optimasi baterai untuk merek seperti Xiaomi, Oppo, Vivo, dan Realme.
+- Minta izin notifikasi (Android 13+) dengan penjelasan; sebelum Android 13 layarnya dilewati. Panduan mematikan optimasi baterai tidak ditampilkan (keputusan pemilik, 23 Oktober 2026): langkah manual di Pengaturan HP terlalu merepotkan untuk alur pertama kali.
 - Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, dan pengingat setor membuka Detail target.
 
 ## UI

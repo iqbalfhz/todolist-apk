@@ -112,7 +112,7 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 ## Layar tanpa mockup
 
 - **Masuk dan Daftar:** email, kata sandi (minimal 8 karakter), dan nama panggilan saat daftar; tautan untuk pindah di antara keduanya. Error diambil dari `message` balasan API.
-- **Izin notifikasi:** alasan singkat kenapa notifikasi penting, tombol minta izin (Android 13+), lalu panduan mematikan optimasi baterai sesuai merek HP (Xiaomi, Oppo, Vivo, Realme). Bisa dilewati.
+- **Izin notifikasi:** alasan singkat kenapa notifikasi penting dan tombol minta izin (Android 13+). Bisa dilewati; sebelum Android 13 layarnya tidak tampil. Tanpa panduan optimasi baterai (lihat CLAUDE.md).
 - **Detail tugas:** judul, catatan, tenggat (tanggal dan jam opsional), switch penting, penanggung jawab, pindah daftar (hanya daftar di ruang yang sama), dan hapus. Tersimpan otomatis tanpa tombol Simpan. Item checklist perjalanan tidak bisa dipindah ke daftar lain.
 - **Kelola daftar:** buat atau ubah nama, emoji, dan warna (enam pilihan); urutkan; arsipkan; hapus dengan konfirmasi "Hapus daftar Belanja? 12 tugas di dalamnya ikut terhapus." Checklist perjalanan tidak tampil di sini; ia ikut terhapus bersama perjalanannya.
 - **Tab Tabungan:** kartu untuk setiap target beserta progresnya; tombol tambah target (nama, emoji, nominal, mata uang, tanggal target opsional).

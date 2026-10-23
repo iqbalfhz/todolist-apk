@@ -433,60 +433,6 @@ abstract class AppLocalizations {
   /// **'Buka pengaturan notifikasi'**
   String get notifOpenSettings;
 
-  /// No description provided for @batteryTitle.
-  ///
-  /// In id, this message translates to:
-  /// **'Supaya pengingat tetap sampai'**
-  String get batteryTitle;
-
-  /// No description provided for @batteryBody.
-  ///
-  /// In id, this message translates to:
-  /// **'HP {brand} sering menghentikan app di latar belakang untuk menghemat baterai, jadi pengingat bisa telat. Matikan penghematan baterai untuk app ini:'**
-  String batteryBody(String brand);
-
-  /// No description provided for @batteryStepsXiaomi.
-  ///
-  /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Aplikasi > Kelola aplikasi, lalu pilih Denly Days.\n2. Ketuk Penghemat baterai, lalu pilih Tanpa batasan.\n3. Nyalakan Mulai otomatis.'**
-  String get batteryStepsXiaomi;
-
-  /// No description provided for @batteryStepsOppo.
-  ///
-  /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih Denly Days, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan Denly Days.'**
-  String get batteryStepsOppo;
-
-  /// No description provided for @batteryStepsVivo.
-  ///
-  /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Baterai > Konsumsi daya tinggi di latar belakang.\n2. Nyalakan untuk Denly Days.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan Denly Days.'**
-  String get batteryStepsVivo;
-
-  /// No description provided for @batteryStepsRealme.
-  ///
-  /// In id, this message translates to:
-  /// **'1. Buka Pengaturan > Baterai > Pengaturan lainnya > Optimalkan penggunaan baterai.\n2. Pilih Denly Days, lalu pilih Jangan optimalkan.\n3. Di Pengaturan > Aplikasi > Mulai otomatis, izinkan Denly Days.'**
-  String get batteryStepsRealme;
-
-  /// No description provided for @batteryNote.
-  ///
-  /// In id, this message translates to:
-  /// **'Nama menunya bisa sedikit berbeda di HP-mu.'**
-  String get batteryNote;
-
-  /// No description provided for @batteryOpen.
-  ///
-  /// In id, this message translates to:
-  /// **'Buka pengaturan baterai'**
-  String get batteryOpen;
-
-  /// No description provided for @batteryOpenFailed.
-  ///
-  /// In id, this message translates to:
-  /// **'Pengaturan baterai tidak bisa dibuka dari sini. Buka lewat Pengaturan HP.'**
-  String get batteryOpenFailed;
-
   /// No description provided for @greetingMorning.
   ///
   /// In id, this message translates to:

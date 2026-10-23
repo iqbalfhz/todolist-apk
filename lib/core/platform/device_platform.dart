@@ -21,19 +21,7 @@ class DeviceInfo {
 
   /// Izin notifikasi baru diminta saat berjalan mulai Android 13 (API 33).
   bool get needsNotificationPermission => sdkInt >= 33;
-
-  /// Merek yang sering menghentikan app di latar belakang, jadi butuh panduan baterai.
-  BatteryGuideBrand? get batteryGuideBrand {
-    final names = '${manufacturer.toLowerCase()} ${brand.toLowerCase()}';
-    if (names.contains('xiaomi') || names.contains('redmi') || names.contains('poco')) return BatteryGuideBrand.xiaomi;
-    if (names.contains('realme')) return BatteryGuideBrand.realme;
-    if (names.contains('oppo')) return BatteryGuideBrand.oppo;
-    if (names.contains('vivo') || names.contains('iqoo')) return BatteryGuideBrand.vivo;
-    return null;
-  }
 }
-
-enum BatteryGuideBrand { xiaomi, oppo, vivo, realme }
 
 /// Kanal ke kode native untuk hal yang tidak punya paket di Stack.
 class DevicePlatform {
@@ -55,17 +43,6 @@ class DevicePlatform {
       return DeviceInfo.unknown;
     } on PlatformException {
       return DeviceInfo.unknown;
-    }
-  }
-
-  /// Buka pengaturan optimasi baterai. `false` kalau HP tidak punya layarnya.
-  Future<bool> openBatterySettings() async {
-    try {
-      return await _channel.invokeMethod<bool>('openBatterySettings') ?? false;
-    } on MissingPluginException {
-      return false;
-    } on PlatformException {
-      return false;
     }
   }
 }

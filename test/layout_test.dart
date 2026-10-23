@@ -217,7 +217,7 @@ void main() {
       await disposeApp(tester, h);
     });
 
-    testWidgets('$label: Izin notifikasi dengan panduan baterai, lalu Ajak pasangan', (tester) async {
+    testWidgets('$label: Izin notifikasi yang ditolak, lalu Ajak pasangan', (tester) async {
       const xiaomi = DeviceInfo(manufacturer: 'Xiaomi', brand: 'Redmi', model: 'Redmi Note 13', sdkInt: 34);
       final h = Harness();
       await h.seedUnpaired();
@@ -231,7 +231,7 @@ void main() {
       );
       await apply(tester, size: size, textScale: textScale);
 
-      // Izin ditolak: kartu petunjuk dan panduan baterai tampil bersamaan.
+      // Izin ditolak: kartu petunjuk ke pengaturan notifikasi tampil.
       await tester.tap(find.text('Izinkan notifikasi'));
       await settle(tester);
       await scrollThrough(tester);

@@ -30,9 +30,8 @@ class Bootstrap {
     final signedIn = token != null && userId != null;
     final device = await platform.info();
 
-    // Layar Izin notifikasi dilewati kalau tidak ada yang perlu dilakukan di HP ini:
-    // izin tidak perlu diminta (sebelum Android 13) dan mereknya tidak butuh panduan baterai.
-    final nothingToAsk = !device.needsNotificationPermission && device.batteryGuideBrand == null;
+    // Layar Izin notifikasi dilewati kalau izinnya tidak perlu diminta (sebelum Android 13).
+    final nothingToAsk = !device.needsNotificationPermission;
 
     return Bootstrap(
       token: signedIn ? token : null,
