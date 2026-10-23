@@ -19,17 +19,22 @@ import '../domain/savings_entry.dart';
 import '../domain/savings_views.dart';
 import 'deposit_sheet.dart';
 import 'goal_form_sheet.dart';
+import 'reminder_sheet.dart';
 
 enum _GoalAction { edit, archive, delete }
 
 /// Detail tabungan: ringkasan dengan cincin progres, tombol Setor, setoran per bulan, dan riwayat.
 class GoalDetailScreen extends ConsumerStatefulWidget {
-  const GoalDetailScreen({super.key, required this.goalId, this.fromHome = false});
+  const GoalDetailScreen({super.key, required this.goalId, this.fromHome = false, this.backTo});
 
   final String goalId;
 
   /// Dibuka dari Beranda; tombol kembali pulang ke sana.
   final bool fromHome;
+
+  /// Alamat yang dibuka tombol kembali, misalnya perjalanan yang menautkan target ini.
+  /// Mengalahkan [fromHome].
+  final String? backTo;
 
   @override
   ConsumerState<GoalDetailScreen> createState() => _GoalDetailScreenState();
@@ -41,7 +46,7 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
 
   bool _showAllHistory = false;
 
-  void _back() => context.go(widget.fromHome ? Routes.home : Routes.savings);
+  void _back() => context.go(widget.backTo ?? (widget.fromHome ? Routes.home : Routes.savings));
 
   Future<void> _onAction(_GoalAction action, GoalProgress progress) async {
     final l10n = context.l10n;
@@ -260,6 +265,12 @@ class _SummaryCard extends StatelessWidget {
                 Expanded(child: details),
               ],
             ),
+          // Target yang tercapai atau diarsipkan tidak diingatkan (kontrak, Pengingat setor rutin).
+          if (!progress.isAchieved && !goal.isArchived) ...[
+            const SizedBox(height: AppDimens.gap8),
+            const RowDivider(),
+            SavingsReminderRow(goal: goal, today: progress.today),
+          ],
           if (progress.isAchieved) ...[
             const SizedBox(height: AppDimens.gap12),
             const RowDivider(),

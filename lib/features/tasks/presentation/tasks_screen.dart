@@ -68,7 +68,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final meId = household.me.id;
     final partnerId = household.partner?.id;
     final person = household.isPaired ? _person : PersonFilter.all;
-    final matching = items.where((item) => item.matches(person, meId: meId, partnerId: partnerId)).toList();
+    // Item checklist perjalanan tampil di layar perjalanannya, bukan di sini.
+    final matching = items
+        .where((item) => !item.isChecklistItem && item.matches(person, meId: meId, partnerId: partnerId))
+        .toList();
     final open = matching.where((item) => !item.isCompleted).toList();
     final done = matching.where((item) => item.isCompleted).toList()
       ..sort((a, b) => b.task.completedAt!.compareTo(a.task.completedAt!));

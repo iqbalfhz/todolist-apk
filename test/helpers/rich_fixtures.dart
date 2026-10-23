@@ -26,9 +26,25 @@ const String achievedGoalId = '01m4djq1w0ystkpbz7mqd22k3c';
 /// Tanggal penting berjudul panjang yang jatuh hari ini (kartu ucapan di Beranda).
 const String longDateId = '01m4dm2k70z5bq7rn3xw8c4v5a';
 
+/// Perjalanan yang sedang berlangsung (7–9 Okt 2026), dengan checklist yang sebagian beres.
+const String ongoingTripId = '01m4dp5r20vbx9k3ws7ty6hn3a';
+
+/// Perjalanan berjudul panjang ke Bali dan Lombok, dengan dana dan catatan panjang.
+const String longTripId = '01m4dp5r20vbx9k3ws7ty6hn3b';
+
+/// Perjalanan pribadi yang tanggalnya belum pasti, dengan checklist kosong dan tanpa dana.
+const String undatedTripId = '01m4dp5r20vbx9k3ws7ty6hn3c';
+
+/// Perjalanan yang sudah selesai.
+const String doneTripId = '01m4dp5r20vbx9k3ws7ty6hn3d';
+
 String _taskId(int n) => '01m4dh1yn0t6cdn39q4f09189$n';
 
 String _goalId(String suffix) => '01m4djq1w0ystkpbz7mqd22k3$suffix';
+
+String _checklistId(String suffix) => '01m4dp5r21vbx9k3ws7ty6hn3$suffix';
+
+String _itemId(int n) => '01m4dq7ta0b4xr1n2k3m4p5r${n.toString().padLeft(2, '0')}';
 
 String _entryId(int n) => '01m4dk06v0p3ew0dm0dk94s1${n.toString().padLeft(2, '0')}';
 
@@ -150,7 +166,7 @@ extension RichHarness on Harness {
     }
 
     final goals = [
-      goalJson(id: tripGoalId),
+      goalJson(id: tripGoalId, reminderFrequency: 'monthly', reminderDay: 31),
       goalJson(
         id: _goalId('b'),
         spaceId: personalSpaceId,
@@ -170,6 +186,96 @@ extension RichHarness on Harness {
     for (final goal in goals) {
       await put(EntityType.goal, goal);
     }
+
+    final trips = [
+      tripJson(
+        id: ongoingTripId,
+        title: 'Staycation Bandung',
+        destination: 'Bandung',
+        startDate: '2026-10-07',
+        endDate: '2026-10-09',
+      ),
+      tripJson(
+        id: longTripId,
+        title: 'Liburan ke Bali dan Lombok bersama keluarga besar',
+        destination: 'Bali, Lombok, dan Gili Trawangan di Nusa Tenggara Barat',
+        startDate: '2027-06-20',
+        endDate: '2027-07-02',
+        notes:
+            'Hotel dekat pantai sudah dipesan untuk tiga malam pertama. Sisanya menyusul setelah tiket kapal '
+            'ke Gili pasti. Jangan lupa bawa obat anti mabuk laut dan kabel ekstensi.',
+        savingsGoalId: tripGoalId,
+      ),
+      tripJson(
+        id: undatedTripId,
+        spaceId: personalSpaceId,
+        title: 'Mendaki Rinjani',
+        destination: null,
+        startDate: null,
+        endDate: null,
+      ),
+      tripJson(id: doneTripId, title: 'Pangandaran', startDate: '2026-08-01', endDate: '2026-08-03'),
+    ];
+    for (final trip in trips) {
+      await put(EntityType.trip, trip);
+    }
+
+    await put(
+      EntityType.list,
+      checklistJson(id: _checklistId('a'), trip: ongoingTripId, name: 'Persiapan Staycation Bandung'),
+    );
+    await put(
+      EntityType.list,
+      checklistJson(id: _checklistId('b'), trip: longTripId, name: 'Persiapan Liburan ke Bali'),
+    );
+    await put(
+      EntityType.list,
+      checklistJson(
+        id: _checklistId('c'),
+        trip: undatedTripId,
+        spaceId: personalSpaceId,
+        name: 'Persiapan Mendaki Rinjani',
+      ),
+    );
+    await put(EntityType.list, checklistJson(id: _checklistId('d'), trip: doneTripId, name: 'Persiapan Pangandaran'));
+
+    var item = 0;
+    Future<void> checklistItem(
+      String checklist,
+      String title, {
+      String? dueDate,
+      String? dueTime,
+      List<String> assignees = const [meId],
+      String? completedAt,
+    }) => put(
+      EntityType.task,
+      taskJson(
+        id: _itemId(item++),
+        taskListId: _checklistId(checklist),
+        title: title,
+        dueDate: dueDate,
+        dueTime: dueTime,
+        assigneeIds: assignees,
+        completedAt: completedAt,
+        completedBy: completedAt == null ? null : partnerId,
+        position: 1024.0 * item,
+      ),
+    );
+
+    await checklistItem('a', 'Check-in hotel', completedAt: '2026-10-07T07:00:00.000000Z');
+    await checklistItem(
+      'a',
+      'Beli oleh-oleh untuk keluarga di rumah',
+      dueDate: '2026-10-08',
+      assignees: [meId, partnerId],
+    );
+    await checklistItem('a', 'Isi bensin sebelum pulang', dueDate: '2026-10-09', assignees: [partnerId]);
+    await checklistItem('b', 'Perpanjang paspor', completedAt: '2026-09-01T03:00:00.000000Z');
+    await checklistItem('b', 'Pesan tiket kapal ke Gili Trawangan untuk empat orang dewasa', dueDate: '2027-05-01');
+    await checklistItem('b', 'Tukar uang', assignees: [partnerId]);
+    await checklistItem('b', 'Beli sunscreen', dueDate: '2026-10-06', dueTime: '10:00');
+    await checklistItem('b', 'Siapkan obat-obatan', assignees: [meId, partnerId]);
+    await checklistItem('d', 'Sewa mobil', completedAt: '2026-07-25T03:00:00.000000Z');
 
     var count = 0;
     Future<void> entry(

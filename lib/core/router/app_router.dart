@@ -15,6 +15,9 @@ import '../../features/special_dates/presentation/special_dates_screen.dart';
 import '../../features/tasks/presentation/manage_lists_screen.dart';
 import '../../features/tasks/presentation/task_detail_screen.dart';
 import '../../features/tasks/presentation/tasks_screen.dart';
+import '../../features/trips/presentation/checklist_screen.dart';
+import '../../features/trips/presentation/trip_detail_screen.dart';
+import '../../features/trips/presentation/trips_screen.dart';
 import '../session/session.dart';
 import 'routes.dart';
 
@@ -46,7 +49,9 @@ bool _fromHome(GoRouterState state) => state.uri.queryParameters[Routes.fromPara
 
 /// Layar detail diberi kunci per ID. Tanpa itu, pindah langsung dari satu detail ke detail lain
 /// (misalnya lewat ketukan notifikasi) memakai ulang isian milik data sebelumnya.
-ValueKey<String> _detailKey(GoRouterState state) => ValueKey(state.pathParameters['id']!);
+ValueKey<String> _detailKey(GoRouterState state, [String param = 'id']) => ValueKey(state.pathParameters[param]!);
+
+String _tripId(GoRouterState state) => state.pathParameters['id']!;
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = _RouterRefresh(ref);
@@ -70,7 +75,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: 'tanggal-penting', builder: (_, _) => const SpecialDatesScreen()),
         ],
       ),
-      // Tab bawah v0.1. Detail tugas dan detail tabungan tetap menampilkan tab bawah.
+      // Tab bawah: Beranda, Tugas, Tabungan, dan Liburan (v0.2). Layar detail tetap menampilkan tab bawah.
       StatefulShellRoute.indexedStack(
         builder: (_, state, navigationShell) => MainShell(location: state.uri.path, navigationShell: navigationShell),
         branches: [
@@ -109,6 +114,52 @@ final routerProvider = Provider<GoRouter>((ref) {
                       goalId: state.pathParameters['id']!,
                       fromHome: _fromHome(state),
                     ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.trips,
+                builder: (_, _) => const TripsScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (_, state) => TripDetailScreen(key: _detailKey(state), tripId: _tripId(state)),
+                    routes: [
+                      GoRoute(
+                        path: 'tugas/:taskId',
+                        builder: (_, state) => TaskDetailScreen(
+                          key: _detailKey(state, 'taskId'),
+                          taskId: state.pathParameters['taskId']!,
+                          backTo: Routes.trip(_tripId(state)),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'tabungan/:goalId',
+                        builder: (_, state) => GoalDetailScreen(
+                          key: _detailKey(state, 'goalId'),
+                          goalId: state.pathParameters['goalId']!,
+                          backTo: Routes.trip(_tripId(state)),
+                        ),
+                      ),
+                      GoRoute(
+                        path: 'persiapan',
+                        builder: (_, state) => ChecklistScreen(key: _detailKey(state), tripId: _tripId(state)),
+                        routes: [
+                          GoRoute(
+                            path: ':taskId',
+                            builder: (_, state) => TaskDetailScreen(
+                              key: _detailKey(state, 'taskId'),
+                              taskId: state.pathParameters['taskId']!,
+                              backTo: Routes.tripChecklist(_tripId(state)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),

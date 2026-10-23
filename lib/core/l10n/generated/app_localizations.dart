@@ -229,6 +229,12 @@ abstract class AppLocalizations {
   /// **'Tabungan'**
   String get navSavings;
 
+  /// No description provided for @navTrips.
+  ///
+  /// In id, this message translates to:
+  /// **'Liburan'**
+  String get navTrips;
+
   /// No description provided for @navLabel.
   ///
   /// In id, this message translates to:
@@ -565,18 +571,6 @@ abstract class AppLocalizations {
   /// **'Buat target'**
   String get homeSavingsCreate;
 
-  /// No description provided for @homeDatesTitle.
-  ///
-  /// In id, this message translates to:
-  /// **'Tanggal penting'**
-  String get homeDatesTitle;
-
-  /// No description provided for @homeDatesEmpty.
-  ///
-  /// In id, this message translates to:
-  /// **'Belum ada tanggal penting. Simpan hari jadi atau ulang tahun supaya kalian diingatkan.'**
-  String get homeDatesEmpty;
-
   /// No description provided for @homeDatesAdd.
   ///
   /// In id, this message translates to:
@@ -600,6 +594,54 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'{title} · {date}'**
   String homeDatesCaption(String title, String date);
+
+  /// No description provided for @homeDatesEmptyCaption.
+  ///
+  /// In id, this message translates to:
+  /// **'Hari jadi dan ulang tahun'**
+  String get homeDatesEmptyCaption;
+
+  /// No description provided for @homeDatesSemantic.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal penting: {detail}'**
+  String homeDatesSemantic(String detail);
+
+  /// No description provided for @homeTripTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Persiapan liburan'**
+  String get homeTripTitle;
+
+  /// No description provided for @homeTripProgress.
+  ///
+  /// In id, this message translates to:
+  /// **'{done} dari {total}'**
+  String homeTripProgress(int done, int total);
+
+  /// No description provided for @homeTripCaption.
+  ///
+  /// In id, this message translates to:
+  /// **'Persiapan {title}'**
+  String homeTripCaption(String title);
+
+  /// No description provided for @homeTripEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Rencanakan liburan'**
+  String get homeTripEmpty;
+
+  /// No description provided for @homeTripEmptyCaption.
+  ///
+  /// In id, this message translates to:
+  /// **'Buat perjalanan dan checklistnya'**
+  String get homeTripEmptyCaption;
+
+  /// No description provided for @homeTripSemantic.
+  ///
+  /// In id, this message translates to:
+  /// **'Persiapan liburan: {detail}'**
+  String homeTripSemantic(String detail);
 
   /// No description provided for @filterAll.
   ///
@@ -1621,6 +1663,30 @@ abstract class AppLocalizations {
   /// **'H-7, H-1, dan hari H pukul 08.00'**
   String get notifSpecialDatesSub;
 
+  /// No description provided for @notifTripReminders.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingat perjalanan'**
+  String get notifTripReminders;
+
+  /// No description provided for @notifTripRemindersSub.
+  ///
+  /// In id, this message translates to:
+  /// **'H-7 dan H-1 pukul 08.00'**
+  String get notifTripRemindersSub;
+
+  /// No description provided for @notifSavingsReminders.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingat setor'**
+  String get notifSavingsReminders;
+
+  /// No description provided for @notifSavingsRemindersSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Hari setor yang dipilih di target, pukul 08.00'**
+  String get notifSavingsRemindersSub;
+
   /// No description provided for @settingsCurrency.
   ///
   /// In id, this message translates to:
@@ -2070,6 +2136,444 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Target itu belum tersedia di HP ini.'**
   String get notifTapMissingGoal;
+
+  /// No description provided for @notifTapMissingTrip.
+  ///
+  /// In id, this message translates to:
+  /// **'Perjalanan itu belum tersedia di HP ini.'**
+  String get notifTapMissingTrip;
+
+  /// No description provided for @tripsTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Liburan'**
+  String get tripsTitle;
+
+  /// No description provided for @tripsNew.
+  ///
+  /// In id, this message translates to:
+  /// **'Buat perjalanan'**
+  String get tripsNew;
+
+  /// No description provided for @tripsEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada rencana liburan. Buat perjalanan, lalu siapkan checklistnya bersama pasangan.'**
+  String get tripsEmpty;
+
+  /// No description provided for @tripsEmptySolo.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada rencana liburan. Buat perjalanan, lalu catat persiapannya di checklist.'**
+  String get tripsEmptySolo;
+
+  /// No description provided for @tripsDoneCount.
+  ///
+  /// In id, this message translates to:
+  /// **'Sudah selesai ({count})'**
+  String tripsDoneCount(int count);
+
+  /// No description provided for @tripsReminders.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingat'**
+  String get tripsReminders;
+
+  /// No description provided for @tripsRemindersSwitch.
+  ///
+  /// In id, this message translates to:
+  /// **'Ingatkan sebelum berangkat'**
+  String get tripsRemindersSwitch;
+
+  /// No description provided for @tripsRemindersSub.
+  ///
+  /// In id, this message translates to:
+  /// **'H-7 dan H-1 pukul 08.00, dengan progres persiapan'**
+  String get tripsRemindersSub;
+
+  /// No description provided for @tripInDays.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} hari lagi'**
+  String tripInDays(int count);
+
+  /// No description provided for @tripTomorrow.
+  ///
+  /// In id, this message translates to:
+  /// **'Besok berangkat'**
+  String get tripTomorrow;
+
+  /// No description provided for @tripUndated.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal belum pasti'**
+  String get tripUndated;
+
+  /// No description provided for @tripOngoingDay.
+  ///
+  /// In id, this message translates to:
+  /// **'Hari ke-{day} dari {total}'**
+  String tripOngoingDay(int day, int total);
+
+  /// No description provided for @tripOngoing.
+  ///
+  /// In id, this message translates to:
+  /// **'Sedang berlangsung'**
+  String get tripOngoing;
+
+  /// No description provided for @tripDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Selesai'**
+  String get tripDone;
+
+  /// No description provided for @tripDays.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} hari'**
+  String tripDays(int count);
+
+  /// No description provided for @tripChecklistProgress.
+  ///
+  /// In id, this message translates to:
+  /// **'{done} dari {total} beres'**
+  String tripChecklistProgress(int done, int total);
+
+  /// No description provided for @tripChecklistNone.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada persiapan'**
+  String get tripChecklistNone;
+
+  /// No description provided for @tripDeleteConfirmTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus {title}?'**
+  String tripDeleteConfirmTitle(String title);
+
+  /// No description provided for @tripDeleteConfirmBody.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =0{Pengingatnya ikut berhenti.} other{Checklist persiapannya ({count} item) ikut terhapus.}}'**
+  String tripDeleteConfirmBody(int count);
+
+  /// No description provided for @tripGone.
+  ///
+  /// In id, this message translates to:
+  /// **'Perjalanan ini sudah tidak ada.'**
+  String get tripGone;
+
+  /// No description provided for @tripChecklistTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Persiapan'**
+  String get tripChecklistTitle;
+
+  /// No description provided for @tripChecklistEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada persiapan. Catat barang bawaan dan hal yang perlu diurus sebelum berangkat.'**
+  String get tripChecklistEmpty;
+
+  /// No description provided for @tripChecklistAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah persiapan'**
+  String get tripChecklistAdd;
+
+  /// No description provided for @tripChecklistMore.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} item lain belum beres'**
+  String tripChecklistMore(int count);
+
+  /// No description provided for @tripChecklistAllDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Persiapan beres semua. Selamat berlibur!'**
+  String get tripChecklistAllDone;
+
+  /// No description provided for @tripFundTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Dana'**
+  String get tripFundTitle;
+
+  /// No description provided for @tripFundEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Tautkan target tabungan supaya progres dana perjalanan ini terlihat di sini.'**
+  String get tripFundEmpty;
+
+  /// No description provided for @tripFundPick.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih target'**
+  String get tripFundPick;
+
+  /// No description provided for @tripFundCreate.
+  ///
+  /// In id, this message translates to:
+  /// **'Buat target'**
+  String get tripFundCreate;
+
+  /// No description provided for @tripFundChange.
+  ///
+  /// In id, this message translates to:
+  /// **'Ganti'**
+  String get tripFundChange;
+
+  /// No description provided for @tripFundPickerTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Dana perjalanan'**
+  String get tripFundPickerTitle;
+
+  /// No description provided for @tripFundNone.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanpa tabungan'**
+  String get tripFundNone;
+
+  /// No description provided for @tripFundPickerEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada target tabungan di ruang ini.'**
+  String get tripFundPickerEmpty;
+
+  /// No description provided for @tripFundDefaultName.
+  ///
+  /// In id, this message translates to:
+  /// **'Dana {title}'**
+  String tripFundDefaultName(String title);
+
+  /// No description provided for @tripNotesTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Catatan'**
+  String get tripNotesTitle;
+
+  /// No description provided for @checklistAddHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Bawa sunscreen'**
+  String get checklistAddHint;
+
+  /// No description provided for @checklistEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada persiapan. Ketik di bawah untuk menambah item pertama.'**
+  String get checklistEmpty;
+
+  /// No description provided for @tripSheetNew.
+  ///
+  /// In id, this message translates to:
+  /// **'Perjalanan baru'**
+  String get tripSheetNew;
+
+  /// No description provided for @tripSheetEdit.
+  ///
+  /// In id, this message translates to:
+  /// **'Ubah perjalanan'**
+  String get tripSheetEdit;
+
+  /// No description provided for @tripTitleLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Apa nama perjalanannya?'**
+  String get tripTitleLabel;
+
+  /// No description provided for @tripTitleHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Liburan ke Bali'**
+  String get tripTitleHint;
+
+  /// No description provided for @tripDestinationLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Ke mana?'**
+  String get tripDestinationLabel;
+
+  /// No description provided for @tripDestinationHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Bali'**
+  String get tripDestinationHint;
+
+  /// No description provided for @tripStartLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Kapan berangkat?'**
+  String get tripStartLabel;
+
+  /// No description provided for @tripEndLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Kapan pulang?'**
+  String get tripEndLabel;
+
+  /// No description provided for @tripDatePick.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih tanggal'**
+  String get tripDatePick;
+
+  /// No description provided for @tripStartHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Boleh dikosongkan kalau belum pasti. Pengingat dikirim H-7 dan H-1.'**
+  String get tripStartHelp;
+
+  /// No description provided for @tripEndHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Kosongkan kalau perjalanannya hanya sehari.'**
+  String get tripEndHelp;
+
+  /// No description provided for @tripDateClear.
+  ///
+  /// In id, this message translates to:
+  /// **'Kosongkan tanggal'**
+  String get tripDateClear;
+
+  /// No description provided for @tripNotesLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Catatan'**
+  String get tripNotesLabel;
+
+  /// No description provided for @tripNotesHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Hotel, rencana harian, atau hal lain yang perlu diingat'**
+  String get tripNotesHint;
+
+  /// No description provided for @tripWherePrivateHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Pasanganmu tidak akan melihat perjalanan ini.'**
+  String get tripWherePrivateHelp;
+
+  /// No description provided for @errorTripTitleRequired.
+  ///
+  /// In id, this message translates to:
+  /// **'Nama perjalanan belum diisi.'**
+  String get errorTripTitleRequired;
+
+  /// No description provided for @errorDestinationLong.
+  ///
+  /// In id, this message translates to:
+  /// **'Tujuan paling banyak 100 karakter.'**
+  String get errorDestinationLong;
+
+  /// No description provided for @savingsReminderOff.
+  ///
+  /// In id, this message translates to:
+  /// **'Ingatkan setor'**
+  String get savingsReminderOff;
+
+  /// No description provided for @savingsReminderOffSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Mingguan atau bulanan, pukul 08.00'**
+  String get savingsReminderOffSub;
+
+  /// No description provided for @savingsReminderWeekly.
+  ///
+  /// In id, this message translates to:
+  /// **'Ingatkan setor tiap {day}'**
+  String savingsReminderWeekly(String day);
+
+  /// No description provided for @savingsReminderMonthly.
+  ///
+  /// In id, this message translates to:
+  /// **'Ingatkan setor tiap tanggal {day}'**
+  String savingsReminderMonthly(int day);
+
+  /// No description provided for @savingsReminderSubShared.
+  ///
+  /// In id, this message translates to:
+  /// **'Pukul 08.00, ke kalian berdua'**
+  String get savingsReminderSubShared;
+
+  /// No description provided for @savingsReminderSubPersonal.
+  ///
+  /// In id, this message translates to:
+  /// **'Pukul 08.00'**
+  String get savingsReminderSubPersonal;
+
+  /// No description provided for @savingsReminderPrefsOff.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingat setor sedang dimatikan di Pengaturan.'**
+  String get savingsReminderPrefsOff;
+
+  /// No description provided for @savingsReminderSheet.
+  ///
+  /// In id, this message translates to:
+  /// **'Pengingat setor'**
+  String get savingsReminderSheet;
+
+  /// No description provided for @savingsReminderHowOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Seberapa sering?'**
+  String get savingsReminderHowOften;
+
+  /// No description provided for @savingsReminderWeeklyOption.
+  ///
+  /// In id, this message translates to:
+  /// **'Mingguan'**
+  String get savingsReminderWeeklyOption;
+
+  /// No description provided for @savingsReminderMonthlyOption.
+  ///
+  /// In id, this message translates to:
+  /// **'Bulanan'**
+  String get savingsReminderMonthlyOption;
+
+  /// No description provided for @savingsReminderWhichDay.
+  ///
+  /// In id, this message translates to:
+  /// **'Hari apa?'**
+  String get savingsReminderWhichDay;
+
+  /// No description provided for @savingsReminderWhichDate.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal berapa?'**
+  String get savingsReminderWhichDate;
+
+  /// No description provided for @savingsReminderDateOption.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanggal {day}'**
+  String savingsReminderDateOption(int day);
+
+  /// No description provided for @savingsReminderShortMonth.
+  ///
+  /// In id, this message translates to:
+  /// **'Di bulan yang lebih pendek, pengingat dikirim di hari terakhir bulan itu.'**
+  String get savingsReminderShortMonth;
+
+  /// No description provided for @savingsReminderNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Dikirim pukul 08.00 selama target belum tercapai.'**
+  String get savingsReminderNote;
+
+  /// No description provided for @savingsReminderNoteShared.
+  ///
+  /// In id, this message translates to:
+  /// **'Dikirim pukul 08.00 ke kalian berdua selama target belum tercapai.'**
+  String get savingsReminderNoteShared;
+
+  /// No description provided for @savingsReminderTurnOff.
+  ///
+  /// In id, this message translates to:
+  /// **'Matikan pengingat'**
+  String get savingsReminderTurnOff;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

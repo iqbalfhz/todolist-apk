@@ -26,6 +26,7 @@
   "navHome": "Beranda",
   "navTasks": "Tugas",
   "navSavings": "Tabungan",
+  "navTrips": "Liburan",
   "navLabel": "Navigasi utama",
 
   "offlineBanner": "Sedang offline. Perubahanmu aman dan dikirim saat online.",
@@ -97,8 +98,6 @@
   "homeSavingsTitle": "Tabungan",
   "homeSavingsEmpty": "Belum ada target tabungan. Mulai dari satu target dulu.",
   "homeSavingsCreate": "Buat target",
-  "homeDatesTitle": "Tanggal penting",
-  "homeDatesEmpty": "Belum ada tanggal penting. Simpan hari jadi atau ulang tahun supaya kalian diingatkan.",
   "homeDatesAdd": "Tambah tanggal",
   "homeDatesInDays": "{count} hari lagi",
   "@homeDatesInDays": {
@@ -117,6 +116,35 @@
     "placeholders": {
       "title": {"type": "String"},
       "date": {"type": "String"}
+    }
+  },
+  "homeDatesEmptyCaption": "Hari jadi dan ulang tahun",
+  "homeDatesSemantic": "Tanggal penting: {detail}",
+  "@homeDatesSemantic": {
+    "placeholders": {
+      "detail": {"type": "String"}
+    }
+  },
+  "homeTripTitle": "Persiapan liburan",
+  "homeTripProgress": "{done} dari {total}",
+  "@homeTripProgress": {
+    "placeholders": {
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "homeTripCaption": "Persiapan {title}",
+  "@homeTripCaption": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "homeTripEmpty": "Rencanakan liburan",
+  "homeTripEmptyCaption": "Buat perjalanan dan checklistnya",
+  "homeTripSemantic": "Persiapan liburan: {detail}",
+  "@homeTripSemantic": {
+    "placeholders": {
+      "detail": {"type": "String"}
     }
   },
   "filterAll": "Semua",
@@ -463,6 +491,10 @@
   "notifSavingsActivitySub": "Setoran baru dan target tercapai",
   "notifSpecialDates": "Tanggal penting",
   "notifSpecialDatesSub": "H-7, H-1, dan hari H pukul 08.00",
+  "notifTripReminders": "Pengingat perjalanan",
+  "notifTripRemindersSub": "H-7 dan H-1 pukul 08.00",
+  "notifSavingsReminders": "Pengingat setor",
+  "notifSavingsRemindersSub": "Hari setor yang dipilih di target, pukul 08.00",
   "settingsCurrency": "Mata uang",
   "settingsCurrencySheet": "Mata uang untuk target baru",
   "settingsBackup": "Backup dan ekspor",
@@ -605,5 +637,140 @@
     }
   },
   "notifTapMissingTask": "Tugas itu belum tersedia di HP ini.",
-  "notifTapMissingGoal": "Target itu belum tersedia di HP ini."
+  "notifTapMissingGoal": "Target itu belum tersedia di HP ini.",
+  "notifTapMissingTrip": "Perjalanan itu belum tersedia di HP ini.",
+  "tripsTitle": "Liburan",
+  "tripsNew": "Buat perjalanan",
+  "tripsEmpty": "Belum ada rencana liburan. Buat perjalanan, lalu siapkan checklistnya bersama pasangan.",
+  "tripsEmptySolo": "Belum ada rencana liburan. Buat perjalanan, lalu catat persiapannya di checklist.",
+  "tripsDoneCount": "Sudah selesai ({count})",
+  "@tripsDoneCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tripsReminders": "Pengingat",
+  "tripsRemindersSwitch": "Ingatkan sebelum berangkat",
+  "tripsRemindersSub": "H-7 dan H-1 pukul 08.00, dengan progres persiapan",
+  "tripInDays": "{count} hari lagi",
+  "@tripInDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tripTomorrow": "Besok berangkat",
+  "tripUndated": "Tanggal belum pasti",
+  "tripOngoingDay": "Hari ke-{day} dari {total}",
+  "@tripOngoingDay": {
+    "placeholders": {
+      "day": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "tripOngoing": "Sedang berlangsung",
+  "tripDone": "Selesai",
+  "tripDays": "{count} hari",
+  "@tripDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tripChecklistProgress": "{done} dari {total} beres",
+  "@tripChecklistProgress": {
+    "placeholders": {
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "tripChecklistNone": "Belum ada persiapan",
+  "tripDeleteConfirmTitle": "Hapus {title}?",
+  "@tripDeleteConfirmTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "tripDeleteConfirmBody": "{count, plural, =0{Pengingatnya ikut berhenti.} other{Checklist persiapannya ({count} item) ikut terhapus.}}",
+  "@tripDeleteConfirmBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tripGone": "Perjalanan ini sudah tidak ada.",
+  "tripChecklistTitle": "Persiapan",
+  "tripChecklistEmpty": "Belum ada persiapan. Catat barang bawaan dan hal yang perlu diurus sebelum berangkat.",
+  "tripChecklistAdd": "Tambah persiapan",
+  "tripChecklistMore": "{count} item lain belum beres",
+  "@tripChecklistMore": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "tripChecklistAllDone": "Persiapan beres semua. Selamat berlibur!",
+  "tripFundTitle": "Dana",
+  "tripFundEmpty": "Tautkan target tabungan supaya progres dana perjalanan ini terlihat di sini.",
+  "tripFundPick": "Pilih target",
+  "tripFundCreate": "Buat target",
+  "tripFundChange": "Ganti",
+  "tripFundPickerTitle": "Dana perjalanan",
+  "tripFundNone": "Tanpa tabungan",
+  "tripFundPickerEmpty": "Belum ada target tabungan di ruang ini.",
+  "tripFundDefaultName": "Dana {title}",
+  "@tripFundDefaultName": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "tripNotesTitle": "Catatan",
+  "checklistAddHint": "Misalnya Bawa sunscreen",
+  "checklistEmpty": "Belum ada persiapan. Ketik di bawah untuk menambah item pertama.",
+  "tripSheetNew": "Perjalanan baru",
+  "tripSheetEdit": "Ubah perjalanan",
+  "tripTitleLabel": "Apa nama perjalanannya?",
+  "tripTitleHint": "Misalnya Liburan ke Bali",
+  "tripDestinationLabel": "Ke mana?",
+  "tripDestinationHint": "Misalnya Bali",
+  "tripStartLabel": "Kapan berangkat?",
+  "tripEndLabel": "Kapan pulang?",
+  "tripDatePick": "Pilih tanggal",
+  "tripStartHelp": "Boleh dikosongkan kalau belum pasti. Pengingat dikirim H-7 dan H-1.",
+  "tripEndHelp": "Kosongkan kalau perjalanannya hanya sehari.",
+  "tripDateClear": "Kosongkan tanggal",
+  "tripNotesLabel": "Catatan",
+  "tripNotesHint": "Hotel, rencana harian, atau hal lain yang perlu diingat",
+  "tripWherePrivateHelp": "Pasanganmu tidak akan melihat perjalanan ini.",
+  "errorTripTitleRequired": "Nama perjalanan belum diisi.",
+  "errorDestinationLong": "Tujuan paling banyak 100 karakter.",
+  "savingsReminderOff": "Ingatkan setor",
+  "savingsReminderOffSub": "Mingguan atau bulanan, pukul 08.00",
+  "savingsReminderWeekly": "Ingatkan setor tiap {day}",
+  "@savingsReminderWeekly": {
+    "placeholders": {
+      "day": {"type": "String"}
+    }
+  },
+  "savingsReminderMonthly": "Ingatkan setor tiap tanggal {day}",
+  "@savingsReminderMonthly": {
+    "placeholders": {
+      "day": {"type": "int"}
+    }
+  },
+  "savingsReminderSubShared": "Pukul 08.00, ke kalian berdua",
+  "savingsReminderSubPersonal": "Pukul 08.00",
+  "savingsReminderPrefsOff": "Pengingat setor sedang dimatikan di Pengaturan.",
+  "savingsReminderSheet": "Pengingat setor",
+  "savingsReminderHowOften": "Seberapa sering?",
+  "savingsReminderWeeklyOption": "Mingguan",
+  "savingsReminderMonthlyOption": "Bulanan",
+  "savingsReminderWhichDay": "Hari apa?",
+  "savingsReminderWhichDate": "Tanggal berapa?",
+  "savingsReminderDateOption": "Tanggal {day}",
+  "@savingsReminderDateOption": {
+    "placeholders": {
+      "day": {"type": "int"}
+    }
+  },
+  "savingsReminderShortMonth": "Di bulan yang lebih pendek, pengingat dikirim di hari terakhir bulan itu.",
+  "savingsReminderNote": "Dikirim pukul 08.00 selama target belum tercapai.",
+  "savingsReminderNoteShared": "Dikirim pukul 08.00 ke kalian berdua selama target belum tercapai.",
+  "savingsReminderTurnOff": "Matikan pengingat"
 }

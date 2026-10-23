@@ -3,16 +3,22 @@ import 'package:material_ui/material_ui.dart';
 import '../utils/dates.dart';
 
 /// Pilih tanggal kalender. [today] adalah hari ini di zona waktu ruang, bukan zona waktu HP.
-/// Mengembalikan `YYYY-MM-DD`.
-Future<String?> pickDate(BuildContext context, {required String today, String? initial}) async {
+/// [earliest] membatasi tanggal paling awal yang bisa dipilih, misalnya tanggal pulang
+/// yang tidak boleh sebelum tanggal berangkat. Mengembalikan `YYYY-MM-DD`.
+Future<String?> pickDate(BuildContext context, {required String today, String? initial, String? earliest}) async {
   final current = _local(today);
+  final first = earliest == null ? DateTime(current.year - 5) : _local(earliest);
+  final last = DateTime(current.year + 10, 12, 31);
+  var start = initial == null ? current : _local(initial);
+  if (start.isBefore(first)) start = first;
+  if (start.isAfter(last)) start = last;
 
   final picked = await showDatePicker(
     context: context,
-    initialDate: initial == null ? current : _local(initial),
+    initialDate: start,
     currentDate: current,
-    firstDate: DateTime(current.year - 5),
-    lastDate: DateTime(current.year + 10, 12, 31),
+    firstDate: first,
+    lastDate: last,
   );
   return picked == null ? null : ymdOf(picked);
 }

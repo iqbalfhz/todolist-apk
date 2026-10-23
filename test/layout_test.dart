@@ -6,12 +6,19 @@ import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
 import 'package:todolist/core/widgets/widgets.dart';
+import 'package:todolist/features/savings/domain/savings_views.dart';
+import 'package:todolist/features/savings/presentation/goal_detail_screen.dart';
 import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
+import 'package:todolist/features/savings/presentation/reminder_sheet.dart';
 import 'package:todolist/features/savings/presentation/savings_screen.dart';
 import 'package:todolist/features/special_dates/presentation/special_date_sheet.dart';
 import 'package:todolist/features/special_dates/presentation/special_dates_screen.dart';
 import 'package:todolist/features/tasks/presentation/list_form_sheet.dart';
 import 'package:todolist/features/tasks/presentation/manage_lists_screen.dart';
+import 'package:todolist/features/trips/presentation/checklist_screen.dart';
+import 'package:todolist/features/trips/presentation/trip_detail_screen.dart';
+import 'package:todolist/features/trips/presentation/trip_form_sheet.dart';
+import 'package:todolist/features/trips/presentation/trips_screen.dart';
 
 import 'helpers/app_harness.dart';
 import 'helpers/fake_push.dart';
@@ -115,6 +122,15 @@ void main() {
       await tester.ensureVisible(find.text('Setor'));
       await settle(tester);
       await withSheet(tester, container, () => tester.tap(find.text('Setor')));
+      // Jadwal bulanan tanggal 31 menampilkan keterangan bulan yang lebih pendek.
+      await withSheet(tester, container, () async {
+        final goal = container.read(goalProgressProvider)!.firstWhere((item) => item.goal.id == tripGoalId).goal;
+        showSavingsReminderSheet(
+          tester.element(find.byType(GoalDetailScreen)),
+          goal: goal,
+          today: '2026-10-08',
+        ).ignore();
+      });
       await visit(tester, container, Routes.goal(achievedGoalId));
 
       await visit(tester, container, Routes.settings);
@@ -132,6 +148,46 @@ void main() {
         // Pilihan Pribadi menambah keterangan di bawahnya.
         await tester.tap(find.text('Pribadi'));
       });
+
+      await visit(tester, container, Routes.trips);
+      await tester.ensureVisible(find.textContaining('Sudah selesai ('));
+      await settle(tester);
+      await tester.tap(find.textContaining('Sudah selesai ('));
+      await settle(tester);
+      await scrollThrough(tester);
+      await withSheet(tester, container, () async {
+        showTripFormSheet(tester.element(find.byType(TripsScreen))).ignore();
+        await settle(tester);
+        // Pilihan Pribadi menambah keterangan di bawahnya.
+        final private = find.descendant(of: find.byType(AppSheet), matching: find.text('Pribadi'));
+        await tester.ensureVisible(private);
+        await settle(tester);
+        await tester.tap(private);
+      });
+
+      await visit(tester, container, Routes.trip(longTripId));
+      await withSheet(tester, container, () async {
+        final trip = container.read(tripsProvider).value!.firstWhere((trip) => trip.id == longTripId);
+        showTripFormSheet(tester.element(find.byType(TripDetailScreen)), trip: trip).ignore();
+      });
+      await withSheet(tester, container, () async {
+        final goals = container.read(goalProgressProvider)!;
+        showGoalPicker(tester.element(find.byType(TripDetailScreen)), goals: goals, selectedId: tripGoalId).ignore();
+      });
+      await visit(tester, container, Routes.tripChecklist(longTripId));
+      await tester.tap(find.textContaining('Selesai ('));
+      await settle(tester);
+      await scrollThrough(tester);
+      // Isian tambah item tetap muat saat keyboard terbuka.
+      tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
+      await settle(tester);
+      expect(find.byType(ChecklistScreen), findsOneWidget);
+      tester.view.resetViewInsets();
+      await settle(tester);
+
+      await visit(tester, container, Routes.trip(ongoingTripId));
+      await visit(tester, container, Routes.trip(undatedTripId));
+      await visit(tester, container, Routes.tripChecklist(undatedTripId));
 
       await disposeApp(tester, h);
     });

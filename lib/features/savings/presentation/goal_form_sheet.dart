@@ -14,9 +14,19 @@ import '../../spaces/domain/household.dart';
 import '../../tasks/presentation/list_form_sheet.dart';
 import '../domain/savings_goal.dart';
 
-/// Buka lembar buat target baru, atau ubah [goal] kalau diisi.
-Future<void> showGoalFormSheet(BuildContext context, {SavingsGoal? goal}) =>
-    showAppSheet<void>(context, builder: (_) => GoalFormSheet(goal: goal));
+/// Buka lembar buat target baru, atau ubah [goal] kalau diisi. Mengembalikan target yang baru dibuat.
+///
+/// [spaceId] menetapkan ruang target baru, misalnya ruang perjalanan yang akan menautkannya,
+/// dan [initialName] mengisi namanya lebih dulu.
+Future<SavingsGoal?> showGoalFormSheet(
+  BuildContext context, {
+  SavingsGoal? goal,
+  String? spaceId,
+  String? initialName,
+}) => showAppSheet<SavingsGoal>(
+  context,
+  builder: (_) => GoalFormSheet(goal: goal, spaceId: spaceId, initialName: initialName),
+);
 
 /// Lembar pilihan mata uang. Mengembalikan kode yang dipilih.
 Future<String?> showCurrencyPicker(BuildContext context, {required String title, required String selected}) =>
@@ -91,16 +101,20 @@ class MoneyField extends StatelessWidget {
 
 /// Lembar buat atau ubah target: nama, emoji, nominal, mata uang, dan tanggal target.
 class GoalFormSheet extends ConsumerStatefulWidget {
-  const GoalFormSheet({super.key, this.goal});
+  const GoalFormSheet({super.key, this.goal, this.spaceId, this.initialName});
 
   final SavingsGoal? goal;
+
+  /// Ruang target baru yang sudah ditetapkan; pilihan Bersama atau Pribadi tidak ditampilkan.
+  final String? spaceId;
+  final String? initialName;
 
   @override
   ConsumerState<GoalFormSheet> createState() => _GoalFormSheetState();
 }
 
 class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
-  late final TextEditingController _name = TextEditingController(text: widget.goal?.name ?? '');
+  late final TextEditingController _name = TextEditingController(text: widget.goal?.name ?? widget.initialName ?? '');
   late final TextEditingController _emoji = TextEditingController(text: widget.goal?.emoji ?? '');
   late final TextEditingController _amount = TextEditingController(
     text: widget.goal == null ? '' : moneyInputText(widget.goal!.targetAmount, widget.goal!.currency),
@@ -165,11 +179,17 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
     if (account == null) return;
 
     final goal = widget.goal;
+    SavingsGoal? created;
     if (goal == null) {
-      final space = (_shared ?? household.isPaired) ? household.shared : household.personal;
+      final fixed = widget.spaceId;
+      final space = fixed != null
+          ? household.spaceOf(fixed)
+          : (_shared ?? household.isPaired)
+          ? household.shared
+          : household.personal;
       final target = space ?? household.personal ?? household.shared;
       if (target == null) return;
-      await account.savings.createGoal(
+      created = await account.savings.createGoal(
         spaceId: target.id,
         name: name,
         emoji: _emoji.text,
@@ -187,7 +207,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
       );
     }
 
-    if (mounted) Navigator.of(context).pop();
+    if (mounted) Navigator.of(context).pop(created);
   }
 
   @override
@@ -206,7 +226,8 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
 
     // Bawaan target baru: mata uang dari profil.
     final currency = _currency ?? household.me.defaultCurrency;
-    final spaceId = widget.goal?.spaceId ?? (household.shared ?? household.personal)?.id ?? '';
+    final spaceId = widget.goal?.spaceId ?? widget.spaceId ?? (household.shared ?? household.personal)?.id ?? '';
+    final spaceFixed = _editing || widget.spaceId != null;
     final today = ref.watch(spaceClockProvider).today(household.timezoneOf(spaceId));
 
     return AppSheet(
@@ -272,7 +293,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
           ),
         ),
         // Ruang hanya dipilih saat membuat; target tidak bisa pindah ruang.
-        if (!_editing && household.isPaired)
+        if (!spaceFixed && household.isPaired)
           LabeledField(
             label: l10n.spaceWhereLabel,
             child: SegmentedControl<bool>(
@@ -285,7 +306,7 @@ class _GoalFormSheetState extends ConsumerState<GoalFormSheet> {
               ],
             ),
           ),
-        if (_editing && !household.isShared(spaceId))
+        if (spaceFixed && !household.isShared(spaceId))
           Row(
             children: [
               Icon(Symbols.lock_rounded, size: AppDimens.iconXs, color: palette.muted),

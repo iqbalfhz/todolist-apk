@@ -131,7 +131,7 @@ void main() {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   });
 
-  testWidgets('seluruh fitur v0.1 dan Tanggal penting v0.2 lewat layar, terhadap API sungguhan', (tester) async {
+  testWidgets('seluruh fitur v0.1 dan v0.2 lewat layar, terhadap API sungguhan', (tester) async {
     final semantics = tester.ensureSemantics();
     WidgetController.hitTestWarningShouldBeFatal = true;
     addTearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
@@ -581,6 +581,8 @@ void main() {
       'partner_activity': false,
       'savings_activity': true,
       'special_dates': false,
+      'trip_reminders': true,
+      'savings_reminders': true,
     });
     expect(profile['default_currency'], 'USD');
     expect(find.text('Dolar AS (USD)'), findsOneWidget);
@@ -748,7 +750,8 @@ void main() {
 
     step('Beranda menghitung mundur tanggal terdekat');
     await go(Routes.home);
-    expect(find.text('Tanggal penting'), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('^Tanggal penting: ')), findsOneWidget);
+    expect(find.text('Rencanakan liburan'), findsOneWidget);
     expect(find.textContaining(RegExp(r'^(\d+ hari lagi|Besok|.*Selamat!)$')), findsOneWidget);
     await go(Routes.specialDates);
 
@@ -771,6 +774,137 @@ void main() {
     await asPartner(() async {
       await partner.syncNow();
       expect((await partner.account.dates.watchAll().first).map((date) => date.id), isNot(contains(anniversary['id'])));
+    });
+
+    // ---------------------------------------------------------------- perjalanan (v0.2)
+
+    step('Perjalanan baru dari tab Liburan: checklistnya ikut dibuat');
+    await go(Routes.home);
+    await tap(find.text('Liburan').last);
+    expect(
+      find.text('Belum ada rencana liburan. Buat perjalanan, lalu siapkan checklistnya bersama pasangan.'),
+      findsOneWidget,
+    );
+    await tap(find.widgetWithText(TextButton, 'Buat perjalanan'));
+    await tester.enterText(field('Apa nama perjalanannya?'), 'Liburan ke Bali');
+    await tester.enterText(field('Ke mana?'), 'Bali');
+    await tap(find.text('Pilih tanggal'));
+    await tap(find.text('OKE'));
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final trip = await serverRow('trips', (row) => row['title'] == 'Liburan ke Bali');
+    final tripId = trip['id'] as String;
+    expect(trip['destination'], 'Bali');
+    expect(trip['start_date'], today());
+    expect(trip['end_date'], isNull);
+    expect(trip['space_id'], sharedGoal['space_id']);
+    final checklist = await serverRow('task_lists', (row) => row['trip_id'] == tripId);
+    expect(checklist['name'], 'Persiapan Liburan ke Bali');
+    expect(container.read(routerProvider).state.uri.path, Routes.trip(tripId));
+    // Berangkat hari ini dan hanya sehari.
+    expect(find.text('Sedang berlangsung'), findsOneWidget);
+
+    step('Checklist: dua item dicatat beruntun, satu dicentang');
+    await tap(find.widgetWithText(TextButton, 'Tambah persiapan'));
+    await tester.enterText(find.byType(TextField), 'Beli sunscreen');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await net();
+    await tester.enterText(find.byType(TextField), 'Tukar uang');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await net();
+    expect(find.text('0 dari 2 beres'), findsOneWidget);
+    final items = (await serverRows('tasks')).where((row) => row['task_list_id'] == checklist['id']).toList();
+    expect(items.map((row) => row['title']), unorderedEquals(['Beli sunscreen', 'Tukar uang']));
+
+    await tap(find.bySemanticsLabel('Tandai selesai: Beli sunscreen'));
+    await advance(const Duration(seconds: 6));
+    expect((await serverRow('tasks', (row) => row['title'] == 'Beli sunscreen'))['completed_at'], isNotNull);
+
+    step('Pasangan menerima perjalanan dan checklistnya, lalu mencentang item kedua');
+    await asPartner(() async {
+      await partner.syncNow();
+      final received = (await partner.account.trips.watchAll().first).singleWhere((row) => row.id == tripId);
+      expect(received.title, 'Liburan ke Bali');
+      final checklists = await partner.account.store.checklistsOf(tripId);
+      expect(checklists.single.id, checklist['id']);
+      final exchange = (await partner.account.store.tasks()).singleWhere((row) => row.title == 'Tukar uang');
+      expect(exchange.taskListId, checklist['id']);
+      await partner.account.tasks.complete(exchange.id);
+      await partner.syncNow();
+    });
+    await pullToRefresh();
+    expect(find.text('2 dari 2 beres'), findsOneWidget);
+    expect(find.text('Persiapan beres semua. Selamat berlibur!'), findsOneWidget);
+
+    step('Dana: target bersama ditautkan ke perjalanan');
+    await tap(find.byTooltip('Kembali'));
+    await tap(find.text('Pilih target'));
+    await tap(find.text('Dana Darurat'));
+    await net();
+    expect((await serverRow('trips', (row) => row['id'] == tripId))['savings_goal_id'], sharedGoal['id']);
+    expect(find.text('Dana Darurat'), findsOneWidget);
+
+    step('Ubah judul: nama checklist di server ikut berubah');
+    await tap(find.byTooltip('Opsi lainnya'));
+    await tap(find.text('Ubah'));
+    await tester.enterText(field('Apa nama perjalanannya?'), 'Liburan ke Bali dan Lombok');
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+    expect((await serverRow('trips', (row) => row['id'] == tripId))['title'], 'Liburan ke Bali dan Lombok');
+    expect(
+      (await serverRow('task_lists', (row) => row['id'] == checklist['id']))['name'],
+      'Persiapan Liburan ke Bali dan Lombok',
+    );
+
+    step('Beranda: kartu Persiapan liburan; item checklist tidak masuk tab Tugas');
+    await go(Routes.home);
+    expect(find.text('2 dari 2'), findsOneWidget);
+    expect(find.text('Persiapan Liburan ke Bali dan Lombok'), findsOneWidget);
+    await go(Routes.tasks);
+    expect(find.text('Tukar uang'), findsNothing);
+
+    step('Pengingat perjalanan dimatikan dari tab Liburan');
+    await go(Routes.trips);
+    await tap(find.text('Ingatkan sebelum berangkat'));
+    await net();
+    profile = (await server('/me'))['data'] as Map<String, dynamic>;
+    expect((profile['notification_prefs'] as Map<String, dynamic>)['trip_reminders'], isFalse);
+
+    step('Pengingat setor: tiap Jumat, sampai ke HP pasangan, lalu dimatikan');
+    await go(Routes.goal(sharedGoal['id'] as String));
+    await tap(find.text('Ingatkan setor'));
+    await tap(find.text('Jum'));
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+    var remindedGoal = await serverRow('savings_goals', (row) => row['id'] == sharedGoal['id']);
+    expect((remindedGoal['reminder_frequency'], remindedGoal['reminder_day']), ('weekly', 5));
+    expect(find.text('Ingatkan setor tiap Jumat'), findsOneWidget);
+    await asPartner(() async {
+      await partner.syncNow();
+      final goals = await partner.account.savings.watchGoals().first;
+      expect(goals.singleWhere((row) => row.id == sharedGoal['id']).reminderDay, 5);
+    });
+
+    await tap(find.byType(Switch));
+    await net();
+    remindedGoal = await serverRow('savings_goals', (row) => row['id'] == sharedGoal['id']);
+    expect((remindedGoal['reminder_frequency'], remindedGoal['reminder_day']), (null, null));
+
+    step('Hapus perjalanan: checklist dan isinya ikut terhapus di server dan di HP pasangan');
+    await go(Routes.trip(tripId));
+    await tap(find.byTooltip('Opsi lainnya'));
+    await tap(find.text('Hapus'));
+    expect(find.text('Checklist persiapannya (2 item) ikut terhapus.'), findsOneWidget);
+    await tap(find.widgetWithText(TextButton, 'Hapus'));
+    await net();
+    expect(container.read(routerProvider).state.uri.path, Routes.trips);
+    expect((await serverRows('trips')).where((row) => row['id'] == tripId), isEmpty);
+    expect((await serverRows('task_lists')).where((row) => row['id'] == checklist['id']), isEmpty);
+    expect((await serverRows('tasks')).where((row) => row['task_list_id'] == checklist['id']), isEmpty);
+    await asPartner(() async {
+      await partner.syncNow();
+      expect((await partner.account.trips.watchAll().first).where((row) => row.id == tripId), isEmpty);
     });
 
     // ---------------------------------------------------------------- offline

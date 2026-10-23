@@ -12,7 +12,7 @@ import '../../firebase_options.dart';
 /// Channel Android, dibuat saat app pertama dibuka. Keduanya bisa dimatikan
 /// terpisah dari pengaturan Android.
 abstract final class PushChannels {
-  /// Penting dan bersuara: pengingat tenggat dan tanggal penting.
+  /// Penting dan bersuara: pengingat tenggat, tanggal penting, perjalanan, dan hari setor.
   static const String reminders = 'pengingat';
 
   /// Normal: titipan, tugas selesai, setoran, dan pasangan bergabung.
@@ -26,7 +26,8 @@ class PushMessage {
   final String? title;
   final String? body;
 
-  /// `type` dan `space_id`, ditambah `task_id`, `savings_goal_id`, `special_date_id`, atau `member_id`.
+  /// `type` dan `space_id`, ditambah `task_id`, `savings_goal_id`, `special_date_id`, `member_id`,
+  /// atau `trip_id`.
   final Map<String, String> data;
 
   String get type => data['type'] ?? '';
@@ -41,12 +42,24 @@ class PushMessage {
   /// Anggota yang berulang tahun, untuk `special_date_reminder` (v0.2).
   String? get memberId => _filled(data['member_id']);
 
+  /// Perjalanan yang diingatkan `trip_reminder` (v0.2).
+  String? get tripId => _filled(data['trip_id']);
+
   bool get isAboutTask => type.startsWith('task_');
 
+  /// `savings_deposit`, `savings_achieved`, dan `savings_reminder` (v0.2); isinya disembunyikan di layar kunci.
   bool get isAboutSavings => type.startsWith('savings_');
 
-  String get channel =>
-      type == 'task_reminder' || type == 'special_date_reminder' ? PushChannels.reminders : PushChannels.activity;
+  bool get isAboutTrip => type == 'trip_reminder';
+
+  static const Set<String> _reminderTypes = {
+    'task_reminder',
+    'special_date_reminder',
+    'trip_reminder',
+    'savings_reminder',
+  };
+
+  String get channel => _reminderTypes.contains(type) ? PushChannels.reminders : PushChannels.activity;
 
   /// Kunci yang membuat notifikasi untuk hal yang sama menimpa yang lama.
   String get tag {
@@ -54,6 +67,7 @@ class PushMessage {
     if (goalId != null) return 'goal-$goalId';
     if (specialDateId != null) return 'date-$specialDateId';
     if (memberId != null) return 'birthday-$memberId';
+    if (tripId != null) return 'trip-$tripId';
     return 'space-${data['space_id'] ?? ''}';
   }
 
@@ -184,7 +198,8 @@ class FirebasePushService implements PushService {
         const AndroidNotificationChannel(
           PushChannels.reminders,
           'Pengingat',
-          description: 'Pengingat saat tenggat tugas tiba dan menjelang tanggal penting.',
+          description:
+              'Pengingat saat tenggat tugas tiba, menjelang tanggal penting dan perjalanan, dan di hari setor.',
           importance: Importance.high,
         ),
       );

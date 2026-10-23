@@ -22,7 +22,8 @@ class ManageListsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final household = ref.watch(householdProvider);
-    final lists = ref.watch(taskListsProvider).value;
+    // Checklist perjalanan dikelola dari perjalanannya: tidak bisa diurutkan, diarsipkan, atau dihapus di sini.
+    final lists = ref.watch(taskListsProvider).value?.where((list) => !list.isChecklist).toList();
     final tasks = ref.watch(tasksProvider).value;
 
     final header = ScreenHeader(

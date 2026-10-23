@@ -25,12 +25,15 @@ import 'task_text.dart';
 /// Teks dikirim 1 detik setelah berhenti mengetik, dan langsung ditulis ke antrean
 /// saat app masuk ke latar belakang atau layar ditutup.
 class TaskDetailScreen extends ConsumerStatefulWidget {
-  const TaskDetailScreen({super.key, required this.taskId, this.fromHome = false});
+  const TaskDetailScreen({super.key, required this.taskId, this.fromHome = false, this.backTo});
 
   final String taskId;
 
   /// Dibuka dari Beranda; tombol kembali pulang ke sana.
   final bool fromHome;
+
+  /// Alamat yang dibuka tombol kembali, misalnya checklist perjalanan. Mengalahkan [fromHome].
+  final String? backTo;
 
   @override
   ConsumerState<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -117,7 +120,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
     }
   }
 
-  void _back() => context.go(widget.fromHome ? Routes.home : Routes.tasks);
+  void _back() => context.go(widget.backTo ?? (widget.fromHome ? Routes.home : Routes.tasks));
 
   Future<void> _delete() async {
     // Perubahan teks yang belum tersimpan tidak perlu lagi.
@@ -340,7 +343,8 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
             child: ListPickerField(
               list: item.list,
               household: household,
-              onTap: sameSpaceLists > 1 ? () => _pickList(item, lists, household) : null,
+              // Item checklist tetap di checklist perjalanannya.
+              onTap: !item.isChecklistItem && sameSpaceLists > 1 ? () => _pickList(item, lists, household) : null,
             ),
           ),
           const SizedBox(height: AppDimens.gap16),

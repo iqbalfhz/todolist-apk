@@ -155,6 +155,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     final router = ref.read(routerProvider);
     final taskId = message.taskId;
     final goalId = message.goalId;
+    final tripId = message.tripId;
 
     // Lembar bawah atau dialog yang masih terbuka ditutup, supaya layar tujuan terlihat.
     router.routerDelegate.navigatorKey.currentState?.popUntil((route) => route is! PopupRoute);
@@ -169,6 +170,12 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       if (await _exists(account, EntityType.goal, goalId)) return router.go(Routes.goal(goalId));
       router.go(Routes.savings);
       return _show(_l10n.notifTapMissingGoal);
+    }
+
+    if (message.isAboutTrip && tripId != null) {
+      if (await _exists(account, EntityType.trip, tripId)) return router.go(Routes.trip(tripId));
+      router.go(Routes.trips);
+      return _show(_l10n.notifTapMissingTrip);
     }
 
     router.go(Routes.home);

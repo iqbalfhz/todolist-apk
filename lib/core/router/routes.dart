@@ -9,6 +9,7 @@ abstract final class Routes {
   static const String tasks = '/tugas';
   static const String manageLists = '/tugas/daftar';
   static const String savings = '/tabungan';
+  static const String trips = '/liburan';
 
   static const String settings = '/pengaturan';
   static const String profile = '/pengaturan/profil';
@@ -21,6 +22,19 @@ abstract final class Routes {
   static String task(String id, {bool fromHome = false}) => '/tugas/$id${_origin(fromHome)}';
 
   static String goal(String id, {bool fromHome = false}) => '/tabungan/$id${_origin(fromHome)}';
+
+  /// Detail perjalanan (v0.2).
+  static String trip(String id) => '/liburan/$id';
+
+  /// Checklist persiapan perjalanan [tripId].
+  static String tripChecklist(String tripId) => '/liburan/$tripId/persiapan';
+
+  /// Item checklist, dibuka dari checklist (kembali ke sana) atau dari Detail perjalanan.
+  static String tripTask(String tripId, String taskId, {bool fromChecklist = false}) =>
+      fromChecklist ? '${tripChecklist(tripId)}/$taskId' : '/liburan/$tripId/tugas/$taskId';
+
+  /// Target tabungan yang ditautkan ke perjalanan [tripId]; kembali ke perjalanannya.
+  static String tripGoal(String tripId, String goalId) => '/liburan/$tripId/tabungan/$goalId';
 
   static String _origin(bool fromHome) => fromHome ? '?$fromParam=${Routes.fromHome}' : '';
 }

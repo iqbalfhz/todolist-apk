@@ -79,6 +79,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get navSavings => 'Tabungan';
 
   @override
+  String get navTrips => 'Liburan';
+
+  @override
   String get navLabel => 'Navigasi utama';
 
   @override
@@ -256,12 +259,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get homeSavingsCreate => 'Buat target';
 
   @override
-  String get homeDatesTitle => 'Tanggal penting';
-
-  @override
-  String get homeDatesEmpty => 'Belum ada tanggal penting. Simpan hari jadi atau ulang tahun supaya kalian diingatkan.';
-
-  @override
   String get homeDatesAdd => 'Tambah tanggal';
 
   @override
@@ -277,6 +274,38 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String homeDatesCaption(String title, String date) {
     return '$title · $date';
+  }
+
+  @override
+  String get homeDatesEmptyCaption => 'Hari jadi dan ulang tahun';
+
+  @override
+  String homeDatesSemantic(String detail) {
+    return 'Tanggal penting: $detail';
+  }
+
+  @override
+  String get homeTripTitle => 'Persiapan liburan';
+
+  @override
+  String homeTripProgress(int done, int total) {
+    return '$done dari $total';
+  }
+
+  @override
+  String homeTripCaption(String title) {
+    return 'Persiapan $title';
+  }
+
+  @override
+  String get homeTripEmpty => 'Rencanakan liburan';
+
+  @override
+  String get homeTripEmptyCaption => 'Buat perjalanan dan checklistnya';
+
+  @override
+  String homeTripSemantic(String detail) {
+    return 'Persiapan liburan: $detail';
   }
 
   @override
@@ -867,6 +896,18 @@ class AppLocalizationsId extends AppLocalizations {
   String get notifSpecialDatesSub => 'H-7, H-1, dan hari H pukul 08.00';
 
   @override
+  String get notifTripReminders => 'Pengingat perjalanan';
+
+  @override
+  String get notifTripRemindersSub => 'H-7 dan H-1 pukul 08.00';
+
+  @override
+  String get notifSavingsReminders => 'Pengingat setor';
+
+  @override
+  String get notifSavingsRemindersSub => 'Hari setor yang dipilih di target, pukul 08.00';
+
+  @override
   String get settingsCurrency => 'Mata uang';
 
   @override
@@ -1124,4 +1165,254 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get notifTapMissingGoal => 'Target itu belum tersedia di HP ini.';
+
+  @override
+  String get notifTapMissingTrip => 'Perjalanan itu belum tersedia di HP ini.';
+
+  @override
+  String get tripsTitle => 'Liburan';
+
+  @override
+  String get tripsNew => 'Buat perjalanan';
+
+  @override
+  String get tripsEmpty => 'Belum ada rencana liburan. Buat perjalanan, lalu siapkan checklistnya bersama pasangan.';
+
+  @override
+  String get tripsEmptySolo => 'Belum ada rencana liburan. Buat perjalanan, lalu catat persiapannya di checklist.';
+
+  @override
+  String tripsDoneCount(int count) {
+    return 'Sudah selesai ($count)';
+  }
+
+  @override
+  String get tripsReminders => 'Pengingat';
+
+  @override
+  String get tripsRemindersSwitch => 'Ingatkan sebelum berangkat';
+
+  @override
+  String get tripsRemindersSub => 'H-7 dan H-1 pukul 08.00, dengan progres persiapan';
+
+  @override
+  String tripInDays(int count) {
+    return '$count hari lagi';
+  }
+
+  @override
+  String get tripTomorrow => 'Besok berangkat';
+
+  @override
+  String get tripUndated => 'Tanggal belum pasti';
+
+  @override
+  String tripOngoingDay(int day, int total) {
+    return 'Hari ke-$day dari $total';
+  }
+
+  @override
+  String get tripOngoing => 'Sedang berlangsung';
+
+  @override
+  String get tripDone => 'Selesai';
+
+  @override
+  String tripDays(int count) {
+    return '$count hari';
+  }
+
+  @override
+  String tripChecklistProgress(int done, int total) {
+    return '$done dari $total beres';
+  }
+
+  @override
+  String get tripChecklistNone => 'Belum ada persiapan';
+
+  @override
+  String tripDeleteConfirmTitle(String title) {
+    return 'Hapus $title?';
+  }
+
+  @override
+  String tripDeleteConfirmBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Checklist persiapannya ($count item) ikut terhapus.',
+      zero: 'Pengingatnya ikut berhenti.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tripGone => 'Perjalanan ini sudah tidak ada.';
+
+  @override
+  String get tripChecklistTitle => 'Persiapan';
+
+  @override
+  String get tripChecklistEmpty =>
+      'Belum ada persiapan. Catat barang bawaan dan hal yang perlu diurus sebelum berangkat.';
+
+  @override
+  String get tripChecklistAdd => 'Tambah persiapan';
+
+  @override
+  String tripChecklistMore(int count) {
+    return '$count item lain belum beres';
+  }
+
+  @override
+  String get tripChecklistAllDone => 'Persiapan beres semua. Selamat berlibur!';
+
+  @override
+  String get tripFundTitle => 'Dana';
+
+  @override
+  String get tripFundEmpty => 'Tautkan target tabungan supaya progres dana perjalanan ini terlihat di sini.';
+
+  @override
+  String get tripFundPick => 'Pilih target';
+
+  @override
+  String get tripFundCreate => 'Buat target';
+
+  @override
+  String get tripFundChange => 'Ganti';
+
+  @override
+  String get tripFundPickerTitle => 'Dana perjalanan';
+
+  @override
+  String get tripFundNone => 'Tanpa tabungan';
+
+  @override
+  String get tripFundPickerEmpty => 'Belum ada target tabungan di ruang ini.';
+
+  @override
+  String tripFundDefaultName(String title) {
+    return 'Dana $title';
+  }
+
+  @override
+  String get tripNotesTitle => 'Catatan';
+
+  @override
+  String get checklistAddHint => 'Misalnya Bawa sunscreen';
+
+  @override
+  String get checklistEmpty => 'Belum ada persiapan. Ketik di bawah untuk menambah item pertama.';
+
+  @override
+  String get tripSheetNew => 'Perjalanan baru';
+
+  @override
+  String get tripSheetEdit => 'Ubah perjalanan';
+
+  @override
+  String get tripTitleLabel => 'Apa nama perjalanannya?';
+
+  @override
+  String get tripTitleHint => 'Misalnya Liburan ke Bali';
+
+  @override
+  String get tripDestinationLabel => 'Ke mana?';
+
+  @override
+  String get tripDestinationHint => 'Misalnya Bali';
+
+  @override
+  String get tripStartLabel => 'Kapan berangkat?';
+
+  @override
+  String get tripEndLabel => 'Kapan pulang?';
+
+  @override
+  String get tripDatePick => 'Pilih tanggal';
+
+  @override
+  String get tripStartHelp => 'Boleh dikosongkan kalau belum pasti. Pengingat dikirim H-7 dan H-1.';
+
+  @override
+  String get tripEndHelp => 'Kosongkan kalau perjalanannya hanya sehari.';
+
+  @override
+  String get tripDateClear => 'Kosongkan tanggal';
+
+  @override
+  String get tripNotesLabel => 'Catatan';
+
+  @override
+  String get tripNotesHint => 'Hotel, rencana harian, atau hal lain yang perlu diingat';
+
+  @override
+  String get tripWherePrivateHelp => 'Pasanganmu tidak akan melihat perjalanan ini.';
+
+  @override
+  String get errorTripTitleRequired => 'Nama perjalanan belum diisi.';
+
+  @override
+  String get errorDestinationLong => 'Tujuan paling banyak 100 karakter.';
+
+  @override
+  String get savingsReminderOff => 'Ingatkan setor';
+
+  @override
+  String get savingsReminderOffSub => 'Mingguan atau bulanan, pukul 08.00';
+
+  @override
+  String savingsReminderWeekly(String day) {
+    return 'Ingatkan setor tiap $day';
+  }
+
+  @override
+  String savingsReminderMonthly(int day) {
+    return 'Ingatkan setor tiap tanggal $day';
+  }
+
+  @override
+  String get savingsReminderSubShared => 'Pukul 08.00, ke kalian berdua';
+
+  @override
+  String get savingsReminderSubPersonal => 'Pukul 08.00';
+
+  @override
+  String get savingsReminderPrefsOff => 'Pengingat setor sedang dimatikan di Pengaturan.';
+
+  @override
+  String get savingsReminderSheet => 'Pengingat setor';
+
+  @override
+  String get savingsReminderHowOften => 'Seberapa sering?';
+
+  @override
+  String get savingsReminderWeeklyOption => 'Mingguan';
+
+  @override
+  String get savingsReminderMonthlyOption => 'Bulanan';
+
+  @override
+  String get savingsReminderWhichDay => 'Hari apa?';
+
+  @override
+  String get savingsReminderWhichDate => 'Tanggal berapa?';
+
+  @override
+  String savingsReminderDateOption(int day) {
+    return 'Tanggal $day';
+  }
+
+  @override
+  String get savingsReminderShortMonth => 'Di bulan yang lebih pendek, pengingat dikirim di hari terakhir bulan itu.';
+
+  @override
+  String get savingsReminderNote => 'Dikirim pukul 08.00 selama target belum tercapai.';
+
+  @override
+  String get savingsReminderNoteShared => 'Dikirim pukul 08.00 ke kalian berdua selama target belum tercapai.';
+
+  @override
+  String get savingsReminderTurnOff => 'Matikan pengingat';
 }

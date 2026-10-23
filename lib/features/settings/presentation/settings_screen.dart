@@ -410,6 +410,20 @@ class _NotificationSwitches extends ConsumerWidget {
             value: prefs.specialDates,
             onChanged: (value) => save(prefs.copyWith(specialDates: value)),
           ),
+          const RowDivider(),
+          SwitchRow(
+            title: l10n.notifTripReminders,
+            subtitle: l10n.notifTripRemindersSub,
+            value: prefs.tripReminders,
+            onChanged: (value) => save(prefs.copyWith(tripReminders: value)),
+          ),
+          const RowDivider(),
+          SwitchRow(
+            title: l10n.notifSavingsReminders,
+            subtitle: l10n.notifSavingsRemindersSub,
+            value: prefs.savingsReminders,
+            onChanged: (value) => save(prefs.copyWith(savingsReminders: value)),
+          ),
         ],
       ),
     );
