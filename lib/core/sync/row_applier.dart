@@ -41,10 +41,15 @@ class RowApplier {
 
   /// Kolom yang nilainya ikut ditentukan kolom lain, jadi dilindungi bersama-sama.
   /// `completed_by` dan `remind_at` diisi server dari `completed_at` dan tenggat.
+  /// Tanggal perjalanan dicek server berpasangan, dan jadwal setor kosong tanpa frekuensinya.
   static const Map<String, List<String>> _linkedColumns = {
     'completed_at': ['completed_by'],
     'due_date': ['due_time', 'remind_at'],
     'due_time': ['due_date', 'remind_at'],
+    'start_date': ['end_date'],
+    'end_date': ['start_date'],
+    'reminder_frequency': ['reminder_day'],
+    'reminder_day': ['reminder_frequency'],
   };
 
   Future<PendingIndex> loadPending() async => PendingIndex(await store.db.select(store.db.outboxOps).get());

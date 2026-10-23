@@ -11,6 +11,9 @@ abstract final class Limits {
   static const int taskNotes = 5000;
   static const int entryNote = 200;
   static const int specialDateTitle = 50;
+  static const int tripTitle = 50;
+  static const int tripDestination = 100;
+  static const int tripNotes = 5000;
   static const int emoji = 16;
   static const int passwordMin = 8;
   static const int invitationCode = 6;

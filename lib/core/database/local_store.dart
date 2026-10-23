@@ -9,6 +9,7 @@ import '../../features/spaces/domain/space.dart';
 import '../../features/special_dates/domain/special_date.dart';
 import '../../features/tasks/domain/task.dart';
 import '../../features/tasks/domain/task_list.dart';
+import '../../features/trips/domain/trip.dart';
 import 'app_database.dart';
 import 'entity_type.dart';
 import 'mappers.dart';
@@ -25,7 +26,7 @@ abstract final class MetaKeys {
   static const String deviceToken = 'device_token';
 
   /// Versi daftar koleksi sync yang sudah pernah ditarik penuh oleh database ini.
-  /// Koleksi baru (v0.2: `special_dates`) membuat sync berikutnya berjalan penuh sekali.
+  /// Koleksi baru (v0.2: `special_dates`, lalu `trips`) membuat sync berikutnya berjalan penuh sekali.
   static const String syncCollections = 'sync_collections';
 }
 
@@ -63,6 +64,9 @@ class LocalStore {
         return row?.toModel().toJson();
       case EntityType.specialDate:
         final row = await (db.select(db.specialDates)..where((t) => t.id.equals(id))).getSingleOrNull();
+        return row?.toModel().toJson();
+      case EntityType.trip:
+        final row = await (db.select(db.trips)..where((t) => t.id.equals(id))).getSingleOrNull();
         return row?.toModel().toJson();
       case EntityType.me:
         final raw = await meta(MetaKeys.profile);
@@ -116,6 +120,13 @@ class LocalStore {
                   ..where(db.specialDates.id.equals(id)))
                 .map((row) => row.read(db.specialDates.serverUpdatedAt))
                 .getSingleOrNull();
+      case EntityType.trip:
+        stamp =
+            await (db.selectOnly(db.trips)
+                  ..addColumns([db.trips.serverUpdatedAt])
+                  ..where(db.trips.id.equals(id)))
+                .map((row) => row.read(db.trips.serverUpdatedAt))
+                .getSingleOrNull();
       case EntityType.me:
         stamp = null;
     }
@@ -154,6 +165,10 @@ class LocalStore {
         await db
             .into(db.specialDates)
             .insertOnConflictUpdate(specialDateCompanion(SpecialDate.fromJson(json), serverUpdatedAt: serverUpdatedAt));
+      case EntityType.trip:
+        await db
+            .into(db.trips)
+            .insertOnConflictUpdate(tripCompanion(Trip.fromJson(json), serverUpdatedAt: serverUpdatedAt));
       case EntityType.me:
         await setMeta(MetaKeys.profile, jsonEncode(User.fromJson(json).toJson()));
     }
@@ -185,6 +200,8 @@ class LocalStore {
         await (db.delete(db.savingsEntries)..where((t) => t.id.equals(id))).go();
       case EntityType.specialDate:
         await (db.delete(db.specialDates)..where((t) => t.id.equals(id))).go();
+      case EntityType.trip:
+        await (db.delete(db.trips)..where((t) => t.id.equals(id))).go();
       case EntityType.me:
         break;
     }
@@ -206,7 +223,12 @@ class LocalStore {
         await (db.update(db.savingsEntries)
               ..where((t) => t.savingsGoalId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
             .write(SavingsEntriesCompanion(deletedAt: Value(deletedAt)));
-      case EntityType.space || EntityType.task || EntityType.entry || EntityType.specialDate || EntityType.me:
+      case EntityType.space ||
+          EntityType.task ||
+          EntityType.entry ||
+          EntityType.specialDate ||
+          EntityType.trip ||
+          EntityType.me:
         break;
     }
   }
@@ -309,6 +331,21 @@ class LocalStore {
             ..orderBy([(t) => OrderingTerm(expression: t.id)]))
           .watch()
           .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Perjalanan yang belum dihapus. Urutan tampil dihitung di HP dari tanggal dan statusnya.
+  Stream<List<Trip>> watchTrips() =>
+      (db.select(db.trips)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+          .watch()
+          .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Checklist perjalanan [tripId] yang belum dihapus. Biasanya satu, tapi bisa kosong
+  /// selama checklist buatan HP pasangan belum sampai lewat sync.
+  Future<List<TaskList>> checklistsOf(String tripId) async {
+    final rows = await (db.select(db.taskLists)..where((t) => t.tripId.equals(tripId) & t.deletedAt.isNull())).get();
+    return rows.map((row) => row.toModel()).toList();
+  }
 
   static int _bySharedFirst(Space a, Space b) {
     if (a.isShared != b.isShared) return a.isShared ? -1 : 1;

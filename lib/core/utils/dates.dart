@@ -16,6 +16,15 @@ String ymdOf(DateTime date) => toYmd(date.year, date.month, date.day);
 /// Jam `HH:MM` dari [time], tanpa mengubah zonanya.
 String hmOf(DateTime time) => '${_two(time.hour)}:${_two(time.minute)}';
 
+final RegExp _ymdPattern = RegExp(r'^\d{4}-\d{2}-\d{2}$');
+
+/// `YYYY-MM-DD` yang benar-benar ada di kalender, sama seperti `date_format:Y-m-d` di server.
+bool isValidYmd(String value) {
+  if (!_ymdPattern.hasMatch(value)) return false;
+  final date = parseYmd(value);
+  return ymdOf(date) == value;
+}
+
 /// Baca `YYYY-MM-DD` sebagai tengah malam UTC, supaya selisih hari tidak terganggu DST.
 DateTime parseYmd(String ymd) {
   final parts = ymd.split('-');
@@ -36,6 +45,29 @@ String formatDayShort(String ymd, {required int currentYear}) {
 
 /// "28 Feb 2027".
 String formatDateMedium(String ymd) => DateFormat('d MMM y', dateLocale).format(parseYmd(ymd));
+
+/// Rentang tanggal, misalnya perjalanan: "Sab, 20 Jun" kalau hanya sehari, "20–25 Jun",
+/// "28 Jun – 3 Jul", atau "28 Des 2026 – 3 Jan 2027". Tahun ditulis kalau bukan [currentYear].
+String formatDateRange(String start, String? end, {required int currentYear}) {
+  if (end == null || end == start) return formatDayShort(start, currentYear: currentYear);
+
+  final from = parseYmd(start);
+  final to = parseYmd(end);
+  final dayMonth = DateFormat('d MMM', dateLocale);
+  final year = from.year == currentYear && to.year == currentYear ? '' : ' ${to.year}';
+
+  if (from.year != to.year) {
+    final full = DateFormat('d MMM y', dateLocale);
+    return '${full.format(from)} – ${full.format(to)}';
+  }
+  if (from.month == to.month) return '${from.day}–${dayMonth.format(to)}$year';
+  return '${dayMonth.format(from)} – ${dayMonth.format(to)}$year';
+}
+
+/// Nama hari ISO, 1 = Senin sampai 7 = Minggu: "Jumat", atau "Jum" kalau [short].
+String weekdayName(int isoDay, {bool short = false}) =>
+    // 3 Agustus 2026 jatuh pada hari Senin.
+    DateFormat(short ? 'EEE' : 'EEEE', dateLocale).format(DateTime.utc(2026, 8, 2 + isoDay));
 
 /// "Kamis, 8 Oktober" untuk kepala Beranda.
 String formatWeekdayLong(DateTime date) => DateFormat('EEEE, d MMMM', dateLocale).format(date);

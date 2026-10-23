@@ -593,6 +593,15 @@ class $TaskListsTable extends TaskLists with TableInfo<$TaskListsTable, TaskList
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _tripIdMeta = const VerificationMeta('tripId');
+  @override
+  late final GeneratedColumn<String> tripId = GeneratedColumn<String>(
+    'trip_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
   @override
   late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
@@ -647,6 +656,7 @@ class $TaskListsTable extends TaskLists with TableInfo<$TaskListsTable, TaskList
     color,
     position,
     archivedAt,
+    tripId,
     createdBy,
     createdAt,
     updatedAt,
@@ -693,6 +703,9 @@ class $TaskListsTable extends TaskLists with TableInfo<$TaskListsTable, TaskList
     if (data.containsKey('archived_at')) {
       context.handle(_archivedAtMeta, archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta));
     }
+    if (data.containsKey('trip_id')) {
+      context.handle(_tripIdMeta, tripId.isAcceptableOrUnknown(data['trip_id']!, _tripIdMeta));
+    }
     if (data.containsKey('created_by')) {
       context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));
     }
@@ -731,6 +744,7 @@ class $TaskListsTable extends TaskLists with TableInfo<$TaskListsTable, TaskList
       color: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}color'])!,
       position: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}position'])!,
       archivedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}archived_at']),
+      tripId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}trip_id']),
       createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']),
       createdAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
       updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
@@ -756,6 +770,9 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
   final String color;
   final double position;
   final String? archivedAt;
+
+  /// Terisi berarti daftar ini checklist persiapan sebuah perjalanan (v0.2).
+  final String? tripId;
   final String? createdBy;
   final String createdAt;
   final String updatedAt;
@@ -769,6 +786,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
     required this.color,
     required this.position,
     this.archivedAt,
+    this.tripId,
     this.createdBy,
     required this.createdAt,
     required this.updatedAt,
@@ -788,6 +806,9 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
     map['position'] = Variable<double>(position);
     if (!nullToAbsent || archivedAt != null) {
       map['archived_at'] = Variable<String>(archivedAt);
+    }
+    if (!nullToAbsent || tripId != null) {
+      map['trip_id'] = Variable<String>(tripId);
     }
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
@@ -812,6 +833,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
       color: Value(color),
       position: Value(position),
       archivedAt: archivedAt == null && nullToAbsent ? const Value.absent() : Value(archivedAt),
+      tripId: tripId == null && nullToAbsent ? const Value.absent() : Value(tripId),
       createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
@@ -830,6 +852,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
       color: serializer.fromJson<String>(json['color']),
       position: serializer.fromJson<double>(json['position']),
       archivedAt: serializer.fromJson<String?>(json['archivedAt']),
+      tripId: serializer.fromJson<String?>(json['tripId']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
       updatedAt: serializer.fromJson<String>(json['updatedAt']),
@@ -848,6 +871,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
       'color': serializer.toJson<String>(color),
       'position': serializer.toJson<double>(position),
       'archivedAt': serializer.toJson<String?>(archivedAt),
+      'tripId': serializer.toJson<String?>(tripId),
       'createdBy': serializer.toJson<String?>(createdBy),
       'createdAt': serializer.toJson<String>(createdAt),
       'updatedAt': serializer.toJson<String>(updatedAt),
@@ -864,6 +888,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
     String? color,
     double? position,
     Value<String?> archivedAt = const Value.absent(),
+    Value<String?> tripId = const Value.absent(),
     Value<String?> createdBy = const Value.absent(),
     String? createdAt,
     String? updatedAt,
@@ -877,6 +902,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
     color: color ?? this.color,
     position: position ?? this.position,
     archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
+    tripId: tripId.present ? tripId.value : this.tripId,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
@@ -892,6 +918,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
       color: data.color.present ? data.color.value : this.color,
       position: data.position.present ? data.position.value : this.position,
       archivedAt: data.archivedAt.present ? data.archivedAt.value : this.archivedAt,
+      tripId: data.tripId.present ? data.tripId.value : this.tripId,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
@@ -910,6 +937,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
           ..write('color: $color, ')
           ..write('position: $position, ')
           ..write('archivedAt: $archivedAt, ')
+          ..write('tripId: $tripId, ')
           ..write('createdBy: $createdBy, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -928,6 +956,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
     color,
     position,
     archivedAt,
+    tripId,
     createdBy,
     createdAt,
     updatedAt,
@@ -945,6 +974,7 @@ class TaskListRow extends DataClass implements Insertable<TaskListRow> {
           other.color == this.color &&
           other.position == this.position &&
           other.archivedAt == this.archivedAt &&
+          other.tripId == this.tripId &&
           other.createdBy == this.createdBy &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt &&
@@ -960,6 +990,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
   final Value<String> color;
   final Value<double> position;
   final Value<String?> archivedAt;
+  final Value<String?> tripId;
   final Value<String?> createdBy;
   final Value<String> createdAt;
   final Value<String> updatedAt;
@@ -974,6 +1005,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
     this.color = const Value.absent(),
     this.position = const Value.absent(),
     this.archivedAt = const Value.absent(),
+    this.tripId = const Value.absent(),
     this.createdBy = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
@@ -989,6 +1021,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
     required String color,
     required double position,
     this.archivedAt = const Value.absent(),
+    this.tripId = const Value.absent(),
     this.createdBy = const Value.absent(),
     required String createdAt,
     required String updatedAt,
@@ -1010,6 +1043,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
     Expression<String>? color,
     Expression<double>? position,
     Expression<String>? archivedAt,
+    Expression<String>? tripId,
     Expression<String>? createdBy,
     Expression<String>? createdAt,
     Expression<String>? updatedAt,
@@ -1025,6 +1059,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
       if (color != null) 'color': color,
       if (position != null) 'position': position,
       if (archivedAt != null) 'archived_at': archivedAt,
+      if (tripId != null) 'trip_id': tripId,
       if (createdBy != null) 'created_by': createdBy,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
@@ -1042,6 +1077,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
     Value<String>? color,
     Value<double>? position,
     Value<String?>? archivedAt,
+    Value<String?>? tripId,
     Value<String?>? createdBy,
     Value<String>? createdAt,
     Value<String>? updatedAt,
@@ -1057,6 +1093,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
       color: color ?? this.color,
       position: position ?? this.position,
       archivedAt: archivedAt ?? this.archivedAt,
+      tripId: tripId ?? this.tripId,
       createdBy: createdBy ?? this.createdBy,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -1090,6 +1127,9 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
     if (archivedAt.present) {
       map['archived_at'] = Variable<String>(archivedAt.value);
     }
+    if (tripId.present) {
+      map['trip_id'] = Variable<String>(tripId.value);
+    }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
     }
@@ -1121,6 +1161,7 @@ class TaskListsCompanion extends UpdateCompanion<TaskListRow> {
           ..write('color: $color, ')
           ..write('position: $position, ')
           ..write('archivedAt: $archivedAt, ')
+          ..write('tripId: $tripId, ')
           ..write('createdBy: $createdBy, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt, ')
@@ -2084,6 +2125,24 @@ class $SavingsGoalsTable extends SavingsGoals with TableInfo<$SavingsGoalsTable,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _reminderFrequencyMeta = const VerificationMeta('reminderFrequency');
+  @override
+  late final GeneratedColumn<String> reminderFrequency = GeneratedColumn<String>(
+    'reminder_frequency',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reminderDayMeta = const VerificationMeta('reminderDay');
+  @override
+  late final GeneratedColumn<int> reminderDay = GeneratedColumn<int>(
+    'reminder_day',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _achievedAtMeta = const VerificationMeta('achievedAt');
   @override
   late final GeneratedColumn<String> achievedAt = GeneratedColumn<String>(
@@ -2156,6 +2215,8 @@ class $SavingsGoalsTable extends SavingsGoals with TableInfo<$SavingsGoalsTable,
     targetAmount,
     currency,
     targetDate,
+    reminderFrequency,
+    reminderDay,
     achievedAt,
     archivedAt,
     createdBy,
@@ -2204,6 +2265,15 @@ class $SavingsGoalsTable extends SavingsGoals with TableInfo<$SavingsGoalsTable,
     if (data.containsKey('target_date')) {
       context.handle(_targetDateMeta, targetDate.isAcceptableOrUnknown(data['target_date']!, _targetDateMeta));
     }
+    if (data.containsKey('reminder_frequency')) {
+      context.handle(
+        _reminderFrequencyMeta,
+        reminderFrequency.isAcceptableOrUnknown(data['reminder_frequency']!, _reminderFrequencyMeta),
+      );
+    }
+    if (data.containsKey('reminder_day')) {
+      context.handle(_reminderDayMeta, reminderDay.isAcceptableOrUnknown(data['reminder_day']!, _reminderDayMeta));
+    }
     if (data.containsKey('achieved_at')) {
       context.handle(_achievedAtMeta, achievedAt.isAcceptableOrUnknown(data['achieved_at']!, _achievedAtMeta));
     }
@@ -2248,6 +2318,11 @@ class $SavingsGoalsTable extends SavingsGoals with TableInfo<$SavingsGoalsTable,
       targetAmount: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}target_amount'])!,
       currency: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}currency'])!,
       targetDate: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}target_date']),
+      reminderFrequency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reminder_frequency'],
+      ),
+      reminderDay: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}reminder_day']),
       achievedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}achieved_at']),
       archivedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}archived_at']),
       createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']),
@@ -2275,6 +2350,10 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
   final int targetAmount;
   final String currency;
   final String? targetDate;
+
+  /// Pengingat setor rutin (v0.2): `weekly` atau `monthly`, dan hari atau tanggalnya.
+  final String? reminderFrequency;
+  final int? reminderDay;
   final String? achievedAt;
   final String? archivedAt;
   final String? createdBy;
@@ -2290,6 +2369,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
     required this.targetAmount,
     required this.currency,
     this.targetDate,
+    this.reminderFrequency,
+    this.reminderDay,
     this.achievedAt,
     this.archivedAt,
     this.createdBy,
@@ -2311,6 +2392,12 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
     map['currency'] = Variable<String>(currency);
     if (!nullToAbsent || targetDate != null) {
       map['target_date'] = Variable<String>(targetDate);
+    }
+    if (!nullToAbsent || reminderFrequency != null) {
+      map['reminder_frequency'] = Variable<String>(reminderFrequency);
+    }
+    if (!nullToAbsent || reminderDay != null) {
+      map['reminder_day'] = Variable<int>(reminderDay);
     }
     if (!nullToAbsent || achievedAt != null) {
       map['achieved_at'] = Variable<String>(achievedAt);
@@ -2341,6 +2428,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
       targetAmount: Value(targetAmount),
       currency: Value(currency),
       targetDate: targetDate == null && nullToAbsent ? const Value.absent() : Value(targetDate),
+      reminderFrequency: reminderFrequency == null && nullToAbsent ? const Value.absent() : Value(reminderFrequency),
+      reminderDay: reminderDay == null && nullToAbsent ? const Value.absent() : Value(reminderDay),
       achievedAt: achievedAt == null && nullToAbsent ? const Value.absent() : Value(achievedAt),
       archivedAt: archivedAt == null && nullToAbsent ? const Value.absent() : Value(archivedAt),
       createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),
@@ -2361,6 +2450,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
       targetAmount: serializer.fromJson<int>(json['targetAmount']),
       currency: serializer.fromJson<String>(json['currency']),
       targetDate: serializer.fromJson<String?>(json['targetDate']),
+      reminderFrequency: serializer.fromJson<String?>(json['reminderFrequency']),
+      reminderDay: serializer.fromJson<int?>(json['reminderDay']),
       achievedAt: serializer.fromJson<String?>(json['achievedAt']),
       archivedAt: serializer.fromJson<String?>(json['archivedAt']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
@@ -2381,6 +2472,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
       'targetAmount': serializer.toJson<int>(targetAmount),
       'currency': serializer.toJson<String>(currency),
       'targetDate': serializer.toJson<String?>(targetDate),
+      'reminderFrequency': serializer.toJson<String?>(reminderFrequency),
+      'reminderDay': serializer.toJson<int?>(reminderDay),
       'achievedAt': serializer.toJson<String?>(achievedAt),
       'archivedAt': serializer.toJson<String?>(archivedAt),
       'createdBy': serializer.toJson<String?>(createdBy),
@@ -2399,6 +2492,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
     int? targetAmount,
     String? currency,
     Value<String?> targetDate = const Value.absent(),
+    Value<String?> reminderFrequency = const Value.absent(),
+    Value<int?> reminderDay = const Value.absent(),
     Value<String?> achievedAt = const Value.absent(),
     Value<String?> archivedAt = const Value.absent(),
     Value<String?> createdBy = const Value.absent(),
@@ -2414,6 +2509,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
     targetAmount: targetAmount ?? this.targetAmount,
     currency: currency ?? this.currency,
     targetDate: targetDate.present ? targetDate.value : this.targetDate,
+    reminderFrequency: reminderFrequency.present ? reminderFrequency.value : this.reminderFrequency,
+    reminderDay: reminderDay.present ? reminderDay.value : this.reminderDay,
     achievedAt: achievedAt.present ? achievedAt.value : this.achievedAt,
     archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
@@ -2431,6 +2528,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
       targetAmount: data.targetAmount.present ? data.targetAmount.value : this.targetAmount,
       currency: data.currency.present ? data.currency.value : this.currency,
       targetDate: data.targetDate.present ? data.targetDate.value : this.targetDate,
+      reminderFrequency: data.reminderFrequency.present ? data.reminderFrequency.value : this.reminderFrequency,
+      reminderDay: data.reminderDay.present ? data.reminderDay.value : this.reminderDay,
       achievedAt: data.achievedAt.present ? data.achievedAt.value : this.achievedAt,
       archivedAt: data.archivedAt.present ? data.archivedAt.value : this.archivedAt,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
@@ -2451,6 +2550,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
           ..write('targetAmount: $targetAmount, ')
           ..write('currency: $currency, ')
           ..write('targetDate: $targetDate, ')
+          ..write('reminderFrequency: $reminderFrequency, ')
+          ..write('reminderDay: $reminderDay, ')
           ..write('achievedAt: $achievedAt, ')
           ..write('archivedAt: $archivedAt, ')
           ..write('createdBy: $createdBy, ')
@@ -2471,6 +2572,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
     targetAmount,
     currency,
     targetDate,
+    reminderFrequency,
+    reminderDay,
     achievedAt,
     archivedAt,
     createdBy,
@@ -2490,6 +2593,8 @@ class SavingsGoalRow extends DataClass implements Insertable<SavingsGoalRow> {
           other.targetAmount == this.targetAmount &&
           other.currency == this.currency &&
           other.targetDate == this.targetDate &&
+          other.reminderFrequency == this.reminderFrequency &&
+          other.reminderDay == this.reminderDay &&
           other.achievedAt == this.achievedAt &&
           other.archivedAt == this.archivedAt &&
           other.createdBy == this.createdBy &&
@@ -2507,6 +2612,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
   final Value<int> targetAmount;
   final Value<String> currency;
   final Value<String?> targetDate;
+  final Value<String?> reminderFrequency;
+  final Value<int?> reminderDay;
   final Value<String?> achievedAt;
   final Value<String?> archivedAt;
   final Value<String?> createdBy;
@@ -2523,6 +2630,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
     this.targetAmount = const Value.absent(),
     this.currency = const Value.absent(),
     this.targetDate = const Value.absent(),
+    this.reminderFrequency = const Value.absent(),
+    this.reminderDay = const Value.absent(),
     this.achievedAt = const Value.absent(),
     this.archivedAt = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -2540,6 +2649,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
     required int targetAmount,
     required String currency,
     this.targetDate = const Value.absent(),
+    this.reminderFrequency = const Value.absent(),
+    this.reminderDay = const Value.absent(),
     this.achievedAt = const Value.absent(),
     this.archivedAt = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -2563,6 +2674,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
     Expression<int>? targetAmount,
     Expression<String>? currency,
     Expression<String>? targetDate,
+    Expression<String>? reminderFrequency,
+    Expression<int>? reminderDay,
     Expression<String>? achievedAt,
     Expression<String>? archivedAt,
     Expression<String>? createdBy,
@@ -2580,6 +2693,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
       if (targetAmount != null) 'target_amount': targetAmount,
       if (currency != null) 'currency': currency,
       if (targetDate != null) 'target_date': targetDate,
+      if (reminderFrequency != null) 'reminder_frequency': reminderFrequency,
+      if (reminderDay != null) 'reminder_day': reminderDay,
       if (achievedAt != null) 'achieved_at': achievedAt,
       if (archivedAt != null) 'archived_at': archivedAt,
       if (createdBy != null) 'created_by': createdBy,
@@ -2599,6 +2714,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
     Value<int>? targetAmount,
     Value<String>? currency,
     Value<String?>? targetDate,
+    Value<String?>? reminderFrequency,
+    Value<int?>? reminderDay,
     Value<String?>? achievedAt,
     Value<String?>? archivedAt,
     Value<String?>? createdBy,
@@ -2616,6 +2733,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
       targetAmount: targetAmount ?? this.targetAmount,
       currency: currency ?? this.currency,
       targetDate: targetDate ?? this.targetDate,
+      reminderFrequency: reminderFrequency ?? this.reminderFrequency,
+      reminderDay: reminderDay ?? this.reminderDay,
       achievedAt: achievedAt ?? this.achievedAt,
       archivedAt: archivedAt ?? this.archivedAt,
       createdBy: createdBy ?? this.createdBy,
@@ -2650,6 +2769,12 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
     }
     if (targetDate.present) {
       map['target_date'] = Variable<String>(targetDate.value);
+    }
+    if (reminderFrequency.present) {
+      map['reminder_frequency'] = Variable<String>(reminderFrequency.value);
+    }
+    if (reminderDay.present) {
+      map['reminder_day'] = Variable<int>(reminderDay.value);
     }
     if (achievedAt.present) {
       map['achieved_at'] = Variable<String>(achievedAt.value);
@@ -2688,6 +2813,8 @@ class SavingsGoalsCompanion extends UpdateCompanion<SavingsGoalRow> {
           ..write('targetAmount: $targetAmount, ')
           ..write('currency: $currency, ')
           ..write('targetDate: $targetDate, ')
+          ..write('reminderFrequency: $reminderFrequency, ')
+          ..write('reminderDay: $reminderDay, ')
           ..write('achievedAt: $achievedAt, ')
           ..write('archivedAt: $archivedAt, ')
           ..write('createdBy: $createdBy, ')
@@ -3833,6 +3960,655 @@ class SpecialDatesCompanion extends UpdateCompanion<SpecialDateRow> {
   }
 }
 
+class $TripsTable extends Trips with TableInfo<$TripsTable, TripRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TripsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _spaceIdMeta = const VerificationMeta('spaceId');
+  @override
+  late final GeneratedColumn<String> spaceId = GeneratedColumn<String>(
+    'space_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _destinationMeta = const VerificationMeta('destination');
+  @override
+  late final GeneratedColumn<String> destination = GeneratedColumn<String>(
+    'destination',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _startDateMeta = const VerificationMeta('startDate');
+  @override
+  late final GeneratedColumn<String> startDate = GeneratedColumn<String>(
+    'start_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _endDateMeta = const VerificationMeta('endDate');
+  @override
+  late final GeneratedColumn<String> endDate = GeneratedColumn<String>(
+    'end_date',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _savingsGoalIdMeta = const VerificationMeta('savingsGoalId');
+  @override
+  late final GeneratedColumn<String> savingsGoalId = GeneratedColumn<String>(
+    'savings_goal_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<String> deletedAt = GeneratedColumn<String>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverUpdatedAtMeta = const VerificationMeta('serverUpdatedAt');
+  @override
+  late final GeneratedColumn<String> serverUpdatedAt = GeneratedColumn<String>(
+    'server_updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    spaceId,
+    title,
+    destination,
+    startDate,
+    endDate,
+    notes,
+    savingsGoalId,
+    createdBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    serverUpdatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'trips';
+  @override
+  VerificationContext validateIntegrity(Insertable<TripRow> instance, {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('space_id')) {
+      context.handle(_spaceIdMeta, spaceId.isAcceptableOrUnknown(data['space_id']!, _spaceIdMeta));
+    } else if (isInserting) {
+      context.missing(_spaceIdMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('destination')) {
+      context.handle(_destinationMeta, destination.isAcceptableOrUnknown(data['destination']!, _destinationMeta));
+    }
+    if (data.containsKey('start_date')) {
+      context.handle(_startDateMeta, startDate.isAcceptableOrUnknown(data['start_date']!, _startDateMeta));
+    }
+    if (data.containsKey('end_date')) {
+      context.handle(_endDateMeta, endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta));
+    }
+    if (data.containsKey('notes')) {
+      context.handle(_notesMeta, notes.isAcceptableOrUnknown(data['notes']!, _notesMeta));
+    }
+    if (data.containsKey('savings_goal_id')) {
+      context.handle(
+        _savingsGoalIdMeta,
+        savingsGoalId.isAcceptableOrUnknown(data['savings_goal_id']!, _savingsGoalIdMeta),
+      );
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta, deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    if (data.containsKey('server_updated_at')) {
+      context.handle(
+        _serverUpdatedAtMeta,
+        serverUpdatedAt.isAcceptableOrUnknown(data['server_updated_at']!, _serverUpdatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  TripRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return TripRow(
+      id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      spaceId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}space_id'])!,
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      destination: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}destination']),
+      startDate: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}start_date']),
+      endDate: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}end_date']),
+      notes: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}notes']),
+      savingsGoalId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}savings_goal_id']),
+      createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']),
+      createdAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      deletedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}deleted_at']),
+      serverUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_updated_at'],
+      ),
+    );
+  }
+
+  @override
+  $TripsTable createAlias(String alias) {
+    return $TripsTable(attachedDatabase, alias);
+  }
+}
+
+class TripRow extends DataClass implements Insertable<TripRow> {
+  final String id;
+  final String spaceId;
+  final String title;
+  final String? destination;
+
+  /// `YYYY-MM-DD`; kosong berarti tanggalnya belum pasti.
+  final String? startDate;
+  final String? endDate;
+  final String? notes;
+  final String? savingsGoalId;
+  final String? createdBy;
+  final String createdAt;
+  final String updatedAt;
+  final String? deletedAt;
+  final String? serverUpdatedAt;
+  const TripRow({
+    required this.id,
+    required this.spaceId,
+    required this.title,
+    this.destination,
+    this.startDate,
+    this.endDate,
+    this.notes,
+    this.savingsGoalId,
+    this.createdBy,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.serverUpdatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['space_id'] = Variable<String>(spaceId);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || destination != null) {
+      map['destination'] = Variable<String>(destination);
+    }
+    if (!nullToAbsent || startDate != null) {
+      map['start_date'] = Variable<String>(startDate);
+    }
+    if (!nullToAbsent || endDate != null) {
+      map['end_date'] = Variable<String>(endDate);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    if (!nullToAbsent || savingsGoalId != null) {
+      map['savings_goal_id'] = Variable<String>(savingsGoalId);
+    }
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<String>(deletedAt);
+    }
+    if (!nullToAbsent || serverUpdatedAt != null) {
+      map['server_updated_at'] = Variable<String>(serverUpdatedAt);
+    }
+    return map;
+  }
+
+  TripsCompanion toCompanion(bool nullToAbsent) {
+    return TripsCompanion(
+      id: Value(id),
+      spaceId: Value(spaceId),
+      title: Value(title),
+      destination: destination == null && nullToAbsent ? const Value.absent() : Value(destination),
+      startDate: startDate == null && nullToAbsent ? const Value.absent() : Value(startDate),
+      endDate: endDate == null && nullToAbsent ? const Value.absent() : Value(endDate),
+      notes: notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      savingsGoalId: savingsGoalId == null && nullToAbsent ? const Value.absent() : Value(savingsGoalId),
+      createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent ? const Value.absent() : Value(deletedAt),
+      serverUpdatedAt: serverUpdatedAt == null && nullToAbsent ? const Value.absent() : Value(serverUpdatedAt),
+    );
+  }
+
+  factory TripRow.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return TripRow(
+      id: serializer.fromJson<String>(json['id']),
+      spaceId: serializer.fromJson<String>(json['spaceId']),
+      title: serializer.fromJson<String>(json['title']),
+      destination: serializer.fromJson<String?>(json['destination']),
+      startDate: serializer.fromJson<String?>(json['startDate']),
+      endDate: serializer.fromJson<String?>(json['endDate']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      savingsGoalId: serializer.fromJson<String?>(json['savingsGoalId']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      deletedAt: serializer.fromJson<String?>(json['deletedAt']),
+      serverUpdatedAt: serializer.fromJson<String?>(json['serverUpdatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'spaceId': serializer.toJson<String>(spaceId),
+      'title': serializer.toJson<String>(title),
+      'destination': serializer.toJson<String?>(destination),
+      'startDate': serializer.toJson<String?>(startDate),
+      'endDate': serializer.toJson<String?>(endDate),
+      'notes': serializer.toJson<String?>(notes),
+      'savingsGoalId': serializer.toJson<String?>(savingsGoalId),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'deletedAt': serializer.toJson<String?>(deletedAt),
+      'serverUpdatedAt': serializer.toJson<String?>(serverUpdatedAt),
+    };
+  }
+
+  TripRow copyWith({
+    String? id,
+    String? spaceId,
+    String? title,
+    Value<String?> destination = const Value.absent(),
+    Value<String?> startDate = const Value.absent(),
+    Value<String?> endDate = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    Value<String?> savingsGoalId = const Value.absent(),
+    Value<String?> createdBy = const Value.absent(),
+    String? createdAt,
+    String? updatedAt,
+    Value<String?> deletedAt = const Value.absent(),
+    Value<String?> serverUpdatedAt = const Value.absent(),
+  }) => TripRow(
+    id: id ?? this.id,
+    spaceId: spaceId ?? this.spaceId,
+    title: title ?? this.title,
+    destination: destination.present ? destination.value : this.destination,
+    startDate: startDate.present ? startDate.value : this.startDate,
+    endDate: endDate.present ? endDate.value : this.endDate,
+    notes: notes.present ? notes.value : this.notes,
+    savingsGoalId: savingsGoalId.present ? savingsGoalId.value : this.savingsGoalId,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    serverUpdatedAt: serverUpdatedAt.present ? serverUpdatedAt.value : this.serverUpdatedAt,
+  );
+  TripRow copyWithCompanion(TripsCompanion data) {
+    return TripRow(
+      id: data.id.present ? data.id.value : this.id,
+      spaceId: data.spaceId.present ? data.spaceId.value : this.spaceId,
+      title: data.title.present ? data.title.value : this.title,
+      destination: data.destination.present ? data.destination.value : this.destination,
+      startDate: data.startDate.present ? data.startDate.value : this.startDate,
+      endDate: data.endDate.present ? data.endDate.value : this.endDate,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      savingsGoalId: data.savingsGoalId.present ? data.savingsGoalId.value : this.savingsGoalId,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      serverUpdatedAt: data.serverUpdatedAt.present ? data.serverUpdatedAt.value : this.serverUpdatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TripRow(')
+          ..write('id: $id, ')
+          ..write('spaceId: $spaceId, ')
+          ..write('title: $title, ')
+          ..write('destination: $destination, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate, ')
+          ..write('notes: $notes, ')
+          ..write('savingsGoalId: $savingsGoalId, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    spaceId,
+    title,
+    destination,
+    startDate,
+    endDate,
+    notes,
+    savingsGoalId,
+    createdBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    serverUpdatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is TripRow &&
+          other.id == this.id &&
+          other.spaceId == this.spaceId &&
+          other.title == this.title &&
+          other.destination == this.destination &&
+          other.startDate == this.startDate &&
+          other.endDate == this.endDate &&
+          other.notes == this.notes &&
+          other.savingsGoalId == this.savingsGoalId &&
+          other.createdBy == this.createdBy &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.serverUpdatedAt == this.serverUpdatedAt);
+}
+
+class TripsCompanion extends UpdateCompanion<TripRow> {
+  final Value<String> id;
+  final Value<String> spaceId;
+  final Value<String> title;
+  final Value<String?> destination;
+  final Value<String?> startDate;
+  final Value<String?> endDate;
+  final Value<String?> notes;
+  final Value<String?> savingsGoalId;
+  final Value<String?> createdBy;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String?> deletedAt;
+  final Value<String?> serverUpdatedAt;
+  final Value<int> rowid;
+  const TripsCompanion({
+    this.id = const Value.absent(),
+    this.spaceId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.destination = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.savingsGoalId = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  TripsCompanion.insert({
+    required String id,
+    required String spaceId,
+    required String title,
+    this.destination = const Value.absent(),
+    this.startDate = const Value.absent(),
+    this.endDate = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.savingsGoalId = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String createdAt,
+    required String updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       spaceId = Value(spaceId),
+       title = Value(title),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<TripRow> custom({
+    Expression<String>? id,
+    Expression<String>? spaceId,
+    Expression<String>? title,
+    Expression<String>? destination,
+    Expression<String>? startDate,
+    Expression<String>? endDate,
+    Expression<String>? notes,
+    Expression<String>? savingsGoalId,
+    Expression<String>? createdBy,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? deletedAt,
+    Expression<String>? serverUpdatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (spaceId != null) 'space_id': spaceId,
+      if (title != null) 'title': title,
+      if (destination != null) 'destination': destination,
+      if (startDate != null) 'start_date': startDate,
+      if (endDate != null) 'end_date': endDate,
+      if (notes != null) 'notes': notes,
+      if (savingsGoalId != null) 'savings_goal_id': savingsGoalId,
+      if (createdBy != null) 'created_by': createdBy,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (serverUpdatedAt != null) 'server_updated_at': serverUpdatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  TripsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? spaceId,
+    Value<String>? title,
+    Value<String?>? destination,
+    Value<String?>? startDate,
+    Value<String?>? endDate,
+    Value<String?>? notes,
+    Value<String?>? savingsGoalId,
+    Value<String?>? createdBy,
+    Value<String>? createdAt,
+    Value<String>? updatedAt,
+    Value<String?>? deletedAt,
+    Value<String?>? serverUpdatedAt,
+    Value<int>? rowid,
+  }) {
+    return TripsCompanion(
+      id: id ?? this.id,
+      spaceId: spaceId ?? this.spaceId,
+      title: title ?? this.title,
+      destination: destination ?? this.destination,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      notes: notes ?? this.notes,
+      savingsGoalId: savingsGoalId ?? this.savingsGoalId,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      serverUpdatedAt: serverUpdatedAt ?? this.serverUpdatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (spaceId.present) {
+      map['space_id'] = Variable<String>(spaceId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (destination.present) {
+      map['destination'] = Variable<String>(destination.value);
+    }
+    if (startDate.present) {
+      map['start_date'] = Variable<String>(startDate.value);
+    }
+    if (endDate.present) {
+      map['end_date'] = Variable<String>(endDate.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (savingsGoalId.present) {
+      map['savings_goal_id'] = Variable<String>(savingsGoalId.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<String>(deletedAt.value);
+    }
+    if (serverUpdatedAt.present) {
+      map['server_updated_at'] = Variable<String>(serverUpdatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TripsCompanion(')
+          ..write('id: $id, ')
+          ..write('spaceId: $spaceId, ')
+          ..write('title: $title, ')
+          ..write('destination: $destination, ')
+          ..write('startDate: $startDate, ')
+          ..write('endDate: $endDate, ')
+          ..write('notes: $notes, ')
+          ..write('savingsGoalId: $savingsGoalId, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $OutboxOpsTable extends OutboxOps with TableInfo<$OutboxOpsTable, OutboxRow> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -4476,6 +5252,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SavingsGoalsTable savingsGoals = $SavingsGoalsTable(this);
   late final $SavingsEntriesTable savingsEntries = $SavingsEntriesTable(this);
   late final $SpecialDatesTable specialDates = $SpecialDatesTable(this);
+  late final $TripsTable trips = $TripsTable(this);
   late final $OutboxOpsTable outboxOps = $OutboxOpsTable(this);
   late final $MetaEntriesTable metaEntries = $MetaEntriesTable(this);
   @override
@@ -4488,6 +5265,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     savingsGoals,
     savingsEntries,
     specialDates,
+    trips,
     outboxOps,
     metaEntries,
   ];
@@ -4734,6 +5512,7 @@ typedef $$TaskListsTableCreateCompanionBuilder = TaskListsCompanion Function({
   required String color,
   required double position,
   Value<String?> archivedAt,
+  Value<String?> tripId,
   Value<String?> createdBy,
   required String createdAt,
   required String updatedAt,
@@ -4749,6 +5528,7 @@ typedef $$TaskListsTableUpdateCompanionBuilder = TaskListsCompanion Function({
   Value<String> color,
   Value<double> position,
   Value<String?> archivedAt,
+  Value<String?> tripId,
   Value<String?> createdBy,
   Value<String> createdAt,
   Value<String> updatedAt,
@@ -4783,6 +5563,9 @@ class $$TaskListsTableFilterComposer extends Composer<_$AppDatabase, $TaskListsT
 
   ColumnFilters<String> get archivedAt =>
       $composableBuilder(column: $table.archivedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tripId =>
+      $composableBuilder(column: $table.tripId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => ColumnFilters(column));
@@ -4828,6 +5611,9 @@ class $$TaskListsTableOrderingComposer extends Composer<_$AppDatabase, $TaskList
   ColumnOrderings<String> get archivedAt =>
       $composableBuilder(column: $table.archivedAt, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get tripId =>
+      $composableBuilder(column: $table.tripId, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => ColumnOrderings(column));
 
@@ -4865,6 +5651,8 @@ class $$TaskListsTableAnnotationComposer extends Composer<_$AppDatabase, $TaskLi
   GeneratedColumn<double> get position => $composableBuilder(column: $table.position, builder: (column) => column);
 
   GeneratedColumn<String> get archivedAt => $composableBuilder(column: $table.archivedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get tripId => $composableBuilder(column: $table.tripId, builder: (column) => column);
 
   GeneratedColumn<String> get createdBy => $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
@@ -4910,6 +5698,7 @@ class $$TaskListsTableTableManager
                 Value<String> color = const Value.absent(),
                 Value<double> position = const Value.absent(),
                 Value<String?> archivedAt = const Value.absent(),
+                Value<String?> tripId = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 Value<String> createdAt = const Value.absent(),
                 Value<String> updatedAt = const Value.absent(),
@@ -4924,6 +5713,7 @@ class $$TaskListsTableTableManager
                 color: color,
                 position: position,
                 archivedAt: archivedAt,
+                tripId: tripId,
                 createdBy: createdBy,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -4940,6 +5730,7 @@ class $$TaskListsTableTableManager
                 required String color,
                 required double position,
                 Value<String?> archivedAt = const Value.absent(),
+                Value<String?> tripId = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 required String createdAt,
                 required String updatedAt,
@@ -4954,6 +5745,7 @@ class $$TaskListsTableTableManager
                 color: color,
                 position: position,
                 archivedAt: archivedAt,
+                tripId: tripId,
                 createdBy: createdBy,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
@@ -5360,6 +6152,8 @@ typedef $$SavingsGoalsTableCreateCompanionBuilder = SavingsGoalsCompanion Functi
   required int targetAmount,
   required String currency,
   Value<String?> targetDate,
+  Value<String?> reminderFrequency,
+  Value<int?> reminderDay,
   Value<String?> achievedAt,
   Value<String?> archivedAt,
   Value<String?> createdBy,
@@ -5377,6 +6171,8 @@ typedef $$SavingsGoalsTableUpdateCompanionBuilder = SavingsGoalsCompanion Functi
   Value<int> targetAmount,
   Value<String> currency,
   Value<String?> targetDate,
+  Value<String?> reminderFrequency,
+  Value<int?> reminderDay,
   Value<String?> achievedAt,
   Value<String?> archivedAt,
   Value<String?> createdBy,
@@ -5413,6 +6209,12 @@ class $$SavingsGoalsTableFilterComposer extends Composer<_$AppDatabase, $Savings
 
   ColumnFilters<String> get targetDate =>
       $composableBuilder(column: $table.targetDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get reminderFrequency =>
+      $composableBuilder(column: $table.reminderFrequency, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get reminderDay =>
+      $composableBuilder(column: $table.reminderDay, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get achievedAt =>
       $composableBuilder(column: $table.achievedAt, builder: (column) => ColumnFilters(column));
@@ -5464,6 +6266,12 @@ class $$SavingsGoalsTableOrderingComposer extends Composer<_$AppDatabase, $Savin
   ColumnOrderings<String> get targetDate =>
       $composableBuilder(column: $table.targetDate, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get reminderFrequency =>
+      $composableBuilder(column: $table.reminderFrequency, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get reminderDay =>
+      $composableBuilder(column: $table.reminderDay, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get achievedAt =>
       $composableBuilder(column: $table.achievedAt, builder: (column) => ColumnOrderings(column));
 
@@ -5507,6 +6315,11 @@ class $$SavingsGoalsTableAnnotationComposer extends Composer<_$AppDatabase, $Sav
   GeneratedColumn<String> get currency => $composableBuilder(column: $table.currency, builder: (column) => column);
 
   GeneratedColumn<String> get targetDate => $composableBuilder(column: $table.targetDate, builder: (column) => column);
+
+  GeneratedColumn<String> get reminderFrequency =>
+      $composableBuilder(column: $table.reminderFrequency, builder: (column) => column);
+
+  GeneratedColumn<int> get reminderDay => $composableBuilder(column: $table.reminderDay, builder: (column) => column);
 
   GeneratedColumn<String> get achievedAt => $composableBuilder(column: $table.achievedAt, builder: (column) => column);
 
@@ -5556,6 +6369,8 @@ class $$SavingsGoalsTableTableManager
                 Value<int> targetAmount = const Value.absent(),
                 Value<String> currency = const Value.absent(),
                 Value<String?> targetDate = const Value.absent(),
+                Value<String?> reminderFrequency = const Value.absent(),
+                Value<int?> reminderDay = const Value.absent(),
                 Value<String?> achievedAt = const Value.absent(),
                 Value<String?> archivedAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -5572,6 +6387,8 @@ class $$SavingsGoalsTableTableManager
                 targetAmount: targetAmount,
                 currency: currency,
                 targetDate: targetDate,
+                reminderFrequency: reminderFrequency,
+                reminderDay: reminderDay,
                 achievedAt: achievedAt,
                 archivedAt: archivedAt,
                 createdBy: createdBy,
@@ -5590,6 +6407,8 @@ class $$SavingsGoalsTableTableManager
                 required int targetAmount,
                 required String currency,
                 Value<String?> targetDate = const Value.absent(),
+                Value<String?> reminderFrequency = const Value.absent(),
+                Value<int?> reminderDay = const Value.absent(),
                 Value<String?> achievedAt = const Value.absent(),
                 Value<String?> archivedAt = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -5606,6 +6425,8 @@ class $$SavingsGoalsTableTableManager
                 targetAmount: targetAmount,
                 currency: currency,
                 targetDate: targetDate,
+                reminderFrequency: reminderFrequency,
+                reminderDay: reminderDay,
                 achievedAt: achievedAt,
                 archivedAt: archivedAt,
                 createdBy: createdBy,
@@ -6137,6 +6958,285 @@ typedef $$SpecialDatesTableProcessedTableManager =
       SpecialDateRow,
       PrefetchHooks Function()
     >;
+typedef $$TripsTableCreateCompanionBuilder = TripsCompanion Function({
+  required String id,
+  required String spaceId,
+  required String title,
+  Value<String?> destination,
+  Value<String?> startDate,
+  Value<String?> endDate,
+  Value<String?> notes,
+  Value<String?> savingsGoalId,
+  Value<String?> createdBy,
+  required String createdAt,
+  required String updatedAt,
+  Value<String?> deletedAt,
+  Value<String?> serverUpdatedAt,
+  Value<int> rowid,
+});
+typedef $$TripsTableUpdateCompanionBuilder = TripsCompanion Function({
+  Value<String> id,
+  Value<String> spaceId,
+  Value<String> title,
+  Value<String?> destination,
+  Value<String?> startDate,
+  Value<String?> endDate,
+  Value<String?> notes,
+  Value<String?> savingsGoalId,
+  Value<String?> createdBy,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String?> deletedAt,
+  Value<String?> serverUpdatedAt,
+  Value<int> rowid,
+});
+
+class $$TripsTableFilterComposer extends Composer<_$AppDatabase, $TripsTable> {
+  $$TripsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get spaceId =>
+      $composableBuilder(column: $table.spaceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get destination =>
+      $composableBuilder(column: $table.destination, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get startDate =>
+      $composableBuilder(column: $table.startDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get endDate =>
+      $composableBuilder(column: $table.endDate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get savingsGoalId =>
+      $composableBuilder(column: $table.savingsGoalId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$TripsTableOrderingComposer extends Composer<_$AppDatabase, $TripsTable> {
+  $$TripsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get spaceId =>
+      $composableBuilder(column: $table.spaceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get destination =>
+      $composableBuilder(column: $table.destination, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get startDate =>
+      $composableBuilder(column: $table.startDate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get endDate =>
+      $composableBuilder(column: $table.endDate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get savingsGoalId =>
+      $composableBuilder(column: $table.savingsGoalId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$TripsTableAnnotationComposer extends Composer<_$AppDatabase, $TripsTable> {
+  $$TripsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id => $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get spaceId => $composableBuilder(column: $table.spaceId, builder: (column) => column);
+
+  GeneratedColumn<String> get title => $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get destination =>
+      $composableBuilder(column: $table.destination, builder: (column) => column);
+
+  GeneratedColumn<String> get startDate => $composableBuilder(column: $table.startDate, builder: (column) => column);
+
+  GeneratedColumn<String> get endDate => $composableBuilder(column: $table.endDate, builder: (column) => column);
+
+  GeneratedColumn<String> get notes => $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<String> get savingsGoalId =>
+      $composableBuilder(column: $table.savingsGoalId, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy => $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get createdAt => $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedAt => $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get deletedAt => $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => column);
+}
+
+class $$TripsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TripsTable,
+          TripRow,
+          $$TripsTableFilterComposer,
+          $$TripsTableOrderingComposer,
+          $$TripsTableAnnotationComposer,
+          $$TripsTableCreateCompanionBuilder,
+          $$TripsTableUpdateCompanionBuilder,
+          (TripRow, BaseReferences<_$AppDatabase, $TripsTable, TripRow>),
+          TripRow,
+          PrefetchHooks Function()
+        > {
+  $$TripsTableTableManager(_$AppDatabase db, $TripsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () => $$TripsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$TripsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$TripsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> spaceId = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> destination = const Value.absent(),
+                Value<String?> startDate = const Value.absent(),
+                Value<String?> endDate = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<String?> savingsGoalId = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String> createdAt = const Value.absent(),
+                Value<String> updatedAt = const Value.absent(),
+                Value<String?> deletedAt = const Value.absent(),
+                Value<String?> serverUpdatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TripsCompanion(
+                id: id,
+                spaceId: spaceId,
+                title: title,
+                destination: destination,
+                startDate: startDate,
+                endDate: endDate,
+                notes: notes,
+                savingsGoalId: savingsGoalId,
+                createdBy: createdBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String spaceId,
+                required String title,
+                Value<String?> destination = const Value.absent(),
+                Value<String?> startDate = const Value.absent(),
+                Value<String?> endDate = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<String?> savingsGoalId = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                required String createdAt,
+                required String updatedAt,
+                Value<String?> deletedAt = const Value.absent(),
+                Value<String?> serverUpdatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => TripsCompanion.insert(
+                id: id,
+                spaceId: spaceId,
+                title: title,
+                destination: destination,
+                startDate: startDate,
+                endDate: endDate,
+                notes: notes,
+                savingsGoalId: savingsGoalId,
+                createdBy: createdBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$TripsTable, TripRow>(table),
+                  BaseReferences<_$AppDatabase, $TripsTable, TripRow>(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TripsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TripsTable,
+      TripRow,
+      $$TripsTableFilterComposer,
+      $$TripsTableOrderingComposer,
+      $$TripsTableAnnotationComposer,
+      $$TripsTableCreateCompanionBuilder,
+      $$TripsTableUpdateCompanionBuilder,
+      (TripRow, BaseReferences<_$AppDatabase, $TripsTable, TripRow>),
+      TripRow,
+      PrefetchHooks Function()
+    >;
 typedef $$OutboxOpsTableCreateCompanionBuilder = OutboxOpsCompanion Function({
   Value<int> id,
   required String entityType,
@@ -6474,6 +7574,7 @@ class $AppDatabaseManager {
   $$SavingsGoalsTableTableManager get savingsGoals => $$SavingsGoalsTableTableManager(_db, _db.savingsGoals);
   $$SavingsEntriesTableTableManager get savingsEntries => $$SavingsEntriesTableTableManager(_db, _db.savingsEntries);
   $$SpecialDatesTableTableManager get specialDates => $$SpecialDatesTableTableManager(_db, _db.specialDates);
+  $$TripsTableTableManager get trips => $$TripsTableTableManager(_db, _db.trips);
   $$OutboxOpsTableTableManager get outboxOps => $$OutboxOpsTableTableManager(_db, _db.outboxOps);
   $$MetaEntriesTableTableManager get metaEntries => $$MetaEntriesTableTableManager(_db, _db.metaEntries);
 }

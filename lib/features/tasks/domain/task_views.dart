@@ -52,6 +52,9 @@ class TaskItem {
     return !isCompleted || completedToday;
   }
 
+  /// Item checklist persiapan perjalanan (v0.2), bukan tugas di daftar biasa.
+  bool get isChecklistItem => list.isChecklist;
+
   /// Penanggung jawab menurut [meId]. Dua orang berarti "Kita".
   Assignee assigneeFor(String meId) {
     if (task.assigneeIds.length > 1) return Assignee.us;
@@ -68,7 +71,8 @@ class TaskItem {
 /// Gabungkan tugas dengan daftar dan ruangnya.
 ///
 /// Hanya tugas di daftar aktif yang lolos: tugas di daftar yang dihapus atau
-/// diarsipkan tidak tampil di tampilan mana pun.
+/// diarsipkan tidak tampil di tampilan mana pun. Item checklist perjalanan ikut,
+/// supaya yang bertenggat tampil di Tugas hari ini.
 List<TaskItem> buildTaskItems({
   required List<Task> tasks,
   required List<TaskList> lists,
@@ -131,8 +135,9 @@ int compareForToday(TaskItem a, TaskItem b) {
 }
 
 /// Daftar aktif dalam urutan tampil: Ruang Bersama dulu, lalu menurut `position`.
+/// Checklist perjalanan tidak termasuk; isinya tampil di layar perjalanannya.
 List<TaskList> orderLists(List<TaskList> lists, Household household) {
-  final active = lists.where((list) => list.isActive && household.spaceOf(list.spaceId) != null).toList();
+  final active = lists.where((list) => list.isRegularActive && household.spaceOf(list.spaceId) != null).toList();
   int rank(TaskList list) => household.isShared(list.spaceId) ? 0 : 1;
 
   return active..sort((a, b) {
@@ -144,8 +149,9 @@ List<TaskList> orderLists(List<TaskList> lists, Household household) {
 }
 
 /// Daftar aktif pertama di sebuah ruang; ke sinilah tambah cepat memasukkan tugas.
+/// Checklist perjalanan tidak pernah dipakai tambah cepat.
 TaskList? firstActiveList(List<TaskList> lists, String spaceId) {
-  final inSpace = lists.where((list) => list.isActive && list.spaceId == spaceId).toList()
+  final inSpace = lists.where((list) => list.isRegularActive && list.spaceId == spaceId).toList()
     ..sort((a, b) => a.position.compareTo(b.position));
   return inSpace.firstOrNull;
 }
@@ -163,7 +169,7 @@ final taskItemsProvider = Provider<List<TaskItem>?>((ref) {
   return buildTaskItems(tasks: tasks, lists: lists, household: household, clock: ref.watch(spaceClockProvider));
 });
 
-/// Daftar aktif dalam urutan tampil; `null` selama cache belum terbaca.
+/// Daftar aktif dalam urutan tampil, tanpa checklist perjalanan; `null` selama cache belum terbaca.
 final activeListsProvider = Provider<List<TaskList>?>((ref) {
   final lists = ref.watch(taskListsProvider).value;
   final household = ref.watch(householdProvider);

@@ -12,6 +12,9 @@ enum EntityType {
   /// Tanggal penting (v0.2).
   specialDate(apiPath: 'special-dates', syncKey: 'special_dates'),
 
+  /// Perjalanan (v0.2). Checklist persiapannya adalah daftar dengan `trip_id`.
+  trip(apiPath: 'trips', syncKey: 'trips'),
+
   /// Profil sendiri; hanya `PATCH /me` yang lewat antrean.
   me(apiPath: 'me');
 
@@ -21,9 +24,12 @@ enum EntityType {
   final String? syncKey;
 
   /// Urutan penerapan satu halaman sync: induk dulu, baru anak.
-  static const List<EntityType> syncOrder = [space, list, task, goal, entry, specialDate];
+  static const List<EntityType> syncOrder = [space, trip, list, task, goal, entry, specialDate];
 
   /// Jenis anak yang ikut terhapus saat induknya dihapus, beserta kolom penunjuk induknya.
+  ///
+  /// Perjalanan tidak tercantum: server ikut menghapus checklist dan tugasnya, dan
+  /// penghapusan itu sampai lewat sync bersama perjalanannya.
   (EntityType, String)? get child => switch (this) {
     EntityType.list => (EntityType.task, 'task_list_id'),
     EntityType.goal => (EntityType.entry, 'savings_goal_id'),

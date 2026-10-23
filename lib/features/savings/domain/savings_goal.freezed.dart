@@ -17,7 +17,9 @@ T _$identity<T>(T value) => value;
 mixin _$SavingsGoal {
 
  String get id; String get spaceId; String get name; String? get emoji; int get targetAmount; String get currency;/// `YYYY-MM-DD`; dipakai untuk menghitung setoran per minggu yang dibutuhkan.
- String? get targetDate; DateTime? get achievedAt; DateTime? get archivedAt; String? get createdBy; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt;
+ String? get targetDate;/// Pengingat setor rutin (v0.2): `weekly`, `monthly`, atau `null` (tanpa pengingat).
+ String? get reminderFrequency;/// 1–7 untuk mingguan (1 = Senin), 1–31 untuk bulanan.
+ int? get reminderDay; DateTime? get achievedAt; DateTime? get archivedAt; String? get createdBy; DateTime get createdAt; DateTime get updatedAt; DateTime? get deletedAt;
 /// Create a copy of SavingsGoal
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -31,20 +33,20 @@ $SavingsGoalCopyWith<SavingsGoal> get copyWith => _$SavingsGoalCopyWithImpl<Savi
 @override
 bool operator ==(Object other) {
   final _this = this as SavingsGoal;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavingsGoal&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.spaceId, _this.spaceId) || other.spaceId == _this.spaceId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.emoji, _this.emoji) || other.emoji == _this.emoji)&&(identical(other.targetAmount, _this.targetAmount) || other.targetAmount == _this.targetAmount)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.targetDate, _this.targetDate) || other.targetDate == _this.targetDate)&&(identical(other.achievedAt, _this.achievedAt) || other.achievedAt == _this.achievedAt)&&(identical(other.archivedAt, _this.archivedAt) || other.archivedAt == _this.archivedAt)&&(identical(other.createdBy, _this.createdBy) || other.createdBy == _this.createdBy)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SavingsGoal&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.spaceId, _this.spaceId) || other.spaceId == _this.spaceId)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.emoji, _this.emoji) || other.emoji == _this.emoji)&&(identical(other.targetAmount, _this.targetAmount) || other.targetAmount == _this.targetAmount)&&(identical(other.currency, _this.currency) || other.currency == _this.currency)&&(identical(other.targetDate, _this.targetDate) || other.targetDate == _this.targetDate)&&(identical(other.reminderFrequency, _this.reminderFrequency) || other.reminderFrequency == _this.reminderFrequency)&&(identical(other.reminderDay, _this.reminderDay) || other.reminderDay == _this.reminderDay)&&(identical(other.achievedAt, _this.achievedAt) || other.achievedAt == _this.achievedAt)&&(identical(other.archivedAt, _this.archivedAt) || other.archivedAt == _this.archivedAt)&&(identical(other.createdBy, _this.createdBy) || other.createdBy == _this.createdBy)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt)&&(identical(other.deletedAt, _this.deletedAt) || other.deletedAt == _this.deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as SavingsGoal;
-  return Object.hash(runtimeType,_this.id,_this.spaceId,_this.name,_this.emoji,_this.targetAmount,_this.currency,_this.targetDate,_this.achievedAt,_this.archivedAt,_this.createdBy,_this.createdAt,_this.updatedAt,_this.deletedAt);
+  return Object.hash(runtimeType,_this.id,_this.spaceId,_this.name,_this.emoji,_this.targetAmount,_this.currency,_this.targetDate,_this.reminderFrequency,_this.reminderDay,_this.achievedAt,_this.archivedAt,_this.createdBy,_this.createdAt,_this.updatedAt,_this.deletedAt);
 }
 
 @override
 String toString() {
   final _this = this as SavingsGoal;
-  return 'SavingsGoal(id: ${_this.id}, spaceId: ${_this.spaceId}, name: ${_this.name}, emoji: ${_this.emoji}, targetAmount: ${_this.targetAmount}, currency: ${_this.currency}, targetDate: ${_this.targetDate}, achievedAt: ${_this.achievedAt}, archivedAt: ${_this.archivedAt}, createdBy: ${_this.createdBy}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
+  return 'SavingsGoal(id: ${_this.id}, spaceId: ${_this.spaceId}, name: ${_this.name}, emoji: ${_this.emoji}, targetAmount: ${_this.targetAmount}, currency: ${_this.currency}, targetDate: ${_this.targetDate}, reminderFrequency: ${_this.reminderFrequency}, reminderDay: ${_this.reminderDay}, achievedAt: ${_this.achievedAt}, archivedAt: ${_this.archivedAt}, createdBy: ${_this.createdBy}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt}, deletedAt: ${_this.deletedAt})';
 }
 
 
@@ -55,7 +57,7 @@ abstract mixin class $SavingsGoalCopyWith<$Res>  {
   factory $SavingsGoalCopyWith(SavingsGoal value, $Res Function(SavingsGoal) _then) = _$SavingsGoalCopyWithImpl;
 @useResult
 $Res call({
- String id, String spaceId, String name, String? emoji, int targetAmount, String currency, String? targetDate, DateTime? achievedAt, DateTime? archivedAt, String? createdBy, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
+ String id, String spaceId, String name, String? emoji, int targetAmount, String currency, String? targetDate, String? reminderFrequency, int? reminderDay, DateTime? achievedAt, DateTime? archivedAt, String? createdBy, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
 });
 
 
@@ -72,7 +74,7 @@ class _$SavingsGoalCopyWithImpl<$Res>
 
 /// Create a copy of SavingsGoal
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? spaceId = null,Object? name = null,Object? emoji = freezed,Object? targetAmount = null,Object? currency = null,Object? targetDate = freezed,Object? achievedAt = freezed,Object? archivedAt = freezed,Object? createdBy = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? spaceId = null,Object? name = null,Object? emoji = freezed,Object? targetAmount = null,Object? currency = null,Object? targetDate = freezed,Object? reminderFrequency = freezed,Object? reminderDay = freezed,Object? achievedAt = freezed,Object? archivedAt = freezed,Object? createdBy = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(SavingsGoal(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,spaceId: null == spaceId ? _self.spaceId : spaceId // ignore: cast_nullable_to_non_nullable
@@ -81,7 +83,9 @@ as String,emoji: freezed == emoji ? _self.emoji : emoji // ignore: cast_nullable
 as String?,targetAmount: null == targetAmount ? _self.targetAmount : targetAmount // ignore: cast_nullable_to_non_nullable
 as int,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String,targetDate: freezed == targetDate ? _self.targetDate : targetDate // ignore: cast_nullable_to_non_nullable
-as String?,achievedAt: freezed == achievedAt ? _self.achievedAt : achievedAt // ignore: cast_nullable_to_non_nullable
+as String?,reminderFrequency: freezed == reminderFrequency ? _self.reminderFrequency : reminderFrequency // ignore: cast_nullable_to_non_nullable
+as String?,reminderDay: freezed == reminderDay ? _self.reminderDay : reminderDay // ignore: cast_nullable_to_non_nullable
+as int?,achievedAt: freezed == achievedAt ? _self.achievedAt : achievedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,archivedAt: freezed == archivedAt ? _self.archivedAt : archivedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdBy: freezed == createdBy ? _self.createdBy : createdBy // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -172,10 +176,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String spaceId,  String name,  String? emoji,  int targetAmount,  String currency,  String? targetDate,  DateTime? achievedAt,  DateTime? archivedAt,  String? createdBy,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String spaceId,  String name,  String? emoji,  int targetAmount,  String currency,  String? targetDate,  String? reminderFrequency,  int? reminderDay,  DateTime? achievedAt,  DateTime? archivedAt,  String? createdBy,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _SavingsGoal() when $default != null:
-return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount,_that.currency,_that.targetDate,_that.achievedAt,_that.archivedAt,_that.createdBy,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
+return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount,_that.currency,_that.targetDate,_that.reminderFrequency,_that.reminderDay,_that.achievedAt,_that.archivedAt,_that.createdBy,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return orElse();
 
 }
@@ -193,10 +197,10 @@ return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String spaceId,  String name,  String? emoji,  int targetAmount,  String currency,  String? targetDate,  DateTime? achievedAt,  DateTime? archivedAt,  String? createdBy,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String spaceId,  String name,  String? emoji,  int targetAmount,  String currency,  String? targetDate,  String? reminderFrequency,  int? reminderDay,  DateTime? achievedAt,  DateTime? archivedAt,  String? createdBy,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)  $default,) {final _that = this;
 switch (_that) {
 case _SavingsGoal():
-return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount,_that.currency,_that.targetDate,_that.achievedAt,_that.archivedAt,_that.createdBy,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
+return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount,_that.currency,_that.targetDate,_that.reminderFrequency,_that.reminderDay,_that.achievedAt,_that.archivedAt,_that.createdBy,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -213,10 +217,10 @@ return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String spaceId,  String name,  String? emoji,  int targetAmount,  String currency,  String? targetDate,  DateTime? achievedAt,  DateTime? archivedAt,  String? createdBy,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String spaceId,  String name,  String? emoji,  int targetAmount,  String currency,  String? targetDate,  String? reminderFrequency,  int? reminderDay,  DateTime? achievedAt,  DateTime? archivedAt,  String? createdBy,  DateTime createdAt,  DateTime updatedAt,  DateTime? deletedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _SavingsGoal() when $default != null:
-return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount,_that.currency,_that.targetDate,_that.achievedAt,_that.archivedAt,_that.createdBy,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
+return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount,_that.currency,_that.targetDate,_that.reminderFrequency,_that.reminderDay,_that.achievedAt,_that.archivedAt,_that.createdBy,_that.createdAt,_that.updatedAt,_that.deletedAt);case _:
   return null;
 
 }
@@ -228,7 +232,7 @@ return $default(_that.id,_that.spaceId,_that.name,_that.emoji,_that.targetAmount
 @JsonSerializable()
 
 class _SavingsGoal extends SavingsGoal {
-  const _SavingsGoal({required this.id, required this.spaceId, required this.name, this.emoji, required this.targetAmount, required this.currency, this.targetDate, this.achievedAt, this.archivedAt, this.createdBy, required this.createdAt, required this.updatedAt, this.deletedAt}): super._();
+  const _SavingsGoal({required this.id, required this.spaceId, required this.name, this.emoji, required this.targetAmount, required this.currency, this.targetDate, this.reminderFrequency, this.reminderDay, this.achievedAt, this.archivedAt, this.createdBy, required this.createdAt, required this.updatedAt, this.deletedAt}): super._();
   factory _SavingsGoal.fromJson(Map<String, dynamic> json) => _$SavingsGoalFromJson(json);
 
 @override final  String id;
@@ -239,6 +243,10 @@ class _SavingsGoal extends SavingsGoal {
 @override final  String currency;
 /// `YYYY-MM-DD`; dipakai untuk menghitung setoran per minggu yang dibutuhkan.
 @override final  String? targetDate;
+/// Pengingat setor rutin (v0.2): `weekly`, `monthly`, atau `null` (tanpa pengingat).
+@override final  String? reminderFrequency;
+/// 1–7 untuk mingguan (1 = Senin), 1–31 untuk bulanan.
+@override final  int? reminderDay;
 @override final  DateTime? achievedAt;
 @override final  DateTime? archivedAt;
 @override final  String? createdBy;
@@ -259,18 +267,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavingsGoal&&(identical(other.id, id) || other.id == id)&&(identical(other.spaceId, spaceId) || other.spaceId == spaceId)&&(identical(other.name, name) || other.name == name)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.targetDate, targetDate) || other.targetDate == targetDate)&&(identical(other.achievedAt, achievedAt) || other.achievedAt == achievedAt)&&(identical(other.archivedAt, archivedAt) || other.archivedAt == archivedAt)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _SavingsGoal&&(identical(other.id, id) || other.id == id)&&(identical(other.spaceId, spaceId) || other.spaceId == spaceId)&&(identical(other.name, name) || other.name == name)&&(identical(other.emoji, emoji) || other.emoji == emoji)&&(identical(other.targetAmount, targetAmount) || other.targetAmount == targetAmount)&&(identical(other.currency, currency) || other.currency == currency)&&(identical(other.targetDate, targetDate) || other.targetDate == targetDate)&&(identical(other.reminderFrequency, reminderFrequency) || other.reminderFrequency == reminderFrequency)&&(identical(other.reminderDay, reminderDay) || other.reminderDay == reminderDay)&&(identical(other.achievedAt, achievedAt) || other.achievedAt == achievedAt)&&(identical(other.archivedAt, archivedAt) || other.archivedAt == archivedAt)&&(identical(other.createdBy, createdBy) || other.createdBy == createdBy)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.deletedAt, deletedAt) || other.deletedAt == deletedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,spaceId,name,emoji,targetAmount,currency,targetDate,achievedAt,archivedAt,createdBy,createdAt,updatedAt,deletedAt);
+    return Object.hash(runtimeType,id,spaceId,name,emoji,targetAmount,currency,targetDate,reminderFrequency,reminderDay,achievedAt,archivedAt,createdBy,createdAt,updatedAt,deletedAt);
 }
 
 @override
 String toString() {
-    return 'SavingsGoal(id: $id, spaceId: $spaceId, name: $name, emoji: $emoji, targetAmount: $targetAmount, currency: $currency, targetDate: $targetDate, achievedAt: $achievedAt, archivedAt: $archivedAt, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
+    return 'SavingsGoal(id: $id, spaceId: $spaceId, name: $name, emoji: $emoji, targetAmount: $targetAmount, currency: $currency, targetDate: $targetDate, reminderFrequency: $reminderFrequency, reminderDay: $reminderDay, achievedAt: $achievedAt, archivedAt: $archivedAt, createdBy: $createdBy, createdAt: $createdAt, updatedAt: $updatedAt, deletedAt: $deletedAt)';
 }
 
 
@@ -281,7 +289,7 @@ abstract mixin class _$SavingsGoalCopyWith<$Res> implements $SavingsGoalCopyWith
   factory _$SavingsGoalCopyWith(_SavingsGoal value, $Res Function(_SavingsGoal) _then) = __$SavingsGoalCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String spaceId, String name, String? emoji, int targetAmount, String currency, String? targetDate, DateTime? achievedAt, DateTime? archivedAt, String? createdBy, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
+ String id, String spaceId, String name, String? emoji, int targetAmount, String currency, String? targetDate, String? reminderFrequency, int? reminderDay, DateTime? achievedAt, DateTime? archivedAt, String? createdBy, DateTime createdAt, DateTime updatedAt, DateTime? deletedAt
 });
 
 
@@ -298,7 +306,7 @@ class __$SavingsGoalCopyWithImpl<$Res>
 
 /// Create a copy of SavingsGoal
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? spaceId = null,Object? name = null,Object? emoji = freezed,Object? targetAmount = null,Object? currency = null,Object? targetDate = freezed,Object? achievedAt = freezed,Object? archivedAt = freezed,Object? createdBy = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? spaceId = null,Object? name = null,Object? emoji = freezed,Object? targetAmount = null,Object? currency = null,Object? targetDate = freezed,Object? reminderFrequency = freezed,Object? reminderDay = freezed,Object? achievedAt = freezed,Object? archivedAt = freezed,Object? createdBy = freezed,Object? createdAt = null,Object? updatedAt = null,Object? deletedAt = freezed,}) {
   return _then(_SavingsGoal(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,spaceId: null == spaceId ? _self.spaceId : spaceId // ignore: cast_nullable_to_non_nullable
@@ -307,7 +315,9 @@ as String,emoji: freezed == emoji ? _self.emoji : emoji // ignore: cast_nullable
 as String?,targetAmount: null == targetAmount ? _self.targetAmount : targetAmount // ignore: cast_nullable_to_non_nullable
 as int,currency: null == currency ? _self.currency : currency // ignore: cast_nullable_to_non_nullable
 as String,targetDate: freezed == targetDate ? _self.targetDate : targetDate // ignore: cast_nullable_to_non_nullable
-as String?,achievedAt: freezed == achievedAt ? _self.achievedAt : achievedAt // ignore: cast_nullable_to_non_nullable
+as String?,reminderFrequency: freezed == reminderFrequency ? _self.reminderFrequency : reminderFrequency // ignore: cast_nullable_to_non_nullable
+as String?,reminderDay: freezed == reminderDay ? _self.reminderDay : reminderDay // ignore: cast_nullable_to_non_nullable
+as int?,achievedAt: freezed == achievedAt ? _self.achievedAt : achievedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,archivedAt: freezed == archivedAt ? _self.archivedAt : archivedAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,createdBy: freezed == createdBy ? _self.createdBy : createdBy // ignore: cast_nullable_to_non_nullable
 as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable

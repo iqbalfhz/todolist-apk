@@ -196,7 +196,7 @@ class FakeApi implements ApiTransport {
 
   /// Kolom yang diisi server saat data dibuat.
   static Map<String, dynamic> _defaults(String resource) => switch (resource) {
-    'lists' => {'emoji': null, 'color': 'mawar', 'archived_at': null, 'created_by': 'server-user'},
+    'lists' => {'emoji': null, 'color': 'mawar', 'archived_at': null, 'trip_id': null, 'created_by': 'server-user'},
     'tasks' => {
       'space_id': 'space-shared',
       'notes': null,
@@ -213,12 +213,22 @@ class FakeApi implements ApiTransport {
     'savings-goals' => {
       'emoji': null,
       'target_date': null,
+      'reminder_frequency': null,
+      'reminder_day': null,
       'achieved_at': null,
       'archived_at': null,
       'created_by': 'server-user',
     },
     'savings-entries' => {'space_id': 'space-shared', 'user_id': 'server-user', 'type': 'deposit', 'note': null},
     'special-dates' => {'created_by': 'server-user'},
+    'trips' => {
+      'destination': null,
+      'start_date': null,
+      'end_date': null,
+      'notes': null,
+      'savings_goal_id': null,
+      'created_by': 'server-user',
+    },
     _ => {},
   };
 
@@ -230,6 +240,7 @@ class FakeApi implements ApiTransport {
     List<Map<String, dynamic>> savingsGoals = const [],
     List<Map<String, dynamic>> savingsEntries = const [],
     List<Map<String, dynamic>> specialDates = const [],
+    List<Map<String, dynamic>> trips = const [],
     String? serverTime,
     String? nextCursor,
   }) => {
@@ -240,6 +251,7 @@ class FakeApi implements ApiTransport {
       'savings_goals': savingsGoals,
       'savings_entries': savingsEntries,
       'special_dates': specialDates,
+      'trips': trips,
     },
     'meta': {'server_time': serverTime ?? stamp(), 'has_more': nextCursor != null, 'next_cursor': nextCursor},
   };

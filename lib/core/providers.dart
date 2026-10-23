@@ -10,6 +10,7 @@ import '../features/spaces/domain/space.dart';
 import '../features/special_dates/domain/special_date.dart';
 import '../features/tasks/domain/task.dart';
 import '../features/tasks/domain/task_list.dart';
+import '../features/trips/domain/trip.dart';
 import 'api/api_transport.dart';
 import 'config/env.dart';
 import 'database/app_database.dart';
@@ -128,6 +129,11 @@ final entriesProvider = StreamProvider<List<SavingsEntry>>(
 /// Tanggal penting yang belum dihapus (v0.2).
 final specialDatesProvider = StreamProvider<List<SpecialDate>>(
   (ref) => ref.watch(accountProvider)?.dates.watchAll() ?? Stream.value(const []),
+);
+
+/// Perjalanan yang belum dihapus (v0.2).
+final tripsProvider = StreamProvider<List<Trip>>(
+  (ref) => ref.watch(accountProvider)?.trips.watchAll() ?? Stream.value(const []),
 );
 
 /// Jumlah perubahan yang belum terkirim ke server.

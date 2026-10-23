@@ -38,6 +38,9 @@ class TaskLists extends Table {
   TextColumn get color => text()();
   RealColumn get position => real()();
   TextColumn get archivedAt => text().nullable()();
+
+  /// Terisi berarti daftar ini checklist persiapan sebuah perjalanan (v0.2).
+  TextColumn get tripId => text().nullable()();
   TextColumn get createdBy => text().nullable()();
   TextColumn get createdAt => text()();
   TextColumn get updatedAt => text()();
@@ -85,6 +88,10 @@ class SavingsGoals extends Table {
   IntColumn get targetAmount => integer()();
   TextColumn get currency => text()();
   TextColumn get targetDate => text().nullable()();
+
+  /// Pengingat setor rutin (v0.2): `weekly` atau `monthly`, dan hari atau tanggalnya.
+  TextColumn get reminderFrequency => text().nullable()();
+  IntColumn get reminderDay => integer().nullable()();
   TextColumn get achievedAt => text().nullable()();
   TextColumn get archivedAt => text().nullable()();
   TextColumn get createdBy => text().nullable()();
@@ -136,6 +143,29 @@ class SpecialDates extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Perjalanan (v0.2). Checklist persiapannya adalah daftar tugas dengan `tripId` terisi.
+@DataClassName('TripRow')
+class Trips extends Table {
+  TextColumn get id => text()();
+  TextColumn get spaceId => text()();
+  TextColumn get title => text()();
+  TextColumn get destination => text().nullable()();
+
+  /// `YYYY-MM-DD`; kosong berarti tanggalnya belum pasti.
+  TextColumn get startDate => text().nullable()();
+  TextColumn get endDate => text().nullable()();
+  TextColumn get notes => text().nullable()();
+  TextColumn get savingsGoalId => text().nullable()();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+  TextColumn get deletedAt => text().nullable()();
+  TextColumn get serverUpdatedAt => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// Antrean operasi tulis yang belum sampai ke server, dikirim berurutan menurut `id`.
 @DataClassName('OutboxRow')
 class OutboxOps extends Table {
@@ -170,7 +200,9 @@ class MetaEntries extends Table {
   Set<Column<Object>> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Spaces, TaskLists, Tasks, SavingsGoals, SavingsEntries, SpecialDates, OutboxOps, MetaEntries])
+@DriftDatabase(
+  tables: [Spaces, TaskLists, Tasks, SavingsGoals, SavingsEntries, SpecialDates, Trips, OutboxOps, MetaEntries],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
@@ -178,14 +210,21 @@ class AppDatabase extends _$AppDatabase {
   /// jadi antrean akun sebelumnya tidak terkirim atas nama akun baru.
   AppDatabase.forAccount(String userId) : super(driftDatabase(name: 'akun_$userId'));
 
-  /// 1: v0.1. 2: tabel tanggal penting (v0.2).
+  /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
+  /// dan jadwal pengingat setor di target (semuanya v0.2).
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onUpgrade: (migrator, from, to) async {
       if (from < 2) await migrator.createTable(specialDates);
+      if (from < 3) {
+        await migrator.createTable(trips);
+        await migrator.addColumn(taskLists, taskLists.tripId);
+        await migrator.addColumn(savingsGoals, savingsGoals.reminderFrequency);
+        await migrator.addColumn(savingsGoals, savingsGoals.reminderDay);
+      }
     },
   );
 }

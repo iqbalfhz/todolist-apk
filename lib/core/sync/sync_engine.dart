@@ -39,9 +39,11 @@ class SyncEngine {
   /// Jeda coba ulang saat server tidak terjangkau: 2, 4, 8 detik dan seterusnya, paling lama 5 menit.
   static const Duration maxBackoff = Duration(minutes: 5);
 
-  /// Versi daftar koleksi `GET /sync` yang dikenal app ini; naik setiap ada koleksi baru.
-  /// 1: v0.1. 2: `special_dates` (v0.2).
-  static const int collectionsVersion = 2;
+  /// Versi daftar koleksi `GET /sync` yang dikenal app ini; naik setiap ada koleksi baru
+  /// atau kolom baru yang perlu diisi untuk baris lama.
+  /// 1: v0.1. 2: `special_dates`. 3: `trips`, `trip_id` di daftar, dan jadwal pengingat
+  /// setor di target (semuanya v0.2).
+  static const int collectionsVersion = 3;
 
   final Zone _zone = Zone.current;
 

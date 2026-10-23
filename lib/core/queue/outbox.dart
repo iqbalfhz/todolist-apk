@@ -313,15 +313,21 @@ class Outbox {
     return (_db.select(_db.outboxOps)..where((t) => t.id.equals(opId))).getSingleOrNull();
   });
 
-  Future<void> _onSuccess(OutboxRow op, ApiResponse response) => store.transaction(() async {
-    await _delete(op.id);
+  Future<void> _onSuccess(OutboxRow op, ApiResponse response) async {
+    await store.transaction(() async {
+      await _delete(op.id);
 
-    // Balasan PUT (201, atau 200 kalau sudah tersimpan dari kiriman sebelumnya) dan
-    // PATCH diterapkan seperti baris sync; kolom yang masih di antrean tetap dilindungi.
-    if (op.method != 'DELETE' && response.body != null) {
-      await applier.apply(EntityType.byName(op.entityType), response.data);
-    }
-  });
+      // Balasan PUT (201, atau 200 kalau sudah tersimpan dari kiriman sebelumnya) dan
+      // PATCH diterapkan seperti baris sync; kolom yang masih di antrean tetap dilindungi.
+      if (op.method != 'DELETE' && response.body != null) {
+        await applier.apply(EntityType.byName(op.entityType), response.data);
+      }
+    });
+
+    // Server ikut menghapus checklist dan tugasnya bersama perjalanan. Balasan PUT checklist
+    // yang dibuat offline bisa memunculkannya lagi di HP, jadi penghapusannya segera ditarik.
+    if (op.method == 'DELETE' && op.entityType == EntityType.trip.name) _emit(const OutboxNeedsSync());
+  }
 
   /// Tangani balasan error sesuai tabel Error di kontrak. Mengembalikan keadaan
   /// kalau pengiriman harus berhenti, atau `null` untuk lanjut ke operasi berikutnya.
@@ -371,6 +377,7 @@ class Outbox {
       case ApiErrorCode.forbidden ||
           ApiErrorCode.lastList ||
           ApiErrorCode.idConflict ||
+          ApiErrorCode.tripChecklist ||
           ApiErrorCode.sharedSpaceExists ||
           ApiErrorCode.validationFailed ||
           ApiErrorCode.invalidCredentials ||
@@ -413,6 +420,7 @@ class Outbox {
   }
 
   /// Pindahkan tugas ke daftar aktif pertama di ruangnya, lalu biarkan operasinya dikirim ulang.
+  /// Checklist perjalanan tidak dihitung sebagai daftar aktif, jadi tidak pernah menjadi tujuan.
   Future<bool> _relocateTask(OutboxRow op) async {
     final listName = await store.transaction(() async {
       final task = await store.read(EntityType.task, op.entityId);
@@ -430,7 +438,7 @@ class Outbox {
           .where(
             (list) =>
                 list.spaceId == task['space_id'] &&
-                list.isActive &&
+                list.isRegularActive &&
                 !rejected.contains(list.id) &&
                 !deleting.contains(list.id),
           )

@@ -22,6 +22,8 @@ const String taskId = '01m4dh1yn0t6cdn39q4f091895';
 const String goalId = '01m4djq1w0ystkpbz7mqd22k3n';
 const String entryId = '01m4dk06v0p3ew0dm0dk94s1k0';
 const String specialDateId = '01m4dm2k70z5bq7rn3xw8c4v1e';
+const String tripId = '01m4dp5r20vbx9k3ws7ty6hn2q';
+const String checklistId = '01m4dp5r21vbx9k3ws7ty6hn2r';
 
 const String t0 = '2026-10-08T10:00:00.000000Z';
 const String t1 = '2026-10-08T10:30:00.000000Z';
@@ -41,6 +43,8 @@ Map<String, dynamic> userJson({String id = meId, String name = 'Iqbal', String c
     'partner_activity': true,
     'savings_activity': true,
     'special_dates': true,
+    'trip_reminders': true,
+    'savings_reminders': true,
   },
   'avatar_url': null,
   'avatar_version': 0,
@@ -100,6 +104,7 @@ Map<String, dynamic> listJson({
   String color = 'toska',
   num position = 1024,
   String? archivedAt,
+  String? tripId,
   String? deletedAt,
   String updatedAt = t0,
 }) => {
@@ -110,6 +115,7 @@ Map<String, dynamic> listJson({
   'color': color,
   'position': position,
   'archived_at': archivedAt,
+  'trip_id': tripId,
   'created_by': meId,
   'created_at': t0,
   'updated_at': updatedAt,
@@ -159,6 +165,8 @@ Map<String, dynamic> goalJson({
   int targetAmount = 10000000,
   String currency = 'IDR',
   String? targetDate = '2027-02-28',
+  String? reminderFrequency,
+  int? reminderDay,
   String? archivedAt,
   String? deletedAt,
   String updatedAt = t0,
@@ -170,6 +178,8 @@ Map<String, dynamic> goalJson({
   'target_amount': targetAmount,
   'currency': currency,
   'target_date': targetDate,
+  'reminder_frequency': reminderFrequency,
+  'reminder_day': reminderDay,
   'achieved_at': null,
   'archived_at': archivedAt,
   'created_by': meId,
@@ -221,6 +231,43 @@ Map<String, dynamic> specialDateJson({
   'updated_at': updatedAt,
   'deleted_at': deletedAt,
 };
+
+/// Perjalanan, sama dengan contoh di kontrak: Liburan ke Bali di Ruang Bersama.
+Map<String, dynamic> tripJson({
+  String id = tripId,
+  String spaceId = sharedSpaceId,
+  String title = 'Liburan ke Bali',
+  String? destination = 'Bali',
+  String? startDate = '2027-06-20',
+  String? endDate = '2027-06-25',
+  String? notes,
+  String? savingsGoalId,
+  String? deletedAt,
+  String updatedAt = t0,
+}) => {
+  'id': id,
+  'space_id': spaceId,
+  'title': title,
+  'destination': destination,
+  'start_date': startDate,
+  'end_date': endDate,
+  'notes': notes,
+  'savings_goal_id': savingsGoalId,
+  'created_by': meId,
+  'created_at': t0,
+  'updated_at': updatedAt,
+  'deleted_at': deletedAt,
+};
+
+/// Checklist persiapan perjalanan [trip]: daftar tugas dengan `trip_id`.
+Map<String, dynamic> checklistJson({
+  String id = checklistId,
+  String trip = tripId,
+  String spaceId = sharedSpaceId,
+  String name = 'Persiapan Liburan ke Bali',
+  String? deletedAt,
+}) =>
+    listJson(id: id, spaceId: spaceId, name: name, color: 'mawar', position: 9216, tripId: trip, deletedAt: deletedAt);
 
 /// Jam yang bisa dimajukan dari tes.
 class TestClock {

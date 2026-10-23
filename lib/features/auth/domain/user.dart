@@ -43,6 +43,12 @@ abstract class NotificationPrefs with _$NotificationPrefs {
     /// Pengingat tanggal penting (v0.2). Bawaannya menyala, juga untuk akun yang
     /// dibuat sebelum kunci ini ada.
     @Default(true) bool specialDates,
+
+    /// Pengingat perjalanan H-7 dan H-1 (v0.2). Bawaannya menyala.
+    @Default(true) bool tripReminders,
+
+    /// Pengingat setor rutin per target (v0.2). Bawaannya menyala.
+    @Default(true) bool savingsReminders,
   }) = _NotificationPrefs;
 
   factory NotificationPrefs.fromJson(Map<String, dynamic> json) => _$NotificationPrefsFromJson(json);

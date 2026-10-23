@@ -27,6 +27,7 @@ import 'package:todolist/features/savings/domain/savings_goal.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/tasks/domain/task.dart';
 import 'package:todolist/features/tasks/domain/task_list.dart';
+import 'package:todolist/features/trips/domain/trip.dart';
 
 /// Satu HP: token, klien API sungguhan, dan database lokal di memori.
 class Device {
@@ -66,7 +67,7 @@ class Device {
 
   Future<TaskList> sharedList() async {
     final space = await sharedSpace();
-    return (await lists()).firstWhere((list) => list.spaceId == space.id);
+    return (await lists()).firstWhere((list) => list.spaceId == space.id && !list.isChecklist);
   }
 
   /// Kirim antrean (melewati jeda Urungkan) lalu tarik perubahan.
@@ -432,6 +433,105 @@ void main() {
     expect(await b.account.store.read(EntityType.task, task.id), isNull);
     expect((await b.account.db.select(b.account.db.outboxOps).get()), isEmpty);
   }, skip: skipReason);
+
+  test(
+    'perjalanan: checklist ikut dibuat dan tidak bisa dihapus sendiri; tautan dana lepas saat targetnya dihapus',
+    () async {
+      final space = await a.sharedSpace();
+      final goal = await a.account.savings.createGoal(
+        spaceId: space.id,
+        name: 'Dana Bali',
+        targetAmount: 5000000,
+        currency: 'IDR',
+      );
+      final trip = await a.account.trips.create(
+        spaceId: space.id,
+        title: 'Liburan ke Bali',
+        destination: 'Bali',
+        startDate: '2027-06-20',
+        endDate: '2027-06-25',
+        savingsGoalId: goal.id,
+      );
+      final checklist = (await a.account.store.checklistsOf(trip.id)).single;
+      await a.account.tasks.create(list: checklist, title: 'Beli sunscreen');
+      await a.syncNow();
+      await b.syncNow();
+
+      // B menerima perjalanan, checklist, dan itemnya.
+      final received = (await b.account.store.checklistsOf(trip.id)).single;
+      expect(received.id, checklist.id);
+      expect(received.name, 'Persiapan Liburan ke Bali');
+      expect((await b.tasks()).singleWhere((task) => task.taskListId == checklist.id).title, 'Beli sunscreen');
+      expect(Trip.fromJson((await b.account.store.read(EntityType.trip, trip.id))!).savingsGoalId, goal.id);
+
+      // Menghapus checklist sendiri (melewati pengecekan di HP) ditolak 409 trip_checklist, dan checklistnya pulih.
+      final before = await a.account.store.patch(EntityType.list, checklist.id, {
+        'deleted_at': DateTime.now().toUtc().toIso8601String(),
+      });
+      await a.account.outbox.enqueueDelete(EntityType.list, checklist.id, before: before!);
+      final events = <OutboxEvent>[];
+      final subscription = a.account.outbox.events.listen(events.add);
+      expect(await a.account.outbox.flush(), FlushState.idle);
+      await pumpEventQueue();
+      await subscription.cancel();
+      expect(
+        (events.single as OutboxRejected).message,
+        'Checklist ini ikut perjalanannya. Hapus perjalanannya kalau ingin menghapus checklist.',
+      );
+      expect((await a.account.store.checklistsOf(trip.id)).single.id, checklist.id);
+
+      // Target dihapus: server mengosongkan tautan perjalanannya, dan itu sampai lewat sync.
+      await a.account.savings.deleteGoal(goal.id);
+      await a.syncNow();
+      expect(Trip.fromJson((await a.account.store.read(EntityType.trip, trip.id))!).savingsGoalId, isNull);
+
+      // A menghapus perjalanan saat B masih mencatat item offline: itemnya dipindah ke daftar biasa.
+      final late = await b.account.tasks.create(list: received, title: 'Tukar uang');
+      await a.account.trips.delete(trip.id);
+      await a.syncNow();
+      expect(await b.account.outbox.flush(), FlushState.idle);
+      final moved = Task.fromJson((await b.account.store.read(EntityType.task, late.id))!);
+      expect(moved.taskListId, (await b.sharedList()).id);
+
+      await b.syncNow();
+      expect(await b.account.store.checklistsOf(trip.id), isEmpty);
+      expect((await b.account.store.read(EntityType.trip, trip.id))!['deleted_at'], isNotNull);
+    },
+    skip: skipReason,
+  );
+
+  test(
+    'pengingat setor: jadwal disimpan server dan sampai ke HP pasangan; frekuensi kosong ikut mengosongkan harinya',
+    () async {
+      final space = await a.sharedSpace();
+      final goal = await a.account.savings.createGoal(
+        spaceId: space.id,
+        name: 'Dana Darurat',
+        targetAmount: 3000000,
+        currency: 'IDR',
+      );
+      await a.account.savings.setReminder(
+        goal.id,
+        const SavingsReminder(frequency: ReminderFrequency.monthly, day: 31),
+      );
+      await a.syncNow();
+      await b.syncNow();
+      expect(
+        SavingsGoal.fromJson((await b.account.store.read(EntityType.goal, goal.id))!).reminder,
+        const SavingsReminder(frequency: ReminderFrequency.monthly, day: 31),
+      );
+
+      await b.account.savings.setReminder(goal.id, null);
+      await b.syncNow();
+      await a.syncNow();
+      final cleared = SavingsGoal.fromJson((await a.account.store.read(EntityType.goal, goal.id))!);
+      expect((cleared.reminderFrequency, cleared.reminderDay), (null, null));
+
+      await a.account.savings.deleteGoal(goal.id);
+      await a.syncNow();
+    },
+    skip: skipReason,
+  );
 
   test('tabungan: setoran dari dua HP, target tercapai diisi server, hapus target berantai', () async {
     final space = await a.sharedSpace();

@@ -81,12 +81,15 @@ class TaskListRepository {
     await writer.delete(EntityType.list, id);
   }
 
+  /// Checklist perjalanan tidak dihitung, sama seperti di server.
   Future<void> _ensureNotLastActive(String id) async {
     final lists = await writer.store.taskLists();
     final target = lists.where((list) => list.id == id).firstOrNull;
-    if (target == null || !target.isActive) return;
+    if (target == null || !target.isRegularActive) return;
 
-    final anotherIsActive = lists.any((list) => list.spaceId == target.spaceId && list.id != id && list.isActive);
+    final anotherIsActive = lists.any(
+      (list) => list.spaceId == target.spaceId && list.id != id && list.isRegularActive,
+    );
     if (!anotherIsActive) throw const LastActiveListException();
   }
 

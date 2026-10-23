@@ -8,6 +8,9 @@ enum ApiErrorCode {
   parentArchived('parent_archived'),
   lastList('last_list'),
   idConflict('id_conflict'),
+
+  /// Checklist perjalanan dihapus atau diarsipkan sendiri (v0.2).
+  tripChecklist('trip_checklist'),
   sharedSpaceExists('shared_space_exists'),
   resourceDeleted('resource_deleted'),
   validationFailed('validation_failed'),

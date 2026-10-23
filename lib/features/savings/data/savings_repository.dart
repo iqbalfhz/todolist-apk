@@ -69,6 +69,13 @@ class SavingsRepository {
     'target_date': targetDate,
   });
 
+  /// Jadwal pengingat setor (v0.2); `null` mematikannya. Frekuensi dan harinya selalu
+  /// dikirim bersama, karena server mengecek keduanya berpasangan.
+  Future<void> setReminder(String id, SavingsReminder? reminder) => writer.update(EntityType.goal, id, {
+    'reminder_frequency': reminder?.frequency.name,
+    'reminder_day': reminder?.day,
+  }, sendTogether: true);
+
   Future<void> archiveGoal(String id) => writer.update(EntityType.goal, id, {'archived_at': writer.nowIso()});
 
   Future<void> unarchiveGoal(String id) => writer.update(EntityType.goal, id, {'archived_at': null});

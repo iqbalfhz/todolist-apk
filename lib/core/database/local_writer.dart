@@ -36,13 +36,15 @@ class LocalWriter {
   /// Hanya kolom yang nilainya benar-benar berubah yang dikirim, supaya perubahan
   /// pasangan di kolom lain tidak ikut tertimpa. Dengan [sendTogether], semua kolom
   /// di [changes] dikirim begitu salah satunya berubah (kolom berpasangan seperti
-  /// `due_date` dan `due_time`).
+  /// `due_date` dan `due_time`). [linked] melakukan hal yang sama hanya untuk kolom
+  /// yang disebut, misalnya `start_date` dan `end_date` perjalanan.
   Future<void> update(
     EntityType type,
     String id,
     Map<String, dynamic> changes, {
     Map<String, dynamic> localOnly = const {},
     bool sendTogether = false,
+    Set<String> linked = const {},
   }) => store.transaction(() async {
     final current = await store.read(type, id);
     if (current == null) return;
@@ -53,7 +55,14 @@ class LocalWriter {
     };
     if (changed.isEmpty) return;
 
-    final payload = sendTogether ? changes : changed;
+    final payload = sendTogether
+        ? changes
+        : {
+            ...changed,
+            if (changed.keys.any(linked.contains))
+              for (final key in linked)
+                if (changes.containsKey(key)) key: changes[key],
+          };
     final local = {...payload, ...localOnly};
 
     await store.write(type, {...current, ...local});
@@ -103,7 +112,12 @@ class LocalWriter {
                   ..where(db.tasks.taskListId.equals(parentId)))
                 .map((row) => row.read(expression))
                 .getSingle();
-      case EntityType.space || EntityType.goal || EntityType.entry || EntityType.specialDate || EntityType.me:
+      case EntityType.space ||
+          EntityType.goal ||
+          EntityType.entry ||
+          EntityType.specialDate ||
+          EntityType.trip ||
+          EntityType.me:
         max = null;
     }
 

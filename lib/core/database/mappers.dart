@@ -8,6 +8,7 @@ import '../../features/spaces/domain/space.dart';
 import '../../features/special_dates/domain/special_date.dart';
 import '../../features/tasks/domain/task.dart';
 import '../../features/tasks/domain/task_list.dart';
+import '../../features/trips/domain/trip.dart';
 import 'app_database.dart';
 
 /// Pemetaan antara baris drift dan model freezed.
@@ -63,6 +64,7 @@ extension TaskListRowMapper on TaskListRow {
     color: color,
     position: position,
     archivedAt: _timeOrNull(archivedAt),
+    tripId: tripId,
     createdBy: createdBy,
     createdAt: _time(createdAt),
     updatedAt: _time(updatedAt),
@@ -78,6 +80,7 @@ TaskListsCompanion taskListCompanion(TaskList list, {String? serverUpdatedAt}) =
   color: Value(list.color),
   position: Value(list.position),
   archivedAt: Value(_isoOrNull(list.archivedAt)),
+  tripId: Value(list.tripId),
   createdBy: Value(list.createdBy),
   createdAt: Value(_iso(list.createdAt)),
   updatedAt: Value(_iso(list.updatedAt)),
@@ -139,6 +142,8 @@ extension SavingsGoalRowMapper on SavingsGoalRow {
     targetAmount: targetAmount,
     currency: currency,
     targetDate: targetDate,
+    reminderFrequency: reminderFrequency,
+    reminderDay: reminderDay,
     achievedAt: _timeOrNull(achievedAt),
     archivedAt: _timeOrNull(archivedAt),
     createdBy: createdBy,
@@ -156,6 +161,8 @@ SavingsGoalsCompanion savingsGoalCompanion(SavingsGoal goal, {String? serverUpda
   targetAmount: Value(goal.targetAmount),
   currency: Value(goal.currency),
   targetDate: Value(goal.targetDate),
+  reminderFrequency: Value(goal.reminderFrequency),
+  reminderDay: Value(goal.reminderDay),
   achievedAt: Value(_isoOrNull(goal.achievedAt)),
   archivedAt: Value(_isoOrNull(goal.archivedAt)),
   createdBy: Value(goal.createdBy),
@@ -205,6 +212,39 @@ SpecialDatesCompanion specialDateCompanion(SpecialDate date, {String? serverUpda
   createdAt: Value(_iso(date.createdAt)),
   updatedAt: Value(_iso(date.updatedAt)),
   deletedAt: Value(_isoOrNull(date.deletedAt)),
+  serverUpdatedAt: _serverStamp(serverUpdatedAt),
+);
+
+extension TripRowMapper on TripRow {
+  Trip toModel() => Trip(
+    id: id,
+    spaceId: spaceId,
+    title: title,
+    destination: destination,
+    startDate: startDate,
+    endDate: endDate,
+    notes: notes,
+    savingsGoalId: savingsGoalId,
+    createdBy: createdBy,
+    createdAt: _time(createdAt),
+    updatedAt: _time(updatedAt),
+    deletedAt: _timeOrNull(deletedAt),
+  );
+}
+
+TripsCompanion tripCompanion(Trip trip, {String? serverUpdatedAt}) => TripsCompanion(
+  id: Value(trip.id),
+  spaceId: Value(trip.spaceId),
+  title: Value(trip.title),
+  destination: Value(trip.destination),
+  startDate: Value(trip.startDate),
+  endDate: Value(trip.endDate),
+  notes: Value(trip.notes),
+  savingsGoalId: Value(trip.savingsGoalId),
+  createdBy: Value(trip.createdBy),
+  createdAt: Value(_iso(trip.createdAt)),
+  updatedAt: Value(_iso(trip.updatedAt)),
+  deletedAt: Value(_isoOrNull(trip.deletedAt)),
   serverUpdatedAt: _serverStamp(serverUpdatedAt),
 );
 

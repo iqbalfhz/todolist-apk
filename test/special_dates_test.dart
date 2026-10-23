@@ -232,23 +232,33 @@ void main() {
     });
   });
 
-  test('database v0.1 dinaikkan ke versi 2: tabel tanggal penting dibuat, isi lama tetap ada', () async {
+  test('database v0.1 dinaikkan ke versi terbaru: tabel tanggal penting dibuat, isi lama tetap ada', () async {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
     final dir = await Directory.systemTemp.createTemp('denly_migrasi');
     addTearDown(() => dir.delete(recursive: true));
     final file = File('${dir.path}/akun.sqlite');
 
-    // Buat database, lalu kembalikan ke bentuk v0.1: tanpa tabel tanggal penting.
+    // Buat database, lalu kembalikan ke bentuk v0.1: tanpa tabel tanggal penting dan
+    // tanpa tambahan versi 3 (perjalanan, `trip_id`, dan jadwal setor).
     final old = AppDatabase(NativeDatabase(file));
     await old.into(old.metaEntries).insert(MetaEntriesCompanion.insert(key: 'sync_since', value: 'T-lama'));
-    await old.customStatement('DROP TABLE special_dates');
-    await old.customStatement('PRAGMA user_version = 1');
+    for (final statement in [
+      'DROP TABLE special_dates',
+      'DROP TABLE trips',
+      'ALTER TABLE task_lists DROP COLUMN trip_id',
+      'ALTER TABLE savings_goals DROP COLUMN reminder_frequency',
+      'ALTER TABLE savings_goals DROP COLUMN reminder_day',
+      'PRAGMA user_version = 1',
+    ]) {
+      await old.customStatement(statement);
+    }
     await old.close();
 
     final upgraded = AppDatabase(NativeDatabase(file));
     addTearDown(upgraded.close);
 
     expect(await upgraded.select(upgraded.specialDates).get(), isEmpty);
+    expect(await upgraded.select(upgraded.trips).get(), isEmpty);
     expect((await upgraded.select(upgraded.metaEntries).getSingle()).value, 'T-lama');
   });
 
@@ -468,6 +478,8 @@ void main() {
         'partner_activity': true,
         'savings_activity': true,
         'special_dates': false,
+        'trip_reminders': true,
+        'savings_reminders': true,
       },
     });
 
