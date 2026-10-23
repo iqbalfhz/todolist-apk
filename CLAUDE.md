@@ -6,13 +6,13 @@
 
 **Sumber kebenaran layar: `docs/layar.md`** (daftar layar, isi, dan navigasi) dan mockup HTML di `docs/mockup/`. Baca sebelum membuat atau mengubah layar.
 
-## Kondisi repo (per 22 Oktober 2026)
+## Kondisi repo (per 23 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting juga sudah dibangun. Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server). `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun. Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server). `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
-- Ketukan notifikasi dan pengingat tanggal penting (`special_date_reminder`) belum dicoba di HP sungguhan; di tes keduanya memakai layanan notifikasi palsu.
+- Ketukan notifikasi dan push pengingat v0.2 (`special_date_reminder`, `trip_reminder`, `savings_reminder`) belum dicoba di HP sungguhan; di tes semuanya memakai layanan notifikasi palsu.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, bagikan kode undangan, dan panduan baterai di Xiaomi, Oppo, Vivo, dan Realme.
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
@@ -32,8 +32,10 @@ v0.1:
 v0.2 yang sudah dibangun:
 
 - Tanggal penting: layar Pengaturan > Tanggal penting, koleksi sync `special_dates` dengan sync penuh sekali, hitung mundur dan kartu ucapan hari H di Beranda, ulang tahun anggota dari `birth_date`, switch `special_dates`, dan push `special_date_reminder` (ketuk membuka Beranda)
+- Perjalanan: tab Liburan (Daftar perjalanan, Detail perjalanan, Checklist persiapan), checklist berupa daftar dengan `trip_id` yang dibuat app tepat setelah perjalanannya dan disembunyikan dari tab Tugas, Kelola daftar, dan tambah cepat, tautan ke target tabungan, kartu Persiapan liburan di Beranda, koleksi sync `trips`, switch `trip_reminders`, dan push `trip_reminder` (ketuk membuka Detail perjalanan)
+- Pengingat setor rutin: jadwal mingguan atau bulanan di Detail target (`reminder_frequency`, `reminder_day`), switch `savings_reminders`, dan push `savings_reminder` (ketuk membuka Detail target)
 
-Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2, kontraknya belum ada), Kenangan (v0.3), ekspor data dan hapus akun (v1.0), iOS.
+Belum dibangun, jangan dibuat dulu: Kenangan (v0.3), ekspor data dan hapus akun (v1.0), iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
@@ -75,7 +77,7 @@ Belum dibangun, jangan dibuat dulu: Liburan dan checklist persiapan (v0.2, kontr
 lib/
   core/        api client, database lokal (drift), antrean, sync, tema, router, l10n
   features/
-    auth/  spaces/  tasks/  savings/  special_dates/  home/  settings/   (v0.2: trips/, v0.3: memories/)
+    auth/  spaces/  tasks/  savings/  special_dates/  trips/  home/  settings/   (v0.3: memories/)
       data/          sumber data + repository
       domain/        model (freezed)
       presentation/  layar dan widget
@@ -102,22 +104,23 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - Layar detail: kirim 1 detik setelah berhenti mengetik; tulis ke antrean saat app masuk ke latar belakang.
 - `PUT` dibalas 200 (sudah ada): terapkan balasan seperti baris sync, jangan tambah operasi.
 - Balasan ditangani sesuai tabel Error di kontrak. Buang operasi atau hapus data lokal hanya kalau balasannya JSON dengan `code` yang dikenal. Non-JSON, 5xx, atau tanpa koneksi: coba lagi dengan jeda 2, 4, 8 detik, maksimal 5 menit. 401: hentikan antrean dan buka layar Masuk.
-- `parent_deleted`/`parent_archived` untuk tugas: pindahkan ke daftar aktif pertama di ruang itu, lalu kirim ulang.
+- `parent_deleted`/`parent_archived` untuk tugas: pindahkan ke daftar aktif pertama di ruang itu (bukan checklist perjalanan), lalu kirim ulang.
+- Checklist perjalanan: dibuat lewat `PUT /lists/{id}` dengan `trip_id` tepat setelah perjalanannya, tidak pernah dihapus atau diarsipkan sendiri, dan tidak dihitung daftar aktif. Hapus perjalanan hanya mengirim `DELETE /trips/{id}`; checklist dan isinya cukup ditandai terhapus di HP. Mengubah judul perjalanan ikut mengganti nama checklistnya ("Persiapan {judul}").
 
 ### Sync
 
 - Satu sync pada satu waktu. Kirim dulu operasi yang bisa dikirim, lalu tetap tarik data.
 - Halaman pertama `GET /sync?since=...`; berikutnya `?cursor=<next_cursor>` sampai `has_more` false. Simpan `server_time` dari halaman terakhir.
-- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`); sifatnya hanya menambah dan memperbarui.
+- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`, lalu `trips` beserta `trip_id` di daftar dan jadwal setor di target); sifatnya hanya menambah dan memperbarui.
 - Saat menerapkan baris: tanpa foreign key check; kolom dengan operasi tertunda tidak ditimpa; baris dengan DELETE tertunda tidak muncul lagi; baris yang lebih tua dari salinan lokal diabaikan.
 - Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda.
 - Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, dan push yang masuk saat app terbuka.
 
 ### Notifikasi
 
-- Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas dan tanggal penting) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
+- Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, dan hari setor) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
 - Minta izin notifikasi (Android 13+) dengan penjelasan, plus panduan mematikan optimasi baterai untuk merek seperti Xiaomi, Oppo, Vivo, dan Realme.
-- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda.
+- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, dan pengingat setor membuka Detail target.
 
 ## UI
 

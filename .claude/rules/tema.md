@@ -85,6 +85,7 @@ Plus Jakarta Sans, tebal 400, 500, 600, 700. Ukuran dalam dp (1 px di mockup = 1
 | --- | --- |
 | Halaman | padding samping 20, atas 24 |
 | Kartu | radius 20, garis 1 warna `line`, padding 16 |
+| Kartu kecil Beranda (v0.2) | setengah lebar, sama tinggi, jarak 12, padding 12 × 14; ikon 18, baris besar 20 Bold |
 | Lembar bawah | radius atas 28, pegangan 40 × 4 |
 | Isian teks | tinggi 52, radius 14, padding samping 14 |
 | Tombol utama | tinggi 52, bulat penuh |
@@ -94,7 +95,7 @@ Plus Jakarta Sans, tebal 400, 500, 600, 700. Ukuran dalam dp (1 px di mockup = 1
 | Tombol ikon | 44 × 44 |
 | FAB | 56 × 56, radius 18, 20 dari tepi kanan |
 | Avatar | 36 (kepala Beranda), 80 (Ajak pasangan), 112 (Profil) |
-| Lingkaran ikon | 40 (baris Pengaturan dan Akan datang), 56 dengan ikon 28 (kartu Bersama sejak) |
+| Lingkaran ikon | 40 (baris Pengaturan dan Akan datang), 56 dengan ikon 28 (kartu Bersama sejak dan ringkasan Detail perjalanan) |
 | Bar progres | tinggi 6 sampai 8, bulat penuh, jalur `track`, isi `brand` |
 | Jarak antarelemen | 4, 6, 8, 10, 12, 16 |
 
