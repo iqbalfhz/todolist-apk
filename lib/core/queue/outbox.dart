@@ -367,13 +367,18 @@ class Outbox {
   });
 
   Future<void> _onSuccess(OutboxRow op, ApiResponse response) async {
+    final type = EntityType.byName(op.entityType);
+
     await store.transaction(() async {
+      // Tugas berikutnya yang tertaut sebelum balasan ini, untuk Urungkan tugas berulang.
+      final before = type == EntityType.task && op.method != 'DELETE' ? await store.read(type, op.entityId) : null;
       await _delete(op.id);
 
       // Balasan PUT (201, atau 200 kalau sudah tersimpan dari kiriman sebelumnya) dan
       // PATCH diterapkan seperti baris sync; kolom yang masih di antrean tetap dilindungi.
       if (op.method != 'DELETE' && response.body != null) {
-        await applier.apply(EntityType.byName(op.entityType), response.data);
+        await applier.apply(type, response.data);
+        if (type == EntityType.task) await _applyNextTask(response, previousNextId: before?['next_task_id'] as String?);
       }
     });
 
@@ -390,6 +395,32 @@ class Outbox {
         await _forgetFile(EntityType.byName(op.entityType), op.entityId);
       }
     }
+  }
+
+  /// Balasan `PUT` dan `PATCH` tugas membawa `next_task` (v1.0): tugas berikutnya yang dibuat
+  /// server saat tugas berulang selesai, diterapkan seperti baris sync. Kalau penyelesaiannya
+  /// dibatalkan dan server ikut menghapus tugas berikutnya, `next_task_id` kembali kosong, jadi
+  /// salinannya dihapus dari cache. Yang masih punya perubahan di antrean ditentukan balasan
+  /// server untuk perubahan itu.
+  Future<void> _applyNextTask(ApiResponse response, {required String? previousNextId}) async {
+    final next = response.body?['next_task'];
+    if (next is Map<String, dynamic>) {
+      await applier.apply(EntityType.task, next);
+      return;
+    }
+
+    if (previousNextId == null || response.data['next_task_id'] != null) return;
+    if (await _hasOps(EntityType.task, previousNextId)) return;
+    await store.remove(EntityType.task, previousNextId);
+  }
+
+  Future<bool> _hasOps(EntityType type, String id) async {
+    final row =
+        await (_db.select(_db.outboxOps)
+              ..where((t) => t.entityType.equals(type.name) & t.entityId.equals(id))
+              ..limit(1))
+            .getSingleOrNull();
+    return row != null;
   }
 
   /// Operasi `POST` yang berkasnya sudah tidak ada di HP tidak mungkin terkirim lagi.
