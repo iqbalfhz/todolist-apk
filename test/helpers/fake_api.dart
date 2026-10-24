@@ -5,12 +5,15 @@ import 'package:todolist/core/api/api_transport.dart';
 
 /// Satu request yang diterima [FakeApi].
 class SentRequest {
-  SentRequest(this.method, this.path, this.body, this.query);
+  SentRequest(this.method, this.path, this.body, this.query, [this.upload]);
 
   final String method;
   final String path;
   final Map<String, dynamic>? body;
   final Map<String, dynamic>? query;
+
+  /// Berkas `multipart/form-data`, untuk `POST /memory-photos/{id}`.
+  final ApiUpload? upload;
 
   @override
   String toString() => '$method $path';
@@ -94,7 +97,7 @@ class FakeApi implements ApiTransport {
     Map<String, dynamic>? query,
     ApiUpload? upload,
   }) async {
-    final request = SentRequest(method, path, body, query);
+    final request = SentRequest(method, path, body, query, upload);
     requests.add(request);
     onRequest?.call(request);
 
@@ -162,6 +165,9 @@ class FakeApi implements ApiTransport {
     final table = rows.putIfAbsent(resource, () => {});
     final existing = table[id];
 
+    if (resource == 'memories' && request.method == 'GET') return _memoryPhotos(id, existing);
+    if (resource == 'memory-photos' && request.method == 'POST') return _uploadPhoto(request, id, existing);
+
     switch (request.method) {
       case 'PUT':
         if (existing != null) return ApiResponse(status: 200, body: {'data': existing});
@@ -188,10 +194,96 @@ class FakeApi implements ApiTransport {
 
       case 'DELETE':
         if (existing != null) table[id] = {...existing, 'deleted_at': stamp(), 'updated_at': stamp()};
+        // Server ikut menghapus foto kenangan yang dihapus.
+        if (resource == 'memories') {
+          final photos = rows['memory-photos'] ?? {};
+          for (final photo in photos.values.toList()) {
+            if (photo['memory_id'] == id && photo['deleted_at'] == null) {
+              photos[photo['id'] as String] = {
+                ...photo,
+                'url': null,
+                'thumb_url': null,
+                'deleted_at': stamp(),
+                'updated_at': stamp(),
+              };
+            }
+          }
+        }
         return const ApiResponse(status: 204);
     }
 
     throw StateError('FakeApi tidak mengenal $request');
+  }
+
+  /// URL R2 bertanda tangan palsu untuk foto [id], berlaku 7 hari sejak sekarang.
+  String photoUrl(String id, {bool thumb = false, DateTime? signedAt}) {
+    final time = (signedAt ?? _now()).toUtc();
+    String two(int value) => value.toString().padLeft(2, '0');
+    final amzDate =
+        '${time.year}${two(time.month)}${two(time.day)}T${two(time.hour)}${two(time.minute)}${two(time.second)}Z';
+    return 'https://r2.contoh.test/memories/$id${thumb ? '-thumb' : ''}.jpg?X-Amz-Date=$amzDate&X-Amz-Expires=604800&X-Amz-Signature=palsu';
+  }
+
+  /// `GET /memories/{id}/photos`: foto yang belum dihapus, urut `position`, dengan URL baru.
+  ApiResponse _memoryPhotos(String memoryId, Map<String, dynamic>? memory) {
+    if (memory == null) throw apiError(404, ApiErrorCode.notFound);
+    if (memory['deleted_at'] != null) throw apiError(410, ApiErrorCode.resourceDeleted, current: memory);
+
+    final photos = rows['memory-photos'] ?? {};
+    final own = [
+      for (final photo in photos.values)
+        if (photo['memory_id'] == memoryId && photo['deleted_at'] == null) photo,
+    ]..sort((a, b) => (a['position'] as num).compareTo(b['position'] as num));
+
+    final fresh = [
+      for (final photo in own)
+        {...photo, 'url': photoUrl(photo['id'] as String), 'thumb_url': photoUrl(photo['id'] as String, thumb: true)},
+    ];
+    for (final photo in fresh) {
+      photos[photo['id'] as String] = photo;
+    }
+    return ApiResponse(status: 200, body: {'data': fresh});
+  }
+
+  /// `POST /memory-photos/{id}` (multipart), dengan aturan yang sama seperti `PUT`.
+  ApiResponse _uploadPhoto(SentRequest request, String id, Map<String, dynamic>? existing) {
+    if (existing != null) {
+      if (existing['deleted_at'] != null) throw apiError(410, ApiErrorCode.resourceDeleted, current: existing);
+      return ApiResponse(status: 200, body: {'data': existing});
+    }
+    if (request.upload == null) throw apiError(422, ApiErrorCode.validationFailed, message: 'Foto wajib diisi.');
+
+    final body = request.body ?? const {};
+    final memoryId = body['memory_id'] as String;
+    final memory = rows['memories']?[memoryId];
+    if (memory == null || memory['deleted_at'] != null) {
+      throw apiError(409, ApiErrorCode.parentDeleted, message: 'Kenangan ini sudah dihapus.');
+    }
+
+    final photos = rows.putIfAbsent('memory-photos', () => {});
+    final count = photos.values.where((photo) => photo['memory_id'] == memoryId && photo['deleted_at'] == null).length;
+    if (count >= 50) {
+      throw apiError(422, ApiErrorCode.validationFailed, message: 'Satu kenangan paling banyak 50 foto.');
+    }
+
+    final time = stamp();
+    final created = <String, dynamic>{
+      'id': id,
+      'memory_id': memoryId,
+      'space_id': memory['space_id'],
+      'uploaded_by': 'server-user',
+      'position': num.parse('${body['position']}'),
+      'width': 2560,
+      'height': 1920,
+      'taken_at': body['taken_at'],
+      'url': photoUrl(id),
+      'thumb_url': photoUrl(id, thumb: true),
+      'created_at': time,
+      'updated_at': time,
+      'deleted_at': null,
+    };
+    photos[id] = created;
+    return ApiResponse(status: 201, body: {'data': created});
   }
 
   /// Kolom yang diisi server saat data dibuat.
@@ -221,6 +313,7 @@ class FakeApi implements ApiTransport {
     },
     'savings-entries' => {'space_id': 'space-shared', 'user_id': 'server-user', 'type': 'deposit', 'note': null},
     'special-dates' => {'created_by': 'server-user'},
+    'memories' => {'trip_id': null, 'place_name': null, 'story': null, 'created_by': 'server-user'},
     'trips' => {
       'destination': null,
       'start_date': null,
@@ -241,6 +334,8 @@ class FakeApi implements ApiTransport {
     List<Map<String, dynamic>> savingsEntries = const [],
     List<Map<String, dynamic>> specialDates = const [],
     List<Map<String, dynamic>> trips = const [],
+    List<Map<String, dynamic>> memories = const [],
+    List<Map<String, dynamic>> memoryPhotos = const [],
     String? serverTime,
     String? nextCursor,
   }) => {
@@ -252,6 +347,8 @@ class FakeApi implements ApiTransport {
       'savings_entries': savingsEntries,
       'special_dates': specialDates,
       'trips': trips,
+      'memories': memories,
+      'memory_photos': memoryPhotos,
     },
     'meta': {'server_time': serverTime ?? stamp(), 'has_more': nextCursor != null, 'next_cursor': nextCursor},
   };

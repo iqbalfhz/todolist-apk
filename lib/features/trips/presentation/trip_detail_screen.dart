@@ -8,10 +8,12 @@ import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/sync/sync_actions.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/dates.dart';
 import '../../../core/utils/money.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../home/presentation/home_screen.dart' show goalTitle;
+import '../../memories/domain/memory_views.dart';
 import '../../savings/domain/savings_views.dart';
 import '../../savings/presentation/goal_form_sheet.dart';
 import '../../spaces/domain/household.dart';
@@ -19,6 +21,7 @@ import '../../tasks/presentation/task_row.dart';
 import '../domain/trip_views.dart';
 import 'trip_form_sheet.dart';
 import 'trip_text.dart';
+import 'trips_screen.dart' show SaveAsMemoryButton;
 
 enum _TripAction { edit, delete }
 
@@ -89,6 +92,11 @@ class TripDetailScreen extends ConsumerWidget {
           ),
           const SizedBox(height: AppDimens.gap12),
           _SummaryCard(item: item, household: household),
+          if (item.isDone) ...[
+            const SizedBox(height: AppDimens.gap10),
+            _SectionHeader(title: l10n.tripMemoriesTitle),
+            _MemoriesCard(item: item),
+          ],
           const SizedBox(height: AppDimens.gap10),
           _SectionHeader(
             title: l10n.tripChecklistTitle,
@@ -270,6 +278,67 @@ class _SummaryCard extends StatelessWidget {
                   detail(Symbols.lock_rounded, l10n.labelPersonal),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Kenangan dari perjalanan yang sudah selesai, dan tombol untuk menyimpan yang baru.
+class _MemoriesCard extends ConsumerWidget {
+  const _MemoriesCard({required this.item});
+
+  final TripItem item;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final text = context.text;
+    final memories = memoriesOfTrip(ref.watch(memoryItemsProvider), item.trip.id);
+    final currentYear = currentYearOf(item);
+
+    return AppCard(
+      semanticLabel: l10n.tripMemoriesTitle,
+      padding: const EdgeInsets.symmetric(horizontal: AppDimens.cardPadding, vertical: AppDimens.gap4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final memory in memories) ...[
+            InkWell(
+              onTap: () => context.go(Routes.memory(memory.memory.id)),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: AppDimens.rowMinHeight),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: AppDimens.gap8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(memory.memory.title, style: text.rowTitle),
+                            Text(
+                              [
+                                formatDayShort(memory.memory.visitedOn, currentYear: currentYear),
+                                l10n.memoryPhotoCount(memory.photos.length),
+                              ].join(' · '),
+                              style: text.caption,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Symbols.chevron_right_rounded, size: AppDimens.iconLg, color: context.palette.muted),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const RowDivider(),
+          ],
+          Align(
+            alignment: Alignment.centerLeft,
+            child: SaveAsMemoryButton(tripId: item.trip.id),
           ),
         ],
       ),

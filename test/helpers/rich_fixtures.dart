@@ -38,6 +38,16 @@ const String undatedTripId = '01m4dp5r20vbx9k3ws7ty6hn3c';
 /// Perjalanan yang sudah selesai.
 const String doneTripId = '01m4dp5r20vbx9k3ws7ty6hn3d';
 
+/// Kenangan berjudul dan bertempat panjang dari perjalanan yang sudah selesai, dengan cerita
+/// panjang dan beberapa foto (satu belum terkirim).
+const String longMemoryId = '01m4dr8c50jk2mt7xw3pq9vb7a';
+
+/// Kenangan pribadi tahun lalu, tanpa foto dan cerita.
+const String privateMemoryId = '01m4dr8c50jk2mt7xw3pq9vb7b';
+
+/// Foto sampul [longMemoryId].
+const String longMemoryCoverId = '01m4drb7k0qz3n8st5vw2hx5a0';
+
 String _taskId(int n) => '01m4dh1yn0t6cdn39q4f09189$n';
 
 String _goalId(String suffix) => '01m4djq1w0ystkpbz7mqd22k3$suffix';
@@ -308,5 +318,48 @@ extension RichHarness on Harness {
     await entry(_goalId('d'), 1000000, '2026-05-01');
     await entry(_goalId('e'), 137500000, '2026-09-30', note: 'Hasil jual tanah warisan keluarga');
     await entry(_goalId('f'), 30000, '2026-10-01', note: 'Jual lensa lama');
+
+    // Kenangan (v0.3).
+    await put(
+      EntityType.memory,
+      memoryJson(
+        id: longMemoryId,
+        tripId: doneTripId,
+        title: 'Keliling pantai selatan Pangandaran bareng sahabat',
+        placeName: 'Pantai Batu Hiu, Batu Karas, dan Green Canyon di Pangandaran, Jawa Barat, Indonesia bagian selatan',
+        visitedOn: '2026-08-01',
+        story: List.filled(
+          12,
+          'Hari pertama hujan, tapi ombaknya tetap indah dan kami berenang sampai sore.',
+        ).join(' '),
+      ),
+    );
+    await put(
+      EntityType.memory,
+      memoryJson(
+        id: '01m4dr8c50jk2mt7xw3pq9vb7c',
+        title: 'Makan malam pertama',
+        placeName: null,
+        story: null,
+        visitedOn: '2026-08-15',
+      ),
+    );
+    await put(
+      EntityType.memory,
+      memoryJson(
+        id: privateMemoryId,
+        spaceId: personalSpaceId,
+        title: 'Lari pagi di Car Free Day',
+        placeName: 'Jalan Sudirman, Jakarta',
+        story: null,
+        visitedOn: '2025-12-31',
+      ),
+    );
+    for (var i = 0; i < 7; i++) {
+      final id = i == 0 ? longMemoryCoverId : '01m4drb7k0qz3n8st5vw2hx5a$i';
+      final photo = memoryPhotoJson(id: id, memory: longMemoryId, position: 1024.0 * (i + 1));
+      // Foto terakhir belum terkirim dari HP ini.
+      await put(EntityType.memoryPhoto, i == 6 ? {...photo, 'url': null, 'thumb_url': null} : photo);
+    }
   }
 }

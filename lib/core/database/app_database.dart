@@ -166,6 +166,51 @@ class Trips extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Kenangan (v0.3): tempat yang pernah didatangi, dengan cerita dan fotonya.
+@DataClassName('MemoryRow')
+class Memories extends Table {
+  TextColumn get id => text()();
+  TextColumn get spaceId => text()();
+  TextColumn get tripId => text().nullable()();
+  TextColumn get title => text()();
+  TextColumn get placeName => text().nullable()();
+
+  /// `YYYY-MM-DD`; tanggal kenangan di linimasa.
+  TextColumn get visitedOn => text()();
+  TextColumn get story => text().nullable()();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+  TextColumn get deletedAt => text().nullable()();
+  TextColumn get serverUpdatedAt => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+/// Foto kenangan (v0.3). `url` dan `thumbUrl` kosong selama foto belum terunggah;
+/// berkasnya yang menunggu diunggah disimpan di luar database.
+@DataClassName('MemoryPhotoRow')
+class MemoryPhotos extends Table {
+  TextColumn get id => text()();
+  TextColumn get memoryId => text()();
+  TextColumn get spaceId => text()();
+  TextColumn get uploadedBy => text().nullable()();
+  RealColumn get position => real()();
+  IntColumn get width => integer().nullable()();
+  IntColumn get height => integer().nullable()();
+  TextColumn get takenAt => text().nullable()();
+  TextColumn get url => text().nullable()();
+  TextColumn get thumbUrl => text().nullable()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+  TextColumn get deletedAt => text().nullable()();
+  TextColumn get serverUpdatedAt => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// Antrean operasi tulis yang belum sampai ke server, dikirim berurutan menurut `id`.
 @DataClassName('OutboxRow')
 class OutboxOps extends Table {
@@ -201,7 +246,19 @@ class MetaEntries extends Table {
 }
 
 @DriftDatabase(
-  tables: [Spaces, TaskLists, Tasks, SavingsGoals, SavingsEntries, SpecialDates, Trips, OutboxOps, MetaEntries],
+  tables: [
+    Spaces,
+    TaskLists,
+    Tasks,
+    SavingsGoals,
+    SavingsEntries,
+    SpecialDates,
+    Trips,
+    Memories,
+    MemoryPhotos,
+    OutboxOps,
+    MetaEntries,
+  ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
@@ -211,9 +268,9 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forAccount(String userId) : super(driftDatabase(name: 'akun_$userId'));
 
   /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
-  /// dan jadwal pengingat setor di target (semuanya v0.2).
+  /// dan jadwal pengingat setor di target (semuanya v0.2). 4: kenangan dan fotonya (v0.3).
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -224,6 +281,10 @@ class AppDatabase extends _$AppDatabase {
         await migrator.addColumn(taskLists, taskLists.tripId);
         await migrator.addColumn(savingsGoals, savingsGoals.reminderFrequency);
         await migrator.addColumn(savingsGoals, savingsGoals.reminderDay);
+      }
+      if (from < 4) {
+        await migrator.createTable(memories);
+        await migrator.createTable(memoryPhotos);
       }
     },
   );

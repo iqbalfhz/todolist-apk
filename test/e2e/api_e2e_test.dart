@@ -9,7 +9,9 @@
 // satu menit sebelum menjalankannya lagi. Kalau terlalu cepat, tes "email yang sudah
 // terdaftar" gagal karena dibalas 429.
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
@@ -18,16 +20,24 @@ import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
 import 'package:todolist/core/database/app_database.dart';
 import 'package:todolist/core/database/entity_type.dart';
+import 'package:todolist/core/media/photo_picker.dart';
 import 'package:todolist/core/queue/outbox.dart';
 import 'package:todolist/core/session/account.dart';
 import 'package:todolist/core/utils/ulid.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/domain/user.dart';
+import 'package:todolist/features/memories/domain/memory.dart';
 import 'package:todolist/features/savings/domain/savings_goal.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/tasks/domain/task.dart';
 import 'package:todolist/features/tasks/domain/task_list.dart';
 import 'package:todolist/features/trips/domain/trip.dart';
+
+/// JPEG 2 × 2 px yang sah, untuk unggahan yang ditolak sebelum fotonya disimpan.
+/// API lokal tidak punya kunci R2, jadi foto yang benar-benar tersimpan tidak diuji di sini.
+final Uint8List tinyJpeg = base64Decode(
+  '/9j/4AAQSkZJRgABAQEAYABgAAD//gA7Q1JFQVRPUjogZ2QtanBlZyB2MS4wICh1c2luZyBJSkcgSlBFRyB2ODApLCBxdWFsaXR5ID0gODAK/9sAQwAGBAUGBQQGBgUGBwcGCAoQCgoJCQoUDg8MEBcUGBgXFBYWGh0lHxobIxwWFiAsICMmJykqKRkfLTAtKDAlKCko/9sAQwEHBwcKCAoTCgoTKBoWGigoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgo/8AAEQgAAgACAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/aAAwDAQACEQMRAD8AqUUUUH6Cf//Z',
+);
 
 /// Satu HP: token, klien API sungguhan, dan database lokal di memori.
 class Device {
@@ -529,6 +539,79 @@ void main() {
 
       await a.account.savings.deleteGoal(goal.id);
       await a.syncNow();
+    },
+    skip: skipReason,
+  );
+
+  test(
+    'kenangan: dari perjalanan sampai ke pasangan; hapus perjalanan melepas tautan; foto ke kenangan terhapus ditolak',
+    () async {
+      final space = await a.sharedSpace();
+      final trip = await a.account.trips.create(
+        spaceId: space.id,
+        title: 'Pangandaran',
+        destination: 'Pangandaran',
+        startDate: '2026-08-01',
+        endDate: '2026-08-03',
+      );
+      final memory = await a.account.memories.create(
+        spaceId: space.id,
+        title: 'Pangandaran',
+        placeName: 'Pangandaran',
+        visitedOn: '2026-08-01',
+        story: 'Ombaknya besar.',
+        tripId: trip.id,
+      );
+      await a.syncNow();
+      await b.syncNow();
+
+      final received = Memory.fromJson((await b.account.store.read(EntityType.memory, memory.id))!);
+      expect((received.title, received.tripId, received.createdBy), ('Pangandaran', trip.id, a.user.id));
+
+      // Pasangan boleh mengubah kenangan siapa pun.
+      await b.account.memories.edit(
+        memory.id,
+        title: 'Pangandaran',
+        placeName: 'Pantai Batu Karas',
+        visitedOn: '2026-08-01',
+        story: 'Ombaknya besar, airnya hangat.',
+      );
+      await b.syncNow();
+      await a.syncNow();
+      final edited = Memory.fromJson((await a.account.store.read(EntityType.memory, memory.id))!);
+      expect((edited.placeName, edited.story), ('Pantai Batu Karas', 'Ombaknya besar, airnya hangat.'));
+
+      // Kenangan tanpa foto: URL baru berupa daftar kosong.
+      expect(await a.account.memories.refreshPhotos(memory.id), isEmpty);
+
+      // Hapus perjalanan: kenangannya tetap ada, tautannya dilepas lewat sync.
+      await a.account.trips.delete(trip.id);
+      await a.syncNow();
+      await b.syncNow();
+      final unlinked = Memory.fromJson((await b.account.store.read(EntityType.memory, memory.id))!);
+      expect((unlinked.tripId, unlinked.deletedAt), (null, null));
+
+      // B menghapus kenangan saat A menambah foto offline: unggahannya ditolak parent_deleted dan dibuang.
+      await b.account.memories.delete(memory.id);
+      await b.syncNow();
+      final added = await a.account.memories.addPhotos(edited, [
+        PreparedPhoto(jpeg: tinyJpeg, width: 2, height: 2, takenAt: '2026-08-01T10:12:45+07:00'),
+      ]);
+      expect(added, 1);
+      final photo = (await a.account.store.memoryPhotos(memory.id)).single;
+
+      final events = <OutboxEvent>[];
+      final subscription = a.account.outbox.events.listen(events.add);
+      expect(await a.account.outbox.flush(), FlushState.idle);
+      await pumpEventQueue();
+      await subscription.cancel();
+      expect((events.single as OutboxRejected).message, 'Kenangan ini sudah dihapus.');
+      expect(await a.account.store.read(EntityType.memoryPhoto, photo.id), isNull);
+      expect(await a.account.photoFiles.pending(photo.id), isNull);
+
+      await a.syncNow();
+      expect((await a.account.store.read(EntityType.memory, memory.id))!['deleted_at'], isNotNull);
+      expect(await a.account.memories.refreshPhotos(memory.id), isEmpty, reason: '410 untuk kenangan terhapus');
     },
     skip: skipReason,
   );

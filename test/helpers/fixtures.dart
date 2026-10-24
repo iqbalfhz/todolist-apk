@@ -10,6 +10,7 @@ import 'package:todolist/core/session/account.dart';
 import 'package:todolist/core/storage/key_value_store.dart';
 
 import 'fake_api.dart';
+import 'fake_photos.dart';
 
 // ID dari contoh di `docs/kontrak-api.md`.
 const String meId = '01m4dg5jegv6sp4xav8efqzcqe';
@@ -24,6 +25,9 @@ const String entryId = '01m4dk06v0p3ew0dm0dk94s1k0';
 const String specialDateId = '01m4dm2k70z5bq7rn3xw8c4v1e';
 const String tripId = '01m4dp5r20vbx9k3ws7ty6hn2q';
 const String checklistId = '01m4dp5r21vbx9k3ws7ty6hn2r';
+const String memoryId = '01m4dr8c50jk2mt7xw3pq9vb6e';
+const String photoId = '01m4drb7k0qz3n8st5vw2hx4cy';
+const String photo2Id = '01m4drb7k1qz3n8st5vw2hx4cz';
 
 const String t0 = '2026-10-08T10:00:00.000000Z';
 const String t1 = '2026-10-08T10:30:00.000000Z';
@@ -233,6 +237,60 @@ Map<String, dynamic> specialDateJson({
 };
 
 /// Perjalanan, sama dengan contoh di kontrak: Liburan ke Bali di Ruang Bersama.
+Map<String, dynamic> memoryJson({
+  String id = memoryId,
+  String spaceId = sharedSpaceId,
+  String? tripId,
+  String title = 'Liburan ke Bali',
+  String? placeName = 'Ubud, Bali',
+  String visitedOn = '2027-06-20',
+  String? story = 'Hari pertama hujan, tapi sawahnya tetap hijau.',
+  String createdAt = t0,
+  String? deletedAt,
+  String updatedAt = t0,
+}) => {
+  'id': id,
+  'space_id': spaceId,
+  'trip_id': tripId,
+  'title': title,
+  'place_name': placeName,
+  'visited_on': visitedOn,
+  'story': story,
+  'created_by': meId,
+  'created_at': createdAt,
+  'updated_at': updatedAt,
+  'deleted_at': deletedAt,
+};
+
+/// URL R2 bertanda tangan palsu, ditandatangani [signedAt] (`YYYYMMDDTHHMMSSZ`) dan berlaku 7 hari.
+String signedPhotoUrl(String id, {bool thumb = false, String signedAt = '20261008T100000Z'}) =>
+    'https://r2.contoh.test/memories/$id${thumb ? '-thumb' : ''}.jpg?X-Amz-Date=$signedAt&X-Amz-Expires=604800&X-Amz-Signature=palsu';
+
+Map<String, dynamic> memoryPhotoJson({
+  String id = photoId,
+  String memory = memoryId,
+  String spaceId = sharedSpaceId,
+  num position = 1024,
+  String signedAt = '20261008T100000Z',
+  String? takenAt = '2027-06-20T03:12:45.000000Z',
+  String? deletedAt,
+  String updatedAt = t0,
+}) => {
+  'id': id,
+  'memory_id': memory,
+  'space_id': spaceId,
+  'uploaded_by': partnerId,
+  'position': position,
+  'width': 2560,
+  'height': 1920,
+  'taken_at': takenAt,
+  'url': deletedAt == null ? signedPhotoUrl(id, signedAt: signedAt) : null,
+  'thumb_url': deletedAt == null ? signedPhotoUrl(id, thumb: true, signedAt: signedAt) : null,
+  'created_at': t0,
+  'updated_at': updatedAt,
+  'deleted_at': deletedAt,
+};
+
 Map<String, dynamic> tripJson({
   String id = tripId,
   String spaceId = sharedSpaceId,
@@ -364,6 +422,8 @@ class Harness {
       userId: meId,
       db: AppDatabase(NativeDatabase.memory()),
       api: transport,
+      photoCache: photoCache,
+      photoFiles: photoFiles,
       now: clock.call,
       createTimer: timers.create,
       autoFlush: autoFlush,
@@ -372,6 +432,10 @@ class Harness {
 
   final TestClock clock = TestClock();
   final ManualTimers timers = ManualTimers();
+
+  /// Foto kenangan (v0.3): cache dan berkas tunggu unggah di memori.
+  final FakePhotoCache photoCache = FakePhotoCache();
+  late final FakePhotoFiles photoFiles = FakePhotoFiles(photoCache);
   late final FakeApi api;
   late final SwitchableTransport transport;
   late final Account account;

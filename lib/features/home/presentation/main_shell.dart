@@ -48,9 +48,7 @@ class AppScaffold extends StatelessWidget {
   );
 }
 
-/// Kerangka tab bawah: Beranda, Tugas, Tabungan, dan Liburan (v0.2).
-///
-/// Kenangan (v0.3) disembunyikan sampai rilisnya.
+/// Kerangka tab bawah: Beranda, Tugas, Tabungan, Liburan (v0.2), dan Kenangan (v0.3).
 class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.location, required this.navigationShell});
 
@@ -110,6 +108,7 @@ class _NavBar extends StatelessWidget {
       (icon: Symbols.check_box_rounded, label: l10n.navTasks),
       (icon: Symbols.account_balance_wallet_rounded, label: l10n.navSavings),
       (icon: Symbols.flight_takeoff_rounded, label: l10n.navTrips),
+      (icon: Symbols.photo_library_rounded, label: l10n.navMemories),
     ];
 
     return Semantics(

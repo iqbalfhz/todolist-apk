@@ -30,6 +30,14 @@ class LocalWriter {
         await outbox.enqueueCreate(type, row['id'] as String, payload);
       });
 
+  /// Buat baris yang diunggah lewat `POST` multipart (foto kenangan). Berkasnya disimpan
+  /// pemanggil lebih dulu; antrean mengambilnya saat operasi ini dikirim.
+  Future<void> upload(EntityType type, Map<String, dynamic> row, Map<String, dynamic> payload) =>
+      store.transaction(() async {
+        await store.write(type, row);
+        await outbox.enqueueUpload(type, row['id'] as String, payload);
+      });
+
   /// Ubah kolom di [changes]. [localOnly] ikut ditulis ke cache tapi tidak dikirim,
   /// misalnya `completed_by`, yang diisi server.
   ///
@@ -112,11 +120,20 @@ class LocalWriter {
                   ..where(db.tasks.taskListId.equals(parentId)))
                 .map((row) => row.read(expression))
                 .getSingle();
+      case EntityType.memoryPhoto:
+        final expression = db.memoryPhotos.position.max();
+        max =
+            await (db.selectOnly(db.memoryPhotos)
+                  ..addColumns([expression])
+                  ..where(db.memoryPhotos.memoryId.equals(parentId) & db.memoryPhotos.deletedAt.isNull()))
+                .map((row) => row.read(expression))
+                .getSingle();
       case EntityType.space ||
           EntityType.goal ||
           EntityType.entry ||
           EntityType.specialDate ||
           EntityType.trip ||
+          EntityType.memory ||
           EntityType.me:
         max = null;
     }

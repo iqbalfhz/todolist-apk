@@ -1,5 +1,7 @@
 package id.my.iqbalfhz.denlydays
 
+import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -21,9 +23,34 @@ class MainActivity : FlutterActivity() {
                     ),
                 )
 
+                "photoInfo" -> result.success(photoInfo(call.argument<String>("path").orEmpty()))
+
                 else -> result.notImplemented()
             }
         }
+    }
+
+    /**
+     * Ukuran asli dan waktu pengambilan foto kenangan, dibaca sebelum fotonya dikompres,
+     * karena hasil kompresnya tidak lagi membawa EXIF.
+     */
+    private fun photoInfo(path: String): Map<String, Any?>? {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(path, bounds)
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+        val exif = try {
+            ExifInterface(path)
+        } catch (_: Exception) {
+            null
+        }
+
+        return mapOf(
+            "width" to bounds.outWidth,
+            "height" to bounds.outHeight,
+            "takenAt" to exif?.getAttribute("DateTimeOriginal"),
+            "offset" to exif?.getAttribute("OffsetTimeOriginal"),
+        )
     }
 
     private companion object {

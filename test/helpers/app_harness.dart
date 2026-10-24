@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/app.dart';
 import 'package:todolist/core/database/entity_type.dart';
+import 'package:todolist/core/media/photo_picker.dart';
 import 'package:todolist/core/notifications/push_service.dart';
 import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
@@ -34,7 +35,8 @@ Future<void> prepareAppTests() async {
 /// Jalankan app sungguhan di atas akun palsu [harness], dengan layar seukuran mockup (390 × 844).
 ///
 /// Kalau [signedIn] dimatikan, app mulai dari layar Masuk; akun [harness] baru dibuka
-/// setelah berhasil masuk. [device] dan [push] menggantikan info HP dan layanan notifikasi.
+/// setelah berhasil masuk. [device] dan [push] menggantikan info HP dan layanan notifikasi,
+/// dan [photoPicker] galeri foto.
 Future<ProviderContainer> pumpApp(
   WidgetTester tester,
   Harness harness, {
@@ -44,6 +46,7 @@ Future<ProviderContainer> pumpApp(
   MemoryKeyValueStore? storage,
   DeviceInfo device = DeviceInfo.unknown,
   PushService? push,
+  PhotoPicker? photoPicker,
   String? themeName,
   String? themeMode,
 }) async {
@@ -71,6 +74,7 @@ Future<ProviderContainer> pumpApp(
       accountFactoryProvider.overrideWithValue((_) => harness.account),
       spaceClockProvider.overrideWithValue(SpaceClock(now: harness.clock.call)),
       if (push != null) pushServiceProvider.overrideWithValue(push),
+      if (photoPicker != null) photoPickerProvider.overrideWithValue(photoPicker),
     ],
   );
   _container = container;

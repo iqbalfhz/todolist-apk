@@ -36,6 +36,8 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
 
   final List<StreamSubscription<Object?>> _pushSubscriptions = [];
   StreamSubscription<OutboxEvent>? _outboxSubscription;
+  StreamSubscription<void>? _pulledSubscription;
+  bool _prefetching = false;
   Account? _account;
 
   AppLocalizations get _l10n => lookupAppLocalizations(const Locale('id'));
@@ -67,6 +69,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       unawaited(subscription.cancel());
     }
     unawaited(_outboxSubscription?.cancel());
+    unawaited(_pulledSubscription?.cancel());
     super.dispose();
   }
 
@@ -81,11 +84,14 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     if (identical(account, _account)) return;
 
     unawaited(_outboxSubscription?.cancel());
+    unawaited(_pulledSubscription?.cancel());
     _outboxSubscription = null;
+    _pulledSubscription = null;
     _account = account;
     if (account == null) return;
 
     _outboxSubscription = account.outbox.events.listen(_onOutboxEvent);
+    _pulledSubscription = account.sync.pulled.listen((_) => unawaited(_prefetchThumbs(account)));
 
     account.sync.sync().ignore();
     unawaited(_refreshSignedUrls(account));
@@ -103,6 +109,21 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       // 401 ditangani lewat sesi.
     } on Object {
       // Akun keluar di tengah jalan.
+    }
+  }
+
+  /// Unduh thumbnail foto kenangan yang belum ada di HP tepat setelah sync, supaya linimasa
+  /// dan galeri tetap tampil saat offline (kontrak, bagian URL foto).
+  Future<void> _prefetchThumbs(Account account) async {
+    if (_prefetching) return;
+    _prefetching = true;
+    try {
+      final photos = await account.memories.watchPhotos().first;
+      await account.photoImages.prefetchThumbs(photos);
+    } on Object {
+      // Offline atau akun keluar di tengah jalan; dicoba lagi setelah sync berikutnya.
+    } finally {
+      _prefetching = false;
     }
   }
 
@@ -156,6 +177,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     final taskId = message.taskId;
     final goalId = message.goalId;
     final tripId = message.tripId;
+    final memoryId = message.memoryId;
 
     // Lembar bawah atau dialog yang masih terbuka ditutup, supaya layar tujuan terlihat.
     router.routerDelegate.navigatorKey.currentState?.popUntil((route) => route is! PopupRoute);
@@ -176,6 +198,12 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       if (await _exists(account, EntityType.trip, tripId)) return router.go(Routes.trip(tripId));
       router.go(Routes.trips);
       return _show(_l10n.notifTapMissingTrip);
+    }
+
+    if (message.isAboutMemory && memoryId != null) {
+      if (await _exists(account, EntityType.memory, memoryId)) return router.go(Routes.memory(memoryId));
+      router.go(Routes.memories);
+      return _show(_l10n.notifTapMissingMemory);
     }
 
     router.go(Routes.home);

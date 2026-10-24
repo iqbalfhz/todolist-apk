@@ -113,6 +113,32 @@ void main() {
       expect(seen.single.headers.value('authorization'), 'Bearer 1|token-hp-ini');
       expect(response.data['avatar_version'], 1);
     });
+
+    test('foto kenangan: kolom formulir ikut multipart, yang kosong tidak dikirim', () async {
+      late List<int> body;
+      handler = (request) async {
+        body = await request.fold<List<int>>([], (all, chunk) => all..addAll(chunk));
+        await json(request, 201, {
+          'data': {'id': 'foto-1'},
+        });
+      };
+      final jpeg = Uint8List.fromList([0xFF, 0xD8, 9, 0xFF, 0xD9]);
+
+      final response = await transport().send(
+        'POST',
+        '/memory-photos/foto-1',
+        body: {'memory_id': 'kenangan-1', 'position': 1024.0, 'taken_at': null},
+        upload: ApiUpload(field: 'photo', bytes: jpeg, filename: 'foto-1.jpg', mimeType: 'image/jpeg'),
+      );
+
+      final text = latin1.decode(body);
+      expect(seen.single.uri.path, '/api/v1/memory-photos/foto-1');
+      expect(text, contains('name="memory_id"\r\n\r\nkenangan-1\r\n'));
+      expect(text, contains('name="position"\r\n\r\n1024.0\r\n'));
+      expect(text, isNot(contains('name="taken_at"')));
+      expect(text, contains('name="photo"; filename="foto-1.jpg"'));
+      expect(response.status, 201);
+    });
   });
 
   group('balasan berhasil', () {

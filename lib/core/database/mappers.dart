@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 
+import '../../features/memories/domain/memory.dart';
+import '../../features/memories/domain/memory_photo.dart';
 import '../../features/savings/domain/savings_entry.dart';
 import '../../features/savings/domain/savings_goal.dart';
 import '../../features/spaces/domain/space.dart';
@@ -245,6 +247,72 @@ TripsCompanion tripCompanion(Trip trip, {String? serverUpdatedAt}) => TripsCompa
   createdAt: Value(_iso(trip.createdAt)),
   updatedAt: Value(_iso(trip.updatedAt)),
   deletedAt: Value(_isoOrNull(trip.deletedAt)),
+  serverUpdatedAt: _serverStamp(serverUpdatedAt),
+);
+
+extension MemoryRowMapper on MemoryRow {
+  Memory toModel() => Memory(
+    id: id,
+    spaceId: spaceId,
+    tripId: tripId,
+    title: title,
+    placeName: placeName,
+    visitedOn: visitedOn,
+    story: story,
+    createdBy: createdBy,
+    createdAt: _time(createdAt),
+    updatedAt: _time(updatedAt),
+    deletedAt: _timeOrNull(deletedAt),
+  );
+}
+
+MemoriesCompanion memoryCompanion(Memory memory, {String? serverUpdatedAt}) => MemoriesCompanion(
+  id: Value(memory.id),
+  spaceId: Value(memory.spaceId),
+  tripId: Value(memory.tripId),
+  title: Value(memory.title),
+  placeName: Value(memory.placeName),
+  visitedOn: Value(memory.visitedOn),
+  story: Value(memory.story),
+  createdBy: Value(memory.createdBy),
+  createdAt: Value(_iso(memory.createdAt)),
+  updatedAt: Value(_iso(memory.updatedAt)),
+  deletedAt: Value(_isoOrNull(memory.deletedAt)),
+  serverUpdatedAt: _serverStamp(serverUpdatedAt),
+);
+
+extension MemoryPhotoRowMapper on MemoryPhotoRow {
+  MemoryPhoto toModel() => MemoryPhoto(
+    id: id,
+    memoryId: memoryId,
+    spaceId: spaceId,
+    uploadedBy: uploadedBy,
+    position: position,
+    width: width,
+    height: height,
+    takenAt: _timeOrNull(takenAt),
+    url: url,
+    thumbUrl: thumbUrl,
+    createdAt: _time(createdAt),
+    updatedAt: _time(updatedAt),
+    deletedAt: _timeOrNull(deletedAt),
+  );
+}
+
+MemoryPhotosCompanion memoryPhotoCompanion(MemoryPhoto photo, {String? serverUpdatedAt}) => MemoryPhotosCompanion(
+  id: Value(photo.id),
+  memoryId: Value(photo.memoryId),
+  spaceId: Value(photo.spaceId),
+  uploadedBy: Value(photo.uploadedBy),
+  position: Value(photo.position),
+  width: Value(photo.width),
+  height: Value(photo.height),
+  takenAt: Value(_isoOrNull(photo.takenAt)),
+  url: Value(photo.url),
+  thumbUrl: Value(photo.thumbUrl),
+  createdAt: Value(_iso(photo.createdAt)),
+  updatedAt: Value(_iso(photo.updatedAt)),
+  deletedAt: Value(_isoOrNull(photo.deletedAt)),
   serverUpdatedAt: _serverStamp(serverUpdatedAt),
 );
 

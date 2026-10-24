@@ -75,6 +75,9 @@ String formatWeekdayLong(DateTime date) => DateFormat('EEEE, d MMMM', dateLocale
 /// "Okt" untuk sumbu grafik.
 String formatMonthShort(int year, int month) => DateFormat('MMM', dateLocale).format(DateTime.utc(year, month));
 
+/// "Juni" untuk kepala bulan di linimasa Kenangan.
+String formatMonthLong(int year, int month) => DateFormat('MMMM', dateLocale).format(DateTime.utc(year, month));
+
 /// Jam 24 jam dengan titik: `17:00` menjadi "17.00".
 String formatClock(String hm) => hm.replaceAll(':', '.');
 

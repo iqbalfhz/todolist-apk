@@ -15,7 +15,7 @@ abstract final class PushChannels {
   /// Penting dan bersuara: pengingat tenggat, tanggal penting, perjalanan, dan hari setor.
   static const String reminders = 'pengingat';
 
-  /// Normal: titipan, tugas selesai, setoran, dan pasangan bergabung.
+  /// Normal: titipan, tugas selesai, setoran, pasangan bergabung, dan kenangan baru.
   static const String activity = 'aktivitas';
 }
 
@@ -27,7 +27,7 @@ class PushMessage {
   final String? body;
 
   /// `type` dan `space_id`, ditambah `task_id`, `savings_goal_id`, `special_date_id`, `member_id`,
-  /// atau `trip_id`.
+  /// `trip_id`, atau `memory_id`.
   final Map<String, String> data;
 
   String get type => data['type'] ?? '';
@@ -45,12 +45,17 @@ class PushMessage {
   /// Perjalanan yang diingatkan `trip_reminder` (v0.2).
   String? get tripId => _filled(data['trip_id']);
 
+  /// Kenangan baru dari `memory_created` (v0.3).
+  String? get memoryId => _filled(data['memory_id']);
+
   bool get isAboutTask => type.startsWith('task_');
 
   /// `savings_deposit`, `savings_achieved`, dan `savings_reminder` (v0.2); isinya disembunyikan di layar kunci.
   bool get isAboutSavings => type.startsWith('savings_');
 
   bool get isAboutTrip => type == 'trip_reminder';
+
+  bool get isAboutMemory => type == 'memory_created';
 
   static const Set<String> _reminderTypes = {
     'task_reminder',
@@ -68,6 +73,7 @@ class PushMessage {
     if (specialDateId != null) return 'date-$specialDateId';
     if (memberId != null) return 'birthday-$memberId';
     if (tripId != null) return 'trip-$tripId';
+    if (memoryId != null) return 'memory-$memoryId';
     return 'space-${data['space_id'] ?? ''}';
   }
 

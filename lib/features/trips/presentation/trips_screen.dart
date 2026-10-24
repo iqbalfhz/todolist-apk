@@ -187,10 +187,32 @@ class TripCard extends StatelessWidget {
               ],
             ),
           ],
+          // Perjalanan yang sudah selesai bisa disimpan jadi kenangan (v0.3), berapa kali pun.
+          if (item.isDone) ...[
+            const SizedBox(height: AppDimens.gap4),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SaveAsMemoryButton(tripId: trip.id),
+            ),
+          ],
         ],
       ),
     );
   }
+}
+
+/// "Simpan jadi kenangan": buka Kenangan baru yang diisi dari perjalanan [tripId].
+class SaveAsMemoryButton extends StatelessWidget {
+  const SaveAsMemoryButton({super.key, required this.tripId});
+
+  final String tripId;
+
+  @override
+  Widget build(BuildContext context) => TextButton.icon(
+    onPressed: () => context.go(Routes.newMemory(tripId: tripId)),
+    icon: const Icon(Symbols.add_photo_alternate_rounded, size: AppDimens.iconMd),
+    label: Text(context.l10n.tripSaveAsMemory),
+  );
 }
 
 /// Jadwal pengingat tetap (H-7 dan H-1 pukul 08.00); yang bisa diatur hanya nyala atau mati.
