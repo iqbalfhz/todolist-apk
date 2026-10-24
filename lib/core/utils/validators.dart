@@ -14,6 +14,10 @@ abstract final class Limits {
   static const int tripTitle = 50;
   static const int tripDestination = 100;
   static const int tripNotes = 5000;
+  static const int memoryTitle = 50;
+  static const int memoryPlace = 100;
+  static const int memoryStory = 10000;
+  static const int memoryPhotos = 50;
   static const int emoji = 16;
   static const int passwordMin = 8;
   static const int invitationCode = 6;

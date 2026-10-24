@@ -4609,6 +4609,1298 @@ class TripsCompanion extends UpdateCompanion<TripRow> {
   }
 }
 
+class $MemoriesTable extends Memories with TableInfo<$MemoriesTable, MemoryRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MemoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _spaceIdMeta = const VerificationMeta('spaceId');
+  @override
+  late final GeneratedColumn<String> spaceId = GeneratedColumn<String>(
+    'space_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tripIdMeta = const VerificationMeta('tripId');
+  @override
+  late final GeneratedColumn<String> tripId = GeneratedColumn<String>(
+    'trip_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _placeNameMeta = const VerificationMeta('placeName');
+  @override
+  late final GeneratedColumn<String> placeName = GeneratedColumn<String>(
+    'place_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _visitedOnMeta = const VerificationMeta('visitedOn');
+  @override
+  late final GeneratedColumn<String> visitedOn = GeneratedColumn<String>(
+    'visited_on',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _storyMeta = const VerificationMeta('story');
+  @override
+  late final GeneratedColumn<String> story = GeneratedColumn<String>(
+    'story',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<String> deletedAt = GeneratedColumn<String>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverUpdatedAtMeta = const VerificationMeta('serverUpdatedAt');
+  @override
+  late final GeneratedColumn<String> serverUpdatedAt = GeneratedColumn<String>(
+    'server_updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    spaceId,
+    tripId,
+    title,
+    placeName,
+    visitedOn,
+    story,
+    createdBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    serverUpdatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'memories';
+  @override
+  VerificationContext validateIntegrity(Insertable<MemoryRow> instance, {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('space_id')) {
+      context.handle(_spaceIdMeta, spaceId.isAcceptableOrUnknown(data['space_id']!, _spaceIdMeta));
+    } else if (isInserting) {
+      context.missing(_spaceIdMeta);
+    }
+    if (data.containsKey('trip_id')) {
+      context.handle(_tripIdMeta, tripId.isAcceptableOrUnknown(data['trip_id']!, _tripIdMeta));
+    }
+    if (data.containsKey('title')) {
+      context.handle(_titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('place_name')) {
+      context.handle(_placeNameMeta, placeName.isAcceptableOrUnknown(data['place_name']!, _placeNameMeta));
+    }
+    if (data.containsKey('visited_on')) {
+      context.handle(_visitedOnMeta, visitedOn.isAcceptableOrUnknown(data['visited_on']!, _visitedOnMeta));
+    } else if (isInserting) {
+      context.missing(_visitedOnMeta);
+    }
+    if (data.containsKey('story')) {
+      context.handle(_storyMeta, story.isAcceptableOrUnknown(data['story']!, _storyMeta));
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta, deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    if (data.containsKey('server_updated_at')) {
+      context.handle(
+        _serverUpdatedAtMeta,
+        serverUpdatedAt.isAcceptableOrUnknown(data['server_updated_at']!, _serverUpdatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MemoryRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MemoryRow(
+      id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      spaceId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}space_id'])!,
+      tripId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}trip_id']),
+      title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      placeName: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}place_name']),
+      visitedOn: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}visited_on'])!,
+      story: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}story']),
+      createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']),
+      createdAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      deletedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}deleted_at']),
+      serverUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_updated_at'],
+      ),
+    );
+  }
+
+  @override
+  $MemoriesTable createAlias(String alias) {
+    return $MemoriesTable(attachedDatabase, alias);
+  }
+}
+
+class MemoryRow extends DataClass implements Insertable<MemoryRow> {
+  final String id;
+  final String spaceId;
+  final String? tripId;
+  final String title;
+  final String? placeName;
+
+  /// `YYYY-MM-DD`; tanggal kenangan di linimasa.
+  final String visitedOn;
+  final String? story;
+  final String? createdBy;
+  final String createdAt;
+  final String updatedAt;
+  final String? deletedAt;
+  final String? serverUpdatedAt;
+  const MemoryRow({
+    required this.id,
+    required this.spaceId,
+    this.tripId,
+    required this.title,
+    this.placeName,
+    required this.visitedOn,
+    this.story,
+    this.createdBy,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.serverUpdatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['space_id'] = Variable<String>(spaceId);
+    if (!nullToAbsent || tripId != null) {
+      map['trip_id'] = Variable<String>(tripId);
+    }
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || placeName != null) {
+      map['place_name'] = Variable<String>(placeName);
+    }
+    map['visited_on'] = Variable<String>(visitedOn);
+    if (!nullToAbsent || story != null) {
+      map['story'] = Variable<String>(story);
+    }
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<String>(deletedAt);
+    }
+    if (!nullToAbsent || serverUpdatedAt != null) {
+      map['server_updated_at'] = Variable<String>(serverUpdatedAt);
+    }
+    return map;
+  }
+
+  MemoriesCompanion toCompanion(bool nullToAbsent) {
+    return MemoriesCompanion(
+      id: Value(id),
+      spaceId: Value(spaceId),
+      tripId: tripId == null && nullToAbsent ? const Value.absent() : Value(tripId),
+      title: Value(title),
+      placeName: placeName == null && nullToAbsent ? const Value.absent() : Value(placeName),
+      visitedOn: Value(visitedOn),
+      story: story == null && nullToAbsent ? const Value.absent() : Value(story),
+      createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent ? const Value.absent() : Value(deletedAt),
+      serverUpdatedAt: serverUpdatedAt == null && nullToAbsent ? const Value.absent() : Value(serverUpdatedAt),
+    );
+  }
+
+  factory MemoryRow.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MemoryRow(
+      id: serializer.fromJson<String>(json['id']),
+      spaceId: serializer.fromJson<String>(json['spaceId']),
+      tripId: serializer.fromJson<String?>(json['tripId']),
+      title: serializer.fromJson<String>(json['title']),
+      placeName: serializer.fromJson<String?>(json['placeName']),
+      visitedOn: serializer.fromJson<String>(json['visitedOn']),
+      story: serializer.fromJson<String?>(json['story']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      deletedAt: serializer.fromJson<String?>(json['deletedAt']),
+      serverUpdatedAt: serializer.fromJson<String?>(json['serverUpdatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'spaceId': serializer.toJson<String>(spaceId),
+      'tripId': serializer.toJson<String?>(tripId),
+      'title': serializer.toJson<String>(title),
+      'placeName': serializer.toJson<String?>(placeName),
+      'visitedOn': serializer.toJson<String>(visitedOn),
+      'story': serializer.toJson<String?>(story),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'deletedAt': serializer.toJson<String?>(deletedAt),
+      'serverUpdatedAt': serializer.toJson<String?>(serverUpdatedAt),
+    };
+  }
+
+  MemoryRow copyWith({
+    String? id,
+    String? spaceId,
+    Value<String?> tripId = const Value.absent(),
+    String? title,
+    Value<String?> placeName = const Value.absent(),
+    String? visitedOn,
+    Value<String?> story = const Value.absent(),
+    Value<String?> createdBy = const Value.absent(),
+    String? createdAt,
+    String? updatedAt,
+    Value<String?> deletedAt = const Value.absent(),
+    Value<String?> serverUpdatedAt = const Value.absent(),
+  }) => MemoryRow(
+    id: id ?? this.id,
+    spaceId: spaceId ?? this.spaceId,
+    tripId: tripId.present ? tripId.value : this.tripId,
+    title: title ?? this.title,
+    placeName: placeName.present ? placeName.value : this.placeName,
+    visitedOn: visitedOn ?? this.visitedOn,
+    story: story.present ? story.value : this.story,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    serverUpdatedAt: serverUpdatedAt.present ? serverUpdatedAt.value : this.serverUpdatedAt,
+  );
+  MemoryRow copyWithCompanion(MemoriesCompanion data) {
+    return MemoryRow(
+      id: data.id.present ? data.id.value : this.id,
+      spaceId: data.spaceId.present ? data.spaceId.value : this.spaceId,
+      tripId: data.tripId.present ? data.tripId.value : this.tripId,
+      title: data.title.present ? data.title.value : this.title,
+      placeName: data.placeName.present ? data.placeName.value : this.placeName,
+      visitedOn: data.visitedOn.present ? data.visitedOn.value : this.visitedOn,
+      story: data.story.present ? data.story.value : this.story,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      serverUpdatedAt: data.serverUpdatedAt.present ? data.serverUpdatedAt.value : this.serverUpdatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MemoryRow(')
+          ..write('id: $id, ')
+          ..write('spaceId: $spaceId, ')
+          ..write('tripId: $tripId, ')
+          ..write('title: $title, ')
+          ..write('placeName: $placeName, ')
+          ..write('visitedOn: $visitedOn, ')
+          ..write('story: $story, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    spaceId,
+    tripId,
+    title,
+    placeName,
+    visitedOn,
+    story,
+    createdBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    serverUpdatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MemoryRow &&
+          other.id == this.id &&
+          other.spaceId == this.spaceId &&
+          other.tripId == this.tripId &&
+          other.title == this.title &&
+          other.placeName == this.placeName &&
+          other.visitedOn == this.visitedOn &&
+          other.story == this.story &&
+          other.createdBy == this.createdBy &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.serverUpdatedAt == this.serverUpdatedAt);
+}
+
+class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
+  final Value<String> id;
+  final Value<String> spaceId;
+  final Value<String?> tripId;
+  final Value<String> title;
+  final Value<String?> placeName;
+  final Value<String> visitedOn;
+  final Value<String?> story;
+  final Value<String?> createdBy;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String?> deletedAt;
+  final Value<String?> serverUpdatedAt;
+  final Value<int> rowid;
+  const MemoriesCompanion({
+    this.id = const Value.absent(),
+    this.spaceId = const Value.absent(),
+    this.tripId = const Value.absent(),
+    this.title = const Value.absent(),
+    this.placeName = const Value.absent(),
+    this.visitedOn = const Value.absent(),
+    this.story = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MemoriesCompanion.insert({
+    required String id,
+    required String spaceId,
+    this.tripId = const Value.absent(),
+    required String title,
+    this.placeName = const Value.absent(),
+    required String visitedOn,
+    this.story = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    required String createdAt,
+    required String updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       spaceId = Value(spaceId),
+       title = Value(title),
+       visitedOn = Value(visitedOn),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<MemoryRow> custom({
+    Expression<String>? id,
+    Expression<String>? spaceId,
+    Expression<String>? tripId,
+    Expression<String>? title,
+    Expression<String>? placeName,
+    Expression<String>? visitedOn,
+    Expression<String>? story,
+    Expression<String>? createdBy,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? deletedAt,
+    Expression<String>? serverUpdatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (spaceId != null) 'space_id': spaceId,
+      if (tripId != null) 'trip_id': tripId,
+      if (title != null) 'title': title,
+      if (placeName != null) 'place_name': placeName,
+      if (visitedOn != null) 'visited_on': visitedOn,
+      if (story != null) 'story': story,
+      if (createdBy != null) 'created_by': createdBy,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (serverUpdatedAt != null) 'server_updated_at': serverUpdatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MemoriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? spaceId,
+    Value<String?>? tripId,
+    Value<String>? title,
+    Value<String?>? placeName,
+    Value<String>? visitedOn,
+    Value<String?>? story,
+    Value<String?>? createdBy,
+    Value<String>? createdAt,
+    Value<String>? updatedAt,
+    Value<String?>? deletedAt,
+    Value<String?>? serverUpdatedAt,
+    Value<int>? rowid,
+  }) {
+    return MemoriesCompanion(
+      id: id ?? this.id,
+      spaceId: spaceId ?? this.spaceId,
+      tripId: tripId ?? this.tripId,
+      title: title ?? this.title,
+      placeName: placeName ?? this.placeName,
+      visitedOn: visitedOn ?? this.visitedOn,
+      story: story ?? this.story,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      serverUpdatedAt: serverUpdatedAt ?? this.serverUpdatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (spaceId.present) {
+      map['space_id'] = Variable<String>(spaceId.value);
+    }
+    if (tripId.present) {
+      map['trip_id'] = Variable<String>(tripId.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (placeName.present) {
+      map['place_name'] = Variable<String>(placeName.value);
+    }
+    if (visitedOn.present) {
+      map['visited_on'] = Variable<String>(visitedOn.value);
+    }
+    if (story.present) {
+      map['story'] = Variable<String>(story.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<String>(deletedAt.value);
+    }
+    if (serverUpdatedAt.present) {
+      map['server_updated_at'] = Variable<String>(serverUpdatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MemoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('spaceId: $spaceId, ')
+          ..write('tripId: $tripId, ')
+          ..write('title: $title, ')
+          ..write('placeName: $placeName, ')
+          ..write('visitedOn: $visitedOn, ')
+          ..write('story: $story, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MemoryPhotosTable extends MemoryPhotos with TableInfo<$MemoryPhotosTable, MemoryPhotoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $MemoryPhotosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _memoryIdMeta = const VerificationMeta('memoryId');
+  @override
+  late final GeneratedColumn<String> memoryId = GeneratedColumn<String>(
+    'memory_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _spaceIdMeta = const VerificationMeta('spaceId');
+  @override
+  late final GeneratedColumn<String> spaceId = GeneratedColumn<String>(
+    'space_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _uploadedByMeta = const VerificationMeta('uploadedBy');
+  @override
+  late final GeneratedColumn<String> uploadedBy = GeneratedColumn<String>(
+    'uploaded_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _positionMeta = const VerificationMeta('position');
+  @override
+  late final GeneratedColumn<double> position = GeneratedColumn<double>(
+    'position',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _widthMeta = const VerificationMeta('width');
+  @override
+  late final GeneratedColumn<int> width = GeneratedColumn<int>(
+    'width',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _heightMeta = const VerificationMeta('height');
+  @override
+  late final GeneratedColumn<int> height = GeneratedColumn<int>(
+    'height',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _takenAtMeta = const VerificationMeta('takenAt');
+  @override
+  late final GeneratedColumn<String> takenAt = GeneratedColumn<String>(
+    'taken_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _urlMeta = const VerificationMeta('url');
+  @override
+  late final GeneratedColumn<String> url = GeneratedColumn<String>(
+    'url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _thumbUrlMeta = const VerificationMeta('thumbUrl');
+  @override
+  late final GeneratedColumn<String> thumbUrl = GeneratedColumn<String>(
+    'thumb_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<String> createdAt = GeneratedColumn<String>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<String> updatedAt = GeneratedColumn<String>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<String> deletedAt = GeneratedColumn<String>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _serverUpdatedAtMeta = const VerificationMeta('serverUpdatedAt');
+  @override
+  late final GeneratedColumn<String> serverUpdatedAt = GeneratedColumn<String>(
+    'server_updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    memoryId,
+    spaceId,
+    uploadedBy,
+    position,
+    width,
+    height,
+    takenAt,
+    url,
+    thumbUrl,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    serverUpdatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'memory_photos';
+  @override
+  VerificationContext validateIntegrity(Insertable<MemoryPhotoRow> instance, {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('memory_id')) {
+      context.handle(_memoryIdMeta, memoryId.isAcceptableOrUnknown(data['memory_id']!, _memoryIdMeta));
+    } else if (isInserting) {
+      context.missing(_memoryIdMeta);
+    }
+    if (data.containsKey('space_id')) {
+      context.handle(_spaceIdMeta, spaceId.isAcceptableOrUnknown(data['space_id']!, _spaceIdMeta));
+    } else if (isInserting) {
+      context.missing(_spaceIdMeta);
+    }
+    if (data.containsKey('uploaded_by')) {
+      context.handle(_uploadedByMeta, uploadedBy.isAcceptableOrUnknown(data['uploaded_by']!, _uploadedByMeta));
+    }
+    if (data.containsKey('position')) {
+      context.handle(_positionMeta, position.isAcceptableOrUnknown(data['position']!, _positionMeta));
+    } else if (isInserting) {
+      context.missing(_positionMeta);
+    }
+    if (data.containsKey('width')) {
+      context.handle(_widthMeta, width.isAcceptableOrUnknown(data['width']!, _widthMeta));
+    }
+    if (data.containsKey('height')) {
+      context.handle(_heightMeta, height.isAcceptableOrUnknown(data['height']!, _heightMeta));
+    }
+    if (data.containsKey('taken_at')) {
+      context.handle(_takenAtMeta, takenAt.isAcceptableOrUnknown(data['taken_at']!, _takenAtMeta));
+    }
+    if (data.containsKey('url')) {
+      context.handle(_urlMeta, url.isAcceptableOrUnknown(data['url']!, _urlMeta));
+    }
+    if (data.containsKey('thumb_url')) {
+      context.handle(_thumbUrlMeta, thumbUrl.isAcceptableOrUnknown(data['thumb_url']!, _thumbUrlMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta, deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    if (data.containsKey('server_updated_at')) {
+      context.handle(
+        _serverUpdatedAtMeta,
+        serverUpdatedAt.isAcceptableOrUnknown(data['server_updated_at']!, _serverUpdatedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MemoryPhotoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MemoryPhotoRow(
+      id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      memoryId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}memory_id'])!,
+      spaceId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}space_id'])!,
+      uploadedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}uploaded_by']),
+      position: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}position'])!,
+      width: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}width']),
+      height: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}height']),
+      takenAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}taken_at']),
+      url: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}url']),
+      thumbUrl: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}thumb_url']),
+      createdAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_at'])!,
+      deletedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}deleted_at']),
+      serverUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}server_updated_at'],
+      ),
+    );
+  }
+
+  @override
+  $MemoryPhotosTable createAlias(String alias) {
+    return $MemoryPhotosTable(attachedDatabase, alias);
+  }
+}
+
+class MemoryPhotoRow extends DataClass implements Insertable<MemoryPhotoRow> {
+  final String id;
+  final String memoryId;
+  final String spaceId;
+  final String? uploadedBy;
+  final double position;
+  final int? width;
+  final int? height;
+  final String? takenAt;
+  final String? url;
+  final String? thumbUrl;
+  final String createdAt;
+  final String updatedAt;
+  final String? deletedAt;
+  final String? serverUpdatedAt;
+  const MemoryPhotoRow({
+    required this.id,
+    required this.memoryId,
+    required this.spaceId,
+    this.uploadedBy,
+    required this.position,
+    this.width,
+    this.height,
+    this.takenAt,
+    this.url,
+    this.thumbUrl,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.serverUpdatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['memory_id'] = Variable<String>(memoryId);
+    map['space_id'] = Variable<String>(spaceId);
+    if (!nullToAbsent || uploadedBy != null) {
+      map['uploaded_by'] = Variable<String>(uploadedBy);
+    }
+    map['position'] = Variable<double>(position);
+    if (!nullToAbsent || width != null) {
+      map['width'] = Variable<int>(width);
+    }
+    if (!nullToAbsent || height != null) {
+      map['height'] = Variable<int>(height);
+    }
+    if (!nullToAbsent || takenAt != null) {
+      map['taken_at'] = Variable<String>(takenAt);
+    }
+    if (!nullToAbsent || url != null) {
+      map['url'] = Variable<String>(url);
+    }
+    if (!nullToAbsent || thumbUrl != null) {
+      map['thumb_url'] = Variable<String>(thumbUrl);
+    }
+    map['created_at'] = Variable<String>(createdAt);
+    map['updated_at'] = Variable<String>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<String>(deletedAt);
+    }
+    if (!nullToAbsent || serverUpdatedAt != null) {
+      map['server_updated_at'] = Variable<String>(serverUpdatedAt);
+    }
+    return map;
+  }
+
+  MemoryPhotosCompanion toCompanion(bool nullToAbsent) {
+    return MemoryPhotosCompanion(
+      id: Value(id),
+      memoryId: Value(memoryId),
+      spaceId: Value(spaceId),
+      uploadedBy: uploadedBy == null && nullToAbsent ? const Value.absent() : Value(uploadedBy),
+      position: Value(position),
+      width: width == null && nullToAbsent ? const Value.absent() : Value(width),
+      height: height == null && nullToAbsent ? const Value.absent() : Value(height),
+      takenAt: takenAt == null && nullToAbsent ? const Value.absent() : Value(takenAt),
+      url: url == null && nullToAbsent ? const Value.absent() : Value(url),
+      thumbUrl: thumbUrl == null && nullToAbsent ? const Value.absent() : Value(thumbUrl),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent ? const Value.absent() : Value(deletedAt),
+      serverUpdatedAt: serverUpdatedAt == null && nullToAbsent ? const Value.absent() : Value(serverUpdatedAt),
+    );
+  }
+
+  factory MemoryPhotoRow.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MemoryPhotoRow(
+      id: serializer.fromJson<String>(json['id']),
+      memoryId: serializer.fromJson<String>(json['memoryId']),
+      spaceId: serializer.fromJson<String>(json['spaceId']),
+      uploadedBy: serializer.fromJson<String?>(json['uploadedBy']),
+      position: serializer.fromJson<double>(json['position']),
+      width: serializer.fromJson<int?>(json['width']),
+      height: serializer.fromJson<int?>(json['height']),
+      takenAt: serializer.fromJson<String?>(json['takenAt']),
+      url: serializer.fromJson<String?>(json['url']),
+      thumbUrl: serializer.fromJson<String?>(json['thumbUrl']),
+      createdAt: serializer.fromJson<String>(json['createdAt']),
+      updatedAt: serializer.fromJson<String>(json['updatedAt']),
+      deletedAt: serializer.fromJson<String?>(json['deletedAt']),
+      serverUpdatedAt: serializer.fromJson<String?>(json['serverUpdatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'memoryId': serializer.toJson<String>(memoryId),
+      'spaceId': serializer.toJson<String>(spaceId),
+      'uploadedBy': serializer.toJson<String?>(uploadedBy),
+      'position': serializer.toJson<double>(position),
+      'width': serializer.toJson<int?>(width),
+      'height': serializer.toJson<int?>(height),
+      'takenAt': serializer.toJson<String?>(takenAt),
+      'url': serializer.toJson<String?>(url),
+      'thumbUrl': serializer.toJson<String?>(thumbUrl),
+      'createdAt': serializer.toJson<String>(createdAt),
+      'updatedAt': serializer.toJson<String>(updatedAt),
+      'deletedAt': serializer.toJson<String?>(deletedAt),
+      'serverUpdatedAt': serializer.toJson<String?>(serverUpdatedAt),
+    };
+  }
+
+  MemoryPhotoRow copyWith({
+    String? id,
+    String? memoryId,
+    String? spaceId,
+    Value<String?> uploadedBy = const Value.absent(),
+    double? position,
+    Value<int?> width = const Value.absent(),
+    Value<int?> height = const Value.absent(),
+    Value<String?> takenAt = const Value.absent(),
+    Value<String?> url = const Value.absent(),
+    Value<String?> thumbUrl = const Value.absent(),
+    String? createdAt,
+    String? updatedAt,
+    Value<String?> deletedAt = const Value.absent(),
+    Value<String?> serverUpdatedAt = const Value.absent(),
+  }) => MemoryPhotoRow(
+    id: id ?? this.id,
+    memoryId: memoryId ?? this.memoryId,
+    spaceId: spaceId ?? this.spaceId,
+    uploadedBy: uploadedBy.present ? uploadedBy.value : this.uploadedBy,
+    position: position ?? this.position,
+    width: width.present ? width.value : this.width,
+    height: height.present ? height.value : this.height,
+    takenAt: takenAt.present ? takenAt.value : this.takenAt,
+    url: url.present ? url.value : this.url,
+    thumbUrl: thumbUrl.present ? thumbUrl.value : this.thumbUrl,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    serverUpdatedAt: serverUpdatedAt.present ? serverUpdatedAt.value : this.serverUpdatedAt,
+  );
+  MemoryPhotoRow copyWithCompanion(MemoryPhotosCompanion data) {
+    return MemoryPhotoRow(
+      id: data.id.present ? data.id.value : this.id,
+      memoryId: data.memoryId.present ? data.memoryId.value : this.memoryId,
+      spaceId: data.spaceId.present ? data.spaceId.value : this.spaceId,
+      uploadedBy: data.uploadedBy.present ? data.uploadedBy.value : this.uploadedBy,
+      position: data.position.present ? data.position.value : this.position,
+      width: data.width.present ? data.width.value : this.width,
+      height: data.height.present ? data.height.value : this.height,
+      takenAt: data.takenAt.present ? data.takenAt.value : this.takenAt,
+      url: data.url.present ? data.url.value : this.url,
+      thumbUrl: data.thumbUrl.present ? data.thumbUrl.value : this.thumbUrl,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      serverUpdatedAt: data.serverUpdatedAt.present ? data.serverUpdatedAt.value : this.serverUpdatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MemoryPhotoRow(')
+          ..write('id: $id, ')
+          ..write('memoryId: $memoryId, ')
+          ..write('spaceId: $spaceId, ')
+          ..write('uploadedBy: $uploadedBy, ')
+          ..write('position: $position, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('takenAt: $takenAt, ')
+          ..write('url: $url, ')
+          ..write('thumbUrl: $thumbUrl, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    memoryId,
+    spaceId,
+    uploadedBy,
+    position,
+    width,
+    height,
+    takenAt,
+    url,
+    thumbUrl,
+    createdAt,
+    updatedAt,
+    deletedAt,
+    serverUpdatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MemoryPhotoRow &&
+          other.id == this.id &&
+          other.memoryId == this.memoryId &&
+          other.spaceId == this.spaceId &&
+          other.uploadedBy == this.uploadedBy &&
+          other.position == this.position &&
+          other.width == this.width &&
+          other.height == this.height &&
+          other.takenAt == this.takenAt &&
+          other.url == this.url &&
+          other.thumbUrl == this.thumbUrl &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.serverUpdatedAt == this.serverUpdatedAt);
+}
+
+class MemoryPhotosCompanion extends UpdateCompanion<MemoryPhotoRow> {
+  final Value<String> id;
+  final Value<String> memoryId;
+  final Value<String> spaceId;
+  final Value<String?> uploadedBy;
+  final Value<double> position;
+  final Value<int?> width;
+  final Value<int?> height;
+  final Value<String?> takenAt;
+  final Value<String?> url;
+  final Value<String?> thumbUrl;
+  final Value<String> createdAt;
+  final Value<String> updatedAt;
+  final Value<String?> deletedAt;
+  final Value<String?> serverUpdatedAt;
+  final Value<int> rowid;
+  const MemoryPhotosCompanion({
+    this.id = const Value.absent(),
+    this.memoryId = const Value.absent(),
+    this.spaceId = const Value.absent(),
+    this.uploadedBy = const Value.absent(),
+    this.position = const Value.absent(),
+    this.width = const Value.absent(),
+    this.height = const Value.absent(),
+    this.takenAt = const Value.absent(),
+    this.url = const Value.absent(),
+    this.thumbUrl = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  MemoryPhotosCompanion.insert({
+    required String id,
+    required String memoryId,
+    required String spaceId,
+    this.uploadedBy = const Value.absent(),
+    required double position,
+    this.width = const Value.absent(),
+    this.height = const Value.absent(),
+    this.takenAt = const Value.absent(),
+    this.url = const Value.absent(),
+    this.thumbUrl = const Value.absent(),
+    required String createdAt,
+    required String updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.serverUpdatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       memoryId = Value(memoryId),
+       spaceId = Value(spaceId),
+       position = Value(position),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<MemoryPhotoRow> custom({
+    Expression<String>? id,
+    Expression<String>? memoryId,
+    Expression<String>? spaceId,
+    Expression<String>? uploadedBy,
+    Expression<double>? position,
+    Expression<int>? width,
+    Expression<int>? height,
+    Expression<String>? takenAt,
+    Expression<String>? url,
+    Expression<String>? thumbUrl,
+    Expression<String>? createdAt,
+    Expression<String>? updatedAt,
+    Expression<String>? deletedAt,
+    Expression<String>? serverUpdatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (memoryId != null) 'memory_id': memoryId,
+      if (spaceId != null) 'space_id': spaceId,
+      if (uploadedBy != null) 'uploaded_by': uploadedBy,
+      if (position != null) 'position': position,
+      if (width != null) 'width': width,
+      if (height != null) 'height': height,
+      if (takenAt != null) 'taken_at': takenAt,
+      if (url != null) 'url': url,
+      if (thumbUrl != null) 'thumb_url': thumbUrl,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (serverUpdatedAt != null) 'server_updated_at': serverUpdatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  MemoryPhotosCompanion copyWith({
+    Value<String>? id,
+    Value<String>? memoryId,
+    Value<String>? spaceId,
+    Value<String?>? uploadedBy,
+    Value<double>? position,
+    Value<int?>? width,
+    Value<int?>? height,
+    Value<String?>? takenAt,
+    Value<String?>? url,
+    Value<String?>? thumbUrl,
+    Value<String>? createdAt,
+    Value<String>? updatedAt,
+    Value<String?>? deletedAt,
+    Value<String?>? serverUpdatedAt,
+    Value<int>? rowid,
+  }) {
+    return MemoryPhotosCompanion(
+      id: id ?? this.id,
+      memoryId: memoryId ?? this.memoryId,
+      spaceId: spaceId ?? this.spaceId,
+      uploadedBy: uploadedBy ?? this.uploadedBy,
+      position: position ?? this.position,
+      width: width ?? this.width,
+      height: height ?? this.height,
+      takenAt: takenAt ?? this.takenAt,
+      url: url ?? this.url,
+      thumbUrl: thumbUrl ?? this.thumbUrl,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      serverUpdatedAt: serverUpdatedAt ?? this.serverUpdatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (memoryId.present) {
+      map['memory_id'] = Variable<String>(memoryId.value);
+    }
+    if (spaceId.present) {
+      map['space_id'] = Variable<String>(spaceId.value);
+    }
+    if (uploadedBy.present) {
+      map['uploaded_by'] = Variable<String>(uploadedBy.value);
+    }
+    if (position.present) {
+      map['position'] = Variable<double>(position.value);
+    }
+    if (width.present) {
+      map['width'] = Variable<int>(width.value);
+    }
+    if (height.present) {
+      map['height'] = Variable<int>(height.value);
+    }
+    if (takenAt.present) {
+      map['taken_at'] = Variable<String>(takenAt.value);
+    }
+    if (url.present) {
+      map['url'] = Variable<String>(url.value);
+    }
+    if (thumbUrl.present) {
+      map['thumb_url'] = Variable<String>(thumbUrl.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<String>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<String>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<String>(deletedAt.value);
+    }
+    if (serverUpdatedAt.present) {
+      map['server_updated_at'] = Variable<String>(serverUpdatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MemoryPhotosCompanion(')
+          ..write('id: $id, ')
+          ..write('memoryId: $memoryId, ')
+          ..write('spaceId: $spaceId, ')
+          ..write('uploadedBy: $uploadedBy, ')
+          ..write('position: $position, ')
+          ..write('width: $width, ')
+          ..write('height: $height, ')
+          ..write('takenAt: $takenAt, ')
+          ..write('url: $url, ')
+          ..write('thumbUrl: $thumbUrl, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('serverUpdatedAt: $serverUpdatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $OutboxOpsTable extends OutboxOps with TableInfo<$OutboxOpsTable, OutboxRow> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -5253,6 +6545,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SavingsEntriesTable savingsEntries = $SavingsEntriesTable(this);
   late final $SpecialDatesTable specialDates = $SpecialDatesTable(this);
   late final $TripsTable trips = $TripsTable(this);
+  late final $MemoriesTable memories = $MemoriesTable(this);
+  late final $MemoryPhotosTable memoryPhotos = $MemoryPhotosTable(this);
   late final $OutboxOpsTable outboxOps = $OutboxOpsTable(this);
   late final $MetaEntriesTable metaEntries = $MetaEntriesTable(this);
   @override
@@ -5266,6 +6560,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     savingsEntries,
     specialDates,
     trips,
+    memories,
+    memoryPhotos,
     outboxOps,
     metaEntries,
   ];
@@ -7237,6 +8533,558 @@ typedef $$TripsTableProcessedTableManager =
       TripRow,
       PrefetchHooks Function()
     >;
+typedef $$MemoriesTableCreateCompanionBuilder = MemoriesCompanion Function({
+  required String id,
+  required String spaceId,
+  Value<String?> tripId,
+  required String title,
+  Value<String?> placeName,
+  required String visitedOn,
+  Value<String?> story,
+  Value<String?> createdBy,
+  required String createdAt,
+  required String updatedAt,
+  Value<String?> deletedAt,
+  Value<String?> serverUpdatedAt,
+  Value<int> rowid,
+});
+typedef $$MemoriesTableUpdateCompanionBuilder = MemoriesCompanion Function({
+  Value<String> id,
+  Value<String> spaceId,
+  Value<String?> tripId,
+  Value<String> title,
+  Value<String?> placeName,
+  Value<String> visitedOn,
+  Value<String?> story,
+  Value<String?> createdBy,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String?> deletedAt,
+  Value<String?> serverUpdatedAt,
+  Value<int> rowid,
+});
+
+class $$MemoriesTableFilterComposer extends Composer<_$AppDatabase, $MemoriesTable> {
+  $$MemoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get spaceId =>
+      $composableBuilder(column: $table.spaceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tripId =>
+      $composableBuilder(column: $table.tripId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get placeName =>
+      $composableBuilder(column: $table.placeName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get visitedOn =>
+      $composableBuilder(column: $table.visitedOn, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get story =>
+      $composableBuilder(column: $table.story, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$MemoriesTableOrderingComposer extends Composer<_$AppDatabase, $MemoriesTable> {
+  $$MemoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get spaceId =>
+      $composableBuilder(column: $table.spaceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get tripId =>
+      $composableBuilder(column: $table.tripId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get placeName =>
+      $composableBuilder(column: $table.placeName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get visitedOn =>
+      $composableBuilder(column: $table.visitedOn, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get story =>
+      $composableBuilder(column: $table.story, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$MemoriesTableAnnotationComposer extends Composer<_$AppDatabase, $MemoriesTable> {
+  $$MemoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id => $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get spaceId => $composableBuilder(column: $table.spaceId, builder: (column) => column);
+
+  GeneratedColumn<String> get tripId => $composableBuilder(column: $table.tripId, builder: (column) => column);
+
+  GeneratedColumn<String> get title => $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get placeName => $composableBuilder(column: $table.placeName, builder: (column) => column);
+
+  GeneratedColumn<String> get visitedOn => $composableBuilder(column: $table.visitedOn, builder: (column) => column);
+
+  GeneratedColumn<String> get story => $composableBuilder(column: $table.story, builder: (column) => column);
+
+  GeneratedColumn<String> get createdBy => $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get createdAt => $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedAt => $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get deletedAt => $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => column);
+}
+
+class $$MemoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MemoriesTable,
+          MemoryRow,
+          $$MemoriesTableFilterComposer,
+          $$MemoriesTableOrderingComposer,
+          $$MemoriesTableAnnotationComposer,
+          $$MemoriesTableCreateCompanionBuilder,
+          $$MemoriesTableUpdateCompanionBuilder,
+          (MemoryRow, BaseReferences<_$AppDatabase, $MemoriesTable, MemoryRow>),
+          MemoryRow,
+          PrefetchHooks Function()
+        > {
+  $$MemoriesTableTableManager(_$AppDatabase db, $MemoriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () => $$MemoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$MemoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$MemoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> spaceId = const Value.absent(),
+                Value<String?> tripId = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> placeName = const Value.absent(),
+                Value<String> visitedOn = const Value.absent(),
+                Value<String?> story = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String> createdAt = const Value.absent(),
+                Value<String> updatedAt = const Value.absent(),
+                Value<String?> deletedAt = const Value.absent(),
+                Value<String?> serverUpdatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MemoriesCompanion(
+                id: id,
+                spaceId: spaceId,
+                tripId: tripId,
+                title: title,
+                placeName: placeName,
+                visitedOn: visitedOn,
+                story: story,
+                createdBy: createdBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String spaceId,
+                Value<String?> tripId = const Value.absent(),
+                required String title,
+                Value<String?> placeName = const Value.absent(),
+                required String visitedOn,
+                Value<String?> story = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                required String createdAt,
+                required String updatedAt,
+                Value<String?> deletedAt = const Value.absent(),
+                Value<String?> serverUpdatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MemoriesCompanion.insert(
+                id: id,
+                spaceId: spaceId,
+                tripId: tripId,
+                title: title,
+                placeName: placeName,
+                visitedOn: visitedOn,
+                story: story,
+                createdBy: createdBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$MemoriesTable, MemoryRow>(table),
+                  BaseReferences<_$AppDatabase, $MemoriesTable, MemoryRow>(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MemoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MemoriesTable,
+      MemoryRow,
+      $$MemoriesTableFilterComposer,
+      $$MemoriesTableOrderingComposer,
+      $$MemoriesTableAnnotationComposer,
+      $$MemoriesTableCreateCompanionBuilder,
+      $$MemoriesTableUpdateCompanionBuilder,
+      (MemoryRow, BaseReferences<_$AppDatabase, $MemoriesTable, MemoryRow>),
+      MemoryRow,
+      PrefetchHooks Function()
+    >;
+typedef $$MemoryPhotosTableCreateCompanionBuilder = MemoryPhotosCompanion Function({
+  required String id,
+  required String memoryId,
+  required String spaceId,
+  Value<String?> uploadedBy,
+  required double position,
+  Value<int?> width,
+  Value<int?> height,
+  Value<String?> takenAt,
+  Value<String?> url,
+  Value<String?> thumbUrl,
+  required String createdAt,
+  required String updatedAt,
+  Value<String?> deletedAt,
+  Value<String?> serverUpdatedAt,
+  Value<int> rowid,
+});
+typedef $$MemoryPhotosTableUpdateCompanionBuilder = MemoryPhotosCompanion Function({
+  Value<String> id,
+  Value<String> memoryId,
+  Value<String> spaceId,
+  Value<String?> uploadedBy,
+  Value<double> position,
+  Value<int?> width,
+  Value<int?> height,
+  Value<String?> takenAt,
+  Value<String?> url,
+  Value<String?> thumbUrl,
+  Value<String> createdAt,
+  Value<String> updatedAt,
+  Value<String?> deletedAt,
+  Value<String?> serverUpdatedAt,
+  Value<int> rowid,
+});
+
+class $$MemoryPhotosTableFilterComposer extends Composer<_$AppDatabase, $MemoryPhotosTable> {
+  $$MemoryPhotosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get memoryId =>
+      $composableBuilder(column: $table.memoryId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get spaceId =>
+      $composableBuilder(column: $table.spaceId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get uploadedBy =>
+      $composableBuilder(column: $table.uploadedBy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get width => $composableBuilder(column: $table.width, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get height =>
+      $composableBuilder(column: $table.height, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get takenAt =>
+      $composableBuilder(column: $table.takenAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get url => $composableBuilder(column: $table.url, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get thumbUrl =>
+      $composableBuilder(column: $table.thumbUrl, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$MemoryPhotosTableOrderingComposer extends Composer<_$AppDatabase, $MemoryPhotosTable> {
+  $$MemoryPhotosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get memoryId =>
+      $composableBuilder(column: $table.memoryId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get spaceId =>
+      $composableBuilder(column: $table.spaceId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get uploadedBy =>
+      $composableBuilder(column: $table.uploadedBy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get position =>
+      $composableBuilder(column: $table.position, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get width =>
+      $composableBuilder(column: $table.width, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get height =>
+      $composableBuilder(column: $table.height, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get takenAt =>
+      $composableBuilder(column: $table.takenAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get url =>
+      $composableBuilder(column: $table.url, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get thumbUrl =>
+      $composableBuilder(column: $table.thumbUrl, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$MemoryPhotosTableAnnotationComposer extends Composer<_$AppDatabase, $MemoryPhotosTable> {
+  $$MemoryPhotosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id => $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get memoryId => $composableBuilder(column: $table.memoryId, builder: (column) => column);
+
+  GeneratedColumn<String> get spaceId => $composableBuilder(column: $table.spaceId, builder: (column) => column);
+
+  GeneratedColumn<String> get uploadedBy => $composableBuilder(column: $table.uploadedBy, builder: (column) => column);
+
+  GeneratedColumn<double> get position => $composableBuilder(column: $table.position, builder: (column) => column);
+
+  GeneratedColumn<int> get width => $composableBuilder(column: $table.width, builder: (column) => column);
+
+  GeneratedColumn<int> get height => $composableBuilder(column: $table.height, builder: (column) => column);
+
+  GeneratedColumn<String> get takenAt => $composableBuilder(column: $table.takenAt, builder: (column) => column);
+
+  GeneratedColumn<String> get url => $composableBuilder(column: $table.url, builder: (column) => column);
+
+  GeneratedColumn<String> get thumbUrl => $composableBuilder(column: $table.thumbUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get createdAt => $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedAt => $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get deletedAt => $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get serverUpdatedAt =>
+      $composableBuilder(column: $table.serverUpdatedAt, builder: (column) => column);
+}
+
+class $$MemoryPhotosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $MemoryPhotosTable,
+          MemoryPhotoRow,
+          $$MemoryPhotosTableFilterComposer,
+          $$MemoryPhotosTableOrderingComposer,
+          $$MemoryPhotosTableAnnotationComposer,
+          $$MemoryPhotosTableCreateCompanionBuilder,
+          $$MemoryPhotosTableUpdateCompanionBuilder,
+          (MemoryPhotoRow, BaseReferences<_$AppDatabase, $MemoryPhotosTable, MemoryPhotoRow>),
+          MemoryPhotoRow,
+          PrefetchHooks Function()
+        > {
+  $$MemoryPhotosTableTableManager(_$AppDatabase db, $MemoryPhotosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () => $$MemoryPhotosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () => $$MemoryPhotosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () => $$MemoryPhotosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> memoryId = const Value.absent(),
+                Value<String> spaceId = const Value.absent(),
+                Value<String?> uploadedBy = const Value.absent(),
+                Value<double> position = const Value.absent(),
+                Value<int?> width = const Value.absent(),
+                Value<int?> height = const Value.absent(),
+                Value<String?> takenAt = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<String?> thumbUrl = const Value.absent(),
+                Value<String> createdAt = const Value.absent(),
+                Value<String> updatedAt = const Value.absent(),
+                Value<String?> deletedAt = const Value.absent(),
+                Value<String?> serverUpdatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MemoryPhotosCompanion(
+                id: id,
+                memoryId: memoryId,
+                spaceId: spaceId,
+                uploadedBy: uploadedBy,
+                position: position,
+                width: width,
+                height: height,
+                takenAt: takenAt,
+                url: url,
+                thumbUrl: thumbUrl,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String memoryId,
+                required String spaceId,
+                Value<String?> uploadedBy = const Value.absent(),
+                required double position,
+                Value<int?> width = const Value.absent(),
+                Value<int?> height = const Value.absent(),
+                Value<String?> takenAt = const Value.absent(),
+                Value<String?> url = const Value.absent(),
+                Value<String?> thumbUrl = const Value.absent(),
+                required String createdAt,
+                required String updatedAt,
+                Value<String?> deletedAt = const Value.absent(),
+                Value<String?> serverUpdatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => MemoryPhotosCompanion.insert(
+                id: id,
+                memoryId: memoryId,
+                spaceId: spaceId,
+                uploadedBy: uploadedBy,
+                position: position,
+                width: width,
+                height: height,
+                takenAt: takenAt,
+                url: url,
+                thumbUrl: thumbUrl,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                serverUpdatedAt: serverUpdatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$MemoryPhotosTable, MemoryPhotoRow>(table),
+                  BaseReferences<_$AppDatabase, $MemoryPhotosTable, MemoryPhotoRow>(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$MemoryPhotosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $MemoryPhotosTable,
+      MemoryPhotoRow,
+      $$MemoryPhotosTableFilterComposer,
+      $$MemoryPhotosTableOrderingComposer,
+      $$MemoryPhotosTableAnnotationComposer,
+      $$MemoryPhotosTableCreateCompanionBuilder,
+      $$MemoryPhotosTableUpdateCompanionBuilder,
+      (MemoryPhotoRow, BaseReferences<_$AppDatabase, $MemoryPhotosTable, MemoryPhotoRow>),
+      MemoryPhotoRow,
+      PrefetchHooks Function()
+    >;
 typedef $$OutboxOpsTableCreateCompanionBuilder = OutboxOpsCompanion Function({
   Value<int> id,
   required String entityType,
@@ -7575,6 +9423,8 @@ class $AppDatabaseManager {
   $$SavingsEntriesTableTableManager get savingsEntries => $$SavingsEntriesTableTableManager(_db, _db.savingsEntries);
   $$SpecialDatesTableTableManager get specialDates => $$SpecialDatesTableTableManager(_db, _db.specialDates);
   $$TripsTableTableManager get trips => $$TripsTableTableManager(_db, _db.trips);
+  $$MemoriesTableTableManager get memories => $$MemoriesTableTableManager(_db, _db.memories);
+  $$MemoryPhotosTableTableManager get memoryPhotos => $$MemoryPhotosTableTableManager(_db, _db.memoryPhotos);
   $$OutboxOpsTableTableManager get outboxOps => $$OutboxOpsTableTableManager(_db, _db.outboxOps);
   $$MetaEntriesTableTableManager get metaEntries => $$MetaEntriesTableTableManager(_db, _db.metaEntries);
 }

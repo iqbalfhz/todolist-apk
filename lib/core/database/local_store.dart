@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../features/auth/domain/user.dart';
+import '../../features/memories/domain/memory.dart';
+import '../../features/memories/domain/memory_photo.dart';
 import '../../features/savings/domain/savings_entry.dart';
 import '../../features/savings/domain/savings_goal.dart';
 import '../../features/spaces/domain/space.dart';
@@ -26,7 +28,8 @@ abstract final class MetaKeys {
   static const String deviceToken = 'device_token';
 
   /// Versi daftar koleksi sync yang sudah pernah ditarik penuh oleh database ini.
-  /// Koleksi baru (v0.2: `special_dates`, lalu `trips`) membuat sync berikutnya berjalan penuh sekali.
+  /// Koleksi baru (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`)
+  /// membuat sync berikutnya berjalan penuh sekali.
   static const String syncCollections = 'sync_collections';
 }
 
@@ -67,6 +70,12 @@ class LocalStore {
         return row?.toModel().toJson();
       case EntityType.trip:
         final row = await (db.select(db.trips)..where((t) => t.id.equals(id))).getSingleOrNull();
+        return row?.toModel().toJson();
+      case EntityType.memory:
+        final row = await (db.select(db.memories)..where((t) => t.id.equals(id))).getSingleOrNull();
+        return row?.toModel().toJson();
+      case EntityType.memoryPhoto:
+        final row = await (db.select(db.memoryPhotos)..where((t) => t.id.equals(id))).getSingleOrNull();
         return row?.toModel().toJson();
       case EntityType.me:
         final raw = await meta(MetaKeys.profile);
@@ -127,6 +136,20 @@ class LocalStore {
                   ..where(db.trips.id.equals(id)))
                 .map((row) => row.read(db.trips.serverUpdatedAt))
                 .getSingleOrNull();
+      case EntityType.memory:
+        stamp =
+            await (db.selectOnly(db.memories)
+                  ..addColumns([db.memories.serverUpdatedAt])
+                  ..where(db.memories.id.equals(id)))
+                .map((row) => row.read(db.memories.serverUpdatedAt))
+                .getSingleOrNull();
+      case EntityType.memoryPhoto:
+        stamp =
+            await (db.selectOnly(db.memoryPhotos)
+                  ..addColumns([db.memoryPhotos.serverUpdatedAt])
+                  ..where(db.memoryPhotos.id.equals(id)))
+                .map((row) => row.read(db.memoryPhotos.serverUpdatedAt))
+                .getSingleOrNull();
       case EntityType.me:
         stamp = null;
     }
@@ -169,6 +192,14 @@ class LocalStore {
         await db
             .into(db.trips)
             .insertOnConflictUpdate(tripCompanion(Trip.fromJson(json), serverUpdatedAt: serverUpdatedAt));
+      case EntityType.memory:
+        await db
+            .into(db.memories)
+            .insertOnConflictUpdate(memoryCompanion(Memory.fromJson(json), serverUpdatedAt: serverUpdatedAt));
+      case EntityType.memoryPhoto:
+        await db
+            .into(db.memoryPhotos)
+            .insertOnConflictUpdate(memoryPhotoCompanion(MemoryPhoto.fromJson(json), serverUpdatedAt: serverUpdatedAt));
       case EntityType.me:
         await setMeta(MetaKeys.profile, jsonEncode(User.fromJson(json).toJson()));
     }
@@ -202,6 +233,10 @@ class LocalStore {
         await (db.delete(db.specialDates)..where((t) => t.id.equals(id))).go();
       case EntityType.trip:
         await (db.delete(db.trips)..where((t) => t.id.equals(id))).go();
+      case EntityType.memory:
+        await (db.delete(db.memories)..where((t) => t.id.equals(id))).go();
+      case EntityType.memoryPhoto:
+        await (db.delete(db.memoryPhotos)..where((t) => t.id.equals(id))).go();
       case EntityType.me:
         break;
     }
@@ -223,11 +258,16 @@ class LocalStore {
         await (db.update(db.savingsEntries)
               ..where((t) => t.savingsGoalId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
             .write(SavingsEntriesCompanion(deletedAt: Value(deletedAt)));
+      case EntityType.memory:
+        await (db.update(db.memoryPhotos)
+              ..where((t) => t.memoryId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
+            .write(MemoryPhotosCompanion(deletedAt: Value(deletedAt)));
       case EntityType.space ||
           EntityType.task ||
           EntityType.entry ||
           EntityType.specialDate ||
           EntityType.trip ||
+          EntityType.memoryPhoto ||
           EntityType.me:
         break;
     }
@@ -344,6 +384,32 @@ class LocalStore {
   /// selama checklist buatan HP pasangan belum sampai lewat sync.
   Future<List<TaskList>> checklistsOf(String tripId) async {
     final rows = await (db.select(db.taskLists)..where((t) => t.tripId.equals(tripId) & t.deletedAt.isNull())).get();
+    return rows.map((row) => row.toModel()).toList();
+  }
+
+  /// Kenangan yang belum dihapus. Linimasanya diurutkan di HP dari `visited_on`.
+  Stream<List<Memory>> watchMemories() =>
+      (db.select(db.memories)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+          .watch()
+          .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Foto kenangan yang belum dihapus, urut `position`.
+  Stream<List<MemoryPhoto>> watchMemoryPhotos() =>
+      (db.select(db.memoryPhotos)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm(expression: t.position), (t) => OrderingTerm(expression: t.id)]))
+          .watch()
+          .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Foto kenangan [memoryId] yang belum dihapus, urut `position`.
+  Future<List<MemoryPhoto>> memoryPhotos(String memoryId) async {
+    final rows =
+        await (db.select(db.memoryPhotos)
+              ..where((t) => t.memoryId.equals(memoryId) & t.deletedAt.isNull())
+              ..orderBy([(t) => OrderingTerm(expression: t.position), (t) => OrderingTerm(expression: t.id)]))
+            .get();
     return rows.map((row) => row.toModel()).toList();
   }
 

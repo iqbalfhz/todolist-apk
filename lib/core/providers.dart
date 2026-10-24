@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/auth/data/auth_repository.dart';
 import '../features/auth/domain/user.dart';
+import '../features/memories/domain/memory.dart';
+import '../features/memories/domain/memory_photo.dart';
 import '../features/savings/domain/savings_entry.dart';
 import '../features/savings/domain/savings_goal.dart';
 import '../features/spaces/domain/space.dart';
@@ -14,6 +16,9 @@ import '../features/trips/domain/trip.dart';
 import 'api/api_transport.dart';
 import 'config/env.dart';
 import 'database/app_database.dart';
+import 'media/photo_cache.dart';
+import 'media/photo_files.dart';
+import 'media/photo_picker.dart';
 import 'session/account.dart';
 import 'session/session.dart';
 import 'time/space_clock.dart';
@@ -67,7 +72,13 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) => AuthRepository(
 /// Cara membuka akun untuk sebuah ID pengguna. Ditimpa di tes dengan database di memori.
 final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
   final api = ref.watch(apiTransportProvider);
-  return (userId) => Account(userId: userId, db: AppDatabase.forAccount(userId), api: api);
+  return (userId) => Account(
+    userId: userId,
+    db: AppDatabase.forAccount(userId),
+    api: api,
+    photoCache: DevicePhotoCache.instance,
+    photoFiles: PhotoFiles.forAccount(userId, DevicePhotoCache.instance),
+  );
 });
 
 /// Akun yang sedang masuk, atau `null`. Akun lain di HP yang sama membuka database yang berbeda.
@@ -135,6 +146,19 @@ final specialDatesProvider = StreamProvider<List<SpecialDate>>(
 final tripsProvider = StreamProvider<List<Trip>>(
   (ref) => ref.watch(accountProvider)?.trips.watchAll() ?? Stream.value(const []),
 );
+
+/// Kenangan yang belum dihapus (v0.3).
+final memoriesProvider = StreamProvider<List<Memory>>(
+  (ref) => ref.watch(accountProvider)?.memories.watchAll() ?? Stream.value(const []),
+);
+
+/// Foto kenangan yang belum dihapus, urut `position` (v0.3).
+final memoryPhotosProvider = StreamProvider<List<MemoryPhoto>>(
+  (ref) => ref.watch(accountProvider)?.memories.watchPhotos() ?? Stream.value(const []),
+);
+
+/// Memilih dan menyiapkan foto kenangan. Ditimpa di tes dengan versi palsu.
+final photoPickerProvider = Provider<PhotoPicker>((ref) => DevicePhotoPicker(ref.watch(devicePlatformProvider)));
 
 /// Jumlah perubahan yang belum terkirim ke server.
 final pendingCountProvider = StreamProvider<int>(

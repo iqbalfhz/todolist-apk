@@ -15,6 +15,12 @@ enum EntityType {
   /// Perjalanan (v0.2). Checklist persiapannya adalah daftar dengan `trip_id`.
   trip(apiPath: 'trips', syncKey: 'trips'),
 
+  /// Kenangan (v0.3).
+  memory(apiPath: 'memories', syncKey: 'memories'),
+
+  /// Foto kenangan (v0.3). Dibuat lewat `POST` multipart, bukan `PUT`.
+  memoryPhoto(apiPath: 'memory-photos', syncKey: 'memory_photos'),
+
   /// Profil sendiri; hanya `PATCH /me` yang lewat antrean.
   me(apiPath: 'me');
 
@@ -24,7 +30,7 @@ enum EntityType {
   final String? syncKey;
 
   /// Urutan penerapan satu halaman sync: induk dulu, baru anak.
-  static const List<EntityType> syncOrder = [space, trip, list, task, goal, entry, specialDate];
+  static const List<EntityType> syncOrder = [space, trip, list, task, goal, entry, specialDate, memory, memoryPhoto];
 
   /// Jenis anak yang ikut terhapus saat induknya dihapus, beserta kolom penunjuk induknya.
   ///
@@ -33,6 +39,7 @@ enum EntityType {
   (EntityType, String)? get child => switch (this) {
     EntityType.list => (EntityType.task, 'task_list_id'),
     EntityType.goal => (EntityType.entry, 'savings_goal_id'),
+    EntityType.memory => (EntityType.memoryPhoto, 'memory_id'),
     _ => null,
   };
 

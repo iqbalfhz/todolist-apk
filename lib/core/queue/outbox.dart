@@ -10,6 +10,7 @@ import '../database/app_database.dart';
 import '../database/entity_type.dart';
 import '../database/local_store.dart';
 import '../sync/row_applier.dart';
+import 'upload_files.dart';
 
 /// Keadaan antrean setelah satu putaran kirim.
 enum FlushState {
@@ -64,12 +65,14 @@ typedef TimerFactory = Timer Function(Duration delay, void Function() callback);
 /// - perubahan baru hanya digabung ke operasi untuk data yang sama kalau operasi itu
 ///   paling akhir di antrean, belum pernah dikirim, dan tidak sedang menunggu Urungkan;
 /// - selesai dan hapus tugas menjadi operasi tersendiri dengan jeda kirim 5 detik;
-/// - data lokal hanya dibuang kalau balasannya JSON dengan `code` yang dikenal.
+/// - data lokal hanya dibuang kalau balasannya JSON dengan `code` yang dikenal;
+/// - foto kenangan diunggah lewat `POST` multipart, dengan berkas dari [uploads].
 class Outbox {
   Outbox({
     required this.store,
     required this.api,
     RowApplier? applier,
+    this.uploads,
     DateTime Function()? now,
     TimerFactory? createTimer,
     this.autoFlush = true,
@@ -80,6 +83,9 @@ class Outbox {
   final LocalStore store;
   final ApiTransport api;
   final RowApplier applier;
+
+  /// Berkas untuk operasi `POST`. Tanpa ini, operasi `POST` dibuang karena tidak bisa dikirim.
+  final UploadFiles? uploads;
   final DateTime Function() _now;
   final TimerFactory _createTimer;
 
@@ -122,6 +128,13 @@ class Outbox {
   /// `PUT`: buat data dengan ID dari HP. [payload] adalah body lengkapnya.
   Future<void> enqueueCreate(EntityType type, String id, Map<String, dynamic> payload) async {
     await _insert(type, id, 'PUT', payload: payload);
+    _kick();
+  }
+
+  /// `POST` multipart: unggah berkas data baru (foto kenangan) dengan ID dari HP.
+  /// [payload] berisi kolom formulirnya; berkasnya diambil dari [uploads] saat dikirim.
+  Future<void> enqueueUpload(EntityType type, String id, Map<String, dynamic> payload) async {
+    await _insert(type, id, 'POST', payload: payload);
     _kick();
   }
 
@@ -180,6 +193,36 @@ class Outbox {
     final opId = await _insert(type, id, 'DELETE', before: before, held: undoable);
     _kick();
     return opId;
+  }
+
+  /// Batalkan unggahan [ids] yang belum pernah dikirim, misalnya foto yang dihapus bersama
+  /// kenangannya: operasinya (termasuk perubahan sesudahnya), barisnya, dan berkasnya dibuang.
+  /// Unggahan yang sudah pernah dikirim dibiarkan; server menghapusnya bersama induknya.
+  Future<void> cancelUploads(EntityType type, Iterable<String> ids) async {
+    final wanted = ids.toSet();
+    if (wanted.isEmpty) return;
+
+    final cancelled = await store.transaction(() async {
+      final ops = await (_db.select(
+        _db.outboxOps,
+      )..where((t) => t.entityType.equals(type.name) & t.entityId.isIn(wanted) & t.attempted.equals(false))).get();
+      final unsent = {
+        for (final op in ops)
+          if (op.method == 'POST') op.entityId,
+      };
+
+      for (final op in ops) {
+        if (unsent.contains(op.entityId)) await _delete(op.id);
+      }
+      for (final id in unsent) {
+        await store.remove(type, id);
+      }
+      return unsent;
+    });
+
+    for (final id in cancelled) {
+      await _forgetFile(type, id);
+    }
   }
 
   /// Urungkan: hapus operasi itu saja dan pulihkan nilai sebelumnya, jadi pasangan
@@ -285,10 +328,20 @@ class Outbox {
       if (op == null) continue;
 
       try {
+        ApiUpload? upload;
+        if (op.method == 'POST') {
+          upload = await uploads?.fileFor(op);
+          if (upload == null) {
+            await _dropUnsendable(op);
+            continue;
+          }
+        }
+
         final response = await api.send(
           op.method,
           _pathOf(op),
           body: op.method == 'DELETE' ? null : _decode(op.payload),
+          upload: upload,
         );
         await _onSuccess(op, response);
         _failures = 0;
@@ -327,6 +380,34 @@ class Outbox {
     // Server ikut menghapus checklist dan tugasnya bersama perjalanan. Balasan PUT checklist
     // yang dibuat offline bisa memunculkannya lagi di HP, jadi penghapusannya segera ditarik.
     if (op.method == 'DELETE' && op.entityType == EntityType.trip.name) _emit(const OutboxNeedsSync());
+
+    // Berkas yang sudah tersimpan di server dipindah ke cache gambar. Gagal di sini tidak
+    // menghentikan antrean: paling buruk, gambarnya diunduh lagi nanti.
+    if (op.method == 'POST' && response.body != null) {
+      try {
+        await uploads?.uploaded(op, response.data);
+      } on Object {
+        await _forgetFile(EntityType.byName(op.entityType), op.entityId);
+      }
+    }
+  }
+
+  /// Operasi `POST` yang berkasnya sudah tidak ada di HP tidak mungkin terkirim lagi.
+  Future<void> _dropUnsendable(OutboxRow op) async {
+    final type = EntityType.byName(op.entityType);
+    await store.transaction(() async {
+      await _delete(op.id);
+      await store.remove(type, op.entityId);
+    });
+  }
+
+  /// Berkas data yang dibuang dari HP tidak dibutuhkan lagi.
+  Future<void> _forgetFile(EntityType type, String id) async {
+    try {
+      await uploads?.discard(type, id);
+    } on Object {
+      // Berkas yang tertinggal tidak mengganggu; dicoba lagi tidak ada gunanya.
+    }
   }
 
   /// Tangani balasan error sesuai tabel Error di kontrak. Mengembalikan keadaan
@@ -344,6 +425,7 @@ class Outbox {
           await _delete(op.id);
           await store.remove(type, op.entityId);
         });
+        await _forgetFile(type, op.entityId);
         return null;
 
       case ApiErrorCode.routeNotFound:
@@ -353,7 +435,7 @@ class Outbox {
 
       case ApiErrorCode.parentDeleted || ApiErrorCode.parentArchived:
         if (type != EntityType.task) {
-          // Setoran ke target yang sudah dihapus: buang dan beri tahu.
+          // Setoran ke target, atau foto ke kenangan, yang sudah dihapus: buang dan beri tahu.
           await _discard(op, error);
           return null;
         }
@@ -394,28 +476,30 @@ class Outbox {
   Future<void> _discard(OutboxRow op, ApiError error) async {
     final type = EntityType.byName(op.entityType);
 
-    await store.transaction(() async {
+    final removed = await store.transaction(() async {
       await _delete(op.id);
 
       if (error.hasCurrent) {
         final current = error.current;
         if (current == null) {
           await store.remove(type, op.entityId);
-        } else {
-          await applier.apply(type, current, force: true);
+          return true;
         }
-        return;
+        await applier.apply(type, current, force: true);
+        return false;
       }
 
       // Tanpa `current`: kembalikan ke keadaan sebelum operasi ini.
-      if (op.method == 'PUT') {
+      if (op.method == 'PUT' || op.method == 'POST') {
         await store.remove(type, op.entityId);
-      } else {
-        final before = _decode(op.before);
-        if (before.isNotEmpty) await store.patch(type, op.entityId, before);
+        return true;
       }
+      final before = _decode(op.before);
+      if (before.isNotEmpty) await store.patch(type, op.entityId, before);
+      return false;
     });
 
+    if (removed) await _forgetFile(type, op.entityId);
     _emit(OutboxRejected(error.message));
   }
 

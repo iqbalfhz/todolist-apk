@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 
 import 'api_error.dart';
 
-/// Berkas untuk request `multipart/form-data` (foto profil).
+/// Berkas untuk request `multipart/form-data` (foto profil dan foto kenangan).
 class ApiUpload {
   const ApiUpload({required this.field, required this.bytes, required this.filename, required this.mimeType});
 
@@ -73,7 +73,7 @@ class DioApiTransport implements ApiTransport {
     _dio.options
       ..baseUrl = baseUrl.endsWith('/') ? baseUrl : '$baseUrl/'
       ..connectTimeout = const Duration(seconds: 10)
-      ..sendTimeout = const Duration(seconds: 20)
+      ..sendTimeout = _sendTimeout
       ..receiveTimeout = const Duration(seconds: 20)
       // Balasan dibaca sebagai teks lalu di-decode sendiri, supaya halaman HTML
       // dari proxy tidak pernah dianggap balasan API.
@@ -88,6 +88,11 @@ class DioApiTransport implements ApiTransport {
 
   final Dio _dio;
 
+  static const Duration _sendTimeout = Duration(seconds: 20);
+
+  /// Foto kenangan sampai sekitar 1,5 MB; di jaringan lambat butuh lebih lama.
+  static const Duration _uploadTimeout = Duration(seconds: 90);
+
   @override
   Future<ApiResponse> send(
     String method,
@@ -101,11 +106,12 @@ class DioApiTransport implements ApiTransport {
     try {
       response = await _dio.request<String>(
         path.startsWith('/') ? path.substring(1) : path,
-        data: upload == null ? body : _formData(upload),
+        data: upload == null ? body : _formData(upload, body),
         queryParameters: query,
         options: Options(
           method: method,
           contentType: upload == null ? Headers.jsonContentType : Headers.multipartFormDataContentType,
+          sendTimeout: upload == null ? _sendTimeout : _uploadTimeout,
         ),
       );
     } on DioException catch (error) {
@@ -142,7 +148,10 @@ class DioApiTransport implements ApiTransport {
     );
   }
 
-  FormData _formData(ApiUpload upload) => FormData.fromMap({
+  /// Berkas dan kolom formulirnya. Kolom yang kosong tidak dikirim, dan angka dikirim sebagai teks.
+  FormData _formData(ApiUpload upload, Map<String, dynamic>? fields) => FormData.fromMap({
+    for (final entry in (fields ?? const <String, dynamic>{}).entries)
+      if (entry.value != null) entry.key: entry.value.toString(),
     upload.field: MultipartFile.fromBytes(
       upload.bytes,
       filename: upload.filename,

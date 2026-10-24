@@ -13,7 +13,9 @@ import 'row_applier.dart';
 /// Aturannya dari bagian "Aturan di HP" di kontrak:
 /// - hanya satu sync berjalan pada satu waktu;
 /// - operasi antrean yang bisa dikirim dikirim dulu, lalu data tetap ditarik walau
-///   masih ada yang menunggu jeda Urungkan atau coba ulang;
+///   masih ada yang menunggu jeda Urungkan atau coba ulang. Pengiriman ditunggu paling
+///   lama [flushLimit], supaya unggahan foto yang panjang tidak menahan perubahan pasangan;
+///   sisanya tetap berjalan di latar belakang;
 /// - halaman pertama memakai `since` yang tersimpan, halaman berikutnya memakai `cursor`
 ///   apa adanya;
 /// - tanpa `since` (sync penuh) kalau database lokal akun itu masih kosong, atau sekali
@@ -42,10 +44,19 @@ class SyncEngine {
   /// Versi daftar koleksi `GET /sync` yang dikenal app ini; naik setiap ada koleksi baru
   /// atau kolom baru yang perlu diisi untuk baris lama.
   /// 1: v0.1. 2: `special_dates`. 3: `trips`, `trip_id` di daftar, dan jadwal pengingat
-  /// setor di target (semuanya v0.2).
-  static const int collectionsVersion = 3;
+  /// setor di target (semuanya v0.2). 4: `memories` dan `memory_photos` (v0.3).
+  static const int collectionsVersion = 4;
+
+  /// Paling lama menunggu antrean terkirim sebelum menarik data.
+  static const Duration flushLimit = Duration(seconds: 8);
 
   final Zone _zone = Zone.current;
+
+  final StreamController<void> _pulled = StreamController.broadcast();
+
+  /// Berbunyi setiap data selesai ditarik sampai halaman terakhir, misalnya untuk
+  /// mengunduh thumbnail foto yang baru datang.
+  Stream<void> get pulled => _pulled.stream;
 
   Future<bool>? _running;
   bool _again = false;
@@ -77,9 +88,10 @@ class SyncEngine {
     do {
       _again = false;
       try {
-        await outbox.flush(retryNow: flushNow);
+        await outbox.flush(retryNow: flushNow).timeout(flushLimit, onTimeout: () => FlushState.waitingRetry);
         await _pull();
         pulled = true;
+        if (!_pulled.isClosed) _pulled.add(null);
         _failures = 0;
         _retryTimer?.cancel();
       } on NetworkFailure {
@@ -167,5 +179,6 @@ class SyncEngine {
   void dispose() {
     _disposed = true;
     _retryTimer?.cancel();
+    unawaited(_pulled.close());
   }
 }

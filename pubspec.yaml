@@ -36,10 +36,14 @@ dependencies:
   firebase_messaging: ^16.7.0
   flutter_local_notifications: ^22.3.1
 
-  # Foto profil
+  # Foto profil dan foto kenangan
   image_picker: ^1.2.4
   image_cropper: ^12.2.1
   flutter_image_compress: ^2.5.1
+  # Sudah terpasang lewat cached_network_image dan drift_flutter; dipakai langsung untuk cache
+  # foto kenangan dengan kunci sendiri dan berkas yang menunggu diunggah (v0.3).
+  flutter_cache_manager: ^3.4.1
+  path_provider: ^2.1.5
 
   # Lain-lain
   share_plus: ^13.3.1

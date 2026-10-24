@@ -45,4 +45,38 @@ class DevicePlatform {
       return DeviceInfo.unknown;
     }
   }
+
+  /// Ukuran asli dan waktu pengambilan foto di [path], dibaca sebelum fotonya dikompres.
+  /// `null` kalau berkasnya bukan gambar yang bisa dibaca HP ini.
+  Future<PhotoInfo?> photoInfo(String path) async {
+    try {
+      final raw = await _channel.invokeMapMethod<String, dynamic>('photoInfo', {'path': path});
+      if (raw == null) return null;
+      return PhotoInfo(
+        width: raw['width'] as int? ?? 0,
+        height: raw['height'] as int? ?? 0,
+        takenAt: raw['takenAt'] as String?,
+        offset: raw['offset'] as String?,
+      );
+    } on MissingPluginException {
+      return null;
+    } on PlatformException {
+      return null;
+    }
+  }
+}
+
+/// Isi `photoInfo` dari `MainActivity.kt`.
+class PhotoInfo {
+  const PhotoInfo({required this.width, required this.height, this.takenAt, this.offset});
+
+  /// Ukuran berkas asli, sebelum diputar menurut EXIF.
+  final int width;
+  final int height;
+
+  /// EXIF `DateTimeOriginal` apa adanya, misalnya "2027:06:20 10:12:45".
+  final String? takenAt;
+
+  /// EXIF `OffsetTimeOriginal`, misalnya "+07:00".
+  final String? offset;
 }
