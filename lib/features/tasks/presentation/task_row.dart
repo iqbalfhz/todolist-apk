@@ -8,6 +8,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../spaces/domain/household.dart';
 import '../domain/task_views.dart';
+import 'repeat_sheet.dart';
 import 'task_actions.dart';
 import 'task_text.dart';
 
@@ -99,8 +100,29 @@ class TaskRow extends ConsumerWidget {
         : null;
 
     final style = overdue ? text.captionStrong.copyWith(color: color) : text.caption;
+    final repeat = item.task.repeat;
 
     Widget icon(IconData data) => Icon(data, size: AppDimens.iconXs, color: color);
+
+    // Penanda satu kotak utuh (ikon dan label), seperti "Penting": baris boleh putus di sekitar
+    // WidgetSpan, jadi keduanya tidak boleh berupa dua span.
+    InlineSpan badge(IconData data, String label) => WidgetSpan(
+      alignment: PlaceholderAlignment.middle,
+      // Isi WidgetSpan sudah ikut diperbesar bersama paragrafnya; tanpa ini teksnya
+      // diperbesar dua kali saat huruf sistem diperbesar.
+      child: MediaQuery.withNoTextScaling(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            icon(data),
+            const SizedBox(width: AppDimens.gap4),
+            Flexible(
+              child: Text(label, style: style, maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+          ],
+        ),
+      ),
+    );
 
     // Satu paragraf yang mengalir. Tanda "Penting" satu kotak utuh: baris boleh putus
     // di sekitar WidgetSpan, jadi ikon dan labelnya tidak boleh berupa dua span.
@@ -112,25 +134,14 @@ class TaskRow extends ConsumerWidget {
             const TextSpan(text: _nbsp),
           ],
           TextSpan(text: caption),
+          // Tugas berulang (v1.0): "Tiap minggu" dengan ikon ulang.
+          if (repeat != null) ...[
+            const TextSpan(text: '$_nbsp· '),
+            badge(Symbols.repeat_rounded, repeatText(l10n, repeat)),
+          ],
           if (item.task.isImportant) ...[
             const TextSpan(text: '$_nbsp· '),
-            WidgetSpan(
-              alignment: PlaceholderAlignment.middle,
-              // Isi WidgetSpan sudah ikut diperbesar bersama paragrafnya; tanpa ini teksnya
-              // diperbesar dua kali saat huruf sistem diperbesar.
-              child: MediaQuery.withNoTextScaling(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    icon(Symbols.flag_rounded),
-                    const SizedBox(width: AppDimens.gap4),
-                    Flexible(
-                      child: Text(l10n.dueImportant, style: style, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            badge(Symbols.flag_rounded, l10n.dueImportant),
           ],
         ],
       ),

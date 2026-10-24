@@ -17,6 +17,7 @@ import '../../spaces/domain/household.dart';
 import '../domain/task_list.dart';
 import '../domain/task_views.dart';
 import 'pickers.dart';
+import 'repeat_sheet.dart';
 import 'task_actions.dart';
 import 'task_text.dart';
 
@@ -144,6 +145,14 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
     await _account?.tasks.setDue(widget.taskId, date: item.task.dueDate, time: picked);
   }
 
+  Future<void> _pickRepeat(TaskItem item) async {
+    final dueDate = item.task.dueDate;
+    if (dueDate == null) return;
+    final picked = await showRepeatSheet(context, current: item.task.repeat, dueDate: dueDate);
+    if (picked == null) return;
+    await _account?.tasks.setRepeat(widget.taskId, picked.repeat);
+  }
+
   Future<void> _pickList(TaskItem item, List<TaskList> lists, Household household) async {
     // Pindah daftar hanya bisa di dalam ruang yang sama.
     final sameSpace = lists.where((list) => list.spaceId == item.space.id).toList();
@@ -205,7 +214,10 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
       );
     } else {
       final task = item.task;
+      final repeat = task.repeat;
       final clock = ref.watch(spaceClockProvider);
+      // Tugas berikutnya dari tugas berulang yang sudah selesai, kalau sudah sampai di HP ini.
+      final next = task.nextTaskId == null ? null : _nextOf(items, task.nextTaskId!);
       final assignee = item.assigneeFor(household.me.id);
       final titleEmpty = _filled && _title.text.trim().isEmpty;
       final sameSpaceLists = lists.where((list) => list.spaceId == item.space.id).length;
@@ -255,6 +267,28 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
               color: palette.muted,
               style: text.caption,
             ),
+            if (repeat != null) ...[
+              const SizedBox(height: AppDimens.gap4),
+              StatusText(
+                text: repeatText(l10n, repeat),
+                icon: Symbols.repeat_rounded,
+                color: palette.muted,
+                style: text.caption,
+              ),
+            ],
+            if (next != null)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () => context.go(Routes.task(next.task.id, fromHome: widget.fromHome)),
+                  icon: const Icon(Symbols.arrow_forward_rounded, size: AppDimens.iconMd),
+                  label: Text(
+                    l10n.repeatNextTask(
+                      next.task.dueDate == null ? l10n.dueNone : dayLabel(l10n, next.task.dueDate!, today: next.today),
+                    ),
+                  ),
+                ),
+              ),
           ],
           const SizedBox(height: AppDimens.gap14),
           LabeledField(
@@ -303,6 +337,15 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
                         label: l10n.addTaskNoTime,
                         selected: false,
                         onTap: () => _account?.tasks.setDue(widget.taskId, date: task.dueDate, time: null),
+                      ),
+                    // Aturan ulang butuh tanggal, tidak ada di checklist perjalanan, dan tidak
+                    // berarti apa-apa lagi di tugas yang sudah selesai.
+                    if (task.dueDate != null && !item.isChecklistItem && !item.isCompleted)
+                      AppFilterChip(
+                        label: repeat == null ? l10n.repeatAdd : repeatText(l10n, repeat),
+                        icon: Symbols.repeat_rounded,
+                        selected: repeat != null,
+                        onTap: () => _pickRepeat(item),
                       ),
                   ],
                 ),
@@ -361,6 +404,9 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
       child: body,
     );
   }
+
+  static TaskItem? _nextOf(List<TaskItem> items, String id) =>
+      items.where((item) => item.task.id == id && item.task.deletedAt == null).firstOrNull;
 
   Widget _assigneeOption(BuildContext context, Assignee option, Assignee selected, Household household) {
     final chip = assigneeChip(context, option, household);

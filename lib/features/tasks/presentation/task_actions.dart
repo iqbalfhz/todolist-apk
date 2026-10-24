@@ -55,7 +55,8 @@ Future<void> toggleTask(BuildContext context, WidgetRef ref, TaskItem item) asyn
 
   showUndoSnackBar(
     messenger,
-    message: l10n.taskCompletedSnack,
+    // Tugas berikutnya dari tugas berulang baru dibuat server setelah centangnya terkirim.
+    message: item.task.repeat == null ? l10n.taskCompletedSnack : l10n.taskCompletedRepeatSnack,
     undoLabel: l10n.commonUndo,
     onUndo: () async {
       // Kalau operasinya sudah terlanjur dikirim, batalkan dengan perubahan baru.

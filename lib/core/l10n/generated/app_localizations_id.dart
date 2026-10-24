@@ -1569,4 +1569,78 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get notifTapMissingMemory => 'Kenangan itu belum tersedia di HP ini.';
+
+  @override
+  String get repeatAdd => 'Ulangi';
+
+  @override
+  String get repeatSheetTitle => 'Ulangi tugas';
+
+  @override
+  String get repeatHowOften => 'Seberapa sering?';
+
+  @override
+  String get repeatNone => 'Tidak diulang';
+
+  @override
+  String get repeatDaily => 'Harian';
+
+  @override
+  String get repeatWeekly => 'Mingguan';
+
+  @override
+  String get repeatMonthly => 'Bulanan';
+
+  @override
+  String get repeatYearly => 'Tahunan';
+
+  @override
+  String get repeatEvery => 'Setiap berapa?';
+
+  @override
+  String repeatEveryDay(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Tiap $count hari', one: 'Tiap hari');
+    return '$_temp0';
+  }
+
+  @override
+  String repeatEveryWeek(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Tiap $count minggu', one: 'Tiap minggu');
+    return '$_temp0';
+  }
+
+  @override
+  String repeatEveryMonth(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Tiap $count bulan', one: 'Tiap bulan');
+    return '$_temp0';
+  }
+
+  @override
+  String repeatEveryYear(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Tiap $count tahun', one: 'Tiap tahun');
+    return '$_temp0';
+  }
+
+  @override
+  String get repeatFewer => 'Kurangi';
+
+  @override
+  String get repeatMore => 'Tambah';
+
+  @override
+  String get repeatNote => 'Begitu tugas ini selesai, tugas berikutnya dibuat dengan tenggat baru.';
+
+  @override
+  String get repeatShortMonth => 'Di bulan yang lebih pendek, tenggatnya jatuh di hari terakhir bulan itu.';
+
+  @override
+  String get repeatLeapDay => 'Di tahun biasa, tenggatnya jatuh pada 28 Februari.';
+
+  @override
+  String repeatNextTask(String date) {
+    return 'Tugas berikutnya: $date';
+  }
+
+  @override
+  String get taskCompletedRepeatSnack => 'Tugas selesai. Yang berikutnya muncul setelah tersimpan di server.';
 }
