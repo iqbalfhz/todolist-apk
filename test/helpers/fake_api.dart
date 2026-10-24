@@ -59,6 +59,7 @@ class FakeApi implements ApiTransport {
   void Function(SentRequest request)? onRequest;
 
   int _tick = 0;
+  int _nextTasks = 0;
 
   /// Timpa balasan request berikutnya (bisa dipanggil beberapa kali, dijawab berurutan).
   void enqueue(Responder responder) => _scripted.add(responder);
@@ -170,7 +171,10 @@ class FakeApi implements ApiTransport {
 
     switch (request.method) {
       case 'PUT':
-        if (existing != null) return ApiResponse(status: 200, body: {'data': existing});
+        if (existing != null) {
+          if (resource == 'tasks') return _taskReply(table, id, existing, Map.of(existing), status: 200);
+          return ApiResponse(status: 200, body: {'data': existing});
+        }
         final time = stamp();
         final created = {
           ..._defaults(resource),
@@ -180,6 +184,7 @@ class FakeApi implements ApiTransport {
           'updated_at': time,
           'deleted_at': null,
         };
+        if (resource == 'tasks') return _taskReply(table, id, null, created, status: 201);
         table[id] = created;
         return ApiResponse(status: 201, body: {'data': created});
 
@@ -188,6 +193,14 @@ class FakeApi implements ApiTransport {
         final updated = {...existing, ...?request.body, 'updated_at': stamp()};
         if (request.body?.containsKey('completed_at') ?? false) {
           updated['completed_by'] = request.body!['completed_at'] == null ? null : 'server-user';
+        }
+        if (resource == 'tasks') {
+          // Seperti server: tanpa tanggal, aturan ulang ikut kosong.
+          if (updated['due_date'] == null) {
+            updated['repeat_frequency'] = null;
+            updated['repeat_interval'] = null;
+          }
+          return _taskReply(table, id, existing, updated);
         }
         table[id] = updated;
         return ApiResponse(status: 200, body: {'data': updated});
@@ -213,6 +226,67 @@ class FakeApi implements ApiTransport {
     }
 
     throw StateError('FakeApi tidak mengenal $request');
+  }
+
+  /// Balasan tugas (v1.0): `{"data": ..., "next_task": ...}`. Tugas berulang yang baru selesai
+  /// membuat tugas berikutnya sekali saja; Urungkan menghapusnya selama belum disentuh.
+  ApiResponse _taskReply(
+    Map<String, Map<String, dynamic>> table,
+    String id,
+    Map<String, dynamic>? before,
+    Map<String, dynamic> after, {
+    int status = 200,
+  }) {
+    final wasDone = before?['completed_at'] != null;
+    final isDone = after['completed_at'] != null;
+    var nextId = after['next_task_id'] as String?;
+
+    if (!wasDone && isDone && after['repeat_frequency'] != null && nextId == null) {
+      nextId = '${id.substring(0, 22)}n${(++_nextTasks).toString().padLeft(3, '0')}';
+      final time = stamp();
+      table[nextId] = {
+        ...after,
+        'id': nextId,
+        'due_date': nextDueDate(after),
+        'completed_at': null,
+        'completed_by': null,
+        'next_task_id': null,
+        'created_at': time,
+        'updated_at': time,
+        'deleted_at': null,
+      };
+      after['next_task_id'] = nextId;
+    } else if (wasDone && !isDone && nextId != null) {
+      final next = table[nextId];
+      // Belum disentuh: belum pernah diubah sejak dibuat.
+      if (next != null && next['updated_at'] == next['created_at']) {
+        table[nextId] = {...next, 'deleted_at': stamp(), 'updated_at': stamp()};
+        after['next_task_id'] = null;
+        nextId = null;
+      }
+    }
+
+    table[id] = after;
+    final next = nextId == null ? null : table[nextId];
+    return ApiResponse(
+      status: status,
+      body: {'data': after, 'next_task': next == null || next['deleted_at'] != null ? null : next},
+    );
+  }
+
+  /// Tenggat berikutnya versi sederhana: tenggat lama ditambah selangnya.
+  static String nextDueDate(Map<String, dynamic> task) {
+    final parts = (task['due_date'] as String).split('-').map(int.parse).toList();
+    final every = (task['repeat_interval'] as int?) ?? 1;
+    final (year, month, day) = (parts[0], parts[1], parts[2]);
+    final next = switch (task['repeat_frequency']) {
+      'daily' => DateTime.utc(year, month, day + every),
+      'weekly' => DateTime.utc(year, month, day + 7 * every),
+      'monthly' => DateTime.utc(year, month + every, day),
+      _ => DateTime.utc(year + every, month, day),
+    };
+    String two(int value) => value.toString().padLeft(2, '0');
+    return '${next.year}-${two(next.month)}-${two(next.day)}';
   }
 
   /// URL R2 bertanda tangan palsu untuk foto [id], berlaku 7 hari sejak sekarang.
@@ -290,6 +364,9 @@ class FakeApi implements ApiTransport {
   static Map<String, dynamic> _defaults(String resource) => switch (resource) {
     'lists' => {'emoji': null, 'color': 'mawar', 'archived_at': null, 'trip_id': null, 'created_by': 'server-user'},
     'tasks' => {
+      'repeat_frequency': null,
+      'repeat_interval': null,
+      'next_task_id': null,
       'space_id': 'space-shared',
       'notes': null,
       'due_date': null,

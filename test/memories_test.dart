@@ -553,7 +553,6 @@ void main() {
       await h.account.store.setMeta(MetaKeys.syncCollections, '3');
       h.api.syncPages.add(h.api.syncPage(serverTime: 'T-1'));
 
-      expect(SyncEngine.collectionsVersion, 4);
       expect(await h.account.sync.sync(), isTrue);
 
       expect(
@@ -563,7 +562,7 @@ void main() {
         ],
         [null],
       );
-      expect(await h.account.store.meta(MetaKeys.syncCollections), '4');
+      expect(await h.account.store.meta(MetaKeys.syncCollections), '${SyncEngine.collectionsVersion}');
       expect(await h.account.store.meta(MetaKeys.syncSince), 'T-1');
     });
   });
@@ -576,7 +575,14 @@ void main() {
 
     final old = AppDatabase(NativeDatabase(file));
     await old.into(old.taskLists).insert(taskListCompanion(TaskList.fromJson(listJson())));
-    for (final statement in ['DROP TABLE memories', 'DROP TABLE memory_photos', 'PRAGMA user_version = 3']) {
+    for (final statement in [
+      'DROP TABLE memories',
+      'DROP TABLE memory_photos',
+      'ALTER TABLE tasks DROP COLUMN repeat_frequency',
+      'ALTER TABLE tasks DROP COLUMN repeat_interval',
+      'ALTER TABLE tasks DROP COLUMN next_task_id',
+      'PRAGMA user_version = 3',
+    ]) {
       await old.customStatement(statement);
     }
     await old.close();

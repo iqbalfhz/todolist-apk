@@ -14,6 +14,10 @@ const String archivedListId = '01m4dh0420zqexwxs1n4yw5jn6';
 /// Tugas hari ini yang penting, berjam, dan punya catatan.
 const String importantTaskId = '01m4dh1yn0t6cdn39q4f091891';
 
+/// Tugas berulang mingguan yang sudah selesai, dengan tugas berikutnya [nextRepeatTaskId] (v1.0).
+const String doneRepeatTaskId = '01m4dh1yn0t6cdn39q4f091893';
+const String nextRepeatTaskId = '01m4dh1yn0t6cdn39q4f0918a0';
+
 /// Tugas dengan judul yang butuh beberapa baris.
 const String longTaskId = '01m4dh1yn0t6cdn39q4f091897';
 
@@ -112,6 +116,7 @@ extension RichHarness on Harness {
         priority: 3,
         notes: 'Tagihan Oktober. Bayar lewat m-banking, lalu simpan buktinya di grup.',
         position: 1024,
+        repeatFrequency: 'monthly',
       ),
       taskJson(id: _taskId(2), title: 'Beli galon', dueDate: '2026-10-08', assigneeIds: [partnerId], position: 1024),
       taskJson(
@@ -122,6 +127,17 @@ extension RichHarness on Harness {
         assigneeIds: [meId, partnerId],
         completedAt: '2026-10-08T03:10:00.000000Z',
         completedBy: partnerId,
+        repeatFrequency: 'weekly',
+        nextTaskId: nextRepeatTaskId,
+      ),
+      taskJson(
+        id: nextRepeatTaskId,
+        taskListId: houseListId,
+        title: 'Jemur kasur',
+        dueDate: '2026-10-15',
+        assigneeIds: [meId, partnerId],
+        repeatFrequency: 'weekly',
+        position: 6144,
       ),
       // Terlewat sekaligus penting.
       taskJson(
@@ -131,6 +147,8 @@ extension RichHarness on Harness {
         dueDate: '2026-10-06',
         priority: 3,
         position: 3072,
+        repeatFrequency: 'monthly',
+        repeatInterval: 12,
       ),
       taskJson(
         id: _taskId(5),

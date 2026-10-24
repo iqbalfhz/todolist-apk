@@ -408,6 +408,60 @@ void main() {
     expect((await b.lists()).where((list) => list.id == doomed.id), isEmpty);
   }, skip: skipReason);
 
+  test(
+    'tugas berulang: tugas berikutnya dari balasan centang, Urungkan menghapusnya, dan aturannya dicek server',
+    () async {
+      final list = await a.sharedList();
+      // Tenggatnya di masa depan, jadi tugas berikutnya tepat seminggu sesudahnya.
+      final task = await a.account.tasks.create(
+        list: list,
+        title: 'Buang sampah',
+        dueDate: '2027-01-04',
+        repeat: const TaskRepeat(RepeatFrequency.weekly),
+      );
+      await a.syncNow();
+
+      await a.account.tasks.complete(task.id);
+      await a.syncNow();
+      final done = Task.fromJson((await a.account.store.read(EntityType.task, task.id))!);
+      final nextId = done.nextTaskId!;
+      final next = Task.fromJson((await a.account.store.read(EntityType.task, nextId))!);
+      expect(
+        (next.title, next.dueDate, next.isCompleted, next.createdBy),
+        ('Buang sampah', '2027-01-11', false, a.user.id),
+      );
+      expect(next.repeat, const TaskRepeat(RepeatFrequency.weekly));
+
+      await b.syncNow();
+      expect(Task.fromJson((await b.account.store.read(EntityType.task, nextId))!).dueDate, '2027-01-11');
+
+      // Urungkan setelah terkirim: tugas berikutnya yang belum disentuh ikut dihapus server.
+      await a.account.tasks.uncomplete(task.id);
+      await a.syncNow();
+      expect(Task.fromJson((await a.account.store.read(EntityType.task, task.id))!).nextTaskId, isNull);
+      expect((await a.account.store.tasks()).where((row) => row.id == nextId && row.deletedAt == null), isEmpty);
+      await b.syncNow();
+      expect((await b.account.store.read(EntityType.task, nextId))!['deleted_at'], isNotNull);
+
+      // Centang ulang membuat tugas berikutnya yang baru.
+      await a.account.tasks.complete(task.id);
+      await a.syncNow();
+      final againId = Task.fromJson((await a.account.store.read(EntityType.task, task.id))!).nextTaskId!;
+      expect(againId, isNot(nextId));
+
+      // Tanpa tanggal tidak bisa berulang; menghapus tenggat ikut mengosongkan aturan ulangnya.
+      await expectLater(
+        a.api.send('PATCH', '/tasks/$againId', body: {'due_date': null, 'repeat_frequency': 'daily'}),
+        throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.validationFailed)),
+      );
+      await a.account.tasks.setDue(againId, date: null, time: null);
+      await a.syncNow();
+      final cleared = Task.fromJson((await a.account.store.read(EntityType.task, againId))!);
+      expect((cleared.dueDate, cleared.repeatFrequency, cleared.repeatInterval), (null, null, null));
+    },
+    skip: skipReason,
+  );
+
   test('arsip: tugas ke daftar arsip ditolak parent_archived dan dipindah', () async {
     final space = await a.sharedSpace();
     final archive = await a.account.lists.create(spaceId: space.id, name: 'Lama');

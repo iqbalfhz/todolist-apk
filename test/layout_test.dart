@@ -15,7 +15,10 @@ import 'package:todolist/features/savings/presentation/savings_screen.dart';
 import 'package:todolist/features/special_dates/presentation/special_date_sheet.dart';
 import 'package:todolist/features/special_dates/presentation/special_dates_screen.dart';
 import 'package:todolist/features/tasks/presentation/list_form_sheet.dart';
+import 'package:todolist/features/tasks/domain/task.dart';
 import 'package:todolist/features/tasks/presentation/manage_lists_screen.dart';
+import 'package:todolist/features/tasks/presentation/repeat_sheet.dart';
+import 'package:todolist/features/tasks/presentation/task_detail_screen.dart';
 import 'package:todolist/features/trips/presentation/checklist_screen.dart';
 import 'package:todolist/features/trips/presentation/trip_detail_screen.dart';
 import 'package:todolist/features/trips/presentation/trip_form_sheet.dart';
@@ -102,7 +105,16 @@ void main() {
       await scrollThrough(tester);
 
       await visit(tester, container, Routes.task(importantTaskId));
+      // Lembar Ulangi tugas (v1.0) dengan selang besar dan keterangan bulan yang lebih pendek.
+      await withSheet(tester, container, () async {
+        showRepeatSheet(
+          tester.element(find.byType(TaskDetailScreen)),
+          current: const TaskRepeat(RepeatFrequency.monthly, 12),
+          dueDate: '2026-10-31',
+        ).ignore();
+      });
       await visit(tester, container, Routes.task(longTaskId));
+      await visit(tester, container, Routes.task(doneRepeatTaskId));
 
       await visit(tester, container, Routes.manageLists);
       await withSheet(tester, container, () async {

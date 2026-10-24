@@ -248,6 +248,9 @@ void main() {
       'ALTER TABLE task_lists DROP COLUMN trip_id',
       'ALTER TABLE savings_goals DROP COLUMN reminder_frequency',
       'ALTER TABLE savings_goals DROP COLUMN reminder_day',
+      'ALTER TABLE tasks DROP COLUMN repeat_frequency',
+      'ALTER TABLE tasks DROP COLUMN repeat_interval',
+      'ALTER TABLE tasks DROP COLUMN next_task_id',
       'PRAGMA user_version = 1',
     ]) {
       await old.customStatement(statement);
