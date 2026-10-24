@@ -6,6 +6,7 @@ import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
 import 'package:todolist/core/widgets/widgets.dart';
+import 'package:todolist/features/memories/presentation/memory_form_screen.dart';
 import 'package:todolist/features/savings/domain/savings_views.dart';
 import 'package:todolist/features/savings/presentation/goal_detail_screen.dart';
 import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
@@ -21,6 +22,7 @@ import 'package:todolist/features/trips/presentation/trip_form_sheet.dart';
 import 'package:todolist/features/trips/presentation/trips_screen.dart';
 
 import 'helpers/app_harness.dart';
+import 'helpers/fake_photos.dart';
 import 'helpers/fake_push.dart';
 import 'helpers/fixtures.dart';
 import 'helpers/rich_fixtures.dart';
@@ -87,7 +89,8 @@ void main() {
     testWidgets('$label: semua layar setelah masuk', (tester) async {
       final h = Harness();
       await h.seedRich();
-      final container = await pumpApp(tester, h);
+      final picker = FakePhotoPicker();
+      final container = await pumpApp(tester, h, photoPicker: picker);
       await apply(tester, size: size, textScale: textScale);
 
       await visit(tester, container, Routes.home);
@@ -188,6 +191,28 @@ void main() {
       await visit(tester, container, Routes.trip(ongoingTripId));
       await visit(tester, container, Routes.trip(undatedTripId));
       await visit(tester, container, Routes.tripChecklist(undatedTripId));
+      await visit(tester, container, Routes.trip(doneTripId));
+
+      // Kenangan (v0.3).
+      await visit(tester, container, Routes.memories);
+      await visit(tester, container, Routes.memory(longMemoryId));
+      await visit(tester, container, Routes.memory(privateMemoryId));
+      await visit(tester, container, Routes.memoryPhoto(longMemoryId, longMemoryCoverId));
+      await visit(tester, container, Routes.editMemory(longMemoryId));
+      await visit(tester, container, Routes.newMemory(tripId: doneTripId));
+      await go(tester, container, Routes.newMemory());
+      // Foto yang dipilih tampil sebagai kisi; formulirnya tetap muat saat keyboard terbuka.
+      picker.picks.add([for (var i = 0; i < 5; i++) 'galeri/foto_$i.jpg']);
+      await tester.ensureVisible(find.text('Pilih foto'));
+      await settle(tester);
+      await tester.tap(find.text('Pilih foto'));
+      await settle(tester);
+      tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
+      await settle(tester);
+      await scrollThrough(tester);
+      expect(find.byType(MemoryFormScreen), findsOneWidget);
+      tester.view.resetViewInsets();
+      await settle(tester);
 
       await disposeApp(tester, h);
     });

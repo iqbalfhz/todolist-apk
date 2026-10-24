@@ -31,6 +31,7 @@ import 'package:todolist/core/session/account.dart';
 import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/storage/key_value_store.dart';
 import 'package:todolist/core/time/space_clock.dart';
+import 'package:todolist/core/utils/dates.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/domain/user.dart';
@@ -131,7 +132,7 @@ void main() {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   });
 
-  testWidgets('seluruh fitur v0.1 dan v0.2 lewat layar, terhadap API sungguhan', (tester) async {
+  testWidgets('seluruh fitur v0.1 sampai v0.3 lewat layar, terhadap API sungguhan', (tester) async {
     final semantics = tester.ensureSemantics();
     WidgetController.hitTestWarningShouldBeFatal = true;
     addTearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
@@ -599,6 +600,8 @@ void main() {
     await tap(find.text('Terang'));
 
     step('Profil: nama, tanggal lahir tanpa tahun, dan warna diri');
+    // Baris Profil ada di atas; isi daftar yang jauh di luar layar belum dibangun.
+    await tester.scrollUntilVisible(find.text('Profil'), -300, scrollable: find.byType(Scrollable).first);
     await tap(find.text('Profil'));
     await tester.enterText(field('Nama panggilan'), 'Iqbal F');
     await tap(find.text('Belum diisi'));
@@ -905,6 +908,98 @@ void main() {
     await asPartner(() async {
       await partner.syncNow();
       expect((await partner.account.trips.watchAll().first).where((row) => row.id == tripId), isEmpty);
+    });
+
+    // ---------------------------------------------------------------- kenangan (v0.3)
+    // Foto tidak diunggah di sini: API lokal tidak punya kunci R2.
+
+    step('Kenangan baru dari tab Kenangan, tanpa foto');
+    await go(Routes.home);
+    await tap(find.text('Kenangan').last);
+    expect(
+      find.text('Belum ada kenangan. Simpan tempat yang pernah kalian datangi, lengkap dengan foto dan ceritanya.'),
+      findsOneWidget,
+    );
+    await tap(find.widgetWithText(TextButton, 'Kenangan baru'));
+    await tester.enterText(field('Mau dikenang sebagai apa?'), 'Makan malam pertama');
+    await tester.enterText(field('Di mana?'), 'Warung Bu Ani');
+    await tester.enterText(field('Ceritanya?'), 'Hujan deras, tapi sotonya enak.');
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final dinner = await serverRow('memories', (row) => row['title'] == 'Makan malam pertama');
+    final dinnerId = dinner['id'] as String;
+    expect(
+      (dinner['place_name'], dinner['visited_on'], dinner['story'], dinner['space_id'], dinner['trip_id']),
+      ('Warung Bu Ani', today(), 'Hujan deras, tapi sotonya enak.', sharedGoal['space_id'], null),
+    );
+    expect(container.read(routerProvider).state.uri.path, Routes.memory(dinnerId));
+
+    step('Pasangan menerima kenangan, lalu mengubah tempatnya');
+    await asPartner(() async {
+      await partner.syncNow();
+      final received = (await partner.account.memories.watchAll().first).singleWhere((row) => row.id == dinnerId);
+      expect(received.story, 'Hujan deras, tapi sotonya enak.');
+      await partner.account.memories.edit(
+        dinnerId,
+        title: received.title,
+        placeName: 'Warung Bu Ani, Bandung',
+        visitedOn: received.visitedOn,
+        story: received.story,
+      );
+      await partner.syncNow();
+    });
+    await pullToRefresh();
+    expect(find.text('Warung Bu Ani, Bandung'), findsOneWidget);
+
+    step('Simpan jadi kenangan dari perjalanan pasangan yang sudah selesai');
+    final pastStart = addDays(today(), -30);
+    final pastTripId = await asPartner(() async {
+      final space = await partner.sharedSpace();
+      final made = await partner.account.trips.create(
+        spaceId: space.id,
+        title: 'Pangandaran',
+        destination: 'Pantai Pangandaran',
+        startDate: pastStart,
+        endDate: addDays(pastStart, 2),
+      );
+      await partner.syncNow();
+      return made.id;
+    });
+    await go(Routes.trips);
+    await pullToRefresh();
+    await tap(find.textContaining('Sudah selesai ('));
+    await tap(find.text('Simpan jadi kenangan'));
+    expect(find.widgetWithText(TextField, 'Pangandaran'), findsOneWidget);
+    expect(find.widgetWithText(TextField, 'Pantai Pangandaran'), findsOneWidget);
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final fromTrip = await serverRow('memories', (row) => row['trip_id'] == pastTripId);
+    final fromTripId = fromTrip['id'] as String;
+    expect(
+      (fromTrip['title'], fromTrip['place_name'], fromTrip['visited_on']),
+      ('Pangandaran', 'Pantai Pangandaran', pastStart),
+    );
+    expect(find.text('Dari perjalanan Pangandaran'), findsOneWidget);
+
+    step('Hapus kenangan tanpa foto: Urungkan dulu, lalu hapus sungguhan');
+    await tap(find.byTooltip('Opsi lainnya'));
+    await tap(find.text('Hapus'));
+    expect(container.read(routerProvider).state.uri.path, Routes.memories);
+    expect(find.text('Kenangan dihapus.'), findsOneWidget);
+    await tap(find.text('Urungkan'));
+    expect(find.text('Pangandaran'), findsOneWidget);
+
+    await go(Routes.memory(fromTripId));
+    await tap(find.byTooltip('Opsi lainnya'));
+    await tap(find.text('Hapus'));
+    await advance(const Duration(seconds: 6));
+    expect((await serverRows('memories')).where((row) => row['id'] == fromTripId), isEmpty);
+    await asPartner(() async {
+      await partner.syncNow();
+      final memories = await partner.account.memories.watchAll().first;
+      expect(memories.map((row) => row.id), [dinnerId]);
     });
 
     // ---------------------------------------------------------------- offline
