@@ -97,6 +97,7 @@ Plus Jakarta Sans, tebal 400, 500, 600, 700. Ukuran dalam dp (1 px di mockup = 1
 | Avatar | 36 (kepala Beranda), 80 (Ajak pasangan), 112 (Profil) |
 | Lingkaran ikon | 40 (baris Pengaturan dan Akan datang), 56 dengan ikon 28 (kartu Bersama sejak dan ringkasan Detail perjalanan) |
 | Bar progres | tinggi 6 sampai 8, bulat penuh, jalur `track`, isi `brand` |
+| Foto kenangan (v0.3) | kisi 3 kolom persegi, jarak 4, radius 12; sampul 16:9 di kartu linimasa (menempel di atas kartu) dan 4:3 di Detail kenangan (radius 20); kotak `track` selama gambar belum ada; penanda "Menunggu terkirim" lingkaran 24 berlatar `surface` |
 | Jarak antarelemen | 4, 6, 8, 10, 12, 16 |
 
 Ukuran 44 adalah ukuran tampilan. Area sentuh tetap minimal 48 dp: biarkan `materialTapTargetSize` bawaan (`padded`).

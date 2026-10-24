@@ -6,13 +6,14 @@
 
 **Sumber kebenaran layar: `docs/layar.md`** (daftar layar, isi, dan navigasi) dan mockup HTML di `docs/mockup/`. Baca sebelum membuat atau mengubah layar.
 
-## Kondisi repo (per 23 Oktober 2026)
+## Kondisi repo (per 24 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun. Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server). `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, kenangan tanpa foto dan "Simpan jadi kenangan", offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
-- Ketukan notifikasi dan push pengingat v0.2 (`special_date_reminder`, `trip_reminder`, `savings_reminder`) belum dicoba di HP sungguhan; di tes semuanya memakai layanan notifikasi palsu.
+- Belum dicoba di HP sungguhan: ketukan notifikasi pengingat v0.2, push `savings_reminder`, dan push `memory_created` (v0.3); di tes semuanya memakai layanan notifikasi palsu.
+- Foto kenangan (v0.3) belum pernah diunggah sungguhan: API lokal tidak punya kunci R2, jadi tes ujung ke ujung hanya mencakup kenangan tanpa foto dan unggahan yang ditolak `parent_deleted`. Perlu dicoba di HP terhadap produksi: pilih banyak foto, unggah saat offline lalu online, thumbnail di HP pasangan, Galeri dan versi penuh, Jadikan sampul, hapus foto, dan URL yang diperbarui setelah 7 hari.
 - `env/staging.json` masih kosong; app menampilkan layar penjelasan kalau dijalankan dengan `API_BASE_URL` kosong.
 - Belum pernah dicoba di HP sungguhan: kamera dan pemotong foto profil, dan bagikan kode undangan.
 - Belum diuji: apakah notifikasi tetap sampai di HP Xiaomi (HyperOS) setelah app ditutup dari daftar app terbaru, dengan Mulai otomatis mati (keadaan bawaan di HP pemilik). Kalau tertahan, tambahkan satu tombol di Pengaturan > Notifikasi yang memunculkan dialog Android (Izinkan/Tolak) dan membuka langsung halaman Mulai otomatis; jangan kembali ke langkah manual.
@@ -36,7 +37,11 @@ v0.2 yang sudah dibangun:
 - Perjalanan: tab Liburan (Daftar perjalanan, Detail perjalanan, Checklist persiapan), checklist berupa daftar dengan `trip_id` yang dibuat app tepat setelah perjalanannya dan disembunyikan dari tab Tugas, Kelola daftar, dan tambah cepat, tautan ke target tabungan, kartu Persiapan liburan di Beranda, koleksi sync `trips`, switch `trip_reminders`, dan push `trip_reminder` (ketuk membuka Detail perjalanan)
 - Pengingat setor rutin: jadwal mingguan atau bulanan di Detail target (`reminder_frequency`, `reminder_day`), switch `savings_reminders`, dan push `savings_reminder` (ketuk membuka Detail target)
 
-Belum dibangun, jangan dibuat dulu: Kenangan (v0.3), ekspor data dan hapus akun (v1.0), iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
+v0.3 yang sudah dibangun:
+
+- Kenangan: tab Kenangan (linimasa per tahun dan bulan), Detail kenangan, Galeri foto, dan Kenangan baru / Ubah kenangan; paling banyak 50 foto per kenangan, sampul = `position` terkecil, Jadikan sampul, hapus foto dengan Urungkan, dan hapus kenangan berfoto dengan konfirmasi; koleksi sync `memories` dan `memory_photos` dengan sync penuh sekali; "Simpan jadi kenangan" di perjalanan yang sudah selesai; push `memory_created` (channel `aktivitas`, ketuk membuka Detail kenangan)
+
+Belum dibangun, jangan dibuat dulu: pin lokasi dan Peta kenangan (v1.x), ekspor data dan hapus akun (v1.0), iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
@@ -49,7 +54,7 @@ Belum dibangun, jangan dibuat dulu: Kenangan (v0.3), ekspor data dan hapus akun 
 - freezed + json_serializable untuk model
 - flutter_secure_storage untuk token (jangan SharedPreferences)
 - firebase_messaging + flutter_local_notifications
-- image_picker, image_cropper, flutter_image_compress, cached_network_image
+- image_picker, image_cropper, flutter_image_compress, cached_network_image; flutter_cache_manager (cache foto kenangan dengan kunci sendiri) dan path_provider (folder foto yang menunggu diunggah), keduanya sudah ikut lewat cached_network_image
 - fl_chart (statistik tabungan), share_plus (bagikan kode undangan)
 - material_symbols_icons (ikon)
 - flutter_localizations + intl (ARB, `id_ID`), flutter_timezone + timezone
@@ -76,9 +81,9 @@ Belum dibangun, jangan dibuat dulu: Kenangan (v0.3), ekspor data dan hapus akun 
 
 ```
 lib/
-  core/        api client, database lokal (drift), antrean, sync, tema, router, l10n
+  core/        api client, database lokal (drift), antrean, sync, media (foto), tema, router, l10n
   features/
-    auth/  spaces/  tasks/  savings/  special_dates/  trips/  home/  settings/   (v0.3: memories/)
+    auth/  spaces/  tasks/  savings/  special_dates/  trips/  memories/  home/  settings/
       data/          sumber data + repository
       domain/        model (freezed)
       presentation/  layar dan widget
@@ -89,7 +94,7 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 ## Data offline (aturan wajib)
 
 - UI selalu membaca dari drift. Jaringan hanya mengisi drift.
-- Tulis: ubah drift dulu (UI langsung berubah), lalu masukkan operasi ke antrean. Hanya PUT/PATCH/DELETE untuk daftar, tugas, target, setoran, dan `PATCH /me` yang lewat antrean; endpoint lain dipanggil langsung dan butuh koneksi.
+- Tulis: ubah drift dulu (UI langsung berubah), lalu masukkan operasi ke antrean. Hanya PUT/PATCH/DELETE untuk daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, dan foto kenangan, unggah foto kenangan (`POST /memory-photos/{id}`), dan `PATCH /me` yang lewat antrean; endpoint lain (termasuk `GET /memories/{id}/photos`) dipanggil langsung dan butuh koneksi.
 - ID dibuat di HP: ULID huruf kecil.
 - Waktu dikirim dengan `toUtc().toIso8601String()`. Tanggal `YYYY-MM-DD` dan jam `HH:MM` menurut zona waktu ruang; "hari ini" dihitung di zona waktu ruang (paket `timezone`).
 - Uang berupa `int` satuan terkecil. Desimal per mata uang dari tabel di kontrak (IDR 0, JPY 0, lainnya 2); selalu isi `decimalDigits` sendiri saat memformat, karena `intl` memakai 2 desimal untuk IDR.
@@ -106,13 +111,16 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - `PUT` dibalas 200 (sudah ada): terapkan balasan seperti baris sync, jangan tambah operasi.
 - Balasan ditangani sesuai tabel Error di kontrak. Buang operasi atau hapus data lokal hanya kalau balasannya JSON dengan `code` yang dikenal. Non-JSON, 5xx, atau tanpa koneksi: coba lagi dengan jeda 2, 4, 8 detik, maksimal 5 menit. 401: hentikan antrean dan buka layar Masuk.
 - `parent_deleted`/`parent_archived` untuk tugas: pindahkan ke daftar aktif pertama di ruang itu (bukan checklist perjalanan), lalu kirim ulang.
+- Foto kenangan: `POST` multipart masuk antrean setelah `PUT` kenangannya. Foto dikecilkan ke sisi terpanjang 2560 px (JPEG mutu 85, tanpa EXIF dan lokasi), `taken_at` dibaca dari EXIF foto asli, dan berkasnya disimpan di folder app per akun (`foto_kenangan/akun_{id}`) sampai server membalas, lalu dipindah ke cache versi penuh. Berkas yang hilang membuat operasinya dibuang. Hapus kenangan berfoto membatalkan unggahan yang belum pernah dikirim. Hapus foto memakai jeda Urungkan 5 detik seperti hapus tugas; hapus kenangan tanpa foto juga.
 - Checklist perjalanan: dibuat lewat `PUT /lists/{id}` dengan `trip_id` tepat setelah perjalanannya, tidak pernah dihapus atau diarsipkan sendiri, dan tidak dihitung daftar aktif. Hapus perjalanan hanya mengirim `DELETE /trips/{id}`; checklist dan isinya cukup ditandai terhapus di HP. Mengubah judul perjalanan ikut mengganti nama checklistnya ("Persiapan {judul}").
 
 ### Sync
 
 - Satu sync pada satu waktu. Kirim dulu operasi yang bisa dikirim, lalu tetap tarik data.
 - Halaman pertama `GET /sync?since=...`; berikutnya `?cursor=<next_cursor>` sampai `has_more` false. Simpan `server_time` dari halaman terakhir.
-- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`, lalu `trips` beserta `trip_id` di daftar dan jadwal setor di target); sifatnya hanya menambah dan memperbarui.
+- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`, lalu `trips` beserta `trip_id` di daftar dan jadwal setor di target; v0.3: `memories` dan `memory_photos`); sifatnya hanya menambah dan memperbarui.
+- Pengiriman antrean sebelum menarik data dibatasi 8 detik (`SyncEngine.flushLimit`), supaya unggahan foto yang lama tidak menahan data baru; antreannya tetap jalan di belakang.
+- Foto kenangan: cache gambar memakai kunci `photo-{id}` dan `photo-{id}-thumb`, bukan URL. Thumbnail yang belum ada diunduh setelah setiap sync yang berhasil; versi penuh saat foto dibuka. URL yang berumur 7 hari, atau yang ditolak R2 dengan 403, diganti lewat `GET /memories/{id}/photos`.
 - Saat menerapkan baris: tanpa foreign key check; kolom dengan operasi tertunda tidak ditimpa; baris dengan DELETE tertunda tidak muncul lagi; baris yang lebih tua dari salinan lokal diabaikan.
 - Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda.
 - Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, dan push yang masuk saat app terbuka.
@@ -121,7 +129,7 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 
 - Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, dan hari setor) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
 - Minta izin notifikasi (Android 13+) dengan penjelasan; sebelum Android 13 layarnya dilewati. Panduan mematikan optimasi baterai tidak ditampilkan (keputusan pemilik, 23 Oktober 2026): langkah manual di Pengaturan HP terlalu merepotkan untuk alur pertama kali.
-- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, dan pengingat setor membuka Detail target.
+- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, pengingat setor membuka Detail target, dan `memory_created` membuka Detail kenangan.
 
 ## UI
 
@@ -139,7 +147,8 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - Widget test untuk alur utama: tambah cepat, centang dan Urungkan, setor tabungan, masukkan kode undangan.
 - Tata letak (`test/layout_test.dart`): setiap layar dan lembar bawah dirender pada huruf 1,3× dan 2× serta layar 360 × 640; isi yang meluap membuat tesnya gagal. Layar baru ditambahkan ke sana.
 - Klien HTTP (`test/core/api_transport_test.dart`): pemilahan error dari tabel Error di kontrak, terhadap server lokal sementara.
-- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya. Fitur atau layar baru ditambahkan juga ke `ui_e2e_test.dart`.
+- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya. Fitur atau layar baru ditambahkan juga ke `ui_e2e_test.dart`. Foto kenangan tidak diunggah di sana (API lokal tanpa kunci R2), dan jangan diarahkan ke R2 sungguhan.
+- Foto di tes memakai `test/helpers/fake_photos.dart` (cache, berkas tunggu unggah, dan galeri palsu); `pumpApp(photoPicker: ...)` mengganti galeri HP.
 
 ## Git
 

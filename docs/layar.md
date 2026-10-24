@@ -1,4 +1,4 @@
-# Daftar layar v0.1 dan v0.2
+# Daftar layar v0.1 sampai v0.3
 
 Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 (1 px = 1 dp). File ini berasal dari kanvas desain di claude.ai dan membutuhkan `support.js` yang tidak disertakan, jadi tidak tampil benar di browser; baca sebagai teks. Teks, ukuran, jarak, dan radius tertulis langsung di atribut `style`.
 
@@ -8,11 +8,11 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 
 ## Navigasi
 
-- Tab bawah: Beranda, Tugas, Tabungan, dan Liburan (v0.2). Mockup menampilkan lima tab; Kenangan (v0.3) disembunyikan sampai rilisnya.
+- Tab bawah: Beranda, Tugas, Tabungan, Liburan (v0.2), dan Kenangan (v0.3), sama dengan lima tab di mockup.
 - Pengaturan dibuka dari avatar di kanan atas Beranda.
-- Tombol + mengambang di Beranda dan Tugas membuka lembar Tambah tugas. Tab Tabungan dan Liburan memakai tombol + di kepala layarnya.
+- Tombol + mengambang di Beranda dan Tugas membuka lembar Tambah tugas. Tab Tabungan, Liburan, dan Kenangan memakai tombol + di kepala layarnya.
 - Alur pertama kali: Masuk atau Daftar → Izin notifikasi → Ajak pasangan (bisa "Nanti saja") → Beranda.
-- Route go_router: `/masuk`, `/daftar`, `/izin-notifikasi`, `/beranda`, `/tugas`, `/tugas/:id`, `/tabungan`, `/tabungan/:id`, `/pengaturan`, `/pengaturan/profil`, `/pengaturan/tanggal-penting` (v0.2), `/ajak-pasangan`, dan untuk Liburan (v0.2) `/liburan`, `/liburan/:id`, `/liburan/:id/persiapan`, `/liburan/:id/persiapan/:tugas`, `/liburan/:id/tugas/:tugas`, `/liburan/:id/tabungan/:target`. Detail tugas dan detail target yang dibuka dari perjalanan tetap di tab Liburan dan kembali ke sana.
+- Route go_router: `/masuk`, `/daftar`, `/izin-notifikasi`, `/beranda`, `/tugas`, `/tugas/:id`, `/tabungan`, `/tabungan/:id`, `/pengaturan`, `/pengaturan/profil`, `/pengaturan/tanggal-penting` (v0.2), `/ajak-pasangan`, dan untuk Liburan (v0.2) `/liburan`, `/liburan/:id`, `/liburan/:id/persiapan`, `/liburan/:id/persiapan/:tugas`, `/liburan/:id/tugas/:tugas`, `/liburan/:id/tabungan/:target`, dan untuk Kenangan (v0.3) `/kenangan`, `/kenangan/baru` (`?perjalanan=:id` untuk "Simpan jadi kenangan"), `/kenangan/:id`, `/kenangan/:id/ubah`, serta `/kenangan/:id/foto/:foto` (Galeri, tanpa tab bawah). Detail tugas dan detail target yang dibuka dari perjalanan tetap di tab Liburan dan kembali ke sana.
 
 ## Layar dengan mockup
 
@@ -75,7 +75,7 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 - Tema: kartu Mawar (Palet C·D·I) dan Anggrek (Palet H·G·E); segmen Terang / Gelap / Ikuti sistem. Perubahan langsung terlihat.
 - Notifikasi: switch yang memetakan `notification_prefs`:
   - Pengingat tugas — saat tenggat tiba (`task_reminders`)
-  - Aktivitas pasangan — titipan baru dan tugas selesai (`partner_activity`)
+  - Aktivitas pasangan — titipan baru, tugas selesai, dan kenangan baru (`partner_activity`)
   - Setoran tabungan — setoran baru dan target tercapai (`savings_activity`)
   - Tanggal penting — H-7, H-1, dan hari H pukul 08.00 (`special_dates`, v0.2)
   - Pengingat perjalanan — H-7 dan H-1 pukul 08.00 (`trip_reminders`, v0.2)
@@ -107,7 +107,15 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 - **Daftar perjalanan** (tab Liburan): kepala "Liburan" dengan tombol + (Buat perjalanan). Kartu per perjalanan: judul, status, tanggal dan tujuan ("20–25 Jun 2027 · 6 hari · Bali"), progres persiapan "7 dari 12 beres" dengan bar dan persen (atau "Belum ada persiapan"), dan gembok "Pribadi". Urutannya: yang berlangsung, yang paling dekat berangkat, lalu yang tanggalnya belum pasti (terbaru dulu); yang sudah selesai dilipat di "Sudah selesai (N)". Kosong: ajakan "Buat perjalanan". Di bawah: "Pengingat" dengan switch "Ingatkan sebelum berangkat" (H-7 dan H-1 pukul 08.00, dengan progres persiapan), sama dengan switch Pengingat perjalanan di Pengaturan.
 - **Detail perjalanan:** kembali, judul, menu (Ubah, Hapus). Kartu ringkasan: lingkaran ikon status, hitung mundur 28 Bold, tanggal dan lamanya, tujuan, dan gembok Pribadi. "Persiapan" dengan "Lihat semua": progres, tiga item pertama yang belum beres (centang dengan Urungkan, ketuk → Detail tugas), lalu "N item lain belum beres" atau "Tambah persiapan" → Checklist persiapan; semuanya beres: "Persiapan beres semua. Selamat berlibur!"; kosong: ajakan "Tambah persiapan". "Dana" dengan "Ganti": progres target yang ditautkan, ketuk → Detail target; belum ditautkan: "Pilih target" (target di ruang yang sama dan belum diarsipkan, ditambah "Tanpa tabungan" untuk melepas) dan "Buat target" (lembar Target baru dengan ruang perjalanan dan nama "Dana Liburan ke Bali", lalu langsung ditautkan). "Catatan" kalau diisi. Hapus dengan konfirmasi "Hapus Liburan ke Bali? Checklist persiapannya (12 item) ikut terhapus."
 - **Checklist persiapan:** kembali ke Detail perjalanan, judul "Persiapan" dan nama perjalanannya, kartu progres berisi item yang belum beres, dan "Selesai (N)" yang dilipat. Isian "Tambah persiapan" menempel di bawah layar: Enter menambah item dan keyboard tetap terbuka untuk item berikutnya; checklist kosong langsung siap diisi. Penanggung jawab bawaannya Aku, supaya mencatat banyak item tidak mengirim notifikasi titipan; diubah di Detail tugas. Ketuk item → Detail tugas, lalu kembali ke checklist.
+- **Perjalanan yang sudah selesai** (v0.3): kartunya di "Sudah selesai (N)" punya tombol "Simpan jadi kenangan", dan Detail perjalanannya menampilkan bagian "Kenangan" berisi kenangan dari perjalanan itu (judul, tanggal, jumlah foto; ketuk → Detail kenangan) dan tombol yang sama. Satu perjalanan boleh punya beberapa kenangan.
 - **Lembar Perjalanan baru / Ubah perjalanan:** "Apa nama perjalanannya?" (1–50 karakter), "Ke mana?" (opsional, paling banyak 100 karakter), "Kapan berangkat?" dan "Kapan pulang?" (pemilih tanggal; boleh kosong kalau belum pasti, tanggal pulang butuh tanggal berangkat dan tidak boleh sebelumnya; "Kosongkan tanggal"), "Catatan", dan "Simpan di mana?" Bersama / Pribadi saat dibuat dan sudah berpasangan. Perjalanan baru langsung membuka detailnya.
+
+### Kenangan (v0.3) — tanpa mockup selain tab
+
+- **Linimasa** (tab Kenangan): kepala "Kenangan" dengan tombol + (Kenangan baru). Dikelompokkan per tahun ("2027", dengan "3 kenangan" di kanan) lalu per bulan ("Juni") dari `visited_on`, terbaru dulu. Kartu: foto sampul 16:9 di atas (foto dengan `position` terkecil; kenangan tanpa foto tampil tanpa sampul), judul, "Min, 20 Jun 2027 · Ubud, Bali", jumlah foto ("7 foto" atau "Belum ada foto") dengan ikon, dan gembok "Pribadi". Ketuk → Detail kenangan. Kosong: ajakan "Kenangan baru".
+- **Detail kenangan:** kembali, judul, menu (Ubah, Hapus). Sampul 4:3 (ketuk → Galeri), kartu berisi tanggal, tempat, "Dari perjalanan Pangandaran" (ketuk → Detail perjalanan), dan gembok Pribadi. "Cerita" kalau diisi. "Foto" dengan jumlahnya: kisi tiga kolom persegi (ketuk → Galeri); foto yang belum terkirim diberi lingkaran ikon unggah ("Menunggu terkirim"), dan foto yang masih disiapkan tampil sebagai kotak skeleton dengan "Menyiapkan 3 foto". "Tambah foto" membuka galeri HP (paling banyak sisa dari 50 foto); foto yang tidak bisa dibaca diberi tahu lewat snackbar. Kosong: "Belum ada foto. Tambahkan dari galeri HP supaya kenangan ini lebih hidup." Hapus kenangan berfoto memakai konfirmasi "Hapus Liburan ke Bali? 7 fotonya ikut terhapus dan tidak bisa dikembalikan."; yang tanpa foto langsung dihapus dengan Urungkan 5 detik.
+- **Galeri foto:** tanpa tab bawah. Kepala "3 dari 12" dengan menu (Jadikan sampul, kecuali foto pertama; Hapus foto dengan Urungkan 5 detik). Geser antarfoto, cubit untuk memperbesar; versi penuh diunduh saat foto dibuka. Di bawah: "Foto sampul", "Diambil Sab, 20 Jun 2027, 10.12" (jam di zona waktu ruang), dan "Menunggu terkirim".
+- **Kenangan baru / Ubah kenangan** (layar penuh): "Mau dikenang sebagai apa?" (1–50 karakter), "Di mana?" (opsional, paling banyak 100), "Kapan?" (pemilih tanggal, bawaannya hari ini), "Ceritanya?" (opsional, paling banyak 10.000), "Fotonya?" (hanya saat dibuat: kisi foto terpilih dengan tombol batal pilih, "Pilih foto", dan keterangan bahwa foto dikecilkan dan lokasinya tidak ikut tersimpan), dan "Simpan di mana?" Bersama / Pribadi saat dibuat dan sudah berpasangan. Dari "Simpan jadi kenangan", judul, tempat (tujuan), dan tanggal (tanggal berangkat) sudah terisi, dan ruangnya ruang perjalanan itu. Setelah Simpan, Detail kenangan langsung terbuka dan fotonya muncul satu per satu sambil disiapkan.
 
 ## Layar tanpa mockup
 
