@@ -9,9 +9,11 @@ import '../../../core/utils/dates.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../spaces/domain/household.dart';
+import '../domain/task.dart';
 import '../domain/task_list.dart';
 import '../domain/task_views.dart';
 import 'pickers.dart';
+import 'repeat_sheet.dart';
 import 'task_text.dart';
 
 /// Buka lembar "Tugas baru". [dueToday] mengisi "Hari ini" sejak awal (dibuka dari Beranda).
@@ -38,6 +40,9 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
   Assignee _assignee = Assignee.me;
   String? _listId;
   bool _important = false;
+
+  /// Aturan ulang (v1.0); hanya berlaku selama tanggalnya terisi.
+  TaskRepeat? _repeat;
   String? _error;
   bool _saving = false;
 
@@ -108,8 +113,17 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
   void _toggleDay(int offset) => setState(() {
     _customDate = null;
     _dayOffset = _dayOffset == offset ? null : offset;
-    if (_dayOffset == null) _time = null;
+    // Jam dan aturan ulang butuh tanggal.
+    if (_dayOffset == null) {
+      _time = null;
+      _repeat = null;
+    }
   });
+
+  Future<void> _pickRepeat(String date) async {
+    final picked = await showRepeatSheet(context, current: _repeat, dueDate: date);
+    if (picked != null && mounted) setState(() => _repeat = picked.repeat);
+  }
 
   Future<void> _save(TaskList list, Household household, String today) async {
     final l10n = context.l10n;
@@ -123,13 +137,15 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
     setState(() => _saving = true);
 
     final shared = household.isShared(list.spaceId);
+    final date = _date(today);
     await account.tasks.create(
       list: list,
       title: title,
-      dueDate: _date(today),
+      dueDate: date,
       dueTime: _time,
       assigneeIds: assigneeIdsFor(shared ? _assignee : Assignee.me, household),
       important: _important,
+      repeat: date == null ? null : _repeat,
     );
 
     if (mounted) Navigator.of(context).pop();
@@ -216,6 +232,12 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
                       label: l10n.addTaskNoTime,
                       selected: _time == null,
                       onTap: () => setState(() => _time = null),
+                    ),
+                    AppFilterChip(
+                      label: _repeat == null ? l10n.repeatAdd : repeatText(l10n, _repeat!),
+                      icon: Symbols.repeat_rounded,
+                      selected: _repeat != null,
+                      onTap: () => _pickRepeat(date),
                     ),
                   ],
                 ),

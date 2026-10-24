@@ -1268,6 +1268,24 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _repeatFrequencyMeta = const VerificationMeta('repeatFrequency');
+  @override
+  late final GeneratedColumn<String> repeatFrequency = GeneratedColumn<String>(
+    'repeat_frequency',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _repeatIntervalMeta = const VerificationMeta('repeatInterval');
+  @override
+  late final GeneratedColumn<int> repeatInterval = GeneratedColumn<int>(
+    'repeat_interval',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _remindAtMeta = const VerificationMeta('remindAt');
   @override
   late final GeneratedColumn<String> remindAt = GeneratedColumn<String>(
@@ -1290,6 +1308,15 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
   @override
   late final GeneratedColumn<String> completedBy = GeneratedColumn<String>(
     'completed_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nextTaskIdMeta = const VerificationMeta('nextTaskId');
+  @override
+  late final GeneratedColumn<String> nextTaskId = GeneratedColumn<String>(
+    'next_task_id',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -1361,9 +1388,12 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
     priority,
     position,
     assigneeIds,
+    repeatFrequency,
+    repeatInterval,
     remindAt,
     completedAt,
     completedBy,
+    nextTaskId,
     createdBy,
     updatedBy,
     createdAt,
@@ -1424,6 +1454,18 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
     } else if (isInserting) {
       context.missing(_assigneeIdsMeta);
     }
+    if (data.containsKey('repeat_frequency')) {
+      context.handle(
+        _repeatFrequencyMeta,
+        repeatFrequency.isAcceptableOrUnknown(data['repeat_frequency']!, _repeatFrequencyMeta),
+      );
+    }
+    if (data.containsKey('repeat_interval')) {
+      context.handle(
+        _repeatIntervalMeta,
+        repeatInterval.isAcceptableOrUnknown(data['repeat_interval']!, _repeatIntervalMeta),
+      );
+    }
     if (data.containsKey('remind_at')) {
       context.handle(_remindAtMeta, remindAt.isAcceptableOrUnknown(data['remind_at']!, _remindAtMeta));
     }
@@ -1432,6 +1474,9 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
     }
     if (data.containsKey('completed_by')) {
       context.handle(_completedByMeta, completedBy.isAcceptableOrUnknown(data['completed_by']!, _completedByMeta));
+    }
+    if (data.containsKey('next_task_id')) {
+      context.handle(_nextTaskIdMeta, nextTaskId.isAcceptableOrUnknown(data['next_task_id']!, _nextTaskIdMeta));
     }
     if (data.containsKey('created_by')) {
       context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));
@@ -1477,9 +1522,15 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
       priority: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}priority'])!,
       position: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}position'])!,
       assigneeIds: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}assignee_ids'])!,
+      repeatFrequency: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}repeat_frequency'],
+      ),
+      repeatInterval: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}repeat_interval']),
       remindAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}remind_at']),
       completedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}completed_at']),
       completedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}completed_by']),
+      nextTaskId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}next_task_id']),
       createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']),
       updatedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_by']),
       createdAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_at'])!,
@@ -1511,9 +1562,16 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
 
   /// JSON larik ID penanggung jawab.
   final String assigneeIds;
+
+  /// Aturan ulang (v1.0).
+  final String? repeatFrequency;
+  final int? repeatInterval;
   final String? remindAt;
   final String? completedAt;
   final String? completedBy;
+
+  /// Tugas berikutnya dari tugas berulang yang sudah selesai (v1.0).
+  final String? nextTaskId;
   final String? createdBy;
   final String? updatedBy;
   final String createdAt;
@@ -1531,9 +1589,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     required this.priority,
     required this.position,
     required this.assigneeIds,
+    this.repeatFrequency,
+    this.repeatInterval,
     this.remindAt,
     this.completedAt,
     this.completedBy,
+    this.nextTaskId,
     this.createdBy,
     this.updatedBy,
     required this.createdAt,
@@ -1560,6 +1621,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     map['priority'] = Variable<int>(priority);
     map['position'] = Variable<double>(position);
     map['assignee_ids'] = Variable<String>(assigneeIds);
+    if (!nullToAbsent || repeatFrequency != null) {
+      map['repeat_frequency'] = Variable<String>(repeatFrequency);
+    }
+    if (!nullToAbsent || repeatInterval != null) {
+      map['repeat_interval'] = Variable<int>(repeatInterval);
+    }
     if (!nullToAbsent || remindAt != null) {
       map['remind_at'] = Variable<String>(remindAt);
     }
@@ -1568,6 +1635,9 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     }
     if (!nullToAbsent || completedBy != null) {
       map['completed_by'] = Variable<String>(completedBy);
+    }
+    if (!nullToAbsent || nextTaskId != null) {
+      map['next_task_id'] = Variable<String>(nextTaskId);
     }
     if (!nullToAbsent || createdBy != null) {
       map['created_by'] = Variable<String>(createdBy);
@@ -1598,9 +1668,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       priority: Value(priority),
       position: Value(position),
       assigneeIds: Value(assigneeIds),
+      repeatFrequency: repeatFrequency == null && nullToAbsent ? const Value.absent() : Value(repeatFrequency),
+      repeatInterval: repeatInterval == null && nullToAbsent ? const Value.absent() : Value(repeatInterval),
       remindAt: remindAt == null && nullToAbsent ? const Value.absent() : Value(remindAt),
       completedAt: completedAt == null && nullToAbsent ? const Value.absent() : Value(completedAt),
       completedBy: completedBy == null && nullToAbsent ? const Value.absent() : Value(completedBy),
+      nextTaskId: nextTaskId == null && nullToAbsent ? const Value.absent() : Value(nextTaskId),
       createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),
       updatedBy: updatedBy == null && nullToAbsent ? const Value.absent() : Value(updatedBy),
       createdAt: Value(createdAt),
@@ -1623,9 +1696,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       priority: serializer.fromJson<int>(json['priority']),
       position: serializer.fromJson<double>(json['position']),
       assigneeIds: serializer.fromJson<String>(json['assigneeIds']),
+      repeatFrequency: serializer.fromJson<String?>(json['repeatFrequency']),
+      repeatInterval: serializer.fromJson<int?>(json['repeatInterval']),
       remindAt: serializer.fromJson<String?>(json['remindAt']),
       completedAt: serializer.fromJson<String?>(json['completedAt']),
       completedBy: serializer.fromJson<String?>(json['completedBy']),
+      nextTaskId: serializer.fromJson<String?>(json['nextTaskId']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
       updatedBy: serializer.fromJson<String?>(json['updatedBy']),
       createdAt: serializer.fromJson<String>(json['createdAt']),
@@ -1648,9 +1724,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       'priority': serializer.toJson<int>(priority),
       'position': serializer.toJson<double>(position),
       'assigneeIds': serializer.toJson<String>(assigneeIds),
+      'repeatFrequency': serializer.toJson<String?>(repeatFrequency),
+      'repeatInterval': serializer.toJson<int?>(repeatInterval),
       'remindAt': serializer.toJson<String?>(remindAt),
       'completedAt': serializer.toJson<String?>(completedAt),
       'completedBy': serializer.toJson<String?>(completedBy),
+      'nextTaskId': serializer.toJson<String?>(nextTaskId),
       'createdBy': serializer.toJson<String?>(createdBy),
       'updatedBy': serializer.toJson<String?>(updatedBy),
       'createdAt': serializer.toJson<String>(createdAt),
@@ -1671,9 +1750,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     int? priority,
     double? position,
     String? assigneeIds,
+    Value<String?> repeatFrequency = const Value.absent(),
+    Value<int?> repeatInterval = const Value.absent(),
     Value<String?> remindAt = const Value.absent(),
     Value<String?> completedAt = const Value.absent(),
     Value<String?> completedBy = const Value.absent(),
+    Value<String?> nextTaskId = const Value.absent(),
     Value<String?> createdBy = const Value.absent(),
     Value<String?> updatedBy = const Value.absent(),
     String? createdAt,
@@ -1691,9 +1773,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     priority: priority ?? this.priority,
     position: position ?? this.position,
     assigneeIds: assigneeIds ?? this.assigneeIds,
+    repeatFrequency: repeatFrequency.present ? repeatFrequency.value : this.repeatFrequency,
+    repeatInterval: repeatInterval.present ? repeatInterval.value : this.repeatInterval,
     remindAt: remindAt.present ? remindAt.value : this.remindAt,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
     completedBy: completedBy.present ? completedBy.value : this.completedBy,
+    nextTaskId: nextTaskId.present ? nextTaskId.value : this.nextTaskId,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
     updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
     createdAt: createdAt ?? this.createdAt,
@@ -1713,9 +1798,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       priority: data.priority.present ? data.priority.value : this.priority,
       position: data.position.present ? data.position.value : this.position,
       assigneeIds: data.assigneeIds.present ? data.assigneeIds.value : this.assigneeIds,
+      repeatFrequency: data.repeatFrequency.present ? data.repeatFrequency.value : this.repeatFrequency,
+      repeatInterval: data.repeatInterval.present ? data.repeatInterval.value : this.repeatInterval,
       remindAt: data.remindAt.present ? data.remindAt.value : this.remindAt,
       completedAt: data.completedAt.present ? data.completedAt.value : this.completedAt,
       completedBy: data.completedBy.present ? data.completedBy.value : this.completedBy,
+      nextTaskId: data.nextTaskId.present ? data.nextTaskId.value : this.nextTaskId,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
       updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
@@ -1738,9 +1826,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
           ..write('priority: $priority, ')
           ..write('position: $position, ')
           ..write('assigneeIds: $assigneeIds, ')
+          ..write('repeatFrequency: $repeatFrequency, ')
+          ..write('repeatInterval: $repeatInterval, ')
           ..write('remindAt: $remindAt, ')
           ..write('completedAt: $completedAt, ')
           ..write('completedBy: $completedBy, ')
+          ..write('nextTaskId: $nextTaskId, ')
           ..write('createdBy: $createdBy, ')
           ..write('updatedBy: $updatedBy, ')
           ..write('createdAt: $createdAt, ')
@@ -1752,7 +1843,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     taskListId,
     spaceId,
@@ -1763,16 +1854,19 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     priority,
     position,
     assigneeIds,
+    repeatFrequency,
+    repeatInterval,
     remindAt,
     completedAt,
     completedBy,
+    nextTaskId,
     createdBy,
     updatedBy,
     createdAt,
     updatedAt,
     deletedAt,
     serverUpdatedAt,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1787,9 +1881,12 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
           other.priority == this.priority &&
           other.position == this.position &&
           other.assigneeIds == this.assigneeIds &&
+          other.repeatFrequency == this.repeatFrequency &&
+          other.repeatInterval == this.repeatInterval &&
           other.remindAt == this.remindAt &&
           other.completedAt == this.completedAt &&
           other.completedBy == this.completedBy &&
+          other.nextTaskId == this.nextTaskId &&
           other.createdBy == this.createdBy &&
           other.updatedBy == this.updatedBy &&
           other.createdAt == this.createdAt &&
@@ -1809,9 +1906,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
   final Value<int> priority;
   final Value<double> position;
   final Value<String> assigneeIds;
+  final Value<String?> repeatFrequency;
+  final Value<int?> repeatInterval;
   final Value<String?> remindAt;
   final Value<String?> completedAt;
   final Value<String?> completedBy;
+  final Value<String?> nextTaskId;
   final Value<String?> createdBy;
   final Value<String?> updatedBy;
   final Value<String> createdAt;
@@ -1830,9 +1930,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     this.priority = const Value.absent(),
     this.position = const Value.absent(),
     this.assigneeIds = const Value.absent(),
+    this.repeatFrequency = const Value.absent(),
+    this.repeatInterval = const Value.absent(),
     this.remindAt = const Value.absent(),
     this.completedAt = const Value.absent(),
     this.completedBy = const Value.absent(),
+    this.nextTaskId = const Value.absent(),
     this.createdBy = const Value.absent(),
     this.updatedBy = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1852,9 +1955,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     required int priority,
     required double position,
     required String assigneeIds,
+    this.repeatFrequency = const Value.absent(),
+    this.repeatInterval = const Value.absent(),
     this.remindAt = const Value.absent(),
     this.completedAt = const Value.absent(),
     this.completedBy = const Value.absent(),
+    this.nextTaskId = const Value.absent(),
     this.createdBy = const Value.absent(),
     this.updatedBy = const Value.absent(),
     required String createdAt,
@@ -1882,9 +1988,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     Expression<int>? priority,
     Expression<double>? position,
     Expression<String>? assigneeIds,
+    Expression<String>? repeatFrequency,
+    Expression<int>? repeatInterval,
     Expression<String>? remindAt,
     Expression<String>? completedAt,
     Expression<String>? completedBy,
+    Expression<String>? nextTaskId,
     Expression<String>? createdBy,
     Expression<String>? updatedBy,
     Expression<String>? createdAt,
@@ -1904,9 +2013,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
       if (priority != null) 'priority': priority,
       if (position != null) 'position': position,
       if (assigneeIds != null) 'assignee_ids': assigneeIds,
+      if (repeatFrequency != null) 'repeat_frequency': repeatFrequency,
+      if (repeatInterval != null) 'repeat_interval': repeatInterval,
       if (remindAt != null) 'remind_at': remindAt,
       if (completedAt != null) 'completed_at': completedAt,
       if (completedBy != null) 'completed_by': completedBy,
+      if (nextTaskId != null) 'next_task_id': nextTaskId,
       if (createdBy != null) 'created_by': createdBy,
       if (updatedBy != null) 'updated_by': updatedBy,
       if (createdAt != null) 'created_at': createdAt,
@@ -1928,9 +2040,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     Value<int>? priority,
     Value<double>? position,
     Value<String>? assigneeIds,
+    Value<String?>? repeatFrequency,
+    Value<int?>? repeatInterval,
     Value<String?>? remindAt,
     Value<String?>? completedAt,
     Value<String?>? completedBy,
+    Value<String?>? nextTaskId,
     Value<String?>? createdBy,
     Value<String?>? updatedBy,
     Value<String>? createdAt,
@@ -1950,9 +2065,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
       priority: priority ?? this.priority,
       position: position ?? this.position,
       assigneeIds: assigneeIds ?? this.assigneeIds,
+      repeatFrequency: repeatFrequency ?? this.repeatFrequency,
+      repeatInterval: repeatInterval ?? this.repeatInterval,
       remindAt: remindAt ?? this.remindAt,
       completedAt: completedAt ?? this.completedAt,
       completedBy: completedBy ?? this.completedBy,
+      nextTaskId: nextTaskId ?? this.nextTaskId,
       createdBy: createdBy ?? this.createdBy,
       updatedBy: updatedBy ?? this.updatedBy,
       createdAt: createdAt ?? this.createdAt,
@@ -1996,6 +2114,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     if (assigneeIds.present) {
       map['assignee_ids'] = Variable<String>(assigneeIds.value);
     }
+    if (repeatFrequency.present) {
+      map['repeat_frequency'] = Variable<String>(repeatFrequency.value);
+    }
+    if (repeatInterval.present) {
+      map['repeat_interval'] = Variable<int>(repeatInterval.value);
+    }
     if (remindAt.present) {
       map['remind_at'] = Variable<String>(remindAt.value);
     }
@@ -2004,6 +2128,9 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     }
     if (completedBy.present) {
       map['completed_by'] = Variable<String>(completedBy.value);
+    }
+    if (nextTaskId.present) {
+      map['next_task_id'] = Variable<String>(nextTaskId.value);
     }
     if (createdBy.present) {
       map['created_by'] = Variable<String>(createdBy.value);
@@ -2042,9 +2169,12 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
           ..write('priority: $priority, ')
           ..write('position: $position, ')
           ..write('assigneeIds: $assigneeIds, ')
+          ..write('repeatFrequency: $repeatFrequency, ')
+          ..write('repeatInterval: $repeatInterval, ')
           ..write('remindAt: $remindAt, ')
           ..write('completedAt: $completedAt, ')
           ..write('completedBy: $completedBy, ')
+          ..write('nextTaskId: $nextTaskId, ')
           ..write('createdBy: $createdBy, ')
           ..write('updatedBy: $updatedBy, ')
           ..write('createdAt: $createdAt, ')
@@ -7087,9 +7217,12 @@ typedef $$TasksTableCreateCompanionBuilder = TasksCompanion Function({
   required int priority,
   required double position,
   required String assigneeIds,
+  Value<String?> repeatFrequency,
+  Value<int?> repeatInterval,
   Value<String?> remindAt,
   Value<String?> completedAt,
   Value<String?> completedBy,
+  Value<String?> nextTaskId,
   Value<String?> createdBy,
   Value<String?> updatedBy,
   required String createdAt,
@@ -7109,9 +7242,12 @@ typedef $$TasksTableUpdateCompanionBuilder = TasksCompanion Function({
   Value<int> priority,
   Value<double> position,
   Value<String> assigneeIds,
+  Value<String?> repeatFrequency,
+  Value<int?> repeatInterval,
   Value<String?> remindAt,
   Value<String?> completedAt,
   Value<String?> completedBy,
+  Value<String?> nextTaskId,
   Value<String?> createdBy,
   Value<String?> updatedBy,
   Value<String> createdAt,
@@ -7158,6 +7294,12 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
   ColumnFilters<String> get assigneeIds =>
       $composableBuilder(column: $table.assigneeIds, builder: (column) => ColumnFilters(column));
 
+  ColumnFilters<String> get repeatFrequency =>
+      $composableBuilder(column: $table.repeatFrequency, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get repeatInterval =>
+      $composableBuilder(column: $table.repeatInterval, builder: (column) => ColumnFilters(column));
+
   ColumnFilters<String> get remindAt =>
       $composableBuilder(column: $table.remindAt, builder: (column) => ColumnFilters(column));
 
@@ -7166,6 +7308,9 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
 
   ColumnFilters<String> get completedBy =>
       $composableBuilder(column: $table.completedBy, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get nextTaskId =>
+      $composableBuilder(column: $table.nextTaskId, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => ColumnFilters(column));
@@ -7223,6 +7368,12 @@ class $$TasksTableOrderingComposer extends Composer<_$AppDatabase, $TasksTable> 
   ColumnOrderings<String> get assigneeIds =>
       $composableBuilder(column: $table.assigneeIds, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get repeatFrequency =>
+      $composableBuilder(column: $table.repeatFrequency, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get repeatInterval =>
+      $composableBuilder(column: $table.repeatInterval, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get remindAt =>
       $composableBuilder(column: $table.remindAt, builder: (column) => ColumnOrderings(column));
 
@@ -7231,6 +7382,9 @@ class $$TasksTableOrderingComposer extends Composer<_$AppDatabase, $TasksTable> 
 
   ColumnOrderings<String> get completedBy =>
       $composableBuilder(column: $table.completedBy, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get nextTaskId =>
+      $composableBuilder(column: $table.nextTaskId, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get createdBy =>
       $composableBuilder(column: $table.createdBy, builder: (column) => ColumnOrderings(column));
@@ -7280,6 +7434,12 @@ class $$TasksTableAnnotationComposer extends Composer<_$AppDatabase, $TasksTable
   GeneratedColumn<String> get assigneeIds =>
       $composableBuilder(column: $table.assigneeIds, builder: (column) => column);
 
+  GeneratedColumn<String> get repeatFrequency =>
+      $composableBuilder(column: $table.repeatFrequency, builder: (column) => column);
+
+  GeneratedColumn<int> get repeatInterval =>
+      $composableBuilder(column: $table.repeatInterval, builder: (column) => column);
+
   GeneratedColumn<String> get remindAt => $composableBuilder(column: $table.remindAt, builder: (column) => column);
 
   GeneratedColumn<String> get completedAt =>
@@ -7287,6 +7447,8 @@ class $$TasksTableAnnotationComposer extends Composer<_$AppDatabase, $TasksTable
 
   GeneratedColumn<String> get completedBy =>
       $composableBuilder(column: $table.completedBy, builder: (column) => column);
+
+  GeneratedColumn<String> get nextTaskId => $composableBuilder(column: $table.nextTaskId, builder: (column) => column);
 
   GeneratedColumn<String> get createdBy => $composableBuilder(column: $table.createdBy, builder: (column) => column);
 
@@ -7337,9 +7499,12 @@ class $$TasksTableTableManager
                 Value<int> priority = const Value.absent(),
                 Value<double> position = const Value.absent(),
                 Value<String> assigneeIds = const Value.absent(),
+                Value<String?> repeatFrequency = const Value.absent(),
+                Value<int?> repeatInterval = const Value.absent(),
                 Value<String?> remindAt = const Value.absent(),
                 Value<String?> completedAt = const Value.absent(),
                 Value<String?> completedBy = const Value.absent(),
+                Value<String?> nextTaskId = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 Value<String?> updatedBy = const Value.absent(),
                 Value<String> createdAt = const Value.absent(),
@@ -7358,9 +7523,12 @@ class $$TasksTableTableManager
                 priority: priority,
                 position: position,
                 assigneeIds: assigneeIds,
+                repeatFrequency: repeatFrequency,
+                repeatInterval: repeatInterval,
                 remindAt: remindAt,
                 completedAt: completedAt,
                 completedBy: completedBy,
+                nextTaskId: nextTaskId,
                 createdBy: createdBy,
                 updatedBy: updatedBy,
                 createdAt: createdAt,
@@ -7381,9 +7549,12 @@ class $$TasksTableTableManager
                 required int priority,
                 required double position,
                 required String assigneeIds,
+                Value<String?> repeatFrequency = const Value.absent(),
+                Value<int?> repeatInterval = const Value.absent(),
                 Value<String?> remindAt = const Value.absent(),
                 Value<String?> completedAt = const Value.absent(),
                 Value<String?> completedBy = const Value.absent(),
+                Value<String?> nextTaskId = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
                 Value<String?> updatedBy = const Value.absent(),
                 required String createdAt,
@@ -7402,9 +7573,12 @@ class $$TasksTableTableManager
                 priority: priority,
                 position: position,
                 assigneeIds: assigneeIds,
+                repeatFrequency: repeatFrequency,
+                repeatInterval: repeatInterval,
                 remindAt: remindAt,
                 completedAt: completedAt,
                 completedBy: completedBy,
+                nextTaskId: nextTaskId,
                 createdBy: createdBy,
                 updatedBy: updatedBy,
                 createdAt: createdAt,

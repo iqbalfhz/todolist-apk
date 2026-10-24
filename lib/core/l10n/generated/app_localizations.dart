@@ -2814,6 +2814,126 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Kenangan itu belum tersedia di HP ini.'**
   String get notifTapMissingMemory;
+
+  /// No description provided for @repeatAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulangi'**
+  String get repeatAdd;
+
+  /// No description provided for @repeatSheetTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Ulangi tugas'**
+  String get repeatSheetTitle;
+
+  /// No description provided for @repeatHowOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Seberapa sering?'**
+  String get repeatHowOften;
+
+  /// No description provided for @repeatNone.
+  ///
+  /// In id, this message translates to:
+  /// **'Tidak diulang'**
+  String get repeatNone;
+
+  /// No description provided for @repeatDaily.
+  ///
+  /// In id, this message translates to:
+  /// **'Harian'**
+  String get repeatDaily;
+
+  /// No description provided for @repeatWeekly.
+  ///
+  /// In id, this message translates to:
+  /// **'Mingguan'**
+  String get repeatWeekly;
+
+  /// No description provided for @repeatMonthly.
+  ///
+  /// In id, this message translates to:
+  /// **'Bulanan'**
+  String get repeatMonthly;
+
+  /// No description provided for @repeatYearly.
+  ///
+  /// In id, this message translates to:
+  /// **'Tahunan'**
+  String get repeatYearly;
+
+  /// No description provided for @repeatEvery.
+  ///
+  /// In id, this message translates to:
+  /// **'Setiap berapa?'**
+  String get repeatEvery;
+
+  /// No description provided for @repeatEveryDay.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =1{Tiap hari} other{Tiap {count} hari}}'**
+  String repeatEveryDay(int count);
+
+  /// No description provided for @repeatEveryWeek.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =1{Tiap minggu} other{Tiap {count} minggu}}'**
+  String repeatEveryWeek(int count);
+
+  /// No description provided for @repeatEveryMonth.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =1{Tiap bulan} other{Tiap {count} bulan}}'**
+  String repeatEveryMonth(int count);
+
+  /// No description provided for @repeatEveryYear.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =1{Tiap tahun} other{Tiap {count} tahun}}'**
+  String repeatEveryYear(int count);
+
+  /// No description provided for @repeatFewer.
+  ///
+  /// In id, this message translates to:
+  /// **'Kurangi'**
+  String get repeatFewer;
+
+  /// No description provided for @repeatMore.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah'**
+  String get repeatMore;
+
+  /// No description provided for @repeatNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Begitu tugas ini selesai, tugas berikutnya dibuat dengan tenggat baru.'**
+  String get repeatNote;
+
+  /// No description provided for @repeatShortMonth.
+  ///
+  /// In id, this message translates to:
+  /// **'Di bulan yang lebih pendek, tenggatnya jatuh di hari terakhir bulan itu.'**
+  String get repeatShortMonth;
+
+  /// No description provided for @repeatLeapDay.
+  ///
+  /// In id, this message translates to:
+  /// **'Di tahun biasa, tenggatnya jatuh pada 28 Februari.'**
+  String get repeatLeapDay;
+
+  /// No description provided for @repeatNextTask.
+  ///
+  /// In id, this message translates to:
+  /// **'Tugas berikutnya: {date}'**
+  String repeatNextTask(String date);
+
+  /// No description provided for @taskCompletedRepeatSnack.
+  ///
+  /// In id, this message translates to:
+  /// **'Tugas selesai. Yang berikutnya muncul setelah tersimpan di server.'**
+  String get taskCompletedRepeatSnack;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

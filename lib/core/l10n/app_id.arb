@@ -876,5 +876,51 @@
   "galleryGone": "Foto ini sudah tidak ada.",
   "tripSaveAsMemory": "Simpan jadi kenangan",
   "tripMemoriesTitle": "Kenangan",
-  "notifTapMissingMemory": "Kenangan itu belum tersedia di HP ini."
+  "notifTapMissingMemory": "Kenangan itu belum tersedia di HP ini.",
+
+  "repeatAdd": "Ulangi",
+  "repeatSheetTitle": "Ulangi tugas",
+  "repeatHowOften": "Seberapa sering?",
+  "repeatNone": "Tidak diulang",
+  "repeatDaily": "Harian",
+  "repeatWeekly": "Mingguan",
+  "repeatMonthly": "Bulanan",
+  "repeatYearly": "Tahunan",
+  "repeatEvery": "Setiap berapa?",
+  "repeatEveryDay": "{count, plural, =1{Tiap hari} other{Tiap {count} hari}}",
+  "@repeatEveryDay": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "repeatEveryWeek": "{count, plural, =1{Tiap minggu} other{Tiap {count} minggu}}",
+  "@repeatEveryWeek": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "repeatEveryMonth": "{count, plural, =1{Tiap bulan} other{Tiap {count} bulan}}",
+  "@repeatEveryMonth": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "repeatEveryYear": "{count, plural, =1{Tiap tahun} other{Tiap {count} tahun}}",
+  "@repeatEveryYear": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "repeatFewer": "Kurangi",
+  "repeatMore": "Tambah",
+  "repeatNote": "Begitu tugas ini selesai, tugas berikutnya dibuat dengan tenggat baru.",
+  "repeatShortMonth": "Di bulan yang lebih pendek, tenggatnya jatuh di hari terakhir bulan itu.",
+  "repeatLeapDay": "Di tahun biasa, tenggatnya jatuh pada 28 Februari.",
+  "repeatNextTask": "Tugas berikutnya: {date}",
+  "@repeatNextTask": {
+    "placeholders": {
+      "date": {"type": "String"}
+    }
+  },
+  "taskCompletedRepeatSnack": "Tugas selesai. Yang berikutnya muncul setelah tersimpan di server."
 }

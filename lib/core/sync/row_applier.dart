@@ -40,10 +40,13 @@ class RowApplier {
   final LocalStore store;
 
   /// Kolom yang nilainya ikut ditentukan kolom lain, jadi dilindungi bersama-sama.
-  /// `completed_by` dan `remind_at` diisi server dari `completed_at` dan tenggat.
-  /// Tanggal perjalanan dicek server berpasangan, dan jadwal setor kosong tanpa frekuensinya.
+  /// `completed_by` dan `remind_at` diisi server dari `completed_at` dan tenggat, begitu pula
+  /// `next_task_id` dari selesainya tugas berulang. Tanggal perjalanan dicek server berpasangan,
+  /// jadwal setor kosong tanpa frekuensinya, dan aturan ulang tugas selalu dikirim berdua.
   static const Map<String, List<String>> _linkedColumns = {
-    'completed_at': ['completed_by'],
+    'completed_at': ['completed_by', 'next_task_id'],
+    'repeat_frequency': ['repeat_interval'],
+    'repeat_interval': ['repeat_frequency'],
     'due_date': ['due_time', 'remind_at'],
     'due_time': ['due_date', 'remind_at'],
     'start_date': ['end_date'],

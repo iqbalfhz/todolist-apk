@@ -17,6 +17,8 @@ class TaskRepository {
   Stream<List<Task>> watchAll() => writer.store.watchTasks();
 
   /// Buat tugas di [list]. Tugas langsung tampil sebelum server membalas.
+  ///
+  /// [repeat] (v1.0) butuh [dueDate] sebagai patokan, dan tidak boleh di checklist perjalanan.
   Future<Task> create({
     required TaskList list,
     required String title,
@@ -24,11 +26,13 @@ class TaskRepository {
     String? dueTime,
     List<String>? assigneeIds,
     bool important = false,
+    TaskRepeat? repeat,
   }) async {
     final cleanTitle = title.trim();
     if (!isValidRequiredText(cleanTitle, Limits.taskTitle)) {
       throw ArgumentError.value(title, 'title', 'Judul wajib diisi, paling banyak ${Limits.taskTitle} karakter.');
     }
+    if (repeat != null) _checkRepeat(repeat, dueDate: dueDate, checklist: list.isChecklist);
 
     final id = newUlid(now: writer.now());
     final nowIso = writer.nowIso();
@@ -47,6 +51,8 @@ class TaskRepository {
       'priority': important ? priorityImportant : priorityNone,
       'position': await writer.nextPosition(EntityType.task, parentId: list.id),
       'assignee_ids': assignees,
+      'repeat_frequency': repeat?.frequency.name,
+      'repeat_interval': repeat?.interval,
     };
 
     final row = <String, dynamic>{
@@ -56,6 +62,7 @@ class TaskRepository {
       'remind_at': null,
       'completed_at': null,
       'completed_by': null,
+      'next_task_id': null,
       'created_by': userId,
       'updated_by': userId,
       'created_at': nowIso,
@@ -79,11 +86,38 @@ class TaskRepository {
     await writer.update(EntityType.task, id, {'notes': nullIfBlank(notes)});
   }
 
-  /// Tenggat. Tanggal dan jam selalu dikirim bersama; mengosongkan tanggal ikut mengosongkan jam.
+  /// Tenggat. Tanggal dan jam selalu dikirim bersama; mengosongkan tanggal ikut mengosongkan jam
+  /// dan aturan ulang, sama seperti yang dilakukan server.
   Future<void> setDue(String id, {required String? date, required String? time}) => writer.update(EntityType.task, id, {
     'due_date': date,
     'due_time': date == null ? null : time,
+    if (date == null) ...{'repeat_frequency': null, 'repeat_interval': null},
   }, sendTogether: true);
+
+  /// Aturan ulang (v1.0); `null` menghentikan pengulangan. Frekuensi dan selangnya selalu
+  /// dikirim berdua. Tugas berulang butuh tenggat, dan item checklist perjalanan tidak bisa berulang.
+  Future<void> setRepeat(String id, TaskRepeat? repeat) async {
+    if (repeat != null) {
+      final task = await writer.store.read(EntityType.task, id);
+      if (task == null) return;
+      final list = await writer.store.read(EntityType.list, task['task_list_id'] as String);
+      _checkRepeat(repeat, dueDate: task['due_date'] as String?, checklist: list?['trip_id'] != null);
+    }
+
+    await writer.update(EntityType.task, id, {
+      'repeat_frequency': repeat?.frequency.name,
+      'repeat_interval': repeat?.interval,
+    }, sendTogether: true);
+  }
+
+  /// Aturan yang sama dengan server, supaya 422 dari antrean tidak terjadi.
+  static void _checkRepeat(TaskRepeat repeat, {required String? dueDate, required bool checklist}) {
+    if (dueDate == null) throw ArgumentError.value(repeat, 'repeat', 'Tugas berulang butuh tanggal.');
+    if (checklist) throw ArgumentError.value(repeat, 'repeat', 'Checklist perjalanan tidak bisa berulang.');
+    if (repeat.interval < 1 || repeat.interval > Limits.repeatInterval) {
+      throw ArgumentError.value(repeat, 'repeat', 'Selang ulang 1–${Limits.repeatInterval}.');
+    }
+  }
 
   Future<void> setImportant(String id, bool important) =>
       writer.update(EntityType.task, id, {'priority': important ? priorityImportant : priorityNone});

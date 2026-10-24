@@ -910,6 +910,42 @@ void main() {
       expect((await partner.account.trips.watchAll().first).where((row) => row.id == tripId), isEmpty);
     });
 
+    // ---------------------------------------------------------------- tugas berulang (v1.0)
+
+    step('Tugas berulang dari tambah cepat: tiap hari, mulai hari ini');
+    await go(Routes.home);
+    await tap(find.byType(FloatingActionButton));
+    await tester.enterText(field('Mau mengerjakan apa?'), 'Siram tanaman');
+    await tap(find.text('Ulangi'));
+    await tap(find.text('Harian'));
+    await tap(find.widgetWithText(FilledButton, 'Simpan').last);
+    expect(find.widgetWithText(InkWell, 'Tiap hari'), findsOneWidget);
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final watering = await serverRow('tasks', (row) => row['title'] == 'Siram tanaman');
+    final wateringId = watering['id'] as String;
+    expect((watering['due_date'], watering['repeat_frequency'], watering['repeat_interval']), (today(), 'daily', 1));
+
+    step('Centang: tugas berikutnya bertenggat besok muncul dari balasan server');
+    await go(Routes.tasks);
+    await tap(find.bySemanticsLabel('Tandai selesai: Siram tanaman'));
+    expect(find.text('Tugas selesai. Yang berikutnya muncul setelah tersimpan di server.'), findsOneWidget);
+    await advance(const Duration(seconds: 6));
+    final wateringNext = await serverRow('tasks', (row) => row['title'] == 'Siram tanaman' && row['id'] != wateringId);
+    expect((wateringNext['due_date'], wateringNext['completed_at']), (addDays(today(), 1), null));
+    expect(find.bySemanticsLabel('Tandai selesai: Siram tanaman'), findsOneWidget);
+    expect(find.textContaining('Besok'), findsWidgets);
+
+    step('Batal selesai: tugas berikutnya yang belum disentuh ikut terhapus');
+    await go(Routes.task(wateringId));
+    await tap(find.bySemanticsLabel('Batalkan selesai: Siram tanaman'));
+    await advance(const Duration(seconds: 6));
+    expect((await serverRows('tasks')).where((row) => row['id'] == wateringNext['id']), isEmpty);
+    expect((await serverRow('tasks', (row) => row['id'] == wateringId))['completed_at'], isNull);
+    await go(Routes.tasks);
+    expect(find.bySemanticsLabel('Tandai selesai: Siram tanaman'), findsOneWidget);
+
     // ---------------------------------------------------------------- kenangan (v0.3)
     // Foto tidak diunggah di sini: API lokal tidak punya kunci R2.
 

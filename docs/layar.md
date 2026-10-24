@@ -1,4 +1,4 @@
-# Daftar layar v0.1 sampai v0.3
+# Daftar layar v0.1 sampai v1.0
 
 Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 (1 px = 1 dp). File ini berasal dari kanvas desain di claude.ai dan membutuhkan `support.js` yang tidak disertakan, jadi tidak tampil benar di browser; baca sebagai teks. Teks, ukuran, jarak, dan radius tertulis langsung di atribut `style`.
 
@@ -34,16 +34,16 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 - Kepala "Tugas" dengan tombol buat daftar baru.
 - Chip status: Semua tugas / Belum selesai / Selesai. Chip orang: Semua orang / Aku / Pasangan.
 - Tugas dikelompokkan per daftar: nama daftar dengan titik warna, label ruang dan jumlah ("Bersama · 3", atau ikon gembok "Pribadi · 1").
-- Baris tugas: tombol centang 44 dp, judul, keterangan tenggat ("Hari ini, 17.00", "Tanpa tenggat", "Jum, 10 Okt · Penting"), chip penanggung jawab (tidak tampil di Ruang Pribadi).
+- Baris tugas: tombol centang 44 dp, judul, keterangan tenggat ("Hari ini, 17.00", "Tanpa tenggat", "Jum, 10 Okt · Penting"), chip penanggung jawab (tidak tampil di Ruang Pribadi). Tugas berulang (v1.0) ditandai ikon ulang dan aturannya: "Hari ini · Tiap minggu".
 - Tugas selesai dilipat di bawah, dibuka lewat tombol "Selesai (3)".
-- Ketuk baris → Detail tugas. Centang → animasi, getar halus, dan snackbar Urungkan selama 5 detik.
+- Ketuk baris → Detail tugas. Centang → animasi, getar halus, dan snackbar Urungkan selama 5 detik. Untuk tugas berulang, snackbarnya "Tugas selesai. Yang berikutnya muncul setelah tersimpan di server.": tugas berikutnya dibuat server dan muncul begitu centangnya terkirim.
 - Checklist perjalanan dan isinya tidak tampil di sini; tempatnya di tab Liburan.
 
 ### Tambah tugas — `TambahTugas.dc.html` (lembar bawah)
 
 - Judul "Tugas baru" dan tombol tutup.
 - "Mau mengerjakan apa?" — satu-satunya isian wajib; keyboard langsung terbuka.
-- "Kapan?": chip Hari ini / Besok / Pilih tanggal, lalu chip jam (misalnya 17.00) atau "Tanpa jam".
+- "Kapan?": chip Hari ini / Besok / Pilih tanggal, lalu chip jam (misalnya 17.00) atau "Tanpa jam", dan chip "Ulangi" (v1.0) yang membuka lembar Ulangi tugas. Jam dan Ulangi hanya ada selama tanggalnya terisi; mengosongkan tanggal ikut mengosongkan keduanya.
 - "Siapa?": Aku / Pasangan / Kita. Pasangan dan Kita hanya ada di Ruang Bersama; memilihnya memindahkan pilihan daftar ke Ruang Bersama.
 - Pilihan daftar: nama daftar dengan keterangan "Daftar bersama" atau "Daftar pribadi".
 - Switch "Tandai penting" = `priority` 3; mati = 0. Prioritas 1 dan 2 belum dipakai di UI v0.1.
@@ -121,7 +121,8 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 
 - **Masuk dan Daftar:** email, kata sandi (minimal 8 karakter), dan nama panggilan saat daftar; tautan untuk pindah di antara keduanya. Error diambil dari `message` balasan API.
 - **Izin notifikasi:** alasan singkat kenapa notifikasi penting dan tombol minta izin (Android 13+). Bisa dilewati; sebelum Android 13 layarnya tidak tampil. Tanpa panduan optimasi baterai (lihat CLAUDE.md).
-- **Detail tugas:** judul, catatan, tenggat (tanggal dan jam opsional), switch penting, penanggung jawab, pindah daftar (hanya daftar di ruang yang sama), dan hapus. Tersimpan otomatis tanpa tombol Simpan. Item checklist perjalanan tidak bisa dipindah ke daftar lain.
+- **Detail tugas:** judul, catatan, tenggat (tanggal dan jam opsional), switch penting, penanggung jawab, pindah daftar (hanya daftar di ruang yang sama), dan hapus. Tersimpan otomatis tanpa tombol Simpan. Item checklist perjalanan tidak bisa dipindah ke daftar lain. Chip "Ulangi" atau aturannya ("Tiap 2 minggu") ada di "Kapan?" selama tanggalnya terisi, kecuali di item checklist perjalanan dan tugas yang sudah selesai; "Hapus tenggat" ikut menghentikan pengulangan. Tugas berulang yang sudah selesai menampilkan aturannya dan "Tugas berikutnya: Kam, 15 Okt" (ketuk → tugas berikutnya).
+- **Lembar Ulangi tugas** (v1.0): "Seberapa sering?" chip Tidak diulang / Harian / Mingguan / Bulanan / Tahunan; "Setiap berapa?" dengan tombol kurang dan tambah di kiri-kanan "Tiap 2 minggu" (1–99); keterangan bulan yang lebih pendek kalau tenggatnya tanggal 29–31 (bulanan) atau 29 Februari (tahunan); catatan "Begitu tugas ini selesai, tugas berikutnya dibuat dengan tenggat baru."; Simpan. Mingguan di beberapa hari sekaligus belum ada.
 - **Kelola daftar:** buat atau ubah nama, emoji, dan warna (enam pilihan); urutkan; arsipkan; hapus dengan konfirmasi "Hapus daftar Belanja? 12 tugas di dalamnya ikut terhapus." Checklist perjalanan tidak tampil di sini; ia ikut terhapus bersama perjalanannya.
 - **Tab Tabungan:** kartu untuk setiap target beserta progresnya; tombol tambah target (nama, emoji, nominal, mata uang, tanggal target opsional).
 - **Offline:** banner kecil "Sedang offline. Perubahanmu aman dan dikirim saat online."

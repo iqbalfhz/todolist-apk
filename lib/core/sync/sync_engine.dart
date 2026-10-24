@@ -45,7 +45,8 @@ class SyncEngine {
   /// atau kolom baru yang perlu diisi untuk baris lama.
   /// 1: v0.1. 2: `special_dates`. 3: `trips`, `trip_id` di daftar, dan jadwal pengingat
   /// setor di target (semuanya v0.2). 4: `memories` dan `memory_photos` (v0.3).
-  static const int collectionsVersion = 4;
+  /// 5: aturan ulang dan `next_task_id` di `tasks` (v1.0).
+  static const int collectionsVersion = 5;
 
   /// Paling lama menunggu antrean terkirim sebelum menarik data.
   static const Duration flushLimit = Duration(seconds: 8);

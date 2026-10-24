@@ -65,9 +65,16 @@ class Tasks extends Table {
 
   /// JSON larik ID penanggung jawab.
   TextColumn get assigneeIds => text()();
+
+  /// Aturan ulang (v1.0).
+  TextColumn get repeatFrequency => text().nullable()();
+  IntColumn get repeatInterval => integer().nullable()();
   TextColumn get remindAt => text().nullable()();
   TextColumn get completedAt => text().nullable()();
   TextColumn get completedBy => text().nullable()();
+
+  /// Tugas berikutnya dari tugas berulang yang sudah selesai (v1.0).
+  TextColumn get nextTaskId => text().nullable()();
   TextColumn get createdBy => text().nullable()();
   TextColumn get updatedBy => text().nullable()();
   TextColumn get createdAt => text()();
@@ -270,7 +277,7 @@ class AppDatabase extends _$AppDatabase {
   /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
   /// dan jadwal pengingat setor di target (semuanya v0.2). 4: kenangan dan fotonya (v0.3).
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -285,6 +292,11 @@ class AppDatabase extends _$AppDatabase {
       if (from < 4) {
         await migrator.createTable(memories);
         await migrator.createTable(memoryPhotos);
+      }
+      if (from < 5) {
+        await migrator.addColumn(tasks, tasks.repeatFrequency);
+        await migrator.addColumn(tasks, tasks.repeatInterval);
+        await migrator.addColumn(tasks, tasks.nextTaskId);
       }
     },
   );
