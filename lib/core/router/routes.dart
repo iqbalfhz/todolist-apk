@@ -36,5 +36,21 @@ abstract final class Routes {
   /// Target tabungan yang ditautkan ke perjalanan [tripId]; kembali ke perjalanannya.
   static String tripGoal(String tripId, String goalId) => '/liburan/$tripId/tabungan/$goalId';
 
+  /// Linimasa Kenangan (v0.3).
+  static const String memories = '/kenangan';
+
+  /// Parameter kueri "Simpan jadi kenangan": perjalanan yang isinya dipakai.
+  static const String tripParam = 'perjalanan';
+
+  /// Kenangan baru, kosong atau diisi dari perjalanan [tripId].
+  static String newMemory({String? tripId}) => tripId == null ? '/kenangan/baru' : '/kenangan/baru?$tripParam=$tripId';
+
+  static String memory(String id) => '/kenangan/$id';
+
+  static String editMemory(String id) => '/kenangan/$id/ubah';
+
+  /// Galeri foto kenangan [memoryId], dibuka di foto [photoId]. Di luar tab bawah.
+  static String memoryPhoto(String memoryId, String photoId) => '/kenangan/$memoryId/foto/$photoId';
+
   static String _origin(bool fromHome) => fromHome ? '?$fromParam=${Routes.fromHome}' : '';
 }

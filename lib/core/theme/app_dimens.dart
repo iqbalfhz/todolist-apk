@@ -124,6 +124,25 @@ abstract final class AppDimens {
   static const double themeSwatch = 24;
   static const double themeCardMinHeight = 92;
 
+  // Foto kenangan (v0.3).
+  /// Radius foto di kisi dan sampul.
+  static const double photoRadius = 12;
+
+  /// Jarak antarfoto di kisi.
+  static const double photoGap = 4;
+
+  /// Kolom kisi foto di Detail kenangan dan Kenangan baru.
+  static const int photoColumns = 3;
+
+  /// Lebar dibagi tinggi sampul di kartu linimasa.
+  static const double coverAspectCard = 16 / 9;
+
+  /// Lebar dibagi tinggi sampul di Detail kenangan.
+  static const double coverAspectDetail = 4 / 3;
+
+  /// Lingkaran penanda "Menunggu terkirim" di pojok foto.
+  static const double photoBadge = 24;
+
   // Ikon.
   static const double iconXs = 14;
   static const double iconSm = 16;

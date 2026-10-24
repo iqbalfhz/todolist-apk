@@ -235,6 +235,12 @@ abstract class AppLocalizations {
   /// **'Liburan'**
   String get navTrips;
 
+  /// No description provided for @navMemories.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan'**
+  String get navMemories;
+
   /// No description provided for @navLabel.
   ///
   /// In id, this message translates to:
@@ -1582,7 +1588,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifPartnerActivitySub.
   ///
   /// In id, this message translates to:
-  /// **'Titipan baru dan tugas selesai'**
+  /// **'Titipan baru, tugas selesai, dan kenangan baru'**
   String get notifPartnerActivitySub;
 
   /// No description provided for @notifSavingsActivity.
@@ -2520,6 +2526,294 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Matikan pengingat'**
   String get savingsReminderTurnOff;
+
+  /// No description provided for @memoriesTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan'**
+  String get memoriesTitle;
+
+  /// No description provided for @memoriesNew.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan baru'**
+  String get memoriesNew;
+
+  /// No description provided for @memoriesEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada kenangan. Simpan tempat yang pernah kalian datangi, lengkap dengan foto dan ceritanya.'**
+  String get memoriesEmpty;
+
+  /// No description provided for @memoriesEmptySolo.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada kenangan. Simpan tempat yang pernah kamu datangi, lengkap dengan foto dan ceritanya.'**
+  String get memoriesEmptySolo;
+
+  /// No description provided for @memoriesYearCount.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} kenangan'**
+  String memoriesYearCount(int count);
+
+  /// No description provided for @memoryPhotoCount.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =0{Belum ada foto} other{{count} foto}}'**
+  String memoryPhotoCount(int count);
+
+  /// No description provided for @memoryGone.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan ini sudah tidak ada.'**
+  String get memoryGone;
+
+  /// No description provided for @memoryFromTrip.
+  ///
+  /// In id, this message translates to:
+  /// **'Dari perjalanan {title}'**
+  String memoryFromTrip(String title);
+
+  /// No description provided for @memoryStoryTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Cerita'**
+  String get memoryStoryTitle;
+
+  /// No description provided for @memoryPhotosTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto'**
+  String get memoryPhotosTitle;
+
+  /// No description provided for @memoryPhotosAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Tambah foto'**
+  String get memoryPhotosAdd;
+
+  /// No description provided for @memoryPhotosEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada foto. Tambahkan dari galeri HP supaya kenangan ini lebih hidup.'**
+  String get memoryPhotosEmpty;
+
+  /// No description provided for @memoryPhotosFull.
+  ///
+  /// In id, this message translates to:
+  /// **'Satu kenangan paling banyak {max} foto.'**
+  String memoryPhotosFull(int max);
+
+  /// No description provided for @memoryPhotosUnreadable.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, other{{count} foto tidak bisa dibaca, jadi tidak ditambahkan.}}'**
+  String memoryPhotosUnreadable(int count);
+
+  /// No description provided for @memoryPhotosPreparing.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, other{Menyiapkan {count} foto}}'**
+  String memoryPhotosPreparing(int count);
+
+  /// No description provided for @memoryPhotoPending.
+  ///
+  /// In id, this message translates to:
+  /// **'Menunggu terkirim'**
+  String get memoryPhotoPending;
+
+  /// No description provided for @memoryPhotoLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto {index} dari {total}'**
+  String memoryPhotoLabel(int index, int total);
+
+  /// No description provided for @memoryDeleteConfirmTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus {title}?'**
+  String memoryDeleteConfirmTitle(String title);
+
+  /// No description provided for @memoryDeleteConfirmBody.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, other{{count} fotonya ikut terhapus dan tidak bisa dikembalikan.}}'**
+  String memoryDeleteConfirmBody(int count);
+
+  /// No description provided for @memoryDeletedSnack.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan dihapus.'**
+  String get memoryDeletedSnack;
+
+  /// No description provided for @memoryFormNew.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan baru'**
+  String get memoryFormNew;
+
+  /// No description provided for @memoryFormEdit.
+  ///
+  /// In id, this message translates to:
+  /// **'Ubah kenangan'**
+  String get memoryFormEdit;
+
+  /// No description provided for @memoryTitleLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Mau dikenang sebagai apa?'**
+  String get memoryTitleLabel;
+
+  /// No description provided for @memoryTitleHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Liburan ke Bali'**
+  String get memoryTitleHint;
+
+  /// No description provided for @memoryPlaceLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Di mana?'**
+  String get memoryPlaceLabel;
+
+  /// No description provided for @memoryPlaceHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya Ubud, Bali'**
+  String get memoryPlaceHint;
+
+  /// No description provided for @memoryDateLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Kapan?'**
+  String get memoryDateLabel;
+
+  /// No description provided for @memoryStoryLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Ceritanya?'**
+  String get memoryStoryLabel;
+
+  /// No description provided for @memoryStoryHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Apa yang paling diingat dari hari itu?'**
+  String get memoryStoryHint;
+
+  /// No description provided for @memoryPhotosLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Fotonya?'**
+  String get memoryPhotosLabel;
+
+  /// No description provided for @memoryPhotosHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Paling banyak {max} foto. Foto dikecilkan sebelum diunggah, dan lokasinya tidak ikut tersimpan.'**
+  String memoryPhotosHelp(int max);
+
+  /// No description provided for @memoryPhotosPick.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih foto'**
+  String get memoryPhotosPick;
+
+  /// No description provided for @memoryPhotoUnpick.
+  ///
+  /// In id, this message translates to:
+  /// **'Batal pilih foto {index}'**
+  String memoryPhotoUnpick(int index);
+
+  /// No description provided for @memoryWherePrivateHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Pasanganmu tidak akan melihat kenangan ini.'**
+  String get memoryWherePrivateHelp;
+
+  /// No description provided for @errorMemoryTitleRequired.
+  ///
+  /// In id, this message translates to:
+  /// **'Judul kenangan belum diisi.'**
+  String get errorMemoryTitleRequired;
+
+  /// No description provided for @errorPlaceLong.
+  ///
+  /// In id, this message translates to:
+  /// **'Nama tempat paling banyak 100 karakter.'**
+  String get errorPlaceLong;
+
+  /// No description provided for @errorStoryLong.
+  ///
+  /// In id, this message translates to:
+  /// **'Cerita paling banyak 10.000 karakter.'**
+  String get errorStoryLong;
+
+  /// No description provided for @galleryCounter.
+  ///
+  /// In id, this message translates to:
+  /// **'{index} dari {total}'**
+  String galleryCounter(int index, int total);
+
+  /// No description provided for @galleryMakeCover.
+  ///
+  /// In id, this message translates to:
+  /// **'Jadikan sampul'**
+  String get galleryMakeCover;
+
+  /// No description provided for @galleryIsCover.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto sampul'**
+  String get galleryIsCover;
+
+  /// No description provided for @galleryCoverSet.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto ini jadi sampul.'**
+  String get galleryCoverSet;
+
+  /// No description provided for @galleryDelete.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus foto'**
+  String get galleryDelete;
+
+  /// No description provided for @galleryDeletedSnack.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto dihapus.'**
+  String get galleryDeletedSnack;
+
+  /// No description provided for @galleryTakenAt.
+  ///
+  /// In id, this message translates to:
+  /// **'Diambil {date}, {time}'**
+  String galleryTakenAt(String date, String time);
+
+  /// No description provided for @galleryGone.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto ini sudah tidak ada.'**
+  String get galleryGone;
+
+  /// No description provided for @tripSaveAsMemory.
+  ///
+  /// In id, this message translates to:
+  /// **'Simpan jadi kenangan'**
+  String get tripSaveAsMemory;
+
+  /// No description provided for @tripMemoriesTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan'**
+  String get tripMemoriesTitle;
+
+  /// No description provided for @notifTapMissingMemory.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan itu belum tersedia di HP ini.'**
+  String get notifTapMissingMemory;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

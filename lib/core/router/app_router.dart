@@ -6,6 +6,10 @@ import '../../features/auth/presentation/auth_screens.dart';
 import '../../features/auth/presentation/notification_permission_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/home/presentation/main_shell.dart';
+import '../../features/memories/presentation/memories_screen.dart';
+import '../../features/memories/presentation/memory_detail_screen.dart';
+import '../../features/memories/presentation/memory_form_screen.dart';
+import '../../features/memories/presentation/memory_gallery_screen.dart';
 import '../../features/savings/presentation/goal_detail_screen.dart';
 import '../../features/savings/presentation/savings_screen.dart';
 import '../../features/settings/presentation/profile_screen.dart';
@@ -75,7 +79,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(path: 'tanggal-penting', builder: (_, _) => const SpecialDatesScreen()),
         ],
       ),
-      // Tab bawah: Beranda, Tugas, Tabungan, dan Liburan (v0.2). Layar detail tetap menampilkan tab bawah.
+      // Galeri foto kenangan tampil tanpa tab bawah, jadi dicocokkan sebelum tab Kenangan.
+      GoRoute(
+        path: '${Routes.memories}/:id/foto/:photoId',
+        builder: (_, state) => MemoryGalleryScreen(
+          key: _detailKey(state, 'photoId'),
+          memoryId: state.pathParameters['id']!,
+          photoId: state.pathParameters['photoId']!,
+        ),
+      ),
+      // Tab bawah: Beranda, Tugas, Tabungan, Liburan (v0.2), dan Kenangan (v0.3).
+      // Layar detail tetap menampilkan tab bawah.
       StatefulShellRoute.indexedStack(
         builder: (_, state, navigationShell) => MainShell(location: state.uri.path, navigationShell: navigationShell),
         branches: [
@@ -158,6 +172,36 @@ final routerProvider = Provider<GoRouter>((ref) {
                             ),
                           ),
                         ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: Routes.memories,
+                builder: (_, _) => const MemoriesScreen(),
+                routes: [
+                  // Sebelum ':id', supaya "baru" tidak dianggap ID.
+                  GoRoute(
+                    path: 'baru',
+                    builder: (_, state) => MemoryFormScreen(
+                      key: ValueKey('baru-${state.uri.queryParameters[Routes.tripParam]}'),
+                      tripId: state.uri.queryParameters[Routes.tripParam],
+                    ),
+                  ),
+                  GoRoute(
+                    path: ':id',
+                    builder: (_, state) =>
+                        MemoryDetailScreen(key: _detailKey(state), memoryId: state.pathParameters['id']!),
+                    routes: [
+                      GoRoute(
+                        path: 'ubah',
+                        builder: (_, state) =>
+                            MemoryFormScreen(key: _detailKey(state), memoryId: state.pathParameters['id']!),
                       ),
                     ],
                   ),

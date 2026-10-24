@@ -82,6 +82,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get navTrips => 'Liburan';
 
   @override
+  String get navMemories => 'Kenangan';
+
+  @override
   String get navLabel => 'Navigasi utama';
 
   @override
@@ -848,7 +851,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get notifPartnerActivity => 'Aktivitas pasangan';
 
   @override
-  String get notifPartnerActivitySub => 'Titipan baru dan tugas selesai';
+  String get notifPartnerActivitySub => 'Titipan baru, tugas selesai, dan kenangan baru';
 
   @override
   String get notifSavingsActivity => 'Setoran tabungan';
@@ -1382,4 +1385,188 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get savingsReminderTurnOff => 'Matikan pengingat';
+
+  @override
+  String get memoriesTitle => 'Kenangan';
+
+  @override
+  String get memoriesNew => 'Kenangan baru';
+
+  @override
+  String get memoriesEmpty =>
+      'Belum ada kenangan. Simpan tempat yang pernah kalian datangi, lengkap dengan foto dan ceritanya.';
+
+  @override
+  String get memoriesEmptySolo =>
+      'Belum ada kenangan. Simpan tempat yang pernah kamu datangi, lengkap dengan foto dan ceritanya.';
+
+  @override
+  String memoriesYearCount(int count) {
+    return '$count kenangan';
+  }
+
+  @override
+  String memoryPhotoCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: '$count foto', zero: 'Belum ada foto');
+    return '$_temp0';
+  }
+
+  @override
+  String get memoryGone => 'Kenangan ini sudah tidak ada.';
+
+  @override
+  String memoryFromTrip(String title) {
+    return 'Dari perjalanan $title';
+  }
+
+  @override
+  String get memoryStoryTitle => 'Cerita';
+
+  @override
+  String get memoryPhotosTitle => 'Foto';
+
+  @override
+  String get memoryPhotosAdd => 'Tambah foto';
+
+  @override
+  String get memoryPhotosEmpty => 'Belum ada foto. Tambahkan dari galeri HP supaya kenangan ini lebih hidup.';
+
+  @override
+  String memoryPhotosFull(int max) {
+    return 'Satu kenangan paling banyak $max foto.';
+  }
+
+  @override
+  String memoryPhotosUnreadable(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count foto tidak bisa dibaca, jadi tidak ditambahkan.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String memoryPhotosPreparing(int count) {
+    String _temp0 = intl.Intl.pluralLogic(count, locale: localeName, other: 'Menyiapkan $count foto');
+    return '$_temp0';
+  }
+
+  @override
+  String get memoryPhotoPending => 'Menunggu terkirim';
+
+  @override
+  String memoryPhotoLabel(int index, int total) {
+    return 'Foto $index dari $total';
+  }
+
+  @override
+  String memoryDeleteConfirmTitle(String title) {
+    return 'Hapus $title?';
+  }
+
+  @override
+  String memoryDeleteConfirmBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fotonya ikut terhapus dan tidak bisa dikembalikan.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get memoryDeletedSnack => 'Kenangan dihapus.';
+
+  @override
+  String get memoryFormNew => 'Kenangan baru';
+
+  @override
+  String get memoryFormEdit => 'Ubah kenangan';
+
+  @override
+  String get memoryTitleLabel => 'Mau dikenang sebagai apa?';
+
+  @override
+  String get memoryTitleHint => 'Misalnya Liburan ke Bali';
+
+  @override
+  String get memoryPlaceLabel => 'Di mana?';
+
+  @override
+  String get memoryPlaceHint => 'Misalnya Ubud, Bali';
+
+  @override
+  String get memoryDateLabel => 'Kapan?';
+
+  @override
+  String get memoryStoryLabel => 'Ceritanya?';
+
+  @override
+  String get memoryStoryHint => 'Apa yang paling diingat dari hari itu?';
+
+  @override
+  String get memoryPhotosLabel => 'Fotonya?';
+
+  @override
+  String memoryPhotosHelp(int max) {
+    return 'Paling banyak $max foto. Foto dikecilkan sebelum diunggah, dan lokasinya tidak ikut tersimpan.';
+  }
+
+  @override
+  String get memoryPhotosPick => 'Pilih foto';
+
+  @override
+  String memoryPhotoUnpick(int index) {
+    return 'Batal pilih foto $index';
+  }
+
+  @override
+  String get memoryWherePrivateHelp => 'Pasanganmu tidak akan melihat kenangan ini.';
+
+  @override
+  String get errorMemoryTitleRequired => 'Judul kenangan belum diisi.';
+
+  @override
+  String get errorPlaceLong => 'Nama tempat paling banyak 100 karakter.';
+
+  @override
+  String get errorStoryLong => 'Cerita paling banyak 10.000 karakter.';
+
+  @override
+  String galleryCounter(int index, int total) {
+    return '$index dari $total';
+  }
+
+  @override
+  String get galleryMakeCover => 'Jadikan sampul';
+
+  @override
+  String get galleryIsCover => 'Foto sampul';
+
+  @override
+  String get galleryCoverSet => 'Foto ini jadi sampul.';
+
+  @override
+  String get galleryDelete => 'Hapus foto';
+
+  @override
+  String get galleryDeletedSnack => 'Foto dihapus.';
+
+  @override
+  String galleryTakenAt(String date, String time) {
+    return 'Diambil $date, $time';
+  }
+
+  @override
+  String get galleryGone => 'Foto ini sudah tidak ada.';
+
+  @override
+  String get tripSaveAsMemory => 'Simpan jadi kenangan';
+
+  @override
+  String get tripMemoriesTitle => 'Kenangan';
+
+  @override
+  String get notifTapMissingMemory => 'Kenangan itu belum tersedia di HP ini.';
 }

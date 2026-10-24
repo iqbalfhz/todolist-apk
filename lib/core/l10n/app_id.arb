@@ -27,6 +27,7 @@
   "navTasks": "Tugas",
   "navSavings": "Tabungan",
   "navTrips": "Liburan",
+  "navMemories": "Kenangan",
   "navLabel": "Navigasi utama",
 
   "offlineBanner": "Sedang offline. Perubahanmu aman dan dikirim saat online.",
@@ -472,7 +473,7 @@
   "notifTaskReminders": "Pengingat tugas",
   "notifTaskRemindersSub": "Saat tenggat tiba",
   "notifPartnerActivity": "Aktivitas pasangan",
-  "notifPartnerActivitySub": "Titipan baru dan tugas selesai",
+  "notifPartnerActivitySub": "Titipan baru, tugas selesai, dan kenangan baru",
   "notifSavingsActivity": "Setoran tabungan",
   "notifSavingsActivitySub": "Setoran baru dan target tercapai",
   "notifSpecialDates": "Tanggal penting",
@@ -758,5 +759,122 @@
   "savingsReminderShortMonth": "Di bulan yang lebih pendek, pengingat dikirim di hari terakhir bulan itu.",
   "savingsReminderNote": "Dikirim pukul 08.00 selama target belum tercapai.",
   "savingsReminderNoteShared": "Dikirim pukul 08.00 ke kalian berdua selama target belum tercapai.",
-  "savingsReminderTurnOff": "Matikan pengingat"
+  "savingsReminderTurnOff": "Matikan pengingat",
+
+  "memoriesTitle": "Kenangan",
+  "memoriesNew": "Kenangan baru",
+  "memoriesEmpty": "Belum ada kenangan. Simpan tempat yang pernah kalian datangi, lengkap dengan foto dan ceritanya.",
+  "memoriesEmptySolo": "Belum ada kenangan. Simpan tempat yang pernah kamu datangi, lengkap dengan foto dan ceritanya.",
+  "memoriesYearCount": "{count} kenangan",
+  "@memoriesYearCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "memoryPhotoCount": "{count, plural, =0{Belum ada foto} other{{count} foto}}",
+  "@memoryPhotoCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "memoryGone": "Kenangan ini sudah tidak ada.",
+  "memoryFromTrip": "Dari perjalanan {title}",
+  "@memoryFromTrip": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "memoryStoryTitle": "Cerita",
+  "memoryPhotosTitle": "Foto",
+  "memoryPhotosAdd": "Tambah foto",
+  "memoryPhotosEmpty": "Belum ada foto. Tambahkan dari galeri HP supaya kenangan ini lebih hidup.",
+  "memoryPhotosFull": "Satu kenangan paling banyak {max} foto.",
+  "@memoryPhotosFull": {
+    "placeholders": {
+      "max": {"type": "int"}
+    }
+  },
+  "memoryPhotosUnreadable": "{count, plural, other{{count} foto tidak bisa dibaca, jadi tidak ditambahkan.}}",
+  "@memoryPhotosUnreadable": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "memoryPhotosPreparing": "{count, plural, other{Menyiapkan {count} foto}}",
+  "@memoryPhotosPreparing": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "memoryPhotoPending": "Menunggu terkirim",
+  "memoryPhotoLabel": "Foto {index} dari {total}",
+  "@memoryPhotoLabel": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "memoryDeleteConfirmTitle": "Hapus {title}?",
+  "@memoryDeleteConfirmTitle": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "memoryDeleteConfirmBody": "{count, plural, other{{count} fotonya ikut terhapus dan tidak bisa dikembalikan.}}",
+  "@memoryDeleteConfirmBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "memoryDeletedSnack": "Kenangan dihapus.",
+  "memoryFormNew": "Kenangan baru",
+  "memoryFormEdit": "Ubah kenangan",
+  "memoryTitleLabel": "Mau dikenang sebagai apa?",
+  "memoryTitleHint": "Misalnya Liburan ke Bali",
+  "memoryPlaceLabel": "Di mana?",
+  "memoryPlaceHint": "Misalnya Ubud, Bali",
+  "memoryDateLabel": "Kapan?",
+  "memoryStoryLabel": "Ceritanya?",
+  "memoryStoryHint": "Apa yang paling diingat dari hari itu?",
+  "memoryPhotosLabel": "Fotonya?",
+  "memoryPhotosHelp": "Paling banyak {max} foto. Foto dikecilkan sebelum diunggah, dan lokasinya tidak ikut tersimpan.",
+  "@memoryPhotosHelp": {
+    "placeholders": {
+      "max": {"type": "int"}
+    }
+  },
+  "memoryPhotosPick": "Pilih foto",
+  "memoryPhotoUnpick": "Batal pilih foto {index}",
+  "@memoryPhotoUnpick": {
+    "placeholders": {
+      "index": {"type": "int"}
+    }
+  },
+  "memoryWherePrivateHelp": "Pasanganmu tidak akan melihat kenangan ini.",
+  "errorMemoryTitleRequired": "Judul kenangan belum diisi.",
+  "errorPlaceLong": "Nama tempat paling banyak 100 karakter.",
+  "errorStoryLong": "Cerita paling banyak 10.000 karakter.",
+  "galleryCounter": "{index} dari {total}",
+  "@galleryCounter": {
+    "placeholders": {
+      "index": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "galleryMakeCover": "Jadikan sampul",
+  "galleryIsCover": "Foto sampul",
+  "galleryCoverSet": "Foto ini jadi sampul.",
+  "galleryDelete": "Hapus foto",
+  "galleryDeletedSnack": "Foto dihapus.",
+  "galleryTakenAt": "Diambil {date}, {time}",
+  "@galleryTakenAt": {
+    "placeholders": {
+      "date": {"type": "String"},
+      "time": {"type": "String"}
+    }
+  },
+  "galleryGone": "Foto ini sudah tidak ada.",
+  "tripSaveAsMemory": "Simpan jadi kenangan",
+  "tripMemoriesTitle": "Kenangan",
+  "notifTapMissingMemory": "Kenangan itu belum tersedia di HP ini."
 }
