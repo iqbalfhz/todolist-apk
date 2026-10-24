@@ -20,6 +20,8 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
 - `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
 
+- APK yang dibangun dengan Flutter 3.47.8 (perbaikan keamanan eMudhra, 24 Oktober 2026) sudah terpasang di HP pemilik, tetapi belum di HP pasangan. Selama HP pasangan masih memakai APK lama, koneksinya bisa disadap di Wi-Fi publik.
+
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
 ## Cakupan
@@ -51,7 +53,8 @@ Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kat
 
 ## Stack
 
-- Flutter stable, Dart 3, Material 3. Material diimpor dari paket `material_ui` (`package:material_ui/material_ui.dart`), bukan `package:flutter/material.dart`: go_router 18 dan cached_network_image 4 memakai `material_ui`, dan tipe kedua pustaka itu berbeda (`ThemeData`, `Scaffold`, dan lainnya tidak saling dikenali), jadi kode app harus konsisten memakai `material_ui`.
+- Flutter stable paling rendah 3.47.8 (Dart 3.13.7), dikunci di `environment` pada `pubspec.yaml`. Versi sebelumnya mempercayai sertifikat perantara eMudhra yang bocor, sehingga koneksi HTTPS app di Android bisa disadap orang di jaringan yang sama (advisory Dart GHSA-frr6-h895-5pxp, 23 Oktober 2026). Setiap ada rilis keamanan Flutter atau Dart, naikkan batas itu, bangun ulang APK, lalu pasang lagi di kedua HP.
+- Material 3. Material diimpor dari paket `material_ui` (`package:material_ui/material_ui.dart`), bukan `package:flutter/material.dart`: go_router 18 dan cached_network_image 4 memakai `material_ui`, dan tipe kedua pustaka itu berbeda (`ThemeData`, `Scaffold`, dan lainnya tidak saling dikenali), jadi kode app harus konsisten memakai `material_ui`.
 - Riverpod untuk state, go_router untuk routing dan deep link dari notifikasi
 - dio untuk HTTP, dengan interceptor token dan retry
 - drift (SQLite) untuk cache lokal dan antrean (outbox); `drift_flutter` membuka file database di HP
