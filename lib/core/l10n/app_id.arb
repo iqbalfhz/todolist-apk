@@ -329,6 +329,10 @@
   },
   "savingsDeposit": "Setor",
   "savingsMonthly": "Setoran per bulan",
+  "savingsContributions": "Kontribusi",
+  "savingsContributionFormer": "Anggota lain",
+  "savingsContributionTotal": "Total",
+  "percentUnderOne": "<1%",
   "savingsMonthlySemantic": "{month}: {amount}",
   "@savingsMonthlySemantic": {
     "placeholders": {

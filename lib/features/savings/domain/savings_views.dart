@@ -48,6 +48,32 @@ class GoalProgress {
     return (remaining / weeksLeft).ceil();
   }
 
+  /// Kontribusi tiap orang di target bersama, dengan bagiannya dari total terkumpul (persen
+  /// yang jumlahnya selalu 100). Urutannya Aku, Pasangan, lalu setoran dari akun yang sudah
+  /// bukan anggota (kalau ada). Setoran tanpa `user_id` dihitung milik [meId], sama seperti
+  /// di riwayat.
+  List<Contribution> contributions({required String meId, required String? partnerId}) {
+    final totals = <Contributor, int>{};
+    for (final entry in entries) {
+      final userId = entry.userId;
+      final who = userId == null || userId == meId
+          ? Contributor.me
+          : userId == partnerId
+          ? Contributor.partner
+          : Contributor.former;
+      totals[who] = (totals[who] ?? 0) + entry.amount;
+    }
+
+    final who = [
+      Contributor.me,
+      if (partnerId != null) Contributor.partner,
+      if (totals.containsKey(Contributor.former)) Contributor.former,
+    ];
+    final amounts = [for (final item in who) totals[item] ?? 0];
+    final percents = sharePercents(amounts);
+    return [for (var i = 0; i < who.length; i++) Contribution(who: who[i], amount: amounts[i], percent: percents[i])];
+  }
+
   /// Jumlah setoran per bulan untuk [count] bulan terakhir sampai bulan ini.
   List<MonthTotal> monthlyTotals({int count = 5}) {
     final current = parseYmd(today);
@@ -67,6 +93,44 @@ class GoalProgress {
         ),
     ];
   }
+}
+
+/// Pemilik setoran di target bersama, dari sudut pandang pengguna.
+enum Contributor { me, partner, former }
+
+/// Kontribusi satu orang: total setorannya dan bagiannya dari total terkumpul.
+class Contribution {
+  const Contribution({required this.who, required this.amount, required this.percent});
+
+  final Contributor who;
+  final int amount;
+
+  /// Bagian dari total terkumpul, 0–100. Semua bagian satu target berjumlah 100.
+  final int percent;
+}
+
+/// Bagian tiap nominal dari jumlahnya dalam persen bulat yang totalnya tepat 100 (metode sisa
+/// terbesar), supaya "62% + 37%" tidak pernah tampil. Semua nol menghasilkan semua nol.
+List<int> sharePercents(List<int> amounts) {
+  final total = amounts.fold(0, (sum, amount) => sum + amount);
+  if (total <= 0) return [for (final _ in amounts) 0];
+
+  final exact = [for (final amount in amounts) amount * 100 / total];
+  final percents = [for (final value in exact) value.floor()];
+  var left = 100 - percents.fold(0, (sum, value) => sum + value);
+
+  // Sisa dibagikan ke pecahan terbesar; yang sama besar, yang lebih dulu.
+  final order = [for (var i = 0; i < amounts.length; i++) i]
+    ..sort((a, b) {
+      final byFraction = (exact[b] - percents[b]).compareTo(exact[a] - percents[a]);
+      return byFraction != 0 ? byFraction : a.compareTo(b);
+    });
+  for (final index in order) {
+    if (left == 0) break;
+    percents[index]++;
+    left--;
+  }
+  return percents;
 }
 
 class MonthTotal {

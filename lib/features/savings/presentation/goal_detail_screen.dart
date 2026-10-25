@@ -137,6 +137,11 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
             onPressed: () => showDepositSheet(context, goal: goal, today: progress.today),
           ),
           const SizedBox(height: AppDimens.gap12),
+          // Tabungan bersama: siapa menyetor berapa, beserta totalnya.
+          if (household.isShared(goal.spaceId) && entries.isNotEmpty) ...[
+            _ContributionsCard(progress: progress, household: household),
+            const SizedBox(height: AppDimens.gap12),
+          ],
           AppCard(
             semanticLabel: l10n.savingsMonthly,
             child: Column(
@@ -287,6 +292,115 @@ class _SummaryCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Kontribusi tiap orang di target bersama: satu bar dibagi warna diri masing-masing, lalu
+/// baris per orang dengan persen dan nominalnya, dan totalnya. Warna selalu ditemani label
+/// dan persen, jadi tidak hanya mengandalkan warna.
+class _ContributionsCard extends StatelessWidget {
+  const _ContributionsCard({required this.progress, required this.household});
+
+  final GoalProgress progress;
+  final Household household;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final palette = context.palette;
+    final text = context.text;
+    final currency = progress.goal.currency;
+    final contributions = progress.contributions(meId: household.me.id, partnerId: household.partner?.id);
+
+    Color colorOf(Contributor who) => switch (who) {
+      Contributor.me => context.personColor(household.me.color),
+      Contributor.partner => context.personColor(household.colorOf(household.partner?.id)),
+      Contributor.former => palette.muted,
+    };
+
+    String labelOf(Contributor who) => switch (who) {
+      Contributor.me => l10n.labelMe,
+      Contributor.partner => l10n.labelPartner,
+      Contributor.former => l10n.savingsContributionFormer,
+    };
+
+    Widget row({Color? color, required String label, String? share, required int amount}) => MergeSemantics(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppDimens.rowMinHeightHistory),
+        child: Row(
+          children: [
+            if (color != null) ...[
+              ColorDot(color: color, size: AppDimens.dotLarge),
+              const SizedBox(width: AppDimens.gap10),
+            ],
+            Expanded(child: Text(label, style: text.bodyStrong)),
+            if (share != null) ...[Text(share, style: text.captionStrong), const SizedBox(width: AppDimens.gap10)],
+            Text(formatMoney(amount, currency), style: text.amount),
+          ],
+        ),
+      ),
+    );
+
+    return AppCard(
+      semanticLabel: l10n.savingsContributions,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.savingsContributions, style: text.sectionTitle),
+          const SizedBox(height: AppDimens.gap10),
+          ExcludeSemantics(
+            child: _SplitBar(
+              parts: [
+                for (final item in contributions)
+                  if (item.amount > 0) (amount: item.amount, color: colorOf(item.who)),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppDimens.gap6),
+          for (final item in contributions)
+            row(
+              color: colorOf(item.who),
+              label: labelOf(item.who),
+              // Setoran kecil yang dibulatkan ke 0% tetap terlihat ada.
+              share: item.percent == 0 && item.amount > 0 ? l10n.percentUnderOne : l10n.percent(item.percent),
+              amount: item.amount,
+            ),
+          const RowDivider(),
+          row(label: l10n.savingsContributionTotal, amount: progress.saved),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bar progres yang dibagi beberapa warna sesuai nominal tiap bagian.
+class _SplitBar extends StatelessWidget {
+  const _SplitBar({required this.parts});
+
+  final List<({int amount, Color color})> parts;
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+    borderRadius: BorderRadius.circular(AppDimens.progressThick / 2),
+    child: SizedBox(
+      height: AppDimens.progressThick,
+      child: parts.isEmpty
+          ? ColoredBox(color: context.palette.track)
+          : Row(
+              // Tanpa stretch, ColoredBox tanpa anak setinggi 0 dan bar tidak terlihat.
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final part in parts)
+                  // Bagian sekecil apa pun tetap terlihat setipis mungkin.
+                  Expanded(
+                    flex: math.max(1, part.amount * 1000 ~/ _total),
+                    child: ColoredBox(color: part.color),
+                  ),
+              ],
+            ),
+    ),
+  );
+
+  int get _total => math.max(1, parts.fold(0, (sum, part) => sum + part.amount));
 }
 
 /// Perayaan kecil saat target tercapai: teksnya muncul dengan sedikit membesar.
