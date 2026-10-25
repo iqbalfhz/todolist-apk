@@ -11,6 +11,9 @@ abstract final class Routes {
   static const String savings = '/tabungan';
   static const String trips = '/liburan';
 
+  /// Cari di semua modul (v1.x). Di luar tab bawah.
+  static const String search = '/cari';
+
   static const String settings = '/pengaturan';
   static const String profile = '/pengaturan/profil';
   static const String specialDates = '/pengaturan/tanggal-penting';
