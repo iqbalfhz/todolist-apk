@@ -79,6 +79,10 @@ class DioApiTransport implements ApiTransport {
       // dari proxy tidak pernah dianggap balasan API.
       ..responseType = ResponseType.plain
       ..headers[Headers.acceptHeader] = Headers.jsonContentType
+      // API tidak pernah mengalihkan. Pengalihan dianggap gangguan (dicoba lagi), bukan diikuti,
+      // supaya token tidak pernah ikut terkirim ke alamat lain.
+      ..followRedirects = false
+      ..maxRedirects = 0
       ..validateStatus = _anyStatus;
 
     _dio.interceptors

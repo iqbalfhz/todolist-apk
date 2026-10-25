@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -14,8 +15,9 @@ import 'core/utils/dates.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!Env.isConfigured) {
-    runApp(const _MissingEnv());
+  final envProblem = apiBaseUrlProblem(Env.apiBaseUrl, release: kReleaseMode);
+  if (envProblem != null) {
+    runApp(_EnvProblem(envProblem));
     return;
   }
 
@@ -47,24 +49,25 @@ Future<void> main() async {
   );
 }
 
-/// Tampil kalau app dijalankan tanpa `--dart-define-from-file=env/<nama>.json`.
-class _MissingEnv extends StatelessWidget {
-  const _MissingEnv();
+/// Tampil kalau `API_BASE_URL` kosong, tidak valid, atau bukan HTTPS di build rilis.
+class _EnvProblem extends StatelessWidget {
+  const _EnvProblem(this.message);
+
+  final String message;
 
   @override
-  Widget build(BuildContext context) => const Directionality(
+  Widget build(BuildContext context) => Directionality(
     textDirection: TextDirection.ltr,
     child: ColoredBox(
-      color: Color(0xFFFCF3F7),
+      color: const Color(0xFFFCF3F7),
       child: SafeArea(
         child: Center(
           child: Padding(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Text(
-              'API_BASE_URL belum diisi.\n\n'
-              'Jalankan dengan:\nflutter run --dart-define-from-file=env/dev.json',
+              message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: Color(0xFF2B1A22), fontSize: 16, height: 1.4),
+              style: const TextStyle(color: Color(0xFF2B1A22), fontSize: 16, height: 1.4),
             ),
           ),
         ),
