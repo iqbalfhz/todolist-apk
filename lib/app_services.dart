@@ -18,9 +18,10 @@ import 'core/session/token_revocations.dart';
 
 /// Menghubungkan akun yang sedang masuk dengan siklus hidup app.
 ///
-/// Pemicu sync: app dibuka atau kembali aktif, dan push yang masuk saat app terbuka
-/// (tarik untuk menyegarkan ditangani tiap layar). Di sini juga pesan dari antrean
-/// ditampilkan, HP didaftarkan untuk push, dan notifikasi yang diketuk dibuka.
+/// Pemicu sync: app dibuka atau kembali aktif, push yang masuk saat app terbuka, dan setiap
+/// [liveSyncInterval] selama app tampil di layar (tarik untuk menyegarkan ditangani tiap layar).
+/// Di sini juga pesan dari antrean ditampilkan, HP didaftarkan untuk push, dan notifikasi yang
+/// diketuk dibuka.
 class AppServices extends ConsumerStatefulWidget {
   const AppServices({super.key, required this.messengerKey, required this.child});
 
@@ -30,6 +31,10 @@ class AppServices extends ConsumerStatefulWidget {
   @override
   ConsumerState<AppServices> createState() => _AppServicesState();
 }
+
+/// Selang sync otomatis selama app tampil di layar (v1.x), supaya perubahan dari pasangan
+/// muncul tanpa tarik untuk menyegarkan. Push `sync` dari server mempercepatnya.
+const Duration liveSyncInterval = Duration(seconds: 30);
 
 class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingObserver {
   /// Batas menunggu sync sebelum membuka layar dari notifikasi yang diketuk.
@@ -41,6 +46,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
   bool _prefetching = false;
   bool _revoking = false;
   Account? _account;
+  Timer? _liveSync;
 
   AppLocalizations get _l10n => lookupAppLocalizations(const Locale('id'));
 
@@ -48,6 +54,8 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    final lifecycle = WidgetsBinding.instance.lifecycleState;
+    if (lifecycle == null || lifecycle == AppLifecycleState.resumed) _startLiveSync();
 
     final push = ref.read(pushServiceProvider);
     _pushSubscriptions
@@ -68,6 +76,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _stopLiveSync();
     for (final subscription in _pushSubscriptions) {
       unawaited(subscription.cancel());
     }
@@ -78,11 +87,29 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // App kembali aktif: kirim antrean sekarang juga, lalu tarik perubahan.
-    if (state == AppLifecycleState.resumed) {
-      _account?.sync.sync(retryNow: true).ignore();
-      unawaited(_revokeLeftoverTokens());
+    switch (state) {
+      // App kembali aktif: kirim antrean sekarang juga, lalu tarik perubahan.
+      case AppLifecycleState.resumed:
+        _account?.sync.sync(retryNow: true).ignore();
+        unawaited(_revokeLeftoverTokens());
+        _startLiveSync();
+      // Tidak tampil lagi: berhenti sync berkala supaya tidak menguras baterai dan kuota.
+      case AppLifecycleState.hidden || AppLifecycleState.paused || AppLifecycleState.detached:
+        _stopLiveSync();
+      // Tetap tampil, misalnya saat panel notifikasi ditarik.
+      case AppLifecycleState.inactive:
+        break;
     }
+  }
+
+  void _startLiveSync() {
+    _liveSync?.cancel();
+    _liveSync = Timer.periodic(liveSyncInterval, (_) => _account?.sync.sync().ignore());
+  }
+
+  void _stopLiveSync() {
+    _liveSync?.cancel();
+    _liveSync = null;
   }
 
   /// Akun berganti (masuk, keluar, atau akun lain): pindahkan pendengar dan mulai dari awal.
@@ -167,6 +194,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
 
   void _onForegroundMessage(PushMessage message) {
     _account?.sync.sync().ignore();
+    if (message.isSilent) return;
     unawaited(ref.read(pushServiceProvider).show(message));
   }
 

@@ -131,7 +131,7 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - Foto kenangan: cache gambar memakai kunci `photo-{id}` dan `photo-{id}-thumb`, bukan URL. Thumbnail yang belum ada diunduh setelah setiap sync yang berhasil; versi penuh saat foto dibuka. URL yang berumur 7 hari, atau yang ditolak R2 dengan 403, diganti lewat `GET /memories/{id}/photos`.
 - Saat menerapkan baris: tanpa foreign key check; kolom dengan operasi tertunda tidak ditimpa; baris dengan DELETE tertunda tidak muncul lagi; baris yang lebih tua dari salinan lokal diabaikan.
 - Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda.
-- Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, dan push yang masuk saat app terbuka.
+- Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, push yang masuk saat app terbuka, dan setiap 30 detik selama app tampil di layar (`liveSyncInterval`, berhenti saat app tidak tampil). Push tanpa judul dan isi (termasuk `type` `sync`) hanya memicu sync, tanpa notifikasi.
 
 ### Notifikasi
 

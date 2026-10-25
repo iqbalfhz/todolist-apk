@@ -57,6 +57,11 @@ class PushMessage {
 
   bool get isAboutMemory => type == 'memory_created';
 
+  /// Push tanpa tampilan (v1.x): server memberi tahu ada perubahan di ruang bersama, supaya app
+  /// yang sedang terbuka langsung sync. Pesan data tanpa judul dan isi juga dianggap begini,
+  /// supaya tidak pernah muncul notifikasi kosong.
+  bool get isSilent => type == 'sync' || (title == null && body == null);
+
   static const Set<String> _reminderTypes = {
     'task_reminder',
     'special_date_reminder',

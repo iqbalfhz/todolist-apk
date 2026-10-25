@@ -750,7 +750,8 @@ Halaman pertama: `GET /sync?since=<server_time tersimpan>`, atau tanpa `since` u
 - Baris yang `updated_at`-nya lebih tua dari salinan lokal diabaikan.
 - Saat induk tiba dengan `deleted_at` terisi, app ikut menghapus anak-anaknya di cache, kecuali anak yang masih punya operasi di antrean; nasibnya ditentukan balasan server (`parent_deleted`).
 - Sync penuh hanya menambah dan memperbarui.
-- Sync berjalan saat app dibuka atau kembali aktif, saat layar ditarik untuk menyegarkan, dan saat push masuk ketika app terbuka.
+- Sync berjalan saat app dibuka atau kembali aktif, saat layar ditarik untuk menyegarkan, saat push masuk ketika app terbuka, dan setiap 30 detik selama app tampil di layar (v1.x). Saat app tidak tampil, sync berkala berhenti. Dengan batas 120 request per menit, sync berkala ini memakai paling banyak 2 request per menit per HP.
+- Push tanpa judul dan isi (pesan data saja), termasuk  , hanya memicu sync dan tidak pernah ditampilkan sebagai notifikasi.
 - App versi baru yang mengenal koleksi atau kolom baru (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`; v1.0: aturan ulang di `tasks`) menjalankan sync penuh sekali sebelum kembali memakai `since`. Tanpa itu, data yang dibuat atau diubah pasangan selama app masih versi lama tidak pernah sampai lengkap, karena `since` sudah melewatinya.
 
 ### Antrean di HP
