@@ -10,6 +10,7 @@
 // satu menit sebelum menjalankan tes ujung ke ujung mana pun lagi.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
@@ -19,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/app.dart';
+import 'package:todolist/app_services.dart';
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
 import 'package:todolist/core/database/app_database.dart';
@@ -134,7 +136,7 @@ void main() {
     driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
   });
 
-  testWidgets('seluruh fitur v0.1 sampai v0.3 lewat layar, terhadap API sungguhan', (tester) async {
+  testWidgets('seluruh fitur v0.1 sampai v1.x lewat layar, terhadap API sungguhan', (tester) async {
     final semantics = tester.ensureSemantics();
     WidgetController.hitTestWarningShouldBeFatal = true;
     addTearDown(() => WidgetController.hitTestWarningShouldBeFatal = false);
@@ -151,6 +153,17 @@ void main() {
       (_) async => throw PlatformException(code: 'unavailable'),
     );
     addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(timezoneChannel, null));
+
+    // Widget layar utama (v1.x): ringkasan yang dikirim app ke Android dicatat di sini.
+    final widgetSnapshots = <Map<String, dynamic>>[];
+    const deviceChannel = MethodChannel('todolist/device');
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(deviceChannel, (call) async {
+      if (call.method == 'updateWidget') {
+        widgetSnapshots.add(jsonDecode((call.arguments as Map)['json'] as String) as Map<String, dynamic>);
+      }
+      return null;
+    });
+    addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(deviceChannel, null));
 
     // Jam app bisa dimajukan bersama jam palsu tes, untuk melewati jeda Urungkan.
     var skew = Duration.zero;
@@ -704,9 +717,17 @@ void main() {
 
     await tap(find.text('Dana Darurat'));
     await pullToRefresh();
-    expect(find.text('Pasangan · sisa gajian'), findsOneWidget);
-    expect(find.text(r'+US$125,50'), findsOneWidget);
     expect(find.text('25%'), findsOneWidget);
+    // Kontribusi per orang (v1.x): baru pasangan yang menyetor.
+    await tester.scrollUntilVisible(find.text('Kontribusi'), 200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('100%'), findsOneWidget);
+    expect(find.text('0%'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Pasangan · sisa gajian'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text(r'+US$125,50'), findsOneWidget);
 
     // ---------------------------------------------------------------- tanggal penting (v0.2)
 
@@ -1044,6 +1065,49 @@ void main() {
       expect(memories.map((row) => row.id), [dinnerId]);
     });
 
+    // ---------------------------------------------------------------- v1.x
+
+    step('Cari: kenangan ditemukan dari ceritanya');
+    await go(Routes.home);
+    await tap(find.byTooltip('Cari'));
+    await tester.enterText(find.byType(TextField), 'soto');
+    await net();
+    expect(find.textContaining('sotonya enak', findRichText: true), findsOneWidget);
+    await tap(find.text('Makan malam pertama', findRichText: true));
+    expect(container.read(routerProvider).state.uri.path, Routes.memory(dinnerId));
+
+    step('Setahun lalu, hari ini: kenangan pasangan dari tanggal yang sama tahun lalu');
+    final lastYear = '${int.parse(today().substring(0, 4)) - 1}${today().substring(4)}';
+    // 29 Februari tidak ada di tahun lalu; langkah ini dilewati di hari itu.
+    if (!lastYear.endsWith('02-29')) {
+      await asPartner(() async {
+        final space = await partner.sharedSpace();
+        await partner.account.memories.create(spaceId: space.id, title: 'Piknik tahun lalu', visitedOn: lastYear);
+        await partner.syncNow();
+      });
+      await go(Routes.home);
+      await pullToRefresh();
+      expect(find.text('Setahun lalu, hari ini'), findsOneWidget);
+      expect(find.text('Piknik tahun lalu'), findsOneWidget);
+    }
+
+    step('Sinkron langsung: tugas dari pasangan muncul tanpa menyegarkan, juga di widget');
+    await go(Routes.home);
+    await asPartner(() async {
+      final space = await partner.sharedSpace();
+      final lists = await partner.account.lists.watchAll().first;
+      final list = lists.firstWhere((row) => row.spaceId == space.id && row.isRegularActive);
+      await partner.account.tasks.create(list: list, title: 'Jemput paket', dueDate: today());
+      await partner.syncNow();
+    });
+    // Tes ini jauh lebih rapat dari pemakaian sungguhan dan sudah dekat batas server 120 request
+    // per menit per akun; tunggu jendelanya berganti supaya sync berkala tidak dibalas 429.
+    await tester.runAsync(() => Future<void>.delayed(const Duration(seconds: 61)));
+    await advance(liveSyncInterval);
+    expect(find.text('Jemput paket'), findsOneWidget);
+    expect(widgetSnapshots.last['signed_in'], isTrue);
+    expect([for (final task in widgetSnapshots.last['tasks'] as List) task['title']], contains('Jemput paket'));
+
     // ---------------------------------------------------------------- offline
 
     step('Offline: perubahan tersimpan di antrean, lalu terkirim saat online');
@@ -1095,6 +1159,8 @@ void main() {
     expect(find.text('Senang melihatmu lagi.'), findsOneWidget);
     expect(storage.values.containsKey(StorageKeys.token), isFalse);
     expect(push.tokenDeleted, isTrue);
+    // Widget layar utama tidak lagi menampilkan tugas.
+    expect(widgetSnapshots.last, {'signed_in': false});
 
     // Token lama sudah dicabut server.
     final revoked = DioApiTransport(baseUrl: baseUrl, token: () => oldToken);
