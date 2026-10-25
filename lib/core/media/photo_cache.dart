@@ -21,6 +21,9 @@ abstract interface class PhotoCache {
 
   /// Simpan gambar yang sudah ada di HP, misalnya foto yang baru diunggah dari HP ini.
   Future<void> put(String photoId, Uint8List bytes, {required bool thumb, required String url});
+
+  /// Hapus semua gambar, misalnya saat keluar.
+  Future<void> clear();
 }
 
 /// Kunci cache sebuah foto, sesuai kontrak.
@@ -71,6 +74,12 @@ class DevicePhotoCache implements PhotoCache {
       fileExtension: 'jpg',
     );
   }
+
+  @override
+  Future<void> clear() async {
+    await _thumbs.emptyCache();
+    await _full.emptyCache();
+  }
 }
 
 /// Tanpa cache: dipakai di tes dan HP uji yang tidak menampilkan foto.
@@ -86,6 +95,9 @@ class NoPhotoCache implements PhotoCache {
 
   @override
   Future<void> put(String photoId, Uint8List bytes, {required bool thumb, required String url}) async {}
+
+  @override
+  Future<void> clear() async {}
 }
 
 /// Kapan URL bertanda tangan R2 (AWS SigV4) kedaluwarsa, dibaca dari `X-Amz-Date` dan

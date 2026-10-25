@@ -4,6 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 abstract final class StorageKeys {
   static const String token = 'auth.token';
   static const String userId = 'auth.user_id';
+
+  /// Token yang belum sempat dicabut di server karena keluar saat offline (JSON).
+  static const String pendingRevocations = 'auth.pending_revocations';
   static const String themeName = 'theme.name';
   static const String themeMode = 'theme.mode';
 

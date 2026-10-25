@@ -7,6 +7,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../core/l10n/l10n.dart';
+import '../../../core/media/photo_picker.dart';
 import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_theme.dart';
@@ -46,6 +47,19 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
   bool _shared = true;
   final List<String> _paths = [];
   bool _filled = false;
+
+  /// Foto pilihan sudah diserahkan ke antrean; yang tidak jadi disimpan dihapus saat keluar layar.
+  bool _handedOver = false;
+
+  /// Dibaca di awal, karena `ref` tidak boleh dipakai lagi saat layar dibuang.
+  late final PhotoPicker _picker;
+
+  @override
+  void initState() {
+    super.initState();
+    _picker = ref.read(photoPickerProvider);
+  }
+
   String? _titleError;
   String? _placeError;
   String? _storyError;
@@ -55,6 +69,11 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
 
   @override
   void dispose() {
+    if (!_handedOver) {
+      for (final path in _paths) {
+        unawaited(_picker.discard(path));
+      }
+    }
     _title.dispose();
     _place.dispose();
     _story.dispose();
@@ -98,12 +117,17 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
 
     final List<String> picked;
     try {
-      picked = await ref.read(photoPickerProvider).pickFromGallery(limit: room);
+      picked = await _picker.pickFromGallery(limit: room);
     } on Object {
       // Galeri tidak bisa dibuka (izin ditolak atau tidak ada app galeri).
       return;
     }
-    if (picked.isNotEmpty && mounted) setState(() => _paths.addAll(picked.take(room)));
+    if (!mounted) return;
+    // Yang melewati batas tidak dipakai.
+    for (final path in picked.skip(room)) {
+      unawaited(_picker.discard(path));
+    }
+    if (picked.isNotEmpty) setState(() => _paths.addAll(picked.take(room)));
   }
 
   Future<void> _save({required Household household, required String spaceId, required String today}) async {
@@ -155,6 +179,7 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
 
     // Foto disiapkan di latar belakang dan muncul satu per satu di Detail kenangan.
     final paths = List.of(_paths);
+    _handedOver = true;
     router.go(Routes.memory(memory.id));
     if (paths.isNotEmpty) {
       unawaited(imports.start(memory, paths).then((result) => reportPhotoImport(messenger, l10n, result)));
@@ -283,7 +308,10 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
                             key: ValueKey(path),
                             path: path,
                             removeLabel: l10n.memoryPhotoUnpick(index + 1),
-                            onRemove: () => setState(() => _paths.removeAt(index)),
+                            onRemove: () {
+                              setState(() => _paths.removeAt(index));
+                              unawaited(_picker.discard(path));
+                            },
                           ),
                       ],
                     ),

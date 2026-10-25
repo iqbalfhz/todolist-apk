@@ -56,6 +56,13 @@ final httpTransportProvider = Provider<ApiTransport>(
   (ref) => DioApiTransport(baseUrl: Env.apiBaseUrl, token: () => ref.read(sessionProvider).token),
 );
 
+/// Klien API untuk mencabut token lama yang tersisa dari keluar saat offline, dengan token itu
+/// sendiri. Ditimpa di tes.
+final revocationTransportProvider = Provider<ApiTransport Function(String token)>(
+  (ref) =>
+      (token) => DioApiTransport(baseUrl: Env.apiBaseUrl, token: () => token),
+);
+
 /// Klien API yang dipakai seluruh app: [httpTransportProvider] ditambah pengamatan
 /// untuk banner offline dan sesi yang berakhir.
 final apiTransportProvider = Provider<ApiTransport>((ref) {

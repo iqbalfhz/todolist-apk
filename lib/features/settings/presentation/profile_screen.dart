@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../../core/api/api_error.dart';
 import '../../../core/l10n/l10n.dart';
+import '../../../core/media/photo_picker.dart';
 import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_theme.dart';
@@ -70,9 +73,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (account == null || _photoBusy) return;
 
     setState(() => _photoBusy = true);
+    // Salinan sementara foto (dari kamera masih membawa lokasi) dihapus apa pun hasilnya.
+    final temporary = <String>[];
     try {
       final picked = await ImagePicker().pickImage(source: source, requestFullMetadata: false);
       if (picked == null) return;
+      temporary.add(picked.path);
 
       final cropped = await ImageCropper().cropImage(
         sourcePath: picked.path,
@@ -93,6 +99,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       );
       if (cropped == null) return;
+      temporary.add(cropped.path);
 
       final bytes = await FlutterImageCompress.compressWithFile(
         cropped.path,
@@ -115,6 +122,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } on FormatException {
       messenger.showSnackBar(SnackBar(content: Text(l10n.profilePhotoFailed)));
     } finally {
+      for (final path in temporary) {
+        unawaited(discardTemporaryFile(path));
+      }
       if (mounted) setState(() => _photoBusy = false);
     }
   }
