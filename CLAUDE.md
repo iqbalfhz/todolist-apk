@@ -20,7 +20,7 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
 - `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
 
-- APK terbaru (Flutter 3.47.8 dan perbaikan audit keamanan, 25 Oktober 2026) belum terpasang di kedua HP. HP pemilik memakai build 24 Oktober yang sudah Flutter 3.47.8; HP pasangan masih memakai APK lama, yang koneksinya bisa disadap di Wi-Fi publik.
+- APK terbaru (Flutter 3.47.8 dan perbaikan audit keamanan) sudah terpasang di HP pemilik pada 25 Oktober 2026, tetapi belum di HP pasangan. HP pasangan masih memakai APK lama, yang koneksinya bisa disadap di Wi-Fi publik.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
