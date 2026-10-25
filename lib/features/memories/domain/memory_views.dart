@@ -117,6 +117,36 @@ final memoryItemsProvider = Provider<List<MemoryItem>?>((ref) {
   return buildMemoryItems(memories: memories, photos: photos, trips: trips, household: household);
 });
 
+/// Kenangan "hari ini, sekian tahun lalu" (v1.x).
+class OnThisDay {
+  const OnThisDay({required this.item, required this.yearsAgo});
+
+  final MemoryItem item;
+
+  /// Selisih tahun dari hari ini, paling kecil 1.
+  final int yearsAgo;
+}
+
+/// Kenangan yang tanggal dan bulannya sama dengan [today] (`YYYY-MM-DD`) di tahun-tahun
+/// sebelumnya, yang paling baru dulu ([sorted] dalam urutan [compareMemories]). Kenangan
+/// 29 Februari ikut muncul di 28 Februari kalau tahun ini bukan tahun kabisat.
+List<OnThisDay> memoriesOnThisDay(List<MemoryItem> sorted, String today) {
+  final year = int.parse(today.substring(0, 4));
+  final monthDay = today.substring(5);
+  final leapDayToo = monthDay == '02-28' && !_isLeapYear(year);
+
+  return [
+    for (final item in sorted)
+      if (item.year < year && _sameDay(item.memory.visitedOn.substring(5), monthDay, leapDayToo: leapDayToo))
+        OnThisDay(item: item, yearsAgo: year - item.year),
+  ];
+}
+
+bool _sameDay(String monthDay, String today, {required bool leapDayToo}) =>
+    monthDay == today || (leapDayToo && monthDay == '02-29');
+
+bool _isLeapYear(int year) => year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+
 /// Kenangan yang ditautkan ke perjalanan [tripId], terbaru dulu.
 List<MemoryItem> memoriesOfTrip(List<MemoryItem>? items, String tripId) => [
   for (final item in items ?? const <MemoryItem>[])

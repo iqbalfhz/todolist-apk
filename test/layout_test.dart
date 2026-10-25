@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:todolist/core/database/entity_type.dart';
 import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/router/app_router.dart';
@@ -92,6 +93,22 @@ void main() {
     testWidgets('$label: semua layar setelah masuk', (tester) async {
       final h = Harness();
       await h.seedRich();
+      // "Setahun lalu, hari ini" (v1.x) di Beranda, dengan sampul dan judul panjang.
+      await h.account.store.write(
+        EntityType.memory,
+        memoryJson(
+          id: '01m4dr8c50jk2mt7xw3pq9vb9z',
+          title: 'Ulang tahun pertama bersama di rumah makan tepi danau yang ramai sekali',
+          placeName: 'Danau Toba, Sumatera Utara, Indonesia',
+          visitedOn: '2025-10-08',
+        ),
+        serverUpdatedAt: t0,
+      );
+      await h.account.store.write(
+        EntityType.memoryPhoto,
+        memoryPhotoJson(id: '01m4drb7k0qz3n8st5vw2hx5zz', memory: '01m4dr8c50jk2mt7xw3pq9vb9z'),
+        serverUpdatedAt: t0,
+      );
       final picker = FakePhotoPicker();
       final container = await pumpApp(tester, h, photoPicker: picker);
       await apply(tester, size: size, textScale: textScale);

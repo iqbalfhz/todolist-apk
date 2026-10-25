@@ -255,6 +255,22 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String homeOnThisDay(int years) {
+    String _temp0 = intl.Intl.pluralLogic(
+      years,
+      locale: localeName,
+      other: '$years tahun lalu, hari ini',
+      one: 'Setahun lalu, hari ini',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String homeOnThisDayMore(int count) {
+    return '$count kenangan lain di tanggal ini';
+  }
+
+  @override
   String get homeTripTitle => 'Persiapan liburan';
 
   @override

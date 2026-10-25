@@ -112,6 +112,22 @@
       "detail": {"type": "String"}
     }
   },
+  "homeOnThisDay": "{years, plural, =1{Setahun lalu, hari ini} other{{years} tahun lalu, hari ini}}",
+  "@homeOnThisDay": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "homeOnThisDayMore": "{count} kenangan lain di tanggal ini",
+  "@homeOnThisDayMore": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "homeTripTitle": "Persiapan liburan",
   "homeTripProgress": "{done} dari {total}",
   "@homeTripProgress": {
