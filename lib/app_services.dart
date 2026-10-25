@@ -15,6 +15,7 @@ import 'core/router/routes.dart';
 import 'core/session/account.dart';
 import 'core/session/session.dart';
 import 'core/session/token_revocations.dart';
+import 'features/home/domain/home_widget_snapshot.dart';
 
 /// Menghubungkan akun yang sedang masuk dengan siklus hidup app.
 ///
@@ -48,6 +49,9 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
   Account? _account;
   Timer? _liveSync;
 
+  /// Ringkasan terakhir yang dikirim ke widget layar utama, supaya yang sama tidak dikirim ulang.
+  String? _widgetJson;
+
   AppLocalizations get _l10n => lookupAppLocalizations(const Locale('id'));
 
   @override
@@ -56,6 +60,10 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     WidgetsBinding.instance.addObserver(this);
     final lifecycle = WidgetsBinding.instance.lifecycleState;
     if (lifecycle == null || lifecycle == AppLifecycleState.resumed) _startLiveSync();
+
+    // Widget "Tugas hari ini" (v1.x) ikut berubah setiap tugas atau tabungan berubah, dan
+    // dikosongkan saat keluar.
+    ref.listenManual(homeWidgetJsonProvider, (_, json) => _updateWidget(json), fireImmediately: true);
 
     final push = ref.read(pushServiceProvider);
     _pushSubscriptions
@@ -100,6 +108,12 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       case AppLifecycleState.inactive:
         break;
     }
+  }
+
+  void _updateWidget(String? json) {
+    if (json == null || json == _widgetJson) return;
+    _widgetJson = json;
+    unawaited(ref.read(devicePlatformProvider).updateWidget(json));
   }
 
   void _startLiveSync() {

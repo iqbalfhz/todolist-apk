@@ -1735,6 +1735,24 @@ abstract class AppLocalizations {
   /// **'Mata uang untuk target baru'**
   String get settingsCurrencySheet;
 
+  /// No description provided for @settingsWidget.
+  ///
+  /// In id, this message translates to:
+  /// **'Widget di layar utama'**
+  String get settingsWidget;
+
+  /// No description provided for @settingsWidgetSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Tugas hari ini dan target tabungan utama'**
+  String get settingsWidgetSub;
+
+  /// No description provided for @settingsWidgetManual.
+  ///
+  /// In id, this message translates to:
+  /// **'Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days.'**
+  String get settingsWidgetManual;
+
   /// No description provided for @settingsBackup.
   ///
   /// In id, this message translates to:

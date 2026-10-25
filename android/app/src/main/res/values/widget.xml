@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Warna widget layar utama (v1.x), dari tema Mawar terang di .claude/rules/tema.md. -->
+    <color name="widget_surface">#FFFFFF</color>
+    <color name="widget_line">#EFD9E2</color>
+    <color name="widget_text">#2B1A22</color>
+    <color name="widget_muted">#6E5A63</color>
+    <color name="widget_link">#B42A5E</color>
+    <color name="widget_warn">#9A5B00</color>
+
+    <string name="widget_name">Tugas hari ini</string>
+    <string name="widget_description">Tugas hari ini dan yang terlewat, ditambah target tabungan utama.</string>
+    <string name="widget_empty">Tidak ada tugas hari ini. Santai dulu.</string>
+    <string name="widget_signed_out">Masuk ke Denly Days untuk melihat tugas hari ini.</string>
+    <string name="widget_count">%1$d belum beres</string>
+    <string name="widget_more">+%1$d lainnya</string>
+    <string name="widget_overdue">Terlewat</string>
+    <string name="widget_goal">%1$s · %2$d%%</string>
+
+    <style name="WidgetRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="WidgetTaskTitle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/widget_text</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="WidgetTaskMeta">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/widget_muted</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

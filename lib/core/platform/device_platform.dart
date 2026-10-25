@@ -64,6 +64,30 @@ class DevicePlatform {
       return null;
     }
   }
+
+  /// Kirim ringkasan baru ke widget "Tugas hari ini" di layar utama (v1.x). Gagal diam-diam
+  /// di tempat tanpa kanal native, misalnya di tes.
+  Future<void> updateWidget(String json) async {
+    try {
+      await _channel.invokeMethod<void>('updateWidget', {'json': json});
+    } on MissingPluginException {
+      // Tanpa widget.
+    } on PlatformException {
+      // Widget tetap memakai ringkasan sebelumnya.
+    }
+  }
+
+  /// Minta launcher menyematkan widget "Tugas hari ini". `false` kalau launcher tidak
+  /// mendukungnya, jadi pengguna perlu menambahkannya sendiri dari layar utama.
+  Future<bool> pinWidget() async {
+    try {
+      return await _channel.invokeMethod<bool>('pinWidget') ?? false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
 }
 
 /// Isi `photoInfo` dari `MainActivity.kt`.
