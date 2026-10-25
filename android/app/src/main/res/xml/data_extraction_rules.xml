@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+: tidak ada data app yang ikut backup ke cloud atau tersalin saat pindah HP.
+     Semua data ada di server, jadi HP baru cukup masuk lagi lalu sync. Yang terbawa malah
+     berbahaya: token terenkripsi dengan kunci perangkat lama (tidak bisa dibuka), dan
+     database akun beserta antrean yang belum terkirim. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+        <exclude domain="file" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="external" />
+    </device-transfer>
+</data-extraction-rules>

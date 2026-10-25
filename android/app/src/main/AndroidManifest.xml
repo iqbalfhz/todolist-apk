@@ -4,12 +4,15 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <!-- allowBackup dimatikan: kunci flutter_secure_storage tidak ikut pulih dari backup,
-         jadi token yang dipulihkan tidak akan bisa dibaca. -->
+         jadi token yang dipulihkan tidak akan bisa dibaca. Di Android 12+, allowBackup tidak
+         menghentikan salinan saat pindah HP; itu diatur dataExtractionRules. -->
     <application
         android:label="Denly Days"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:allowBackup="false">
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -27,6 +30,11 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <!-- App tidak memakai deep link. Tanpa ini, app lain bisa membuka layar mana pun
+                 lewat intent ke aktivitas ini. Ketukan notifikasi tidak lewat jalur ini. -->
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
