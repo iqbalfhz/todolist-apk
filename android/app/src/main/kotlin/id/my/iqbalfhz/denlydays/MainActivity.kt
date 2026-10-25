@@ -25,6 +25,14 @@ class MainActivity : FlutterActivity() {
 
                 "photoInfo" -> result.success(photoInfo(call.argument<String>("path").orEmpty()))
 
+                // Widget "Tugas hari ini" (v1.x): ringkasan baru dari app, atau null saat keluar.
+                "updateWidget" -> {
+                    TasksWidget.save(applicationContext, call.argument<String>("json"))
+                    result.success(null)
+                }
+
+                "pinWidget" -> result.success(TasksWidget.requestPin(applicationContext))
+
                 else -> result.notImplemented()
             }
         }

@@ -943,6 +943,15 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsCurrencySheet => 'Mata uang untuk target baru';
 
   @override
+  String get settingsWidget => 'Widget di layar utama';
+
+  @override
+  String get settingsWidgetSub => 'Tugas hari ini dan target tabungan utama';
+
+  @override
+  String get settingsWidgetManual => 'Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days.';
+
+  @override
   String get settingsBackup => 'Backup dan ekspor';
 
   @override

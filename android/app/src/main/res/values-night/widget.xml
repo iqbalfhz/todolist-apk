@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Mawar gelap. -->
+    <color name="widget_surface">#2A1F24</color>
+    <color name="widget_line">#43343B</color>
+    <color name="widget_text">#F5E9EE</color>
+    <color name="widget_muted">#BBA6AF</color>
+    <color name="widget_link">#E38BB3</color>
+    <color name="widget_warn">#F0B45C</color>
+</resources>

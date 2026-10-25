@@ -40,6 +40,19 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- Widget "Tugas hari ini" di layar utama (v1.x). Tidak diekspor: hanya sistem yang
+             mengirim siaran pembaruan widget. -->
+        <receiver
+            android:name=".TasksWidget"
+            android:exported="false"
+            android:label="@string/widget_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_tasks_info" />
+        </receiver>
         <!-- Layar potong foto profil (image_cropper). -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

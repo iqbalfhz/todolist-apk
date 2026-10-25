@@ -7,6 +7,7 @@ import '../../../core/constants/currencies.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/providers.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/session/session.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/theme_controller.dart';
 import '../../../core/widgets/widgets.dart';
@@ -55,6 +56,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final container = ProviderScope.containerOf(context, listen: false);
     setState(() => _loggingOut = true);
     await signOut(container);
+  }
+
+  /// Minta launcher menyematkan widget; kalau tidak bisa, jelaskan cara menambahkannya sendiri.
+  Future<void> _pinWidget() async {
+    final pinned = await ref.read(devicePlatformProvider).pinWidget();
+    if (!pinned && mounted) showMessage(context, context.l10n.settingsWidgetManual);
   }
 
   @override
@@ -167,6 +174,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitle: currencyOf(household.me.defaultCurrency).label,
                     onTap: () => _pickCurrency(household.me),
                   ),
+                  const RowDivider(),
+                  _NavRow(title: l10n.settingsWidget, subtitle: l10n.settingsWidgetSub, onTap: _pinWidget),
                   const RowDivider(),
                   _NavRow(
                     title: l10n.settingsBackup,
