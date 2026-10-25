@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../platform/device_platform.dart';
 
@@ -33,7 +35,11 @@ abstract interface class PhotoPicker {
   Future<List<String>> pickFromGallery({required int limit});
 
   /// Kecilkan dan kompres foto di [path]; `null` kalau berkasnya tidak bisa dibaca sebagai gambar.
+  /// Salinan sementaranya dihapus sesudahnya.
   Future<PreparedPhoto?> prepare(String path);
+
+  /// Hapus salinan sementara foto yang dipilih tapi tidak jadi dipakai.
+  Future<void> discard(String path);
 }
 
 /// [PhotoPicker] di atas image_picker, flutter_image_compress, dan EXIF dari kode native.
@@ -56,6 +62,17 @@ class DevicePhotoPicker implements PhotoPicker {
 
   @override
   Future<PreparedPhoto?> prepare(String path) async {
+    try {
+      return await _prepare(path);
+    } finally {
+      await discardTemporaryFile(path);
+    }
+  }
+
+  @override
+  Future<void> discard(String path) => discardTemporaryFile(path);
+
+  Future<PreparedPhoto?> _prepare(String path) async {
     final info = await _platform.photoInfo(path);
     if (info == null) return null;
 
@@ -89,6 +106,30 @@ class DevicePhotoPicker implements PhotoPicker {
     buffer.dispose();
     return size;
   }
+}
+
+/// Hapus salinan sementara foto dari image_picker atau image_cropper. Salinan dari kamera
+/// membawa EXIF asli, termasuk lokasi, jadi tidak dibiarkan menumpuk di HP. Hanya berkas di
+/// folder cache app yang dihapus; berkas di tempat lain tidak pernah disentuh.
+Future<void> discardTemporaryFile(
+  String path, {
+  Future<Directory> Function() temporaryDirectory = getTemporaryDirectory,
+}) async {
+  try {
+    final file = File(path);
+    if (!isWithinDirectory(file.absolute.path, (await temporaryDirectory()).absolute.path)) return;
+    if (await file.exists()) await file.delete();
+  } on Object {
+    // Gagal menghapus tidak mengganggu; Android membersihkan cache app sendiri.
+  }
+}
+
+/// [path] berada di dalam [directory], setelah `.` dan `..` dirapikan. Path seperti
+/// `cache/../berkas` tidak dianggap di dalam `cache`.
+bool isWithinDirectory(String path, String directory) {
+  final target = Uri.file(path).normalizePath().toFilePath();
+  final root = Uri.directory(directory).normalizePath().toFilePath();
+  return target.length > root.length && target.startsWith(root);
 }
 
 /// Cara mengecilkan foto berukuran [width] × [height] supaya sisi terpanjangnya [maxPhotoSide].

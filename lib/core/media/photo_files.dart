@@ -7,6 +7,7 @@ import '../api/api_transport.dart';
 import '../database/app_database.dart';
 import '../database/entity_type.dart';
 import '../queue/upload_files.dart';
+import '../utils/ulid.dart';
 import 'photo_cache.dart';
 
 /// Foto kenangan yang sudah dikompres dan menunggu diunggah, satu folder per akun.
@@ -18,20 +19,30 @@ class PhotoFiles implements UploadFiles {
   PhotoFiles({required this.directory, required this.cache});
 
   /// Folder akun [userId] di penyimpanan app.
-  factory PhotoFiles.forAccount(String userId, PhotoCache cache) => PhotoFiles(
-    directory: () async => Directory('${(await getApplicationSupportDirectory()).path}/foto_kenangan/akun_$userId'),
-    cache: cache,
-  );
+  factory PhotoFiles.forAccount(String userId, PhotoCache cache) {
+    if (!ulidPattern.hasMatch(userId)) throw ArgumentError.value(userId, 'userId', 'Bukan ULID');
+    return PhotoFiles(
+      directory: () async => Directory('${(await getApplicationSupportDirectory()).path}/foto_kenangan/akun_$userId'),
+      cache: cache,
+    );
+  }
 
   /// Folder tempat berkas disimpan; dibuat saat foto pertama disimpan.
   final Future<Directory> Function() directory;
   final PhotoCache cache;
 
-  Future<File> _fileOf(String photoId) async => File('${(await directory()).path}/$photoId.jpg');
+  /// Berkas foto [photoId], atau `null` kalau ID-nya bukan ULID. ID foto dari server juga
+  /// dipakai di sini; yang bentuknya lain tidak pernah dijadikan nama berkas, supaya tidak
+  /// bisa menunjuk berkas di luar folder ini.
+  Future<File?> _fileOf(String photoId) async {
+    if (!ulidPattern.hasMatch(photoId)) return null;
+    return File('${(await directory()).path}/$photoId.jpg');
+  }
 
   /// Simpan foto [photoId] yang sudah dikompres sampai terunggah.
   Future<File> save(String photoId, Uint8List jpeg) async {
     final file = await _fileOf(photoId);
+    if (file == null) throw ArgumentError.value(photoId, 'photoId', 'Bukan ULID');
     await file.parent.create(recursive: true);
     return file.writeAsBytes(jpeg, flush: true);
   }
@@ -39,7 +50,7 @@ class PhotoFiles implements UploadFiles {
   /// Berkas foto yang belum selesai diunggah dari HP ini, atau `null`.
   Future<File?> pending(String photoId) async {
     final file = await _fileOf(photoId);
-    return await file.exists() ? file : null;
+    return file != null && await file.exists() ? file : null;
   }
 
   @override

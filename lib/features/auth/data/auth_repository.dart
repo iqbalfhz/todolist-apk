@@ -42,14 +42,17 @@ class AuthRepository {
 
   /// Cabut token HP ini dan hapus token FCM-nya di server.
   ///
-  /// Kegagalan diabaikan: keluar tetap dilanjutkan di HP walau server tidak terjangkau.
-  Future<void> logout({String? fcmToken}) async {
+  /// Keluar tetap dilanjutkan di HP walau server tidak terjangkau. Mengembalikan `false`
+  /// kalau tokennya belum tercabut (tanpa koneksi), supaya pemanggil mencabutnya nanti.
+  Future<bool> logout({String? fcmToken}) async {
     try {
       await api.send('POST', '/auth/logout', body: {'fcm_token': fcmToken});
+      return true;
     } on ApiError {
       // Token sudah tidak berlaku; tidak ada lagi yang perlu dicabut.
+      return true;
     } on NetworkFailure {
-      // Tanpa koneksi; token FCM tetap dihapus di HP oleh pemanggil.
+      return false;
     }
   }
 }

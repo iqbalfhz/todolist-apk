@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:todolist/core/api/api_transport.dart';
 import 'package:todolist/core/database/app_database.dart';
 import 'package:todolist/core/database/entity_type.dart';
+import 'package:todolist/core/media/media_caches.dart';
 import 'package:todolist/core/media/photo_cache.dart';
 import 'package:todolist/core/media/photo_files.dart';
 import 'package:todolist/core/media/photo_picker.dart';
@@ -49,6 +50,20 @@ class FakePhotoCache implements PhotoCache {
   Future<void> put(String photoId, Uint8List bytes, {required bool thumb, required String url}) async {
     _of(thumb)[photoId] = bytes;
   }
+
+  @override
+  Future<void> clear() async {
+    thumbs.clear();
+    fulls.clear();
+  }
+}
+
+/// Cache gambar palsu: mencatat berapa kali dikosongkan.
+class FakeMediaCaches implements MediaCaches {
+  int clears = 0;
+
+  @override
+  Future<void> clear() async => clears++;
 }
 
 /// Berkas foto yang menunggu diunggah, di memori.
@@ -105,6 +120,12 @@ class FakePhotoPicker implements PhotoPicker {
 
   /// Berkas yang disiapkan, urut waktu.
   final List<String> prepared = [];
+
+  /// Salinan sementara yang dibuang tanpa dipakai, urut waktu.
+  final List<String> discarded = [];
+
+  @override
+  Future<void> discard(String path) async => discarded.add(path);
 
   @override
   Future<List<String>> pickFromGallery({required int limit}) async {

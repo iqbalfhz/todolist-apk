@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../platform/device_platform.dart';
 import '../storage/key_value_store.dart';
+import '../utils/ulid.dart';
 
 /// Nilai yang dibaca dari HP sebelum frame pertama, supaya app langsung tahu
 /// apakah sedang masuk dan tema apa yang dipakai.
@@ -25,9 +26,10 @@ class Bootstrap {
   final DeviceInfo device;
 
   static Future<Bootstrap> load(KeyValueStore storage, DevicePlatform platform) async {
-    final token = await storage.read(StorageKeys.token);
-    final userId = await storage.read(StorageKeys.userId);
-    final signedIn = token != null && userId != null;
+    final token = await _readOrNull(storage, StorageKeys.token);
+    final userId = await _readOrNull(storage, StorageKeys.userId);
+    // ID akun menjadi nama database dan folder foto, jadi hanya ULID yang diterima.
+    final signedIn = token != null && userId != null && ulidPattern.hasMatch(userId);
     final device = await platform.info();
 
     // Layar Izin notifikasi dilewati kalau izinnya tidak perlu diminta (sebelum Android 13).
@@ -36,12 +38,22 @@ class Bootstrap {
     return Bootstrap(
       token: signedIn ? token : null,
       userId: signedIn ? userId : null,
-      themeName: await storage.read(StorageKeys.themeName),
-      themeMode: await storage.read(StorageKeys.themeMode),
-      notificationsOnboarded: nothingToAsk || await storage.read(StorageKeys.notificationsOnboarded) != null,
-      pairingOnboarded: signedIn && await storage.read(StorageKeys.pairingOnboarded(userId)) != null,
+      themeName: await _readOrNull(storage, StorageKeys.themeName),
+      themeMode: await _readOrNull(storage, StorageKeys.themeMode),
+      notificationsOnboarded: nothingToAsk || await _readOrNull(storage, StorageKeys.notificationsOnboarded) != null,
+      pairingOnboarded: signedIn && await _readOrNull(storage, StorageKeys.pairingOnboarded(userId)) != null,
       device: device,
     );
+  }
+
+  /// Penyimpanan aman yang tidak bisa dibaca (misalnya kunci perangkat hilang) berarti belum
+  /// masuk, bukan app yang gagal dibuka.
+  static Future<String?> _readOrNull(KeyValueStore storage, String key) async {
+    try {
+      return await storage.read(key);
+    } on Object {
+      return null;
+    }
   }
 }
 
@@ -81,6 +93,8 @@ class SessionController extends Notifier<Session> {
   KeyValueStore get _storage => ref.read(keyValueStoreProvider);
 
   Future<void> signIn({required String userId, required String token}) async {
+    // ID akun menjadi nama database dan folder foto di HP.
+    if (!ulidPattern.hasMatch(userId)) throw ArgumentError.value(userId, 'userId', 'Bukan ULID');
     await _storage.write(StorageKeys.token, token);
     await _storage.write(StorageKeys.userId, userId);
     await ref.read(onboardingProvider.notifier).loadFor(userId);

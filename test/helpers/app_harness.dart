@@ -7,6 +7,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/app.dart';
 import 'package:todolist/core/database/entity_type.dart';
+import 'package:todolist/core/media/media_caches.dart';
 import 'package:todolist/core/media/photo_picker.dart';
 import 'package:todolist/core/notifications/push_service.dart';
 import 'package:todolist/core/platform/device_platform.dart';
@@ -73,6 +74,11 @@ Future<ProviderContainer> pumpApp(
       httpTransportProvider.overrideWithValue(harness.api),
       accountFactoryProvider.overrideWithValue((_) => harness.account),
       spaceClockProvider.overrideWithValue(SpaceClock(now: harness.clock.call)),
+      mediaCachesProvider.overrideWithValue(harness.mediaCaches),
+      revocationTransportProvider.overrideWithValue((token) {
+        harness.revocationTokens.add(token);
+        return harness.api;
+      }),
       if (push != null) pushServiceProvider.overrideWithValue(push),
       if (photoPicker != null) photoPickerProvider.overrideWithValue(photoPicker),
     ],

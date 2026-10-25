@@ -14,6 +14,7 @@ import 'core/router/app_router.dart';
 import 'core/router/routes.dart';
 import 'core/session/account.dart';
 import 'core/session/session.dart';
+import 'core/session/token_revocations.dart';
 
 /// Menghubungkan akun yang sedang masuk dengan siklus hidup app.
 ///
@@ -38,6 +39,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
   StreamSubscription<OutboxEvent>? _outboxSubscription;
   StreamSubscription<void>? _pulledSubscription;
   bool _prefetching = false;
+  bool _revoking = false;
   Account? _account;
 
   AppLocalizations get _l10n => lookupAppLocalizations(const Locale('id'));
@@ -56,6 +58,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
       _attach(ref.read(accountProvider));
+      unawaited(_revokeLeftoverTokens());
 
       final opened = await push.initialTap();
       if (opened != null) await _openFromPush(opened);
@@ -76,7 +79,10 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // App kembali aktif: kirim antrean sekarang juga, lalu tarik perubahan.
-    if (state == AppLifecycleState.resumed) _account?.sync.sync(retryNow: true).ignore();
+    if (state == AppLifecycleState.resumed) {
+      _account?.sync.sync(retryNow: true).ignore();
+      unawaited(_revokeLeftoverTokens());
+    }
   }
 
   /// Akun berganti (masuk, keluar, atau akun lain): pindahkan pendengar dan mulai dari awal.
@@ -124,6 +130,19 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       // Offline atau akun keluar di tengah jalan; dicoba lagi setelah sync berikutnya.
     } finally {
       _prefetching = false;
+    }
+  }
+
+  /// Cabut token lama yang tersisa dari keluar saat offline.
+  Future<void> _revokeLeftoverTokens() async {
+    if (_revoking) return;
+    _revoking = true;
+    try {
+      await TokenRevocations(ref.read(keyValueStoreProvider)).revokeAll(ref.read(revocationTransportProvider));
+    } on Object {
+      // Dicoba lagi saat app dibuka atau kembali aktif.
+    } finally {
+      _revoking = false;
     }
   }
 
