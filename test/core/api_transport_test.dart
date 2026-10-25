@@ -114,6 +114,26 @@ void main() {
       expect(response.data['avatar_version'], 1);
     });
 
+    test('pengalihan tidak diikuti, jadi token tidak pernah terkirim ke alamat lain', () async {
+      final elsewhere = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      final reached = <HttpRequest>[];
+      elsewhere.listen((request) async {
+        reached.add(request);
+        await json(request, 200, {'data': <String, dynamic>{}});
+      });
+      addTearDown(() => elsewhere.close(force: true));
+
+      handler = (request) async {
+        request.response.statusCode = 302;
+        request.response.headers.set('location', 'http://127.0.0.1:${elsewhere.port}/curi');
+        await request.response.close();
+      };
+
+      await expectLater(transport().send('GET', '/me'), throwsA(isA<NetworkFailure>()));
+      expect(reached, isEmpty);
+      expect(seen.single.headers.value('authorization'), 'Bearer 1|token-hp-ini');
+    });
+
     test('foto kenangan: kolom formulir ikut multipart, yang kosong tidak dikirim', () async {
       late List<int> body;
       handler = (request) async {

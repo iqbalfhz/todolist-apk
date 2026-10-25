@@ -439,6 +439,12 @@ class Harness {
   final TestClock clock = TestClock();
   final ManualTimers timers = ManualTimers();
 
+  /// Cache gambar yang dikosongkan saat keluar.
+  final FakeMediaCaches mediaCaches = FakeMediaCaches();
+
+  /// Token yang dipakai untuk mencabut token lama dari keluar saat offline.
+  final List<String> revocationTokens = [];
+
   /// Foto kenangan (v0.3): cache dan berkas tunggu unggah di memori.
   final FakePhotoCache photoCache = FakePhotoCache();
   late final FakePhotoFiles photoFiles = FakePhotoFiles(photoCache);

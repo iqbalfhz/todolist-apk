@@ -22,6 +22,7 @@ import 'package:todolist/app.dart';
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
 import 'package:todolist/core/database/app_database.dart';
+import 'package:todolist/core/media/media_caches.dart';
 import 'package:todolist/core/notifications/push_service.dart';
 import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
@@ -39,6 +40,7 @@ import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/special_dates/domain/special_date.dart';
 
 import '../helpers/app_harness.dart';
+import '../helpers/fake_photos.dart';
 import '../helpers/fake_push.dart';
 import '../helpers/fixtures.dart';
 
@@ -186,6 +188,10 @@ void main() {
         }),
         spaceClockProvider.overrideWithValue(clock),
         pushServiceProvider.overrideWithValue(push),
+        mediaCachesProvider.overrideWithValue(FakeMediaCaches()),
+        revocationTransportProvider.overrideWithValue(
+          (token) => RootZoneTransport(DioApiTransport(baseUrl: baseUrl, token: () => token)),
+        ),
       ],
     );
 
