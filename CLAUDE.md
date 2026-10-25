@@ -6,9 +6,9 @@
 
 **Sumber kebenaran layar: `docs/layar.md`** (daftar layar, isi, dan navigasi) dan mockup HTML di `docs/mockup/`. Baca sebelum membuat atau mengubah layar.
 
-## Kondisi repo (per 24 Oktober 2026)
+## Kondisi repo (per 25 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3) dan tugas berulang (awal v1.0). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, tugas berulang, kenangan tanpa foto dan "Simpan jadi kenangan", offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3), tugas berulang (awal v1.0), dan bagian v1.x yang cukup di HP (lihat Cakupan). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, tugas berulang, kenangan tanpa foto dan "Simpan jadi kenangan", kontribusi tabungan, Cari, "Setahun lalu, hari ini", sync berkala, ringkasan widget, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
@@ -20,7 +20,9 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
 - `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
 
-- APK terbaru (Flutter 3.47.8 dan perbaikan audit keamanan) sudah terpasang di HP pemilik pada 25 Oktober 2026, tetapi belum di HP pasangan. HP pasangan masih memakai APK lama, yang koneksinya bisa disadap di Wi-Fi publik.
+- APK terbaru (Flutter 3.47.8, perbaikan audit keamanan, dan fitur v1.x di bawah) sudah terpasang di HP pemilik pada 25 Oktober 2026, tetapi belum di HP pasangan. HP pasangan masih memakai APK lama, yang koneksinya bisa disadap di Wi-Fi publik.
+- Widget "Tugas hari ini" sudah terdaftar di HP pemilik, tetapi belum pernah ditambahkan ke layar utama, jadi tampilannya di launcher HyperOS dan pergantian harinya belum dilihat.
+- Sisa v1.x butuh sisi Laravel dulu: penarikan tabungan, pin lokasi dan Peta kenangan, reaksi dan komentar, masuk dengan Google (juga butuh klien OAuth dari pemilik), dan push `sync` dari server untuk sinkron langsung saat app terbuka.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
@@ -47,7 +49,15 @@ v1.0 yang sudah dibangun:
 
 - Tugas berulang: aturan `repeat_frequency` (harian, mingguan, bulanan, tahunan) dan `repeat_interval` (1–99) dengan `due_date` sebagai patokan, chip "Ulangi" di Tugas baru dan Detail tugas, lembar Ulangi tugas, penanda "Tiap minggu" di baris tugas, dan tautan "Tugas berikutnya" di tugas yang sudah selesai. Tugas berikutnya dibuat server dan tiba di balasan centang; app tidak menghitung tenggatnya.
 
-Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kata sandi di app, keluar dari Ruang Bersama), pin lokasi dan Peta kenangan, penarikan tabungan, dan realtime (v1.x), iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
+v1.x yang sudah dibangun (diminta pemilik 25 Oktober 2026; semuanya cukup di HP):
+
+- Kontribusi tabungan bersama: kartu Kontribusi di Detail tabungan untuk target di Ruang Bersama, berisi bagian Aku dan Pasangan (bar terbagi warna diri, persen yang selalu berjumlah 100, dan nominal) serta Total
+- "Setahun lalu, hari ini": kartu kenangan dari tanggal dan bulan yang sama di tahun sebelumnya di Beranda
+- Cari (`/cari`, dari kepala Beranda): tugas, target, setoran, perjalanan, kenangan, dan tanggal penting di cache lokal, juga saat offline
+- Sinkron langsung sisi HP: sync tiap 30 detik selama app tampil, dan push `sync` tanpa notifikasi (server belum mengirimnya)
+- Widget "Tugas hari ini" di layar utama Android (`TasksWidget.kt`, kanal `todolist/device`), dengan tombol sematkan di Pengaturan
+
+Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kata sandi di app, keluar dari Ruang Bersama), sisa v1.x yang menunggu server (penarikan tabungan, pin lokasi dan Peta kenangan, reaksi dan komentar, masuk dengan Google), dan iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
@@ -90,7 +100,7 @@ Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kat
 lib/
   core/        api client, database lokal (drift), antrean, sync, media (foto), tema, router, l10n
   features/
-    auth/  spaces/  tasks/  savings/  special_dates/  trips/  memories/  home/  settings/
+    auth/  spaces/  tasks/  savings/  special_dates/  trips/  memories/  home/  settings/  search/
       data/          sumber data + repository
       domain/        model (freezed)
       presentation/  layar dan widget
@@ -168,7 +178,7 @@ Diaudit 24–25 Oktober 2026. Aturan yang harus tetap berlaku:
 - Widget test untuk alur utama: tambah cepat, centang dan Urungkan, setor tabungan, masukkan kode undangan.
 - Tata letak (`test/layout_test.dart`): setiap layar dan lembar bawah dirender pada huruf 1,3× dan 2× serta layar 360 × 640; isi yang meluap membuat tesnya gagal. Layar baru ditambahkan ke sana.
 - Klien HTTP (`test/core/api_transport_test.dart`): pemilahan error dari tabel Error di kontrak, terhadap server lokal sementara.
-- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya. Fitur atau layar baru ditambahkan juga ke `ui_e2e_test.dart`. Foto kenangan tidak diunggah di sana (API lokal tanpa kunci R2), dan jangan diarahkan ke R2 sungguhan.
+- Ujung ke ujung (`test/e2e/`): hanya jalan kalau `E2E_API_URL` diisi, dan hanya ke API lokal dengan database khusus tes. Caranya ada di kepala filenya. Fitur atau layar baru ditambahkan juga ke `ui_e2e_test.dart`. Tes itu jauh lebih rapat dari pemakaian sungguhan dan dekat batas server 120 request per menit per akun, jadi langkah yang bergantung pada sync berkala menunggu 61 detik dulu. Foto kenangan tidak diunggah di sana (API lokal tanpa kunci R2), dan jangan diarahkan ke R2 sungguhan.
 - Foto di tes memakai `test/helpers/fake_photos.dart` (cache, berkas tunggu unggah, dan galeri palsu); `pumpApp(photoPicker: ...)` mengganti galeri HP.
 
 ## Git
