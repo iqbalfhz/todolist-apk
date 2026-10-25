@@ -20,7 +20,7 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
 - `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
 
-- APK yang dibangun dengan Flutter 3.47.8 (perbaikan keamanan eMudhra, 24 Oktober 2026) sudah terpasang di HP pemilik, tetapi belum di HP pasangan. Selama HP pasangan masih memakai APK lama, koneksinya bisa disadap di Wi-Fi publik.
+- APK terbaru (Flutter 3.47.8 dan perbaikan audit keamanan, 25 Oktober 2026) belum terpasang di kedua HP. HP pemilik memakai build 24 Oktober yang sudah Flutter 3.47.8; HP pasangan masih memakai APK lama, yang koneksinya bisa disadap di Wi-Fi publik.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
@@ -138,6 +138,19 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, dan hari setor) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
 - Minta izin notifikasi (Android 13+) dengan penjelasan; sebelum Android 13 layarnya dilewati. Panduan mematikan optimasi baterai tidak ditampilkan (keputusan pemilik, 23 Oktober 2026): langkah manual di Pengaturan HP terlalu merepotkan untuk alur pertama kali.
 - Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, pengingat setor membuka Detail target, dan `memory_created` membuka Detail kenangan.
+
+## Keamanan
+
+Diaudit 24–25 Oktober 2026. Aturan yang harus tetap berlaku:
+
+- Android: `allowBackup` mati dan `data_extraction_rules.xml` mengecualikan semua data dari backup cloud dan salinan saat pindah HP (data ada di server; token terenkripsi tidak bisa dibuka di HP lain). Deep link Flutter dimatikan (`flutter_deeplinking_enabled`), karena app tidak memakainya dan app lain bisa membuka layar mana pun lewat intent. `MainActivity` memakai `taskAffinity=""`.
+- Klien API tidak mengikuti pengalihan (redirect), supaya token tidak pernah terkirim ke alamat lain, dan build rilis menolak `API_BASE_URL` yang bukan HTTPS (`apiBaseUrlProblem` di `lib/core/config/env.dart`).
+- ID dari server atau penyimpanan hanya dipakai sebagai nama berkas atau database kalau berbentuk ULID (`ulidPattern`): folder dan berkas foto, dan database akun.
+- Penyimpanan aman yang tidak bisa dibaca saat app dibuka berarti belum masuk, bukan app gagal dibuka.
+- Keluar: token yang tidak sempat dicabut karena offline disimpan di penyimpanan aman lalu dicabut dengan token itu sendiri saat app dibuka atau kembali aktif (`TokenRevocations`). Cache foto kenangan dan foto profil dikosongkan.
+- Salinan sementara foto dari image_picker dan image_cropper (dari kamera masih membawa lokasi) dihapus setelah diproses atau saat batal dipilih, dan hanya kalau letaknya di folder cache app.
+- Tidak ada rahasia di repo: kunci rilis dan kata sandinya di luar git; kunci Firebase di `google-services.json` memang publik.
+- Cek paket Dart setiap ada kabar kerentanan: `dart run tool/cek_kerentanan.dart` (OSV). SDK Flutter dan Dart dipantau terpisah lewat advisory resminya.
 
 ## UI
 
