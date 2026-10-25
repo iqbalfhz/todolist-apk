@@ -559,6 +559,18 @@ abstract class AppLocalizations {
   /// **'Tanggal penting: {detail}'**
   String homeDatesSemantic(String detail);
 
+  /// No description provided for @homeOnThisDay.
+  ///
+  /// In id, this message translates to:
+  /// **'{years, plural, =1{Setahun lalu, hari ini} other{{years} tahun lalu, hari ini}}'**
+  String homeOnThisDay(int years);
+
+  /// No description provided for @homeOnThisDayMore.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} kenangan lain di tanggal ini'**
+  String homeOnThisDayMore(int count);
+
   /// No description provided for @homeTripTitle.
   ///
   /// In id, this message translates to:

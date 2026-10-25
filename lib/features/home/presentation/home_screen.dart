@@ -11,6 +11,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/utils/money.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../memories/domain/memory_views.dart';
+import '../../memories/presentation/memory_photo_view.dart';
 import '../../savings/domain/savings_views.dart';
 import '../../savings/presentation/goal_form_sheet.dart';
 import '../../spaces/domain/household.dart';
@@ -36,6 +38,9 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  /// Paling banyak kartu "hari ini, setahun lalu" di Beranda; sisanya lewat tautan ke Kenangan.
+  static const int _onThisDayShown = 2;
+
   PersonFilter _person = PersonFilter.all;
 
   String _greeting(AppLocalizations l10n, int hour) => switch (hour) {
@@ -63,6 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final goals = ref.watch(goalProgressProvider);
     final upcoming = ref.watch(upcomingDatesProvider);
     final trips = ref.watch(tripItemsProvider);
+    final memories = ref.watch(memoryItemsProvider);
     final header = _headerTime(ref.watch(nowProvider), household);
 
     final greeting = Column(
@@ -86,6 +92,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
     }
 
+    final onThisDay = memoriesOnThisDay(memories ?? const [], ymdOf(header.date));
+
     return PageBody(
       onRefresh: () => refreshFromServer(ref),
       bottomPadding: AppDimens.fabClearance,
@@ -105,6 +113,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           onPerson: (person) => setState(() => _person = person),
         ),
         const SizedBox(height: AppDimens.gap12),
+        // "Hari ini, setahun lalu" (v1.x): hanya tampil di hari yang punya kenangan.
+        for (final memory in onThisDay.take(_onThisDayShown)) ...[
+          _OnThisDayCard(memory: memory, currentYear: header.date.year),
+          const SizedBox(height: AppDimens.gap12),
+        ],
+        if (onThisDay.length > _onThisDayShown) ...[
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton(
+              onPressed: () => context.go(Routes.memories),
+              child: Text(l10n.homeOnThisDayMore(onThisDay.length - _onThisDayShown)),
+            ),
+          ),
+          const SizedBox(height: AppDimens.gap12),
+        ],
         _SavingsCard(goal: primaryGoal(goals)),
         const SizedBox(height: AppDimens.gap12),
         // Dua kartu sama tinggi, berdampingan seperti di mockup.
@@ -318,6 +341,68 @@ class _SavingsCard extends StatelessWidget {
                 ],
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Kenangan dari tanggal yang sama di tahun sebelumnya: sampul (kalau ada foto), "Setahun lalu,
+/// hari ini", judul, lalu tanggal dan tempat. Ketuk → Detail kenangan.
+class _OnThisDayCard extends StatelessWidget {
+  const _OnThisDayCard({required this.memory, required this.currentYear});
+
+  final OnThisDay memory;
+  final int currentYear;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final text = context.text;
+    final palette = context.palette;
+    final item = memory.item;
+    final cover = item.cover;
+    final label = l10n.homeOnThisDay(memory.yearsAgo);
+    final details = [
+      formatDayShort(item.memory.visitedOn, currentYear: currentYear),
+      ?item.memory.placeName,
+    ].join(' · ');
+
+    return AppCard(
+      semanticLabel: label,
+      padding: EdgeInsets.zero,
+      onTap: () => context.go(Routes.memory(item.memory.id)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (cover != null)
+            ExcludeSemantics(
+              child: AspectRatio(
+                aspectRatio: AppDimens.coverAspectCard,
+                child: MemoryPhotoImage(photo: cover),
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.all(AppDimens.cardPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Icon(Symbols.history_rounded, size: AppDimens.iconSm, color: palette.brand),
+                    const SizedBox(width: AppDimens.gap6),
+                    Expanded(
+                      child: Text(label, style: text.captionStrong.copyWith(color: palette.link)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppDimens.gap4),
+                Text(item.memory.title, style: text.rowTitle),
+                const SizedBox(height: AppDimens.gap2),
+                Text(details, style: text.caption),
+              ],
+            ),
+          ),
         ],
       ),
     );
