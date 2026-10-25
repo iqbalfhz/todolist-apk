@@ -1141,6 +1141,30 @@ abstract class AppLocalizations {
   /// **'Setoran per bulan'**
   String get savingsMonthly;
 
+  /// No description provided for @savingsContributions.
+  ///
+  /// In id, this message translates to:
+  /// **'Kontribusi'**
+  String get savingsContributions;
+
+  /// No description provided for @savingsContributionFormer.
+  ///
+  /// In id, this message translates to:
+  /// **'Anggota lain'**
+  String get savingsContributionFormer;
+
+  /// No description provided for @savingsContributionTotal.
+  ///
+  /// In id, this message translates to:
+  /// **'Total'**
+  String get savingsContributionTotal;
+
+  /// No description provided for @percentUnderOne.
+  ///
+  /// In id, this message translates to:
+  /// **'<1%'**
+  String get percentUnderOne;
+
   /// No description provided for @savingsMonthlySemantic.
   ///
   /// In id, this message translates to:

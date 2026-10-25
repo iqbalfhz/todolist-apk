@@ -596,6 +596,18 @@ class AppLocalizationsId extends AppLocalizations {
   String get savingsMonthly => 'Setoran per bulan';
 
   @override
+  String get savingsContributions => 'Kontribusi';
+
+  @override
+  String get savingsContributionFormer => 'Anggota lain';
+
+  @override
+  String get savingsContributionTotal => 'Total';
+
+  @override
+  String get percentUnderOne => '<1%';
+
+  @override
   String savingsMonthlySemantic(String month, String amount) {
     return '$month: $amount';
   }

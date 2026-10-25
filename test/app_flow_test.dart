@@ -353,10 +353,13 @@ void main() {
 
       expect(find.text('Setor tabungan'), findsNothing);
       expect(find.text('65%'), findsOneWidget);
-      expect(find.text('Rp6.500.000'), findsOneWidget);
+      // Ringkasan, lalu baris Aku dan Total di kartu Kontribusi (target ini di Ruang Bersama).
+      expect(find.text('Rp6.500.000'), findsNWidgets(3));
+      expect(find.text('Kontribusi'), findsOneWidget);
       expect(find.text('Sisa Rp3.500.000'), findsOneWidget);
       expect(find.text('Target 28 Feb 2027'), findsOneWidget);
       expect(find.text('Perlu Rp175.000 per minggu'), findsOneWidget);
+      await tester.scrollUntilVisible(find.text('+Rp6.500.000'), 300, scrollable: find.byType(Scrollable).first);
       expect(find.text('+Rp6.500.000'), findsOneWidget);
 
       final op = (await h.ops()).single;
