@@ -247,6 +247,48 @@ abstract class AppLocalizations {
   /// **'Navigasi utama'**
   String get navLabel;
 
+  /// No description provided for @searchHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Mau cari apa?'**
+  String get searchHint;
+
+  /// No description provided for @searchClear.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus kata kunci'**
+  String get searchClear;
+
+  /// No description provided for @searchIntro.
+  ///
+  /// In id, this message translates to:
+  /// **'Cari tugas, tabungan, setoran, liburan, kenangan, dan tanggal penting. Bisa juga saat offline.'**
+  String get searchIntro;
+
+  /// No description provided for @searchEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ketemu \"{query}\". Coba kata lain.'**
+  String searchEmpty(String query);
+
+  /// No description provided for @searchCount.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} hasil'**
+  String searchCount(int count);
+
+  /// No description provided for @searchShowAll.
+  ///
+  /// In id, this message translates to:
+  /// **'Tampilkan semua ({count})'**
+  String searchShowAll(int count);
+
+  /// No description provided for @searchSectionEntries.
+  ///
+  /// In id, this message translates to:
+  /// **'Setoran'**
+  String get searchSectionEntries;
+
   /// No description provided for @offlineBanner.
   ///
   /// In id, this message translates to:
@@ -570,6 +612,12 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'{count} kenangan lain di tanggal ini'**
   String homeOnThisDayMore(int count);
+
+  /// No description provided for @homeSearch.
+  ///
+  /// In id, this message translates to:
+  /// **'Cari'**
+  String get homeSearch;
 
   /// No description provided for @homeTripTitle.
   ///

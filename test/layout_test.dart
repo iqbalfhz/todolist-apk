@@ -13,6 +13,7 @@ import 'package:todolist/features/savings/presentation/goal_detail_screen.dart';
 import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
 import 'package:todolist/features/savings/presentation/reminder_sheet.dart';
 import 'package:todolist/features/savings/presentation/savings_screen.dart';
+import 'package:todolist/features/search/domain/search.dart';
 import 'package:todolist/features/special_dates/presentation/special_date_sheet.dart';
 import 'package:todolist/features/special_dates/presentation/special_dates_screen.dart';
 import 'package:todolist/features/tasks/presentation/list_form_sheet.dart';
@@ -115,6 +116,12 @@ void main() {
 
       await visit(tester, container, Routes.home);
       await withSheet(tester, container, () => tester.tap(find.byType(FloatingActionButton)));
+
+      // Cari (v1.x): hasil dari semua jenis, termasuk potongan cerita dan catatan.
+      container.read(searchTextProvider.notifier).set('an');
+      await visit(tester, container, Routes.search);
+      container.read(searchTextProvider.notifier).set('hujan');
+      await visit(tester, container, Routes.search);
 
       await visit(tester, container, Routes.tasks);
       await tester.tap(find.textContaining('Selesai ('));

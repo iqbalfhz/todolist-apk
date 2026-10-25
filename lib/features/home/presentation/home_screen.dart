@@ -101,7 +101,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Row(
           children: [
             Expanded(child: greeting),
-            const SizedBox(width: AppDimens.gap12),
+            const SizedBox(width: AppDimens.gap8),
+            AppIconButton(
+              icon: Symbols.search_rounded,
+              label: l10n.homeSearch,
+              onPressed: () => context.push(Routes.search),
+            ),
+            const SizedBox(width: AppDimens.gap4),
             _HeaderAvatars(household: household),
           ],
         ),

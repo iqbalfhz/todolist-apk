@@ -88,6 +88,34 @@ class AppLocalizationsId extends AppLocalizations {
   String get navLabel => 'Navigasi utama';
 
   @override
+  String get searchHint => 'Mau cari apa?';
+
+  @override
+  String get searchClear => 'Hapus kata kunci';
+
+  @override
+  String get searchIntro =>
+      'Cari tugas, tabungan, setoran, liburan, kenangan, dan tanggal penting. Bisa juga saat offline.';
+
+  @override
+  String searchEmpty(String query) {
+    return 'Belum ketemu \"$query\". Coba kata lain.';
+  }
+
+  @override
+  String searchCount(int count) {
+    return '$count hasil';
+  }
+
+  @override
+  String searchShowAll(int count) {
+    return 'Tampilkan semua ($count)';
+  }
+
+  @override
+  String get searchSectionEntries => 'Setoran';
+
+  @override
   String get offlineBanner => 'Sedang offline. Perubahanmu aman dan dikirim saat online.';
 
   @override
@@ -269,6 +297,9 @@ class AppLocalizationsId extends AppLocalizations {
   String homeOnThisDayMore(int count) {
     return '$count kenangan lain di tanggal ini';
   }
+
+  @override
+  String get homeSearch => 'Cari';
 
   @override
   String get homeTripTitle => 'Persiapan liburan';

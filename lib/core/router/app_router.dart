@@ -12,6 +12,7 @@ import '../../features/memories/presentation/memory_form_screen.dart';
 import '../../features/memories/presentation/memory_gallery_screen.dart';
 import '../../features/savings/presentation/goal_detail_screen.dart';
 import '../../features/savings/presentation/savings_screen.dart';
+import '../../features/search/presentation/search_screen.dart';
 import '../../features/settings/presentation/profile_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/spaces/presentation/pairing_screen.dart';
@@ -71,6 +72,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.register, builder: (_, _) => const RegisterScreen()),
       GoRoute(path: Routes.notifications, builder: (_, _) => const NotificationPermissionScreen()),
       GoRoute(path: Routes.pairing, builder: (_, _) => const PairingScreen()),
+      GoRoute(path: Routes.search, builder: (_, _) => const SearchScreen()),
       GoRoute(
         path: Routes.settings,
         builder: (_, _) => const SettingsScreen(),

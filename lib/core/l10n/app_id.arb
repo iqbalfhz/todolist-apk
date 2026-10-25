@@ -29,6 +29,34 @@
   "navTrips": "Liburan",
   "navMemories": "Kenangan",
   "navLabel": "Navigasi utama",
+  "searchHint": "Mau cari apa?",
+  "searchClear": "Hapus kata kunci",
+  "searchIntro": "Cari tugas, tabungan, setoran, liburan, kenangan, dan tanggal penting. Bisa juga saat offline.",
+  "searchEmpty": "Belum ketemu \"{query}\". Coba kata lain.",
+  "@searchEmpty": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "searchCount": "{count} hasil",
+  "@searchCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchShowAll": "Tampilkan semua ({count})",
+  "@searchShowAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "searchSectionEntries": "Setoran",
 
   "offlineBanner": "Sedang offline. Perubahanmu aman dan dikirim saat online.",
   "updateBanner": "Versi app ini sudah tertinggal. Perbarui app supaya perubahanmu terkirim.",
@@ -128,6 +156,7 @@
       }
     }
   },
+  "homeSearch": "Cari",
   "homeTripTitle": "Persiapan liburan",
   "homeTripProgress": "{done} dari {total}",
   "@homeTripProgress": {
