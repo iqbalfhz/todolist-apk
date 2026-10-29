@@ -8,7 +8,7 @@
 
 ## Kondisi repo (per 29 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3), tugas berulang (awal v1.0), dan bagian v1.x yang cukup di HP (lihat Cakupan). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, tugas berulang, kenangan tanpa foto dan "Simpan jadi kenangan", kontribusi dan penarikan tabungan, pin lokasi kenangan dan Peta kenangan, Cari, "Setahun lalu, hari ini", sync berkala, ringkasan widget, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3), tugas berulang (awal v1.0), dan bagian v1.x yang cukup di HP (lihat Cakupan). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, tugas berulang, kenangan tanpa foto dan "Simpan jadi kenangan", kontribusi dan penarikan tabungan, pin lokasi kenangan dan Peta kenangan, komentar dan reaksi antara dua HP, Cari, "Setahun lalu, hari ini", sync berkala, ringkasan widget, offline, keluar, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
@@ -23,7 +23,8 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - APK dengan penarikan tabungan dan pin lokasi sudah terpasang di HP pemilik (29 Oktober 2026, 13.24), dan harus terpasang juga di HP pasangan sebelum penarikan pertama dicatat: app lama menghitung penarikan sebagai setoran. HP pasangan juga masih memakai APK lama yang koneksinya bisa disadap di Wi-Fi publik.
 - Pin lokasi belum dicoba di HP sungguhan: ubin OpenStreetMap, cache ubin, dan cari tempat lewat Nominatim di server produksi.
 - Widget "Tugas hari ini" sudah terdaftar di HP pemilik, tetapi belum pernah ditambahkan ke layar utama, jadi tampilannya di launcher HyperOS dan pergantian harinya belum dilihat.
-- Sisa v1.x butuh sisi Laravel dulu: reaksi dan komentar (kontraknya sedang disusun di dokumen perencanaan), lalu masuk dengan Google (juga butuh klien OAuth dari pemilik).
+- Sisa v1.x butuh sisi Laravel dulu: masuk dengan Google (juga butuh klien OAuth dari pemilik).
+- Komentar dan reaksi belum dicoba di HP sungguhan: emoji di chip reaksi (tes hanya merender kotak karena font tes tanpa emoji), push `comment_created` dan `reaction_created`, dan ketukannya.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
 
@@ -57,10 +58,11 @@ v1.x yang sudah dibangun (diminta pemilik 25 Oktober 2026; semuanya cukup di HP)
 - Cari (`/cari`, dari kepala Beranda): tugas, target, setoran, perjalanan, kenangan, dan tanggal penting di cache lokal, juga saat offline
 - Sinkron langsung: sync tiap 30 detik selama app tampil, dan push `sync` dari server (aktif sejak 25 Oktober 2026) yang hanya memicu sync, tanpa notifikasi
 - Penarikan tabungan (29 Oktober 2026): tombol Ambil di Detail target, setoran dengan `type` `withdrawal` yang hanya dikirim saat PUT, total bersih (setoran dikurangi penarikan) untuk progres dan kontribusi, penarikan di atas yang terkumpul dicegah di layar (server menerimanya), riwayat "Aku mengambil" dengan "−Rp...", dan push `savings_withdrawal` (ketuk membuka Detail target)
+- Komentar dan reaksi (29 Oktober 2026): koleksi sync `comments` dan `reactions` (skema 7, sync penuh sekali) untuk tugas, setoran, dan kenangan di Ruang Bersama; bagian Komentar di Detail tugas, Detail kenangan, dan lembar detail setoran (ketuk setoran di target bersama); satu reaksi per orang per subjek (reaksi baru menggantikan yang lama, yang belum terkirim dibatalkan tanpa request); hanya penulis yang bisa mengubah dan menghapus komentarnya (hapus dengan Urungkan); penanda reaksi dan jumlah komentar di riwayat setoran dan kartu kenangan; push `comment_created` dan `reaction_created` yang membuka subjeknya langsung di bagian Komentar (`?komentar=1`, atau `?setoran={id}` untuk setoran)
 - Pin lokasi kenangan (29 Oktober 2026): `latitude` dan `longitude` di kenangan yang selalu dikirim berdua (dibulatkan 6 desimal), layar Pilih lokasi (cari tempat lewat `GET /places` hanya saat tombol Cari ditekan, atau ketuk peta), pratinjau peta di formulir dan Detail kenangan, dan Peta kenangan (`/kenangan/peta`) dengan ubin OpenStreetMap; kolom baru di `memories`, jadi sync penuh sekali
 - Widget "Tugas hari ini" di layar utama Android (`TasksWidget.kt`, kanal `todolist/device`), dengan tombol sematkan di Pengaturan
 
-Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kata sandi di app, keluar dari Ruang Bersama), sisa v1.x yang menunggu server (reaksi dan komentar, masuk dengan Google), dan iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
+Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kata sandi di app, keluar dari Ruang Bersama), masuk dengan Google (menunggu server dan klien OAuth), dan iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
@@ -104,7 +106,7 @@ Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kat
 lib/
   core/        api client, database lokal (drift), antrean, sync, media (foto), tema, router, l10n
   features/
-    auth/  spaces/  tasks/  savings/  special_dates/  trips/  memories/  home/  settings/  search/
+    auth/  spaces/  tasks/  savings/  special_dates/  trips/  memories/  comments/  home/  settings/  search/
       data/          sumber data + repository
       domain/        model (freezed)
       presentation/  layar dan widget
@@ -115,7 +117,7 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 ## Data offline (aturan wajib)
 
 - UI selalu membaca dari drift. Jaringan hanya mengisi drift.
-- Tulis: ubah drift dulu (UI langsung berubah), lalu masukkan operasi ke antrean. Hanya PUT/PATCH/DELETE untuk daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, dan foto kenangan, unggah foto kenangan (`POST /memory-photos/{id}`), dan `PATCH /me` yang lewat antrean; endpoint lain (termasuk `GET /memories/{id}/photos` dan `GET /places`) dipanggil langsung dan butuh koneksi.
+- Tulis: ubah drift dulu (UI langsung berubah), lalu masukkan operasi ke antrean. Hanya PUT/PATCH/DELETE untuk daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, foto kenangan, dan komentar, PUT/DELETE untuk reaksi, unggah foto kenangan (`POST /memory-photos/{id}`), dan `PATCH /me` yang lewat antrean; endpoint lain (termasuk `GET /memories/{id}/photos` dan `GET /places`) dipanggil langsung dan butuh koneksi.
 - ID dibuat di HP: ULID huruf kecil.
 - Waktu dikirim dengan `toUtc().toIso8601String()`. Tanggal `YYYY-MM-DD` dan jam `HH:MM` menurut zona waktu ruang; "hari ini" dihitung di zona waktu ruang (paket `timezone`).
 - Uang berupa `int` satuan terkecil. Desimal per mata uang dari tabel di kontrak (IDR 0, JPY 0, lainnya 2); selalu isi `decimalDigits` sendiri saat memformat, karena `intl` memakai 2 desimal untuk IDR.
@@ -140,11 +142,11 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 
 - Satu sync pada satu waktu. Kirim dulu operasi yang bisa dikirim, lalu tetap tarik data.
 - Halaman pertama `GET /sync?since=...`; berikutnya `?cursor=<next_cursor>` sampai `has_more` false. Simpan `server_time` dari halaman terakhir.
-- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`, lalu `trips` beserta `trip_id` di daftar dan jadwal setor di target; v0.3: `memories` dan `memory_photos`; v1.0: aturan ulang dan `next_task_id` di `tasks`; v1.x: `latitude` dan `longitude` di `memories`); sifatnya hanya menambah dan memperbarui.
+- Sync penuh (tanpa `since`) hanya saat database lokal akun itu masih kosong, atau sekali setelah app mengenal koleksi baru (`SyncEngine.collectionsVersion`; v0.2: `special_dates`, lalu `trips` beserta `trip_id` di daftar dan jadwal setor di target; v0.3: `memories` dan `memory_photos`; v1.0: aturan ulang dan `next_task_id` di `tasks`; v1.x: `latitude` dan `longitude` di `memories`, lalu `comments` dan `reactions`); sifatnya hanya menambah dan memperbarui.
 - Pengiriman antrean sebelum menarik data dibatasi 8 detik (`SyncEngine.flushLimit`), supaya unggahan foto yang lama tidak menahan data baru; antreannya tetap jalan di belakang.
 - Foto kenangan: cache gambar memakai kunci `photo-{id}` dan `photo-{id}-thumb`, bukan URL. Thumbnail yang belum ada diunduh setelah setiap sync yang berhasil; versi penuh saat foto dibuka. URL yang berumur 7 hari, atau yang ditolak R2 dengan 403, diganti lewat `GET /memories/{id}/photos`.
 - Saat menerapkan baris: tanpa foreign key check; kolom dengan operasi tertunda tidak ditimpa; baris dengan DELETE tertunda tidak muncul lagi; baris yang lebih tua dari salinan lokal diabaikan.
-- Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda.
+- Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda. Anaknya didaftar di `EntityType.children`: komentar dan reaksi menunjuk tugas, setoran, atau kenangan lewat `subject_id`.
 - Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, push yang masuk saat app terbuka, dan setiap 30 detik selama app tampil di layar (`liveSyncInterval`, berhenti saat app tidak tampil). Push tanpa judul dan isi (termasuk `type` `sync`) hanya memicu sync, tanpa notifikasi.
 
 ### Notifikasi
