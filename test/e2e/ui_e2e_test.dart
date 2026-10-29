@@ -39,6 +39,7 @@ import 'package:todolist/core/utils/dates.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/domain/user.dart';
+import 'package:todolist/features/comments/domain/comment.dart';
 import 'package:todolist/features/memories/domain/memory.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
 import 'package:todolist/features/savings/domain/savings_entry.dart';
@@ -1151,6 +1152,43 @@ void main() {
     expect(find.textContaining('sotonya enak', findRichText: true), findsOneWidget);
     await tap(find.text('Makan malam pertama', findRichText: true));
     expect(container.read(routerProvider).state.uri.path, Routes.memory(dinnerId));
+
+    step('Komentar dan reaksi (v1.x): aku menulis, pasangan membalas dan memberi reaksi, aku ikut');
+    await go(Routes.task(sharedTaskId, comments: true));
+    await tester.enterText(find.widgetWithText(TextField, 'Tulis komentar…'), 'Galonnya yang 19 liter, ya');
+    await net();
+    await tap(find.byTooltip('Kirim komentar'));
+    await net();
+    final myComment = await serverRow('comments', (row) => row['body'] == 'Galonnya yang 19 liter, ya');
+    expect(
+      (myComment['subject_type'], myComment['subject_id'], myComment['user_id']),
+      ('task', sharedTaskId, container.read(sessionProvider).userId),
+    );
+
+    await asPartner(() async {
+      await partner.syncNow();
+      final received = await partner.account.comments.watchComments().first;
+      expect(received.singleWhere((row) => row.subjectId == sharedTaskId).body, 'Galonnya yang 19 liter, ya');
+      final space = await partner.sharedSpace();
+      final onTask = Subject(SubjectType.task, sharedTaskId);
+      await partner.account.comments.addComment(subject: onTask, spaceId: space.id, body: 'Siap, nanti sore');
+      await partner.account.comments.react(subject: onTask, spaceId: space.id, emoji: '❤️');
+      await partner.syncNow();
+    });
+    await go(Routes.home);
+    await pullToRefresh();
+    await go(Routes.task(sharedTaskId, comments: true));
+    expect(find.text('Siap, nanti sore'), findsOneWidget);
+    expect(find.bySemanticsLabel('Reaksi ❤️ dari Pasangan'), findsOneWidget);
+
+    await tap(find.bySemanticsLabel('Reaksi ❤️ dari Pasangan'));
+    await net();
+    expect(find.bySemanticsLabel('Reaksi ❤️ dari Pasangan dan Aku'), findsOneWidget);
+    final reactions = [
+      for (final row in await serverRows('reactions'))
+        if (row['subject_id'] == sharedTaskId && row['deleted_at'] == null) row['emoji'],
+    ];
+    expect(reactions, ['❤️', '❤️']);
 
     step('Setahun lalu, hari ini: kenangan pasangan dari tanggal yang sama tahun lalu');
     final lastYear = '${int.parse(today().substring(0, 4)) - 1}${today().substring(4)}';
