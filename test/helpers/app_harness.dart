@@ -14,7 +14,9 @@ import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/time/space_clock.dart';
+import 'package:todolist/features/memories/presentation/memory_map.dart';
 
+import 'fake_map.dart';
 import 'fixtures.dart';
 
 /// Siapkan hal yang biasanya dikerjakan `main()`: format tanggal, zona waktu, dan font.
@@ -50,6 +52,7 @@ Future<ProviderContainer> pumpApp(
   PhotoPicker? photoPicker,
   String? themeName,
   String? themeMode,
+  FakeTileProvider? tiles,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
@@ -75,6 +78,8 @@ Future<ProviderContainer> pumpApp(
       accountFactoryProvider.overrideWithValue((_) => harness.account),
       spaceClockProvider.overrideWithValue(SpaceClock(now: harness.clock.call)),
       mediaCachesProvider.overrideWithValue(harness.mediaCaches),
+      // Peta kenangan (v1.x) tidak pernah mengunduh ubin sungguhan di tes.
+      mapTileProviderProvider.overrideWithValue(tiles ?? FakeTileProvider()),
       revocationTransportProvider.overrideWithValue((token) {
         harness.revocationTokens.add(token);
         return harness.api;

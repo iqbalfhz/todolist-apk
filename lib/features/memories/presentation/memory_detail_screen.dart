@@ -12,8 +12,10 @@ import '../../../core/utils/dates.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../spaces/domain/household.dart';
+import '../domain/memory.dart';
 import '../domain/memory_views.dart';
 import 'memory_actions.dart';
+import 'memory_map.dart';
 import 'memory_photo_view.dart';
 import 'photo_imports.dart';
 
@@ -122,6 +124,15 @@ class MemoryDetailScreen extends ConsumerWidget {
             household: household,
             currentYear: parseYmd(ref.watch(spaceClockProvider).today(item.space.timezone)).year,
           ),
+          // Pin lokasi (v1.x): ketuk untuk melihatnya bersama kenangan lain di Peta kenangan.
+          if (memory.pin case final pin?) ...[
+            const SizedBox(height: AppDimens.gap10),
+            MemoryMapPreview(
+              point: pin,
+              semanticLabel: l10n.memoryMapPreview,
+              onTap: () => context.go(Routes.memoriesMap(focusId: memory.id)),
+            ),
+          ],
           if (story != null) ...[
             const SizedBox(height: AppDimens.gap10),
             SectionTitle(l10n.memoryStoryTitle),

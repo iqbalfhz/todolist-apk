@@ -38,6 +38,7 @@ class MemoryRepository {
   Stream<List<MemoryPhoto>> watchPhotos() => writer.store.watchMemoryPhotos();
 
   /// Buat kenangan. [visitedOn] berformat `YYYY-MM-DD`; [tripId] diisi lewat "Simpan jadi kenangan".
+  /// [pin] (v1.x) hanya dikirim kalau diisi; tanpa itu server menyimpannya tanpa pin.
   Future<Memory> create({
     required String spaceId,
     required String title,
@@ -45,11 +46,17 @@ class MemoryRepository {
     required String visitedOn,
     String? story,
     String? tripId,
+    GeoPoint? pin,
   }) async {
     final fields = _validated(title: title, placeName: placeName, visitedOn: visitedOn, story: story);
     final nowIso = writer.nowIso();
 
-    final payload = <String, dynamic>{'space_id': spaceId, ...fields, 'trip_id': tripId};
+    final payload = <String, dynamic>{
+      'space_id': spaceId,
+      ...fields,
+      'trip_id': tripId,
+      if (pin != null) ..._pinFields(pin),
+    };
     final row = <String, dynamic>{
       ...payload,
       'id': newUlid(now: writer.now()),
@@ -75,6 +82,23 @@ class MemoryRepository {
     id,
     _validated(title: title, placeName: placeName, visitedOn: visitedOn, story: story),
   );
+
+  /// Pasang, pindahkan, atau lepas ([pin] `null`) pin lokasi (v1.x). Lintang dan bujur selalu
+  /// dikirim berdua, karena server menolak salah satunya saja.
+  Future<void> setPin(String id, GeoPoint? pin) => writer.update(
+    EntityType.memory,
+    id,
+    pin == null ? {'latitude': null, 'longitude': null} : _pinFields(pin),
+    sendTogether: true,
+  );
+
+  /// Cari tempat lewat `GET /places` (v1.x), langsung ke server dan butuh koneksi. Dipanggil
+  /// hanya saat tombol cari ditekan, karena kebijakan Nominatim melarang pencarian sambil
+  /// mengetik. [query] harus 3–100 karakter.
+  Future<List<Place>> searchPlaces(String query) async {
+    final response = await api.send('GET', '/places', query: {'q': query.trim()});
+    return [for (final row in response.dataList) Place.fromJson(row)];
+  }
 
   /// Hapus kenangan; server ikut menghapus fotonya, dan penghapusan itu sampai lewat sync.
   ///
@@ -157,6 +181,12 @@ class MemoryRepository {
   }
 
   // ---------------------------------------------------------------- validasi
+
+  static Map<String, dynamic> _pinFields(GeoPoint pin) {
+    final valid = GeoPoint.tryCreate(pin.latitude, pin.longitude);
+    if (valid == null) throw ArgumentError.value(pin, 'pin', 'Lintang -90..90 dan bujur -180..180.');
+    return {'latitude': valid.latitude, 'longitude': valid.longitude};
+  }
 
   /// Kolom isi kenangan yang sudah dirapikan, dengan aturan yang sama seperti server.
   static Map<String, dynamic> _validated({

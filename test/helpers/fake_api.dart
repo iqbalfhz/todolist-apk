@@ -50,6 +50,9 @@ class FakeApi implements ApiTransport {
   /// Ruang Bersama yang dibalas `POST /invitations/accept`.
   Map<String, dynamic>? acceptedSpace;
 
+  /// Hasil `GET /places` (v1.x).
+  List<Map<String, dynamic>> places = [];
+
   /// Selama menyala, semua request gagal seperti HP tanpa koneksi.
   bool offline = false;
 
@@ -126,6 +129,10 @@ class FakeApi implements ApiTransport {
     }
 
     if (segments.first == 'spaces') return ApiResponse(status: 200, body: {'data': spaces});
+
+    if (request.method == 'GET' && segments.first == 'places') {
+      return ApiResponse(status: 200, body: {'data': places});
+    }
 
     if (segments.first == 'devices') {
       return ApiResponse(status: 201, body: {'data': request.body});

@@ -182,6 +182,10 @@ class Memories extends Table {
   TextColumn get title => text()();
   TextColumn get placeName => text().nullable()();
 
+  /// Pin lokasi (v1.x), selalu berpasangan.
+  RealColumn get latitude => real().nullable()();
+  RealColumn get longitude => real().nullable()();
+
   /// `YYYY-MM-DD`; tanggal kenangan di linimasa.
   TextColumn get visitedOn => text()();
   TextColumn get story => text().nullable()();
@@ -277,7 +281,7 @@ class AppDatabase extends _$AppDatabase {
   /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
   /// dan jadwal pengingat setor di target (semuanya v0.2). 4: kenangan dan fotonya (v0.3).
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -297,6 +301,12 @@ class AppDatabase extends _$AppDatabase {
         await migrator.addColumn(tasks, tasks.repeatFrequency);
         await migrator.addColumn(tasks, tasks.repeatInterval);
         await migrator.addColumn(tasks, tasks.nextTaskId);
+      }
+      // Pin lokasi kenangan (v1.x). Database sebelum versi 4 baru saja membuat tabel kenangan
+      // dengan kolom ini.
+      if (from >= 4 && from < 6) {
+        await migrator.addColumn(memories, memories.latitude);
+        await migrator.addColumn(memories, memories.longitude);
       }
     },
   );

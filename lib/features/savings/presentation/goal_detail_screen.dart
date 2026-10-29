@@ -131,10 +131,35 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
           const SizedBox(height: AppDimens.gap12),
           _SummaryCard(progress: progress, paired: household.isPaired),
           const SizedBox(height: AppDimens.gap12),
-          PrimaryButton(
-            label: l10n.savingsDeposit,
-            icon: Symbols.add_rounded,
-            onPressed: () => showDepositSheet(context, goal: goal, today: progress.today),
+          Row(
+            children: [
+              Expanded(
+                child: PrimaryButton(
+                  label: l10n.savingsDeposit,
+                  icon: Symbols.add_rounded,
+                  onPressed: () => showDepositSheet(context, goal: goal, today: progress.today, saved: progress.saved),
+                ),
+              ),
+              // Penarikan (v1.x): hanya kalau ada yang bisa diambil.
+              if (progress.available > 0) ...[
+                const SizedBox(width: AppDimens.gap10),
+                OutlinedButton.icon(
+                  onPressed: () => showDepositSheet(
+                    context,
+                    goal: goal,
+                    today: progress.today,
+                    saved: progress.saved,
+                    withdrawal: true,
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    side: BorderSide(color: context.palette.line),
+                  ),
+                  icon: const Icon(Symbols.remove_rounded, size: AppDimens.iconLg),
+                  label: Text(l10n.savingsWithdraw),
+                ),
+              ],
+            ],
           ),
           const SizedBox(height: AppDimens.gap12),
           // Tabungan bersama: siapa menyetor berapa, beserta totalnya.
@@ -186,7 +211,13 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
                     entry: entry,
                     progress: progress,
                     household: household,
-                    onTap: () => showDepositSheet(context, goal: goal, today: progress.today, entry: entry),
+                    onTap: () => showDepositSheet(
+                      context,
+                      goal: goal,
+                      today: progress.today,
+                      saved: progress.saved,
+                      entry: entry,
+                    ),
                   ),
                 ],
               ],
@@ -519,7 +550,8 @@ class _MonthlyChart extends StatelessWidget {
   }
 }
 
-/// Satu baris riwayat: siapa dan catatannya, tanggal, dan nominal "+Rp200.000".
+/// Satu baris riwayat: siapa dan catatannya, tanggal, dan nominal "+Rp200.000", atau
+/// "Aku mengambil" dan "−Rp200.000" untuk penarikan (v1.x).
 class _EntryRow extends StatelessWidget {
   const _EntryRow({
     super.key,
@@ -557,7 +589,14 @@ class _EntryRow extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(note == null ? who : l10n.savingsHistoryWho(who, note), style: text.bodyStrong),
+                    Text(
+                      entry.isWithdrawal
+                          ? (note == null
+                                ? l10n.savingsHistoryWithdrawal(who)
+                                : l10n.savingsHistoryWithdrawalNote(who, note))
+                          : (note == null ? who : l10n.savingsHistoryWho(who, note)),
+                      style: text.bodyStrong,
+                    ),
                     Text(
                       formatDayShort(entry.entryDate, currentYear: parseYmd(progress.today).year),
                       style: text.small,
@@ -566,7 +605,7 @@ class _EntryRow extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppDimens.gap8),
-              Text(formatMoney(entry.amount, progress.goal.currency, withSign: true), style: text.amount),
+              Text(formatMoney(entry.signedAmount, progress.goal.currency, withSign: true), style: text.amount),
             ],
           ),
         ),

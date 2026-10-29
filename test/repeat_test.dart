@@ -299,7 +299,7 @@ void main() {
       ),
     );
 
-    expect(SyncEngine.collectionsVersion, 5);
+    expect(SyncEngine.collectionsVersion, greaterThanOrEqualTo(5));
     await h.account.sync.sync();
 
     expect(
@@ -310,7 +310,7 @@ void main() {
       [null],
     );
     expect((await h.task(taskId))!.repeat, const TaskRepeat(RepeatFrequency.monthly, 3));
-    expect(await h.account.store.meta(MetaKeys.syncCollections), '5');
+    expect(await h.account.store.meta(MetaKeys.syncCollections), '${SyncEngine.collectionsVersion}');
   });
 
   test('database versi 4 dinaikkan ke versi 5: kolom aturan ulang di tugas, isi lama tetap ada', () async {
@@ -325,6 +325,9 @@ void main() {
       'ALTER TABLE tasks DROP COLUMN repeat_frequency',
       'ALTER TABLE tasks DROP COLUMN repeat_interval',
       'ALTER TABLE tasks DROP COLUMN next_task_id',
+      // Kolom pin lokasi kenangan baru ada di versi 6.
+      'ALTER TABLE memories DROP COLUMN latitude',
+      'ALTER TABLE memories DROP COLUMN longitude',
       'PRAGMA user_version = 4',
     ]) {
       await old.customStatement(statement);

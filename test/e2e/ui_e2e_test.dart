@@ -16,6 +16,7 @@ import 'dart:io';
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -38,10 +39,14 @@ import 'package:todolist/core/utils/dates.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/domain/user.dart';
+import 'package:todolist/features/memories/domain/memory.dart';
+import 'package:todolist/features/memories/presentation/memory_map.dart';
+import 'package:todolist/features/savings/domain/savings_entry.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/special_dates/domain/special_date.dart';
 
 import '../helpers/app_harness.dart';
+import '../helpers/fake_map.dart';
 import '../helpers/fake_photos.dart';
 import '../helpers/fake_push.dart';
 import '../helpers/fixtures.dart';
@@ -202,6 +207,8 @@ void main() {
         spaceClockProvider.overrideWithValue(clock),
         pushServiceProvider.overrideWithValue(push),
         mediaCachesProvider.overrideWithValue(FakeMediaCaches()),
+        // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
+        mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
         revocationTransportProvider.overrideWithValue(
           (token) => RootZoneTransport(DioApiTransport(baseUrl: baseUrl, token: () => token)),
         ),
@@ -258,6 +265,19 @@ void main() {
       await breathe();
       await tester.tap(finder);
       await net();
+    }
+
+    /// Tes ini jauh lebih rapat dari pemakaian sungguhan dan bisa melewati batas server 120 request
+    /// per menit per akun. Tunggu jendelanya berganti sebelum bagian yang banyak request-nya.
+    Future<void> coolDown() => tester.runAsync(() => Future<void>.delayed(const Duration(seconds: 61)));
+
+    /// Gulir sampai [finder] dibangun. Tarikannya dari tepi kiri, supaya tidak mengenai kolom
+    /// teks yang punya gulir sendiri.
+    Future<void> reveal(Finder finder, {bool up = false}) async {
+      for (var i = 0; i < 30 && finder.evaluate().isEmpty; i++) {
+        await tester.dragFrom(const Offset(8, 420), Offset(0, up ? 300 : -300));
+        await breathe();
+      }
     }
 
     Future<void> go(String path) async {
@@ -729,6 +749,27 @@ void main() {
     );
     expect(find.text(r'+US$125,50'), findsOneWidget);
 
+    step('Penarikan (v1.x): tidak boleh melebihi yang terkumpul, lalu sampai ke server dan HP pasangan');
+    await tester.scrollUntilVisible(find.text('Ambil'), -200, scrollable: find.byType(Scrollable).first);
+    await tap(find.text('Ambil'));
+    await tester.enterText(find.byType(TextField).first, '200');
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    expect(find.text(r'Paling banyak US$125,50, sebesar yang terkumpul.'), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, '25');
+    await tester.enterText(find.byType(TextField).last, 'tiket bus');
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final withdrawal = await serverRow('savings_entries', (row) => row['note'] == 'tiket bus');
+    expect((withdrawal['type'], withdrawal['amount']), ('withdrawal', 2500));
+    await tester.scrollUntilVisible(find.text('20%'), -200, scrollable: find.byType(Scrollable).first);
+    expect(find.text('20%'), findsOneWidget);
+    await asPartner(() async {
+      await partner.syncNow();
+      final entries = await partner.account.savings.watchEntries().first;
+      expect(entries.singleWhere((row) => row.note == 'tiket bus').isWithdrawal, isTrue);
+    });
+
     // ---------------------------------------------------------------- tanggal penting (v0.2)
 
     step('Tanggal penting: hari jadi di Ruang Bersama, dengan tahun');
@@ -976,6 +1017,7 @@ void main() {
     // ---------------------------------------------------------------- kenangan (v0.3)
     // Foto tidak diunggah di sini: API lokal tidak punya kunci R2.
 
+    await coolDown();
     step('Kenangan baru dari tab Kenangan, tanpa foto');
     await go(Routes.home);
     await tap(find.text('Kenangan').last);
@@ -987,6 +1029,7 @@ void main() {
     await tester.enterText(field('Mau dikenang sebagai apa?'), 'Makan malam pertama');
     await tester.enterText(field('Di mana?'), 'Warung Bu Ani');
     await tester.enterText(field('Ceritanya?'), 'Hujan deras, tapi sotonya enak.');
+    await reveal(find.widgetWithText(FilledButton, 'Simpan'));
     await tap(find.widgetWithText(FilledButton, 'Simpan'));
     await net();
 
@@ -1015,6 +1058,38 @@ void main() {
     await pullToRefresh();
     expect(find.text('Warung Bu Ani, Bandung'), findsOneWidget);
 
+    step('Pin lokasi (v1.x): ketuk peta, sampai ke server dan HP pasangan, lalu tampil di Peta kenangan');
+    await tap(find.byTooltip('Opsi lainnya'));
+    await tap(find.text('Ubah'));
+    await reveal(find.text('Pasang pin di peta'));
+    await tap(find.text('Pasang pin di peta'));
+    // Ketukan peta baru terbaca setelah jeda ketuk dua kali.
+    await tester.tap(find.byType(FlutterMap));
+    await tester.pump(const Duration(milliseconds: 400));
+    await net();
+    await tap(find.widgetWithText(FilledButton, 'Pakai titik ini'));
+    await reveal(find.widgetWithText(FilledButton, 'Simpan'));
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await net();
+
+    final pinnedDinner = await serverRow('memories', (row) => row['id'] == dinnerId);
+    // Pin di tengah peta Indonesia; server mengirimnya sebagai angka JSON, kadang bulat.
+    expect(pinnedDinner['latitude'], isA<num>());
+    expect(pinnedDinner['longitude'], isA<num>());
+    expect(pinnedDinner['place_name'], 'Warung Bu Ani, Bandung');
+    await asPartner(() async {
+      await partner.syncNow();
+      final received = (await partner.account.memories.watchAll().first).singleWhere((row) => row.id == dinnerId);
+      expect(
+        received.pin,
+        GeoPoint((pinnedDinner['latitude'] as num).toDouble(), (pinnedDinner['longitude'] as num).toDouble()),
+      );
+    });
+    await tap(find.bySemanticsLabel('Lokasi di peta. Ketuk untuk membuka Peta kenangan.'));
+    expect(find.text('1 kenangan berpin'), findsOneWidget);
+    await tap(find.text('Buka kenangan'));
+    expect(container.read(routerProvider).state.uri.path, Routes.memory(dinnerId));
+
     step('Simpan jadi kenangan dari perjalanan pasangan yang sudah selesai');
     final pastStart = addDays(today(), -30);
     final pastTripId = await asPartner(() async {
@@ -1035,6 +1110,7 @@ void main() {
     await tap(find.text('Simpan jadi kenangan'));
     expect(find.widgetWithText(TextField, 'Pangandaran'), findsOneWidget);
     expect(find.widgetWithText(TextField, 'Pantai Pangandaran'), findsOneWidget);
+    await reveal(find.widgetWithText(FilledButton, 'Simpan'));
     await tap(find.widgetWithText(FilledButton, 'Simpan'));
     await net();
 
@@ -1100,9 +1176,8 @@ void main() {
       await partner.account.tasks.create(list: list, title: 'Jemput paket', dueDate: today());
       await partner.syncNow();
     });
-    // Tes ini jauh lebih rapat dari pemakaian sungguhan dan sudah dekat batas server 120 request
-    // per menit per akun; tunggu jendelanya berganti supaya sync berkala tidak dibalas 429.
-    await tester.runAsync(() => Future<void>.delayed(const Duration(seconds: 61)));
+    // Supaya sync berkala tidak dibalas 429.
+    await coolDown();
     await advance(liveSyncInterval);
     expect(find.text('Jemput paket'), findsOneWidget);
     expect(widgetSnapshots.last['signed_in'], isTrue);

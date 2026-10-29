@@ -88,6 +88,78 @@ class AppLocalizationsId extends AppLocalizations {
   String get navLabel => 'Navigasi utama';
 
   @override
+  String get osmAttribution => '© OpenStreetMap contributors';
+
+  @override
+  String get memoryPinLabel => 'Tepatnya di titik mana?';
+
+  @override
+  String get memoryPinHelp => 'Opsional. Kenangan berpin tampil di Peta kenangan.';
+
+  @override
+  String get memoryPinAdd => 'Pasang pin di peta';
+
+  @override
+  String get memoryPinChange => 'Ubah pin';
+
+  @override
+  String get memoryPinRemove => 'Lepas pin';
+
+  @override
+  String get memoryPinPreview => 'Lokasi di peta. Ketuk untuk mengubah pin.';
+
+  @override
+  String get memoryMapPreview => 'Lokasi di peta. Ketuk untuk membuka Peta kenangan.';
+
+  @override
+  String get pickerTitle => 'Pilih lokasi';
+
+  @override
+  String get pickerSearchHint => 'Cari tempat, misalnya Ubud';
+
+  @override
+  String get pickerSearch => 'Cari tempat';
+
+  @override
+  String get pickerTapHint => 'Ketuk peta untuk memasang pin';
+
+  @override
+  String get pickerMapSemantic => 'Peta. Ketuk untuk memasang pin di titik itu.';
+
+  @override
+  String get pickerUse => 'Pakai titik ini';
+
+  @override
+  String pickerQueryShort(int count) {
+    return 'Ketik paling sedikit $count huruf, lalu ketuk Cari.';
+  }
+
+  @override
+  String pickerNoResults(String query) {
+    return 'Tidak ada tempat yang cocok dengan \"$query\". Coba kata lain, atau ketuk peta.';
+  }
+
+  @override
+  String get pickerOffline => 'Mencari tempat butuh koneksi internet. Pin tetap bisa dipasang dengan mengetuk peta.';
+
+  @override
+  String get pickerTooOften => 'Terlalu sering mencari. Coba lagi sebentar lagi, atau ketuk peta.';
+
+  @override
+  String get memoriesMapTitle => 'Peta kenangan';
+
+  @override
+  String get memoriesMapEmpty => 'Belum ada kenangan berpin. Pasang pin lewat Ubah kenangan.';
+
+  @override
+  String memoriesMapCount(int count) {
+    return '$count kenangan berpin';
+  }
+
+  @override
+  String get memoriesMapOpen => 'Buka kenangan';
+
+  @override
   String get searchHint => 'Mau cari apa?';
 
   @override
@@ -640,6 +712,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get savingsDeposit => 'Setor';
 
   @override
+  String get savingsWithdraw => 'Ambil';
+
+  @override
   String get savingsMonthly => 'Setoran per bulan';
 
   @override
@@ -668,6 +743,16 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String savingsHistoryWho(String who, String note) {
     return '$who · $note';
+  }
+
+  @override
+  String savingsHistoryWithdrawal(String who) {
+    return '$who mengambil';
+  }
+
+  @override
+  String savingsHistoryWithdrawalNote(String who, String note) {
+    return '$who mengambil · $note';
   }
 
   @override
@@ -768,6 +853,36 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String depositDeleteConfirm(String amount) {
     return 'Hapus setoran $amount?';
+  }
+
+  @override
+  String get withdrawTitle => 'Ambil tabungan';
+
+  @override
+  String get withdrawEditTitle => 'Ubah penarikan';
+
+  @override
+  String get withdrawAmountLabel => 'Berapa yang diambil?';
+
+  @override
+  String withdrawAvailable(String amount) {
+    return 'Terkumpul $amount, jadi paling banyak segitu yang bisa diambil.';
+  }
+
+  @override
+  String withdrawTooMuch(String amount) {
+    return 'Paling banyak $amount, sebesar yang terkumpul.';
+  }
+
+  @override
+  String get withdrawNoteHint => 'Misalnya untuk tiket pesawat';
+
+  @override
+  String get withdrawDelete => 'Hapus penarikan';
+
+  @override
+  String withdrawDeleteConfirm(String amount) {
+    return 'Hapus penarikan $amount?';
   }
 
   @override
@@ -916,7 +1031,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get notifSavingsActivity => 'Setoran tabungan';
 
   @override
-  String get notifSavingsActivitySub => 'Setoran baru dan target tercapai';
+  String get notifSavingsActivitySub => 'Setoran, penarikan, dan target tercapai';
 
   @override
   String get notifSpecialDates => 'Tanggal penting';

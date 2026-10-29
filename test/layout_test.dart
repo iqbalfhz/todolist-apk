@@ -7,6 +7,7 @@ import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
 import 'package:todolist/core/widgets/widgets.dart';
+import 'package:todolist/features/memories/presentation/location_picker_screen.dart';
 import 'package:todolist/features/memories/presentation/memory_form_screen.dart';
 import 'package:todolist/features/savings/domain/savings_views.dart';
 import 'package:todolist/features/savings/presentation/goal_detail_screen.dart';
@@ -154,6 +155,16 @@ void main() {
         showGoalFormSheet(tester.element(find.byType(SavingsScreen))).ignore();
       });
 
+      // Penarikan (v1.x) dengan catatan panjang di riwayat.
+      await h.account.store.write(EntityType.entry, {
+        ...entryJson(
+          id: '01m4dk06v0p3ew0dm0dk94s3zz',
+          savingsGoalId: tripGoalId,
+          amount: 350000,
+          note: 'Uang muka penginapan di Ubud untuk tiga malam pertama',
+        ),
+        'type': 'withdrawal',
+      }, serverUpdatedAt: t0);
       await visit(tester, container, Routes.goal(tripGoalId));
       // Kembali ke atas: tombol Setor harus benar-benar tampil sebelum diketuk.
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 4000), warnIfMissed: false);
@@ -161,6 +172,7 @@ void main() {
       await tester.ensureVisible(find.text('Setor'));
       await settle(tester);
       await withSheet(tester, container, () => tester.tap(find.text('Setor')));
+      await withSheet(tester, container, () => tester.tap(find.text('Ambil')));
       // Jadwal bulanan tanggal 31 menampilkan keterangan bulan yang lebih pendek.
       await withSheet(tester, container, () async {
         final goal = container.read(goalProgressProvider)!.firstWhere((item) => item.goal.id == tripGoalId).goal;
@@ -239,7 +251,7 @@ void main() {
       await go(tester, container, Routes.newMemory());
       // Foto yang dipilih tampil sebagai kisi; formulirnya tetap muat saat keyboard terbuka.
       picker.picks.add([for (var i = 0; i < 5; i++) 'galeri/foto_$i.jpg']);
-      await tester.ensureVisible(find.text('Pilih foto'));
+      await tester.scrollUntilVisible(find.text('Pilih foto'), 200, scrollable: find.byType(Scrollable).first);
       await settle(tester);
       await tester.tap(find.text('Pilih foto'));
       await settle(tester);
@@ -248,6 +260,49 @@ void main() {
       await scrollThrough(tester);
       expect(find.byType(MemoryFormScreen), findsOneWidget);
       tester.view.resetViewInsets();
+      await settle(tester);
+
+      // Pin lokasi dan Peta kenangan (v1.x).
+      // Langsung di cache: lewat antrean, API palsu yang tidak mengenal kenangan ini akan membalas 404.
+      for (final (id, latitude, longitude) in [(longMemoryId, -7.689, 108.651), (privateMemoryId, -6.2088, 106.8456)]) {
+        final row = (await h.local(EntityType.memory, id))!;
+        await h.account.store.write(EntityType.memory, {
+          ...row,
+          'latitude': latitude,
+          'longitude': longitude,
+        }, serverUpdatedAt: t0);
+      }
+      await visit(tester, container, Routes.memory(longMemoryId));
+      await visit(tester, container, Routes.memoriesMap());
+      await visit(tester, container, Routes.memoriesMap(focusId: longMemoryId));
+      expect(find.text('Buka kenangan'), findsOneWidget);
+      await visit(tester, container, Routes.editMemory(longMemoryId));
+      // Pilih lokasi dengan hasil pencarian yang namanya panjang, dan dengan keyboard terbuka.
+      h.api.places = [
+        for (var i = 0; i < 8; i++)
+          {
+            'name': 'Pantai Batu Hiu dan sekitarnya nomor $i',
+            'address': 'Jalan Raya Pangandaran, Kabupaten Pangandaran, Jawa Barat, Indonesia',
+            'latitude': -7.68 - i / 100,
+            'longitude': 108.65,
+          },
+      ];
+      // Formulirnya sudah digulir sampai bawah; isian pin ada di atas. Menarik layar bisa
+      // mengenai kolom cerita yang punya gulir sendiri, jadi gulir langsung ke tombolnya.
+      await tester.ensureVisible(find.text('Ubah pin', skipOffstage: false));
+      await settle(tester);
+      await tester.tap(find.text('Ubah pin'));
+      await settle(tester);
+      expect(find.byType(LocationPickerScreen), findsOneWidget);
+      await tester.enterText(find.byType(TextField), 'pantai');
+      await tester.tap(find.byTooltip('Cari tempat'));
+      await settle(tester);
+      await scrollThrough(tester);
+      tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
+      await settle(tester);
+      tester.view.resetViewInsets();
+      await settle(tester);
+      Navigator.of(tester.element(find.byType(LocationPickerScreen))).pop();
       await settle(tester);
 
       await disposeApp(tester, h);

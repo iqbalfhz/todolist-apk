@@ -9,27 +9,32 @@ import '../../spaces/domain/space.dart';
 import 'savings_entry.dart';
 import 'savings_goal.dart';
 
-/// Target beserta setoran dan progresnya. Progres dihitung di HP dari daftar setoran.
+/// Target beserta setoran dan progresnya. Progres dihitung di HP dari daftar setoran: jumlah
+/// setoran dikurangi jumlah penarikan (v1.x).
 class GoalProgress {
   const GoalProgress({required this.goal, required this.space, required this.entries, required this.today});
 
   final SavingsGoal goal;
   final Space space;
 
-  /// Setoran target ini, yang terbaru lebih dulu.
+  /// Setoran dan penarikan target ini, yang terbaru lebih dulu.
   final List<SavingsEntry> entries;
 
   /// Tanggal hari ini (`YYYY-MM-DD`) di zona waktu ruang target ini.
   final String today;
 
-  int get saved => entries.fold(0, (total, entry) => total + entry.amount);
+  /// Total bersih. Bisa negatif kalau dua HP mencatat penarikan bersamaan saat offline.
+  int get saved => entries.fold(0, (total, entry) => total + entry.signedAmount);
+
+  /// Yang masih bisa diambil: total bersih, paling kecil 0.
+  int get available => math.max(0, saved);
 
   int get remaining => math.max(0, goal.targetAmount - saved);
 
   bool get isAchieved => saved >= goal.targetAmount;
 
   /// Bagian yang terkumpul, 0 sampai 1.
-  double get fraction => goal.targetAmount <= 0 ? 0 : math.min(1, saved / goal.targetAmount);
+  double get fraction => goal.targetAmount <= 0 ? 0 : (saved / goal.targetAmount).clamp(0, 1).toDouble();
 
   /// Persen dibulatkan ke bawah, supaya 100% hanya tampil saat benar-benar tercapai.
   int get percent => (fraction * 100).floor();
@@ -52,6 +57,9 @@ class GoalProgress {
   /// yang jumlahnya selalu 100). Urutannya Aku, Pasangan, lalu setoran dari akun yang sudah
   /// bukan anggota (kalau ada). Setoran tanpa `user_id` dihitung milik [meId], sama seperti
   /// di riwayat.
+  ///
+  /// Nominalnya bersih: setoran orang itu dikurangi penarikannya, jadi bisa negatif kalau ia
+  /// mengambil lebih dari yang ia setor. Bagian persen hanya dibagi di antara yang positif.
   List<Contribution> contributions({required String meId, required String? partnerId}) {
     final totals = <Contributor, int>{};
     for (final entry in entries) {
@@ -61,7 +69,7 @@ class GoalProgress {
           : userId == partnerId
           ? Contributor.partner
           : Contributor.former;
-      totals[who] = (totals[who] ?? 0) + entry.amount;
+      totals[who] = (totals[who] ?? 0) + entry.signedAmount;
     }
 
     final who = [
@@ -70,11 +78,12 @@ class GoalProgress {
       if (totals.containsKey(Contributor.former)) Contributor.former,
     ];
     final amounts = [for (final item in who) totals[item] ?? 0];
-    final percents = sharePercents(amounts);
+    final percents = sharePercents([for (final amount in amounts) math.max(0, amount)]);
     return [for (var i = 0; i < who.length; i++) Contribution(who: who[i], amount: amounts[i], percent: percents[i])];
   }
 
-  /// Jumlah setoran per bulan untuk [count] bulan terakhir sampai bulan ini.
+  /// Jumlah setoran per bulan untuk [count] bulan terakhir sampai bulan ini. Penarikan tidak
+  /// ikut: grafiknya "Setoran per bulan", dan penarikan tampil di riwayat.
   List<MonthTotal> monthlyTotals({int count = 5}) {
     final current = parseYmd(today);
     final months = [
@@ -87,6 +96,7 @@ class GoalProgress {
           year: month.year,
           month: month.month,
           amount: entries
+              .where((entry) => !entry.isWithdrawal)
               .where((entry) => entry.entryDate.startsWith(toYmd(month.year, month.month, 1).substring(0, 7)))
               .fold(0, (total, entry) => total + entry.amount),
           isCurrent: month.year == current.year && month.month == current.month,
@@ -98,14 +108,15 @@ class GoalProgress {
 /// Pemilik setoran di target bersama, dari sudut pandang pengguna.
 enum Contributor { me, partner, former }
 
-/// Kontribusi satu orang: total setorannya dan bagiannya dari total terkumpul.
+/// Kontribusi satu orang: total bersih setorannya dan bagiannya dari total terkumpul.
 class Contribution {
   const Contribution({required this.who, required this.amount, required this.percent});
 
   final Contributor who;
   final int amount;
 
-  /// Bagian dari total terkumpul, 0–100. Semua bagian satu target berjumlah 100.
+  /// Bagian dari total terkumpul, 0–100. Semua bagian satu target berjumlah 100, kecuali
+  /// totalnya 0 atau kurang.
   final int percent;
 }
 

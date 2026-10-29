@@ -4789,6 +4789,24 @@ class $MemoriesTable extends Memories with TableInfo<$MemoriesTable, MemoryRow> 
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _latitudeMeta = const VerificationMeta('latitude');
+  @override
+  late final GeneratedColumn<double> latitude = GeneratedColumn<double>(
+    'latitude',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _longitudeMeta = const VerificationMeta('longitude');
+  @override
+  late final GeneratedColumn<double> longitude = GeneratedColumn<double>(
+    'longitude',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _visitedOnMeta = const VerificationMeta('visitedOn');
   @override
   late final GeneratedColumn<String> visitedOn = GeneratedColumn<String>(
@@ -4859,6 +4877,8 @@ class $MemoriesTable extends Memories with TableInfo<$MemoriesTable, MemoryRow> 
     tripId,
     title,
     placeName,
+    latitude,
+    longitude,
     visitedOn,
     story,
     createdBy,
@@ -4896,6 +4916,12 @@ class $MemoriesTable extends Memories with TableInfo<$MemoriesTable, MemoryRow> 
     }
     if (data.containsKey('place_name')) {
       context.handle(_placeNameMeta, placeName.isAcceptableOrUnknown(data['place_name']!, _placeNameMeta));
+    }
+    if (data.containsKey('latitude')) {
+      context.handle(_latitudeMeta, latitude.isAcceptableOrUnknown(data['latitude']!, _latitudeMeta));
+    }
+    if (data.containsKey('longitude')) {
+      context.handle(_longitudeMeta, longitude.isAcceptableOrUnknown(data['longitude']!, _longitudeMeta));
     }
     if (data.containsKey('visited_on')) {
       context.handle(_visitedOnMeta, visitedOn.isAcceptableOrUnknown(data['visited_on']!, _visitedOnMeta));
@@ -4941,6 +4967,8 @@ class $MemoriesTable extends Memories with TableInfo<$MemoriesTable, MemoryRow> 
       tripId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}trip_id']),
       title: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}title'])!,
       placeName: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}place_name']),
+      latitude: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}latitude']),
+      longitude: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}longitude']),
       visitedOn: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}visited_on'])!,
       story: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}story']),
       createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']),
@@ -4967,6 +4995,10 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
   final String title;
   final String? placeName;
 
+  /// Pin lokasi (v1.x), selalu berpasangan.
+  final double? latitude;
+  final double? longitude;
+
   /// `YYYY-MM-DD`; tanggal kenangan di linimasa.
   final String visitedOn;
   final String? story;
@@ -4981,6 +5013,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
     this.tripId,
     required this.title,
     this.placeName,
+    this.latitude,
+    this.longitude,
     required this.visitedOn,
     this.story,
     this.createdBy,
@@ -5000,6 +5034,12 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
     map['title'] = Variable<String>(title);
     if (!nullToAbsent || placeName != null) {
       map['place_name'] = Variable<String>(placeName);
+    }
+    if (!nullToAbsent || latitude != null) {
+      map['latitude'] = Variable<double>(latitude);
+    }
+    if (!nullToAbsent || longitude != null) {
+      map['longitude'] = Variable<double>(longitude);
     }
     map['visited_on'] = Variable<String>(visitedOn);
     if (!nullToAbsent || story != null) {
@@ -5026,6 +5066,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
       tripId: tripId == null && nullToAbsent ? const Value.absent() : Value(tripId),
       title: Value(title),
       placeName: placeName == null && nullToAbsent ? const Value.absent() : Value(placeName),
+      latitude: latitude == null && nullToAbsent ? const Value.absent() : Value(latitude),
+      longitude: longitude == null && nullToAbsent ? const Value.absent() : Value(longitude),
       visitedOn: Value(visitedOn),
       story: story == null && nullToAbsent ? const Value.absent() : Value(story),
       createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),
@@ -5044,6 +5086,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
       tripId: serializer.fromJson<String?>(json['tripId']),
       title: serializer.fromJson<String>(json['title']),
       placeName: serializer.fromJson<String?>(json['placeName']),
+      latitude: serializer.fromJson<double?>(json['latitude']),
+      longitude: serializer.fromJson<double?>(json['longitude']),
       visitedOn: serializer.fromJson<String>(json['visitedOn']),
       story: serializer.fromJson<String?>(json['story']),
       createdBy: serializer.fromJson<String?>(json['createdBy']),
@@ -5062,6 +5106,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
       'tripId': serializer.toJson<String?>(tripId),
       'title': serializer.toJson<String>(title),
       'placeName': serializer.toJson<String?>(placeName),
+      'latitude': serializer.toJson<double?>(latitude),
+      'longitude': serializer.toJson<double?>(longitude),
       'visitedOn': serializer.toJson<String>(visitedOn),
       'story': serializer.toJson<String?>(story),
       'createdBy': serializer.toJson<String?>(createdBy),
@@ -5078,6 +5124,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
     Value<String?> tripId = const Value.absent(),
     String? title,
     Value<String?> placeName = const Value.absent(),
+    Value<double?> latitude = const Value.absent(),
+    Value<double?> longitude = const Value.absent(),
     String? visitedOn,
     Value<String?> story = const Value.absent(),
     Value<String?> createdBy = const Value.absent(),
@@ -5091,6 +5139,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
     tripId: tripId.present ? tripId.value : this.tripId,
     title: title ?? this.title,
     placeName: placeName.present ? placeName.value : this.placeName,
+    latitude: latitude.present ? latitude.value : this.latitude,
+    longitude: longitude.present ? longitude.value : this.longitude,
     visitedOn: visitedOn ?? this.visitedOn,
     story: story.present ? story.value : this.story,
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
@@ -5106,6 +5156,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
       tripId: data.tripId.present ? data.tripId.value : this.tripId,
       title: data.title.present ? data.title.value : this.title,
       placeName: data.placeName.present ? data.placeName.value : this.placeName,
+      latitude: data.latitude.present ? data.latitude.value : this.latitude,
+      longitude: data.longitude.present ? data.longitude.value : this.longitude,
       visitedOn: data.visitedOn.present ? data.visitedOn.value : this.visitedOn,
       story: data.story.present ? data.story.value : this.story,
       createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
@@ -5124,6 +5176,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
           ..write('tripId: $tripId, ')
           ..write('title: $title, ')
           ..write('placeName: $placeName, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
           ..write('visitedOn: $visitedOn, ')
           ..write('story: $story, ')
           ..write('createdBy: $createdBy, ')
@@ -5142,6 +5196,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
     tripId,
     title,
     placeName,
+    latitude,
+    longitude,
     visitedOn,
     story,
     createdBy,
@@ -5159,6 +5215,8 @@ class MemoryRow extends DataClass implements Insertable<MemoryRow> {
           other.tripId == this.tripId &&
           other.title == this.title &&
           other.placeName == this.placeName &&
+          other.latitude == this.latitude &&
+          other.longitude == this.longitude &&
           other.visitedOn == this.visitedOn &&
           other.story == this.story &&
           other.createdBy == this.createdBy &&
@@ -5174,6 +5232,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
   final Value<String?> tripId;
   final Value<String> title;
   final Value<String?> placeName;
+  final Value<double?> latitude;
+  final Value<double?> longitude;
   final Value<String> visitedOn;
   final Value<String?> story;
   final Value<String?> createdBy;
@@ -5188,6 +5248,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
     this.tripId = const Value.absent(),
     this.title = const Value.absent(),
     this.placeName = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
     this.visitedOn = const Value.absent(),
     this.story = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -5203,6 +5265,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
     this.tripId = const Value.absent(),
     required String title,
     this.placeName = const Value.absent(),
+    this.latitude = const Value.absent(),
+    this.longitude = const Value.absent(),
     required String visitedOn,
     this.story = const Value.absent(),
     this.createdBy = const Value.absent(),
@@ -5223,6 +5287,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
     Expression<String>? tripId,
     Expression<String>? title,
     Expression<String>? placeName,
+    Expression<double>? latitude,
+    Expression<double>? longitude,
     Expression<String>? visitedOn,
     Expression<String>? story,
     Expression<String>? createdBy,
@@ -5238,6 +5304,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
       if (tripId != null) 'trip_id': tripId,
       if (title != null) 'title': title,
       if (placeName != null) 'place_name': placeName,
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
       if (visitedOn != null) 'visited_on': visitedOn,
       if (story != null) 'story': story,
       if (createdBy != null) 'created_by': createdBy,
@@ -5255,6 +5323,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
     Value<String?>? tripId,
     Value<String>? title,
     Value<String?>? placeName,
+    Value<double?>? latitude,
+    Value<double?>? longitude,
     Value<String>? visitedOn,
     Value<String?>? story,
     Value<String?>? createdBy,
@@ -5270,6 +5340,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
       tripId: tripId ?? this.tripId,
       title: title ?? this.title,
       placeName: placeName ?? this.placeName,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       visitedOn: visitedOn ?? this.visitedOn,
       story: story ?? this.story,
       createdBy: createdBy ?? this.createdBy,
@@ -5298,6 +5370,12 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
     }
     if (placeName.present) {
       map['place_name'] = Variable<String>(placeName.value);
+    }
+    if (latitude.present) {
+      map['latitude'] = Variable<double>(latitude.value);
+    }
+    if (longitude.present) {
+      map['longitude'] = Variable<double>(longitude.value);
     }
     if (visitedOn.present) {
       map['visited_on'] = Variable<String>(visitedOn.value);
@@ -5334,6 +5412,8 @@ class MemoriesCompanion extends UpdateCompanion<MemoryRow> {
           ..write('tripId: $tripId, ')
           ..write('title: $title, ')
           ..write('placeName: $placeName, ')
+          ..write('latitude: $latitude, ')
+          ..write('longitude: $longitude, ')
           ..write('visitedOn: $visitedOn, ')
           ..write('story: $story, ')
           ..write('createdBy: $createdBy, ')
@@ -8713,6 +8793,8 @@ typedef $$MemoriesTableCreateCompanionBuilder = MemoriesCompanion Function({
   Value<String?> tripId,
   required String title,
   Value<String?> placeName,
+  Value<double?> latitude,
+  Value<double?> longitude,
   required String visitedOn,
   Value<String?> story,
   Value<String?> createdBy,
@@ -8728,6 +8810,8 @@ typedef $$MemoriesTableUpdateCompanionBuilder = MemoriesCompanion Function({
   Value<String?> tripId,
   Value<String> title,
   Value<String?> placeName,
+  Value<double?> latitude,
+  Value<double?> longitude,
   Value<String> visitedOn,
   Value<String?> story,
   Value<String?> createdBy,
@@ -8759,6 +8843,12 @@ class $$MemoriesTableFilterComposer extends Composer<_$AppDatabase, $MemoriesTab
 
   ColumnFilters<String> get placeName =>
       $composableBuilder(column: $table.placeName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get visitedOn =>
       $composableBuilder(column: $table.visitedOn, builder: (column) => ColumnFilters(column));
@@ -8804,6 +8894,12 @@ class $$MemoriesTableOrderingComposer extends Composer<_$AppDatabase, $MemoriesT
   ColumnOrderings<String> get placeName =>
       $composableBuilder(column: $table.placeName, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get latitude =>
+      $composableBuilder(column: $table.latitude, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get longitude =>
+      $composableBuilder(column: $table.longitude, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get visitedOn =>
       $composableBuilder(column: $table.visitedOn, builder: (column) => ColumnOrderings(column));
 
@@ -8843,6 +8939,10 @@ class $$MemoriesTableAnnotationComposer extends Composer<_$AppDatabase, $Memorie
   GeneratedColumn<String> get title => $composableBuilder(column: $table.title, builder: (column) => column);
 
   GeneratedColumn<String> get placeName => $composableBuilder(column: $table.placeName, builder: (column) => column);
+
+  GeneratedColumn<double> get latitude => $composableBuilder(column: $table.latitude, builder: (column) => column);
+
+  GeneratedColumn<double> get longitude => $composableBuilder(column: $table.longitude, builder: (column) => column);
 
   GeneratedColumn<String> get visitedOn => $composableBuilder(column: $table.visitedOn, builder: (column) => column);
 
@@ -8890,6 +8990,8 @@ class $$MemoriesTableTableManager
                 Value<String?> tripId = const Value.absent(),
                 Value<String> title = const Value.absent(),
                 Value<String?> placeName = const Value.absent(),
+                Value<double?> latitude = const Value.absent(),
+                Value<double?> longitude = const Value.absent(),
                 Value<String> visitedOn = const Value.absent(),
                 Value<String?> story = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -8904,6 +9006,8 @@ class $$MemoriesTableTableManager
                 tripId: tripId,
                 title: title,
                 placeName: placeName,
+                latitude: latitude,
+                longitude: longitude,
                 visitedOn: visitedOn,
                 story: story,
                 createdBy: createdBy,
@@ -8920,6 +9024,8 @@ class $$MemoriesTableTableManager
                 Value<String?> tripId = const Value.absent(),
                 required String title,
                 Value<String?> placeName = const Value.absent(),
+                Value<double?> latitude = const Value.absent(),
+                Value<double?> longitude = const Value.absent(),
                 required String visitedOn,
                 Value<String?> story = const Value.absent(),
                 Value<String?> createdBy = const Value.absent(),
@@ -8934,6 +9040,8 @@ class $$MemoriesTableTableManager
                 tripId: tripId,
                 title: title,
                 placeName: placeName,
+                latitude: latitude,
+                longitude: longitude,
                 visitedOn: visitedOn,
                 story: story,
                 createdBy: createdBy,

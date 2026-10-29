@@ -250,7 +250,7 @@ class _Results extends ConsumerWidget {
             key: hit.item.entry.id,
             hit: hit,
             subtitle: [
-              formatMoney(hit.item.entry.amount, hit.item.progress.goal.currency, withSign: true),
+              formatMoney(hit.item.entry.signedAmount, hit.item.progress.goal.currency, withSign: true),
               formatDayShort(hit.item.entry.entryDate, currentYear: currentYear),
               hit.item.progress.goal.name,
             ].join(' · '),

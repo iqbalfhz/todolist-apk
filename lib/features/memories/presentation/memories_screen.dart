@@ -31,6 +31,14 @@ class MemoriesScreen extends ConsumerWidget {
           child: Semantics(header: true, child: Text(l10n.memoriesTitle, style: text.homeTitle)),
         ),
         AppIconButton(
+          icon: Symbols.map_rounded,
+          label: l10n.memoriesMapTitle,
+          outlined: true,
+          iconSize: AppDimens.iconLg,
+          onPressed: household == null ? null : () => context.go(Routes.memoriesMap()),
+        ),
+        const SizedBox(width: AppDimens.gap8),
+        AppIconButton(
           icon: Symbols.add_rounded,
           label: l10n.memoriesNew,
           outlined: true,

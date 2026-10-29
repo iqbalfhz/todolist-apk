@@ -483,7 +483,9 @@ class Outbox {
         _wakeAt(_retryAt!);
         return FlushState.waitingRetry;
 
-      case ApiErrorCode.serverError:
+      // `places_unavailable` hanya datang dari pencarian tempat, yang tidak lewat antrean; kalau
+      // pun sampai di sini, perlakukan seperti gangguan server.
+      case ApiErrorCode.serverError || ApiErrorCode.placesUnavailable:
         _scheduleRetry();
         return FlushState.waitingRetry;
 

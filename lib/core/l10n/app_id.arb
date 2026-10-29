@@ -29,6 +29,49 @@
   "navTrips": "Liburan",
   "navMemories": "Kenangan",
   "navLabel": "Navigasi utama",
+  "osmAttribution": "© OpenStreetMap contributors",
+  "memoryPinLabel": "Tepatnya di titik mana?",
+  "memoryPinHelp": "Opsional. Kenangan berpin tampil di Peta kenangan.",
+  "memoryPinAdd": "Pasang pin di peta",
+  "memoryPinChange": "Ubah pin",
+  "memoryPinRemove": "Lepas pin",
+  "memoryPinPreview": "Lokasi di peta. Ketuk untuk mengubah pin.",
+  "memoryMapPreview": "Lokasi di peta. Ketuk untuk membuka Peta kenangan.",
+  "pickerTitle": "Pilih lokasi",
+  "pickerSearchHint": "Cari tempat, misalnya Ubud",
+  "pickerSearch": "Cari tempat",
+  "pickerTapHint": "Ketuk peta untuk memasang pin",
+  "pickerMapSemantic": "Peta. Ketuk untuk memasang pin di titik itu.",
+  "pickerUse": "Pakai titik ini",
+  "pickerQueryShort": "Ketik paling sedikit {count} huruf, lalu ketuk Cari.",
+  "@pickerQueryShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pickerNoResults": "Tidak ada tempat yang cocok dengan \"{query}\". Coba kata lain, atau ketuk peta.",
+  "@pickerNoResults": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "pickerOffline": "Mencari tempat butuh koneksi internet. Pin tetap bisa dipasang dengan mengetuk peta.",
+  "pickerTooOften": "Terlalu sering mencari. Coba lagi sebentar lagi, atau ketuk peta.",
+  "memoriesMapTitle": "Peta kenangan",
+  "memoriesMapEmpty": "Belum ada kenangan berpin. Pasang pin lewat Ubah kenangan.",
+  "memoriesMapCount": "{count} kenangan berpin",
+  "@memoriesMapCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "memoriesMapOpen": "Buka kenangan",
   "searchHint": "Mau cari apa?",
   "searchClear": "Hapus kata kunci",
   "searchIntro": "Cari tugas, tabungan, setoran, liburan, kenangan, dan tanggal penting. Bisa juga saat offline.",
@@ -373,6 +416,7 @@
     }
   },
   "savingsDeposit": "Setor",
+  "savingsWithdraw": "Ambil",
   "savingsMonthly": "Setoran per bulan",
   "savingsContributions": "Kontribusi",
   "savingsContributionFormer": "Anggota lain",
@@ -388,6 +432,25 @@
   "savingsHistory": "Riwayat tabungan",
   "savingsHistoryEmpty": "Belum ada setoran. Ketuk Setor untuk mencatat yang pertama.",
   "savingsHistoryWho": "{who} · {note}",
+  "savingsHistoryWithdrawal": "{who} mengambil",
+  "@savingsHistoryWithdrawal": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsHistoryWithdrawalNote": "{who} mengambil · {note}",
+  "@savingsHistoryWithdrawalNote": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
   "@savingsHistoryWho": {
     "placeholders": {
       "who": {"type": "String"},
@@ -442,6 +505,35 @@
   "depositNoteHint": "Misalnya sisa gajian",
   "depositDelete": "Hapus setoran",
   "depositDeleteConfirm": "Hapus setoran {amount}?",
+  "withdrawTitle": "Ambil tabungan",
+  "withdrawEditTitle": "Ubah penarikan",
+  "withdrawAmountLabel": "Berapa yang diambil?",
+  "withdrawAvailable": "Terkumpul {amount}, jadi paling banyak segitu yang bisa diambil.",
+  "@withdrawAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawTooMuch": "Paling banyak {amount}, sebesar yang terkumpul.",
+  "@withdrawTooMuch": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawNoteHint": "Misalnya untuk tiket pesawat",
+  "withdrawDelete": "Hapus penarikan",
+  "withdrawDeleteConfirm": "Hapus penarikan {amount}?",
+  "@withdrawDeleteConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "@depositDeleteConfirm": {
     "placeholders": {
       "amount": {"type": "String"}
@@ -524,7 +616,7 @@
   "notifPartnerActivity": "Aktivitas pasangan",
   "notifPartnerActivitySub": "Titipan baru, tugas selesai, dan kenangan baru",
   "notifSavingsActivity": "Setoran tabungan",
-  "notifSavingsActivitySub": "Setoran baru dan target tercapai",
+  "notifSavingsActivitySub": "Setoran, penarikan, dan target tercapai",
   "notifSpecialDates": "Tanggal penting",
   "notifSpecialDatesSub": "H-7, H-1, dan hari H pukul 08.00",
   "notifTripReminders": "Pengingat perjalanan",
