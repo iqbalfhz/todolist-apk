@@ -1,12 +1,12 @@
 # Kontrak API v0.1
 
-> Salinan dari dokumen perencanaan di claude.ai (tab "Kontrak API v0.1"), per 24 Oktober 2026. Kalau berbeda, dokumen itu yang berlaku. Setiap kali kontrak berubah, perbarui salinan ini di repo `api` dan `mobile`.
+> Salinan dari dokumen perencanaan di claude.ai (tab "Kontrak API v0.1"), per 29 Oktober 2026. Kalau berbeda, dokumen itu yang berlaku. Setiap kali kontrak berubah, perbarui salinan ini di repo `api` dan `mobile`.
 
-Rilis v0.1 butuh 25 endpoint di bawah `/api/v1`: semua data dibaca lewat satu pintu, `GET /sync`, dan setiap perubahan data dari antrean offline aman dikirim ulang. Laravel membangunnya persis seperti di sini, dan Flutter memanggilnya dengan bentuk data yang sama. Setelah endpoint jadi, dokumentasi otomatis Scramble menjadi acuan harian. Rilis v0.2 menambah 6 endpoint: 3 untuk Tanggal penting dan 3 untuk Perjalanan. Rilis v0.3 menambah 7 endpoint untuk Kenangan dan fotonya. Rilis v1.0 dimulai dari tugas berulang, tanpa endpoint baru.
+Rilis v0.1 butuh 25 endpoint di bawah `/api/v1`: semua data dibaca lewat satu pintu, `GET /sync`, dan setiap perubahan data dari antrean offline aman dikirim ulang. Laravel membangunnya persis seperti di sini, dan Flutter memanggilnya dengan bentuk data yang sama. Setelah endpoint jadi, dokumentasi otomatis Scramble menjadi acuan harian. Rilis v0.2 menambah 6 endpoint: 3 untuk Tanggal penting dan 3 untuk Perjalanan. Rilis v0.3 menambah 7 endpoint untuk Kenangan dan fotonya. Rilis v1.0 dimulai dari tugas berulang, tanpa endpoint baru. Rilis v1.x dimulai dari push sinkron, lalu penarikan tabungan, keduanya tanpa endpoint baru. Pin lokasi kenangan menambah satu endpoint baca untuk mencari tempat.
 
 ## Ringkasan endpoint
 
-Semua endpoint butuh token Sanctum, kecuali daftar dan masuk. Hanya empat yang membaca data (`GET /me`, `GET /spaces`, `GET /sync`, dan `GET /memories/{id}/photos` sejak v0.3); sisanya menulis.
+Semua endpoint butuh token Sanctum, kecuali daftar dan masuk. Hanya lima yang membaca data (`GET /me`, `GET /spaces`, `GET /sync`, `GET /memories/{id}/photos` sejak v0.3, dan `GET /places` sejak v1.x); sisanya menulis.
 
 | Modul | Method | Endpoint | Fungsi |
 | --- | --- | --- | --- |
@@ -48,6 +48,7 @@ Semua endpoint butuh token Sanctum, kecuali daftar dan masuk. Hanya empat yang m
 | Kenangan | POST | `/memory-photos/{id}` | Unggah foto kenangan (v0.3) |
 | Kenangan | PATCH | `/memory-photos/{id}` | Ubah urutan foto (v0.3) |
 | Kenangan | DELETE | `/memory-photos/{id}` | Hapus foto (v0.3) |
+| Kenangan | GET | `/places` | Cari tempat untuk pin lokasi kenangan (v1.x) |
 
 ## Konvensi
 
@@ -68,7 +69,7 @@ Pesan error selalu berbahasa Indonesia (`APP_LOCALE=id`, terjemahan dari paket l
 - Satu data: `{"data": {...}}`. Tugas (v1.0): `{"data": {...}, "next_task": {...}}`. Sinkron: `{"data": {...}, "meta": {...}}`.
 - Kolom kosong tetap dikirim sebagai `null`, supaya model freezed di Flutter selalu lengkap.
 - `DELETE` dan `POST /auth/logout` membalas 204 tanpa body.
-- Angka desimal seperti `position` bisa tiba sebagai `1024` atau `1024.5`; di Dart baca sebagai `num`.
+- Angka desimal seperti `position` bisa tiba sebagai `1024` atau `1024.5`; di Dart baca sebagai `num`. Nilainya harus di antara -10^15 dan 10^15; di luar itu, termasuk angka yang terlalu besar untuk disimpan, ditolak 422.
 
 ### ID
 
@@ -122,8 +123,9 @@ Nominal disimpan sebagai bilangan bulat dalam satuan terkecil, ditambah kode ISO
 | `/auth/register` | 5 per menit per IP |
 | `/invitations/accept` | 10 per menit per akun dan per IP |
 | Lainnya | 120 per menit per akun, cukup untuk antrean yang menumpuk setelah offline |
+| `/places` | 20 per menit per akun (v1.x) |
 
-Di luar `/api/v1` ada `GET /up` (bawaan Laravel) untuk health check Coolify, dan `/docs/api` untuk dokumentasi Scramble, yang secara bawaan hanya terbuka di environment lokal.
+Di luar `/api/v1` ada `GET /up` (bawaan Laravel) untuk health check Coolify, `GET /` yang mengalihkan ke halaman masuk panel admin, dan `/docs/api` untuk dokumentasi Scramble, yang secara bawaan hanya terbuka di environment lokal.
 
 ## Error
 
@@ -156,6 +158,7 @@ Contoh untuk `PUT /tasks/{id}` yang belum ada di server, sehingga `current` bern
 | 422 | `validation_failed`, `invalid_credentials`, `invitation_invalid` | Isi request tidak valid | Tampilkan pesan; kalau dari antrean, buang dan pakai `current` |
 | 429 | `too_many_requests` | Terlalu sering | Tunggu sesuai header `Retry-After`, lalu coba lagi |
 | 5xx, tanpa koneksi, atau balasan bukan JSON | `server_error` atau tidak ada | Server, proxy, atau jaringan bermasalah | Coba lagi dengan jeda 2, 4, 8 detik dan seterusnya, maksimal 5 menit |
+| 503 | `places_unavailable` (v1.x) | Pencarian tempat sedang tidak tersedia: layanannya gangguan atau dimatikan di server | Tampilkan pesan; pin tetap bisa dipasang langsung di peta |
 
 - App hanya menghapus data atau membuang isi antrean kalau balasannya JSON dengan `code` yang dikenal. 404 atau 502 tanpa JSON, misalnya dari Traefik saat Coolify sedang deploy, diperlakukan seperti 5xx.
 - "Pakai `current`" berarti: kalau `null`, hapus versi lokal; kalau terisi, timpa versi lokal dengannya. Kalau DELETE daftar ditolak, app juga memulihkan tugas yang tadi ikut terhapus di cache.
@@ -243,7 +246,7 @@ Dipakai oleh `GET /me`, `PATCH /me`, dan balasan daftar atau masuk.
 
 - `POST /devices` dengan `{"token": "<token FCM>", "platform": "android"}` → 201 kalau baru, 200 kalau sudah ada. Token yang tercatat milik akun lain dipindah ke akun ini (HP berganti akun).
 - App mengirim ulang setiap kali FCM memberi token baru.
-- `DELETE /devices/{token}` → 204, hanya untuk token milik akunmu sendiri. Server juga menghapus token yang ditolak FCM sebagai `UNREGISTERED`.
+- `DELETE /devices/{token}` → 204, hanya untuk token milik akunmu sendiri. Server juga menghapus token yang ditolak FCM sebagai `UNREGISTERED` atau sebagai token yang tidak valid.
 
 ## Ruang dan undangan
 
@@ -420,7 +423,7 @@ Tugas berulang dibuat ulang oleh server: begitu satu kejadian diselesaikan, serv
 
 ## Tabungan
 
-Progres dihitung di HP dari daftar setoran. Server menghitung total hanya untuk menandai target tercapai dan mengirim notifikasi.
+Progres dihitung di HP dari daftar setoran: total adalah jumlah setoran dikurangi jumlah penarikan (v1.x). Server menghitung total hanya untuk menandai target tercapai dan mengirim notifikasi.
 
 ### Sumber target
 
@@ -480,13 +483,23 @@ Progres dihitung di HP dari daftar setoran. Server menghitung total hanya untuk 
 | `amount` | wajib | Bilangan bulat lebih dari 0, paling besar 10^15, dalam mata uang targetnya |
 | `entry_date` | wajib | Tanggal setor menurut HP; tidak diisi server karena setoran bisa terkirim belakangan |
 | `note` | opsional | Paling banyak 200 karakter |
+| `type` | opsional | `deposit` (bawaan) atau `withdrawal`. Hanya diisi saat PUT; PATCH mengabaikannya (v1.x) |
 
-- `user_id` diisi server dengan akun yang mencatat. `type` di v0.1 selalu `deposit`; penarikan menyusul di v1.x.
+- `user_id` diisi server dengan akun yang mencatat. `type` membedakan setoran dan penarikan (v1.x), dan di v0.1 selalu `deposit`.
 - Kedua anggota boleh mengubah dan menghapus setoran siapa pun.
 - Setiap kali setoran dibuat, diubah, atau dihapus, atau `target_amount` berubah, server menghitung ulang total dalam transaksi yang mengunci baris target. Total mencapai target: `achieved_at` diisi. Total turun lagi di bawah target: `achieved_at` kembali `null`.
 - Push `savings_achieved` dikirim paling banyak sekali per target, dicatat di `achieved_notified_at`. Kalau push itu terkirim karena sebuah setoran, push `savings_deposit` untuk setoran yang sama tidak dikirim.
 - `DELETE /savings-goals/{id}` ikut menghapus semua setorannya dan memperbarui `updated_at` setoran itu. Setoran ke target yang sudah dihapus dibalas 409 `parent_deleted`; setoran ke target yang diarsipkan tetap diterima.
 
+### Penarikan tabungan (v1.x)
+
+Penarikan dicatat sebagai setoran dengan `type` `withdrawal`, jadi tidak ada endpoint atau koleksi baru. `amount` tetap bilangan bulat lebih dari 0; arah uangnya ditentukan `type`.
+
+- `type` hanya diisi saat `PUT`: `deposit` (bawaan) atau `withdrawal`. `PATCH` mengabaikannya, jadi setoran tidak bisa diubah menjadi penarikan atau sebaliknya. Nilai lain ditolak 422.
+- Total target = jumlah setoran dikurangi jumlah penarikan. Total ini yang dipakai untuk `achieved_at`, persen di push `savings_reminder`, dan progres di app. Kalau penarikan membuat total turun di bawah target, `achieved_at` kembali `null`. Push `savings_achieved` tetap hanya sekali per target, jadi tidak terkirim lagi saat target tercapai kembali.
+- Penarikan yang melebihi saldo tetap diterima, karena dua HP bisa mencatat saat offline bersamaan dan 422 dari antrean harus dihindari. App yang mencegahnya di layar, dan total boleh negatif.
+- Push `savings_withdrawal` dikirim ke anggota lain saat penarikan baru dicatat, dengan preferensi `savings_activity`, channel `aktivitas`, `visibility` `PRIVATE`, dan `tag` `goal-{id}` seperti push tabungan lain. Judulnya nama target, isinya "{nama} mengambil {nominal}". Mengubah atau menghapus penarikan tidak mengirim push, dan penarikan tidak pernah memicu `savings_deposit`.
+- Kolom `type` sudah ada sejak v0.1, jadi app tidak perlu sync penuh. App versi lama menghitung penarikan sebagai setoran, jadi kedua HP perlu memakai app baru sebelum penarikan pertama dicatat.
 ### Pengingat setor rutin (v0.2)
 
 - Jadwalnya disimpan di target: `reminder_frequency` (`weekly` atau `monthly`) dan `reminder_day`. Tanpa `reminder_frequency`, target tidak diingatkan.
@@ -495,7 +508,7 @@ Progres dihitung di HP dari daftar setoran. Server menghitung total hanya untuk 
 - Penerima: kedua anggota untuk target di Ruang Bersama, pemilik ruang untuk target di Ruang Pribadi.
 - Target yang sudah tercapai, diarsipkan, atau dihapus tidak diingatkan. Setoran yang sudah masuk minggu atau bulan itu tidak membatalkan pengingat.
 - Hanya dikirim kalau `notification_prefs.savings_reminders` penerima menyala. Kunci ini baru di v0.2 dan bawaannya menyala.
-- Judul push adalah nama target, isinya "Waktunya menabung. Terkumpul {persen}% dari target." Persen dibulatkan ke bawah.
+- Judul push adalah nama target, isinya "Waktunya menabung. Terkumpul {persen}% dari target." Persen dihitung dari total bersih, dibulatkan ke bawah, dan paling kecil 0 (v1.x).
 - Paling banyak sekali per target per hari. Yang telat lebih dari 30 menit dilewati.
 
 ## Tanggal penting (v0.2)
@@ -613,6 +626,8 @@ Kenangan menyimpan tempat yang pernah kalian datangi: judul, nama tempat, tangga
   "trip_id": "01m4dp5r20vbx9k3ws7ty6hn2q",
   "title": "Liburan ke Bali",
   "place_name": "Ubud, Bali",
+  "latitude": -8.506853,
+  "longitude": 115.262477,
   "visited_on": "2027-06-20",
   "story": "Hari pertama hujan, tapi sawahnya tetap hijau.",
   "created_by": "01m4dg5jegv6sp4xav8efqzcqe",
@@ -630,6 +645,8 @@ Kenangan menyimpan tempat yang pernah kalian datangi: judul, nama tempat, tangga
 | `visited_on` | wajib | `YYYY-MM-DD`; tanggal kenangan di linimasa |
 | `story` | opsional | Paling banyak 10.000 karakter |
 | `trip_id` | opsional | Perjalanan di ruang yang sama; perjalanan yang ternyata sudah dihapus disimpan sebagai tanpa tautan; `null` melepas tautan |
+| `latitude` | opsional | -90 sampai 90, berpasangan dengan `longitude`; dibulatkan ke 6 desimal (v1.x) |
+| `longitude` | opsional | -180 sampai 180, berpasangan dengan `latitude`; dibulatkan ke 6 desimal (v1.x) |
 
 - Endpoint: `PUT`, `PATCH`, dan `DELETE /memories/{id}`, dengan aturan tulis yang sama seperti sumber lain.
 - `created_by` diisi server. Kedua anggota Ruang Bersama boleh mengubah dan menghapus kenangan dan foto siapa pun.
@@ -638,6 +655,36 @@ Kenangan menyimpan tempat yang pernah kalian datangi: judul, nama tempat, tangga
 - Kalau perjalanannya dihapus, server mengosongkan `trip_id` kenangannya dan memperbarui `updated_at`-nya; kenangannya tetap ada.
 - `DELETE /memories/{id}` ikut menghapus semua fotonya (soft delete) dan memperbarui `updated_at` foto itu. Kalau kenangannya berfoto, app meminta konfirmasi dulu.
 
+### Lokasi dan cari tempat (v1.x)
+
+Kenangan bisa diberi pin lokasi lewat `latitude` dan `longitude`, dan Peta kenangan disusun app dari hasil sync. Untuk mencari tempat, app memanggil `GET /places`; server yang meneruskannya ke Nominatim (OpenStreetMap), jadi HP tidak menghubungi pihak ketiga selain ubin peta.
+
+- `latitude` (-90 sampai 90) dan `longitude` (-180 sampai 180) selalu berpasangan: kirim keduanya untuk memasang pin, keduanya `null` untuk melepasnya. Hanya satu yang terisi, atau `PATCH` yang mengirim salah satunya saja, ditolak 422.
+- Server membulatkan keduanya ke 6 angka desimal (sekitar 11 cm) dan mengirimnya sebagai angka JSON; di Dart baca sebagai `num`.
+- Kolom baru di sumber kenangan berarti app versi baru menjalankan sync penuh sekali.
+
+`GET /places?q=ubud` dipanggil langsung, tidak lewat antrean, jadi butuh koneksi:
+
+```json
+{
+  "data": [
+    {
+      "name": "Ubud",
+      "address": "Ubud, Gianyar, Bali, Indonesia",
+      "latitude": -8.506853,
+      "longitude": 115.262477
+    }
+  ]
+}
+```
+
+- `q` 3–100 karakter. Paling banyak 8 hasil, urut seperti dari Nominatim; tanpa hasil, `data` kosong. Nama dan alamat dalam bahasa Indonesia kalau tersedia.
+- App mencari hanya saat pengguna menekan tombol cari, bukan setiap kali mengetik: kebijakan Nominatim melarang autocomplete, termasuk dari sisi app.
+- Hasil disimpan di server 1 hari per kata kunci (huruf besar-kecil dan spasi berlebih tidak dibedakan), jadi pencarian yang sama tidak sampai ke Nominatim lagi.
+- Server mengirim paling banyak 1 request per detik ke Nominatim untuk seluruh app, dengan User-Agent Denly Days, dan hanya meneruskan kata kuncinya tanpa data akun. Request yang tidak mendapat giliran dalam 2 detik dibalas 429 `too_many_requests`.
+- Batasnya 20 pencarian per menit per akun.
+- Kalau Nominatim gagal atau pencarian dimatikan di server, balasannya 503 `places_unavailable`. App menampilkan pesannya, dan pin tetap bisa dipasang langsung di peta. Saklar `PLACES_SEARCH_ENABLED` ada karena kebijakan Nominatim mewajibkan app bisa berhenti memakai layanannya kapan pun OSMF meminta, tanpa update app.
+- App menampilkan "© OpenStreetMap contributors" di bawah hasil pencarian dan di peta. Ubin peta diambil app langsung dan mengikuti kebijakan tile OSM.
 ### Foto kenangan
 
 ```json
@@ -750,8 +797,7 @@ Halaman pertama: `GET /sync?since=<server_time tersimpan>`, atau tanpa `since` u
 - Baris yang `updated_at`-nya lebih tua dari salinan lokal diabaikan.
 - Saat induk tiba dengan `deleted_at` terisi, app ikut menghapus anak-anaknya di cache, kecuali anak yang masih punya operasi di antrean; nasibnya ditentukan balasan server (`parent_deleted`).
 - Sync penuh hanya menambah dan memperbarui.
-- Sync berjalan saat app dibuka atau kembali aktif, saat layar ditarik untuk menyegarkan, saat push masuk ketika app terbuka, dan setiap 30 detik selama app tampil di layar (v1.x). Saat app tidak tampil, sync berkala berhenti. Dengan batas 120 request per menit, sync berkala ini memakai paling banyak 2 request per menit per HP.
-- Push tanpa judul dan isi (pesan data saja), termasuk  , hanya memicu sync dan tidak pernah ditampilkan sebagai notifikasi.
+- Sync berjalan saat app dibuka atau kembali aktif, saat layar ditarik untuk menyegarkan, saat push masuk ketika app terbuka, termasuk push sinkron (v1.x), dan tiap 30 detik selama app tampil (v1.x).
 - App versi baru yang mengenal koleksi atau kolom baru (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`; v1.0: aturan ulang di `tasks`) menjalankan sync penuh sekali sebelum kembali memakai `since`. Tanpa itu, data yang dibuat atau diubah pasangan selama app masih versi lama tidak pernah sampai lengkap, karena `since` sudah melewatinya.
 
 ### Antrean di HP
@@ -762,6 +808,31 @@ Halaman pertama: `GET /sync?since=<server_time tersimpan>`, atau tanpa `since` u
 - Selesai dan hapus tugas masuk antrean sebagai operasi tersendiri dengan jeda kirim 5 detik selama tombol Urungkan tampil (FR-08). Urungkan hanya menghapus operasi itu, jadi pasangan tidak menerima notifikasi yang dibatalkan.
 - Di layar detail, perubahan dikirim 1 detik setelah berhenti mengetik, dan langsung ditulis ke antrean saat app masuk ke latar belakang.
 - Unggah foto kenangan (v0.3) masuk antrean setelah `PUT` kenangannya. File yang sudah dikompres disimpan di HP sampai server membalas, lalu dipakai sebagai cache versi penuhnya.
+
+### Push sinkron (v1.x)
+
+Push `sync` memberi tahu HP pasangan bahwa ada data baru di Ruang Bersama, supaya app yang sedang terbuka langsung menjalankan sync tanpa menunggu putaran 30 detik berikutnya. Pesannya hanya berisi data, tanpa judul dan isi, jadi tidak pernah tampil sebagai notifikasi.
+
+```json
+{
+  "data": {
+    "type": "sync",
+    "space_id": "01m4dgdt40te98hy85v3fe2t18"
+  },
+  "android": {
+    "priority": "normal",
+    "collapse_key": "sync-01m4dgdt40te98hy85v3fe2t18"
+  }
+}
+```
+
+- Pemicu: setiap perubahan di Ruang Bersama yang ikut terkirim lewat `GET /sync`, yaitu ruang dan anggotanya, daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, dan foto kenangan. Penghapusan ikut dihitung, begitu juga perubahan yang dibuat server dalam request yang sama, seperti tugas berikutnya dari tugas berulang. Perubahan di Ruang Pribadi tidak memicunya.
+- Penerima: anggota lain di ruang itu, di semua perangkatnya. Pelaku tidak menerimanya, termasuk di HP lain miliknya.
+- Selalu dikirim, tanpa melihat `notification_prefs`, karena tidak tampil di layar.
+- Paling banyak satu push per penerima setiap 10 detik. Perubahan pertama dikirim langsung dan biasanya sampai dalam beberapa detik. Perubahan lain selama jeda 10 detik itu digabung menjadi satu push di akhir jeda, jadi antrean HP yang terkirim beruntun tidak membanjiri HP pasangan.
+- Push ini hanya mempercepat. FCM tidak menjamin setiap pesan sampai, jadi app tetap sync saat dibuka, saat kembali aktif, dan tiap 30 detik selama tampil.
+- Sesekali push bisa datang tanpa ada yang baru, misalnya saat penyimpanan dibatalkan di tengah jalan. App cukup menjalankan sync seperti biasa.
+- Tidak ada kolom atau koleksi baru, jadi app tidak perlu sync penuh.
 
 ## Notifikasi push
 
@@ -779,6 +850,8 @@ Server mengirim push lewat FCM HTTP v1 dari job antrean, ke semua token perangka
 | `trip_reminder` | H-7 dan H-1 sebelum `start_date` pukul 08.00 (v0.2) | Kedua anggota; pemilik ruang untuk Ruang Pribadi | `trip_reminders` | `pengingat` | Tinggi |
 | `savings_reminder` | Hari setor yang dipilih di target, pukul 08.00 (v0.2) | Kedua anggota; pemilik ruang untuk Ruang Pribadi | `savings_reminders` | `pengingat` | Tinggi |
 | `memory_created` | Kenangan baru dibuat, dikirim 2 menit kemudian (v0.3) | Anggota lain | `partner_activity` | `aktivitas` | Normal |
+| `sync` | Data di Ruang Bersama berubah, paling banyak satu per 10 detik (v1.x) | Anggota lain, selain pelaku | Selalu dikirim | Tanpa notifikasi | Normal |
+| `savings_withdrawal` | Penarikan baru dicatat (v1.x) | Anggota lain | `savings_activity` | `aktivitas` | Normal |
 
 Isi pesan yang diterima app, disederhanakan:
 
@@ -914,3 +987,38 @@ Sepuluh butir ini merancang "Tugas berulang" di lingkup fitur tab utama, yang be
 - [x] Pengulangan berhenti dengan mengosongkan aturan ulang atau menghapus tugas yang belum selesai. Mengosongkan `due_date` ikut mengosongkan aturan ulang.
 - [x] Checklist perjalanan tidak bisa berulang (422).
 - [x] Balasan PUT dan PATCH tugas membawa `next_task`, dan sumber tugas punya kolom baru `repeat_frequency`, `repeat_interval`, dan `next_task_id`, jadi app versi baru sync penuh sekali.
+
+### Push sinkron (v1.x)
+
+Lima butir ini merancang sinkron langsung (realtime) di lingkup v1.x dari usulan sesi Flutter, dan disetujui pada 25 Oktober 2026.
+
+- [x] Push `sync` berisi data saja (`type` dan `space_id`), tanpa judul dan isi, dengan prioritas normal dan `collapse_key` `sync-{space_id}`.
+- [x] Dikirim untuk setiap perubahan di Ruang Bersama yang terlihat di `GET /sync`, ke anggota lain di semua perangkatnya. Pelaku tidak menerimanya, termasuk di HP lain miliknya.
+- [x] Selalu dikirim, tanpa preferensi notifikasi.
+- [x] Paling banyak satu push per penerima setiap 10 detik: perubahan pertama dikirim langsung, dan sisanya dalam jeda itu digabung di akhir jeda. Ini berbeda dari usulan yang menunda semua push 10 detik, karena dengan cara itu pasangan selalu baru melihat perubahan 10–13 detik kemudian, tidak jauh beda dari sync tiap 30 detik yang rata-rata menunggu 15 detik.
+- [x] Push ini hanya mempercepat: app tetap sync saat dibuka, kembali aktif, dan tiap 30 detik selama tampil, dan push yang datang tanpa perubahan baru cukup dijawab dengan sync biasa.
+
+### Penarikan tabungan (v1.x)
+
+Tujuh butir ini merancang penarikan tabungan di lingkup v1.x dari usulan sesi Flutter, dan disetujui pada 29 Oktober 2026.
+
+- [x] Penarikan dicatat sebagai setoran dengan `type` `withdrawal`, dan `amount` tetap lebih dari 0. Tidak ada endpoint atau koleksi baru.
+- [x] `type` hanya diisi saat `PUT` dan tidak bisa diubah lewat `PATCH`.
+- [x] Total = setoran dikurangi penarikan, dipakai untuk `achieved_at`, persen `savings_reminder`, dan progres di app. Total yang turun di bawah target membuat `achieved_at` kembali `null`, tetapi `savings_achieved` tetap sekali per target.
+- [x] Penarikan yang melebihi saldo tidak ditolak; app yang mencegahnya, dan total boleh negatif. Persen di `savings_reminder` paling kecil 0.
+- [x] Push baru `savings_withdrawal` ke anggota lain saat penarikan dibuat: preferensi `savings_activity`, channel `aktivitas`, `visibility` `PRIVATE`, dan `tag` `goal-{id}`.
+- [x] Teks push: judulnya nama target, isinya "{nama} mengambil {nominal}". Ini berbeda dari usulan "{nama} mengambil {nominal} dari {target}", karena nama target sudah menjadi judul, sama seperti "{nama} menabung {nominal}" di push setoran.
+- [x] Kedua HP memakai app baru sebelum penarikan pertama dicatat, karena app lama menghitung penarikan sebagai setoran.
+
+### Pin lokasi kenangan (v1.x)
+
+Delapan butir ini merancang pin lokasi dan pencarian tempat di lingkup v1.x dari usulan sesi Flutter, dan disetujui pada 29 Oktober 2026. Butir terakhir adalah keputusan pemilik untuk memakai server Nominatim publik.
+
+- [x] Kenangan punya `latitude` dan `longitude` yang selalu berpasangan; mengirim hanya satu, termasuk lewat `PATCH`, ditolak 422.
+- [x] Server membulatkan koordinat ke 6 desimal, bukan menolak angka yang lebih panjang. Ini berbeda dari usulan, supaya koordinat GPS dari HP tidak perlu dibulatkan app dulu.
+- [x] `GET /places?q=` lewat server ke Nominatim: paling banyak 8 hasil berisi `name`, `address`, `latitude`, dan `longitude`, dengan cache 1 hari dan paling banyak 1 request per detik ke Nominatim untuk seluruh app.
+- [x] App mencari hanya saat tombol cari ditekan, tidak sambil mengetik, karena autocomplete dilarang kebijakan Nominatim.
+- [x] Batas 20 pencarian per menit per akun, dan 429 `too_many_requests` kalau giliran ke Nominatim tidak didapat dalam 2 detik.
+- [x] Kode error baru 503 `places_unavailable` saat Nominatim gagal atau pencarian dimatikan; pin manual di peta tetap bisa.
+- [x] Saklar `PLACES_SEARCH_ENABLED` di server untuk mematikan pencarian tanpa update app.
+- [x] Pemilik memutuskan memakai server Nominatim publik dan bertanggung jawab mematuhi [kebijakannya](https://operations.osmfoundation.org/policies/nominatim/): paling banyak 1 request per detik untuk seluruh app, tanpa autocomplete, dengan atribusi OpenStreetMap, dan siap berhenti kapan pun OSMF meminta. Kalau pemakaian membesar saat rilis publik, beralih ke Nominatim sendiri atau penyedia berbayar.
