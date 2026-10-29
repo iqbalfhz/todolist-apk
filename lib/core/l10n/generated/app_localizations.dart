@@ -1195,6 +1195,12 @@ abstract class AppLocalizations {
   /// **'Setor'**
   String get savingsDeposit;
 
+  /// No description provided for @savingsWithdraw.
+  ///
+  /// In id, this message translates to:
+  /// **'Ambil'**
+  String get savingsWithdraw;
+
   /// No description provided for @savingsMonthly.
   ///
   /// In id, this message translates to:
@@ -1248,6 +1254,18 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'{who} · {note}'**
   String savingsHistoryWho(String who, String note);
+
+  /// No description provided for @savingsHistoryWithdrawal.
+  ///
+  /// In id, this message translates to:
+  /// **'{who} mengambil'**
+  String savingsHistoryWithdrawal(String who);
+
+  /// No description provided for @savingsHistoryWithdrawalNote.
+  ///
+  /// In id, this message translates to:
+  /// **'{who} mengambil · {note}'**
+  String savingsHistoryWithdrawalNote(String who, String note);
 
   /// No description provided for @savingsAchieved.
   ///
@@ -1416,6 +1434,54 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Hapus setoran {amount}?'**
   String depositDeleteConfirm(String amount);
+
+  /// No description provided for @withdrawTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Ambil tabungan'**
+  String get withdrawTitle;
+
+  /// No description provided for @withdrawEditTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Ubah penarikan'**
+  String get withdrawEditTitle;
+
+  /// No description provided for @withdrawAmountLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Berapa yang diambil?'**
+  String get withdrawAmountLabel;
+
+  /// No description provided for @withdrawAvailable.
+  ///
+  /// In id, this message translates to:
+  /// **'Terkumpul {amount}, jadi paling banyak segitu yang bisa diambil.'**
+  String withdrawAvailable(String amount);
+
+  /// No description provided for @withdrawTooMuch.
+  ///
+  /// In id, this message translates to:
+  /// **'Paling banyak {amount}, sebesar yang terkumpul.'**
+  String withdrawTooMuch(String amount);
+
+  /// No description provided for @withdrawNoteHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Misalnya untuk tiket pesawat'**
+  String get withdrawNoteHint;
+
+  /// No description provided for @withdrawDelete.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus penarikan'**
+  String get withdrawDelete;
+
+  /// No description provided for @withdrawDeleteConfirm.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus penarikan {amount}?'**
+  String withdrawDeleteConfirm(String amount);
 
   /// No description provided for @errorNoteLong.
   ///
@@ -1684,7 +1750,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifSavingsActivitySub.
   ///
   /// In id, this message translates to:
-  /// **'Setoran baru dan target tercapai'**
+  /// **'Setoran, penarikan, dan target tercapai'**
   String get notifSavingsActivitySub;
 
   /// No description provided for @notifSpecialDates.

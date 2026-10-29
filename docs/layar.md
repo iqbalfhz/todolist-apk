@@ -57,9 +57,11 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 - Baris pengingat setor (v0.2) di bawah ringkasan, dengan ikon lonceng dan switch: "Ingatkan setor tiap Jumat" atau "Ingatkan setor tiap tanggal 25", keterangan "Pukul 08.00, ke kalian berdua" (Ruang Pribadi: "Pukul 08.00"). Mati: "Ingatkan setor" · "Mingguan atau bulanan, pukul 08.00". Ketuk baris atau nyalakan switch → lembar Pengingat setor; matikan switch → jadwalnya dikosongkan. Tidak tampil untuk target yang sudah tercapai atau diarsipkan. Kalau `savings_reminders` mati: "Pengingat setor sedang dimatikan di Pengaturan."
 - Lembar Pengingat setor (tanpa mockup): "Seberapa sering?" Mingguan / Bulanan; "Hari apa?" chip Sen sampai Min, atau "Tanggal berapa?" Tanggal 1–31 dengan keterangan untuk 29–31 ("Di bulan yang lebih pendek, pengingat dikirim di hari terakhir bulan itu."); catatan "Dikirim pukul 08.00 ke kalian berdua selama target belum tercapai."; "Matikan pengingat" kalau sudah menyala; Simpan. Pilihan bawaannya hari ini.
 - Tombol "Setor" → lembar setor: nominal dengan keyboard angka dan format Rp otomatis, tanggal (bawaan hari ini), catatan opsional.
-- "Kontribusi" (tanpa mockup; hanya target di Ruang Bersama yang sudah punya setoran): satu bar yang dibagi warna diri masing-masing, lalu baris Aku dan Pasangan dengan titik warna, persen, dan nominal ("Aku · 60% · Rp3.000.000"), dan baris "Total" berisi jumlah terkumpul. Persennya selalu berjumlah 100; setoran yang dibulatkan ke 0% tampil "<1%". Pasangan yang belum menyetor tetap tampil dengan Rp0. Setoran dari akun yang sudah bukan anggota ruang digabung di baris "Anggota lain".
-- "Setoran per bulan": grafik batang (fl_chart).
-- "Riwayat tabungan": siapa dan catatan, tanggal, nominal "+Rp200.000"; ketuk → ubah atau hapus setoran.
+- Tombol "Ambil" (v1.x, tanpa mockup) di samping Setor, bergaris dengan ikon minus, hanya kalau total terkumpul lebih dari 0 → lembar "Ambil tabungan": "Berapa yang diambil?" dengan keterangan "Terkumpul Rp4.500.000, jadi paling banyak segitu yang bisa diambil.", tanggal, dan catatan ("Misalnya untuk tiket pesawat"). Nominal di atas yang terkumpul ditolak di layar: "Paling banyak Rp4.500.000, sebesar yang terkumpul." (server menerimanya, jadi layar ini yang mencegah). Mengubah penarikan: "Ubah penarikan", batasnya ditambah nominal penarikan itu sendiri; "Hapus penarikan" dengan konfirmasi "Hapus penarikan Rp350.000?". Jenisnya tidak bisa diubah: setoran tetap setoran.
+- Total, persen, sisa, dan "Perlu ... per minggu" dihitung dari total bersih (setoran dikurangi penarikan). Total bisa negatif kalau dua HP menarik bersamaan saat offline ("−Rp600.000"); persennya tetap 0%.
+- "Kontribusi" (tanpa mockup; hanya target di Ruang Bersama yang sudah punya setoran): satu bar yang dibagi warna diri masing-masing, lalu baris Aku dan Pasangan dengan titik warna, persen, dan nominal ("Aku · 60% · Rp3.000.000"), dan baris "Total" berisi jumlah terkumpul. Persennya selalu berjumlah 100; setoran yang dibulatkan ke 0% tampil "<1%". Pasangan yang belum menyetor tetap tampil dengan Rp0. Setoran dari akun yang sudah bukan anggota ruang digabung di baris "Anggota lain". Nominal tiap orang bersih (setorannya dikurangi penarikannya, v1.x), jadi bisa negatif ("−Rp1.000.000") kalau ia mengambil lebih dari yang ia setor; persennya hanya dibagi di antara yang positif.
+- "Setoran per bulan": grafik batang (fl_chart), hanya setoran; penarikan tidak ikut.
+- "Riwayat tabungan": siapa dan catatan, tanggal, nominal "+Rp200.000"; penarikan tertulis "Aku mengambil · catatan" dengan "−Rp350.000" (tanda minus U+2212). Ketuk → ubah atau hapus.
 - Target tercapai: perayaan kecil, teks "Dana Liburan tercapai. Selamat, kalian berhasil!"
 
 ### Ajak pasangan — `Pairing.dc.html`
@@ -78,7 +80,7 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 - Notifikasi: switch yang memetakan `notification_prefs`:
   - Pengingat tugas — saat tenggat tiba (`task_reminders`)
   - Aktivitas pasangan — titipan baru, tugas selesai, dan kenangan baru (`partner_activity`)
-  - Setoran tabungan — setoran baru dan target tercapai (`savings_activity`)
+  - Setoran tabungan — setoran, penarikan (v1.x), dan target tercapai (`savings_activity`)
   - Tanggal penting — H-7, H-1, dan hari H pukul 08.00 (`special_dates`, v0.2)
   - Pengingat perjalanan — H-7 dan H-1 pukul 08.00 (`trip_reminders`, v0.2)
   - Pengingat setor — Hari setor yang dipilih di target, pukul 08.00 (`savings_reminders`, v0.2)

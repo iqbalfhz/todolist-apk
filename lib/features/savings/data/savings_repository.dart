@@ -85,12 +85,15 @@ class SavingsRepository {
 
   // ---------------------------------------------------------------- setoran
 
-  /// Catat setoran. [entryDate] adalah tanggal setor menurut HP.
+  /// Catat setoran, atau penarikan kalau [withdrawal] (v1.x). [entryDate] adalah tanggal setor
+  /// menurut HP. `type` hanya dikirim untuk penarikan; tanpa itu server menganggapnya setoran.
+  /// Penarikan yang melebihi saldo dicegah layarnya, bukan di sini: server juga menerimanya.
   Future<SavingsEntry> createEntry({
     required SavingsGoal goal,
     required int amount,
     required String entryDate,
     String? note,
+    bool withdrawal = false,
   }) async {
     final nowIso = writer.nowIso();
 
@@ -99,6 +102,7 @@ class SavingsRepository {
       'amount': _requireAmount(amount),
       'entry_date': entryDate,
       'note': _cleanNote(note),
+      if (withdrawal) 'type': EntryType.withdrawal,
     };
 
     final row = <String, dynamic>{
@@ -106,7 +110,7 @@ class SavingsRepository {
       'id': newUlid(now: writer.now()),
       'space_id': goal.spaceId,
       'user_id': userId,
-      'type': 'deposit',
+      'type': withdrawal ? EntryType.withdrawal : EntryType.deposit,
       'created_at': nowIso,
       'updated_at': nowIso,
       'deleted_at': null,
@@ -116,7 +120,8 @@ class SavingsRepository {
     return SavingsEntry.fromJson(row);
   }
 
-  /// Kedua anggota boleh mengubah setoran siapa pun.
+  /// Kedua anggota boleh mengubah setoran siapa pun. `type` tidak bisa diubah (PATCH
+  /// mengabaikannya), jadi setoran tetap setoran dan penarikan tetap penarikan.
   Future<void> editEntry(String id, {required int amount, required String entryDate, required String? note}) =>
       writer.update(EntityType.entry, id, {
         'amount': _requireAmount(amount),

@@ -8,10 +8,14 @@ const String _locale = 'id_ID';
 /// Format nominal (satuan terkecil) untuk ditampilkan: `150000` IDR menjadi "Rp150.000".
 ///
 /// `decimalDigits` selalu diisi dari tabel di kontrak, karena `intl` memakai 2 desimal untuk IDR.
+///
+/// Nominal negatif selalu diawali tanda minus "−" (U+2212), misalnya penarikan "−Rp200.000";
+/// [withSign] menambah "+" untuk yang positif.
 String formatMoney(int amount, String currencyCode, {bool withSign = false}) {
   final currency = currencyOf(currencyCode);
   final formatter = NumberFormat.currency(locale: _locale, symbol: currency.symbol, decimalDigits: currency.decimals);
-  final text = formatter.format(amount / currency.unitsPerMajor);
+  final text = formatter.format(amount.abs() / currency.unitsPerMajor);
+  if (amount < 0) return '−$text';
   return withSign && amount > 0 ? '+$text' : text;
 }
 

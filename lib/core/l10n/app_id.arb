@@ -373,6 +373,7 @@
     }
   },
   "savingsDeposit": "Setor",
+  "savingsWithdraw": "Ambil",
   "savingsMonthly": "Setoran per bulan",
   "savingsContributions": "Kontribusi",
   "savingsContributionFormer": "Anggota lain",
@@ -388,6 +389,25 @@
   "savingsHistory": "Riwayat tabungan",
   "savingsHistoryEmpty": "Belum ada setoran. Ketuk Setor untuk mencatat yang pertama.",
   "savingsHistoryWho": "{who} · {note}",
+  "savingsHistoryWithdrawal": "{who} mengambil",
+  "@savingsHistoryWithdrawal": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "savingsHistoryWithdrawalNote": "{who} mengambil · {note}",
+  "@savingsHistoryWithdrawalNote": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
   "@savingsHistoryWho": {
     "placeholders": {
       "who": {"type": "String"},
@@ -442,6 +462,35 @@
   "depositNoteHint": "Misalnya sisa gajian",
   "depositDelete": "Hapus setoran",
   "depositDeleteConfirm": "Hapus setoran {amount}?",
+  "withdrawTitle": "Ambil tabungan",
+  "withdrawEditTitle": "Ubah penarikan",
+  "withdrawAmountLabel": "Berapa yang diambil?",
+  "withdrawAvailable": "Terkumpul {amount}, jadi paling banyak segitu yang bisa diambil.",
+  "@withdrawAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawTooMuch": "Paling banyak {amount}, sebesar yang terkumpul.",
+  "@withdrawTooMuch": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "withdrawNoteHint": "Misalnya untuk tiket pesawat",
+  "withdrawDelete": "Hapus penarikan",
+  "withdrawDeleteConfirm": "Hapus penarikan {amount}?",
+  "@withdrawDeleteConfirm": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "@depositDeleteConfirm": {
     "placeholders": {
       "amount": {"type": "String"}
@@ -524,7 +573,7 @@
   "notifPartnerActivity": "Aktivitas pasangan",
   "notifPartnerActivitySub": "Titipan baru, tugas selesai, dan kenangan baru",
   "notifSavingsActivity": "Setoran tabungan",
-  "notifSavingsActivitySub": "Setoran baru dan target tercapai",
+  "notifSavingsActivitySub": "Setoran, penarikan, dan target tercapai",
   "notifSpecialDates": "Tanggal penting",
   "notifSpecialDatesSub": "H-7, H-1, dan hari H pukul 08.00",
   "notifTripReminders": "Pengingat perjalanan",

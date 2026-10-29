@@ -640,6 +640,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get savingsDeposit => 'Setor';
 
   @override
+  String get savingsWithdraw => 'Ambil';
+
+  @override
   String get savingsMonthly => 'Setoran per bulan';
 
   @override
@@ -668,6 +671,16 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String savingsHistoryWho(String who, String note) {
     return '$who · $note';
+  }
+
+  @override
+  String savingsHistoryWithdrawal(String who) {
+    return '$who mengambil';
+  }
+
+  @override
+  String savingsHistoryWithdrawalNote(String who, String note) {
+    return '$who mengambil · $note';
   }
 
   @override
@@ -768,6 +781,36 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String depositDeleteConfirm(String amount) {
     return 'Hapus setoran $amount?';
+  }
+
+  @override
+  String get withdrawTitle => 'Ambil tabungan';
+
+  @override
+  String get withdrawEditTitle => 'Ubah penarikan';
+
+  @override
+  String get withdrawAmountLabel => 'Berapa yang diambil?';
+
+  @override
+  String withdrawAvailable(String amount) {
+    return 'Terkumpul $amount, jadi paling banyak segitu yang bisa diambil.';
+  }
+
+  @override
+  String withdrawTooMuch(String amount) {
+    return 'Paling banyak $amount, sebesar yang terkumpul.';
+  }
+
+  @override
+  String get withdrawNoteHint => 'Misalnya untuk tiket pesawat';
+
+  @override
+  String get withdrawDelete => 'Hapus penarikan';
+
+  @override
+  String withdrawDeleteConfirm(String amount) {
+    return 'Hapus penarikan $amount?';
   }
 
   @override
@@ -916,7 +959,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get notifSavingsActivity => 'Setoran tabungan';
 
   @override
-  String get notifSavingsActivitySub => 'Setoran baru dan target tercapai';
+  String get notifSavingsActivitySub => 'Setoran, penarikan, dan target tercapai';
 
   @override
   String get notifSpecialDates => 'Tanggal penting';

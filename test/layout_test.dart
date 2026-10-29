@@ -154,6 +154,16 @@ void main() {
         showGoalFormSheet(tester.element(find.byType(SavingsScreen))).ignore();
       });
 
+      // Penarikan (v1.x) dengan catatan panjang di riwayat.
+      await h.account.store.write(EntityType.entry, {
+        ...entryJson(
+          id: '01m4dk06v0p3ew0dm0dk94s3zz',
+          savingsGoalId: tripGoalId,
+          amount: 350000,
+          note: 'Uang muka penginapan di Ubud untuk tiga malam pertama',
+        ),
+        'type': 'withdrawal',
+      }, serverUpdatedAt: t0);
       await visit(tester, container, Routes.goal(tripGoalId));
       // Kembali ke atas: tombol Setor harus benar-benar tampil sebelum diketuk.
       await tester.drag(find.byType(Scrollable).first, const Offset(0, 4000), warnIfMissed: false);
@@ -161,6 +171,7 @@ void main() {
       await tester.ensureVisible(find.text('Setor'));
       await settle(tester);
       await withSheet(tester, container, () => tester.tap(find.text('Setor')));
+      await withSheet(tester, container, () => tester.tap(find.text('Ambil')));
       // Jadwal bulanan tanggal 31 menampilkan keterangan bulan yang lebih pendek.
       await withSheet(tester, container, () async {
         final goal = container.read(goalProgressProvider)!.firstWhere((item) => item.goal.id == tripGoalId).goal;
