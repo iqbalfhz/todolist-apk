@@ -66,7 +66,9 @@ class RowApplier {
               (t) =>
                   (t.entityType.equals(type.name) & t.entityId.equals(id)) |
                   // Anak yang punya operasi tertunda tidak ikut terhapus bersama induknya.
-                  (type.child == null ? const Constant(false) : t.entityType.equals(type.child!.$1.name)),
+                  (type.children.isEmpty
+                      ? const Constant(false)
+                      : t.entityType.isIn([for (final child in type.children) child.name])),
             ))
             .get();
     return PendingIndex(ops);
@@ -107,8 +109,10 @@ class RowApplier {
     await store.write(type, merged, serverUpdatedAt: incomingStamp);
 
     final deletedAt = merged['deleted_at'] as String?;
-    if (deletedAt != null && type.child != null) {
-      await store.markChildrenDeleted(type, id, deletedAt: deletedAt, except: index.idsOf(type.child!.$1));
+    if (deletedAt != null) {
+      for (final child in type.children) {
+        await store.markChildrenDeleted(child, id, deletedAt: deletedAt, except: index.idsOf(child));
+      }
     }
   }
 

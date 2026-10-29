@@ -88,6 +88,74 @@ class AppLocalizationsId extends AppLocalizations {
   String get navLabel => 'Navigasi utama';
 
   @override
+  String get commentsTitle => 'Komentar';
+
+  @override
+  String commentsCount(int count) {
+    return '$count komentar';
+  }
+
+  @override
+  String get commentsEmpty => 'Belum ada komentar. Tulis yang pertama.';
+
+  @override
+  String get commentHint => 'Tulis komentar…';
+
+  @override
+  String get commentSend => 'Kirim komentar';
+
+  @override
+  String get commentRequired => 'Komentarnya masih kosong.';
+
+  @override
+  String get commentTooLong => 'Komentar paling banyak 1.000 karakter.';
+
+  @override
+  String get commentEdited => 'diedit';
+
+  @override
+  String get commentOptions => 'Opsi komentar';
+
+  @override
+  String get commentEditTitle => 'Ubah komentar';
+
+  @override
+  String get commentDeleted => 'Komentar dihapus.';
+
+  @override
+  String get reactionAdd => 'Beri reaksi';
+
+  @override
+  String get reactionClose => 'Tutup pilihan reaksi';
+
+  @override
+  String reactionPick(String emoji) {
+    return 'Reaksi $emoji';
+  }
+
+  @override
+  String reactionBy(String emoji, String people) {
+    return 'Reaksi $emoji dari $people';
+  }
+
+  @override
+  String get listAnd => ' dan ';
+
+  @override
+  String conversationSummary(int reactions, int comments) {
+    return '$reactions reaksi, $comments komentar';
+  }
+
+  @override
+  String get entryDetailDeposit => 'Setoran';
+
+  @override
+  String get entryGone => 'Setoran ini sudah dihapus.';
+
+  @override
+  String get entryDetailWithdrawal => 'Penarikan';
+
+  @override
   String get osmAttribution => '© OpenStreetMap contributors';
 
   @override
@@ -1025,7 +1093,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get notifPartnerActivity => 'Aktivitas pasangan';
 
   @override
-  String get notifPartnerActivitySub => 'Titipan baru, tugas selesai, dan kenangan baru';
+  String get notifPartnerActivitySub => 'Titipan baru, tugas selesai, kenangan baru, komentar, dan reaksi';
 
   @override
   String get notifSavingsActivity => 'Setoran tabungan';

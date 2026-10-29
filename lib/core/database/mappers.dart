@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 
+import '../../features/comments/domain/comment.dart';
 import '../../features/memories/domain/memory.dart';
 import '../../features/memories/domain/memory_photo.dart';
 import '../../features/savings/domain/savings_entry.dart';
@@ -288,6 +289,60 @@ MemoriesCompanion memoryCompanion(Memory memory, {String? serverUpdatedAt}) => M
   createdAt: Value(_iso(memory.createdAt)),
   updatedAt: Value(_iso(memory.updatedAt)),
   deletedAt: Value(_isoOrNull(memory.deletedAt)),
+  serverUpdatedAt: _serverStamp(serverUpdatedAt),
+);
+
+extension CommentRowMapper on CommentRow {
+  Comment toModel() => Comment(
+    id: id,
+    spaceId: spaceId,
+    subjectType: subjectType,
+    subjectId: subjectId,
+    userId: userId,
+    body: body,
+    createdAt: _time(createdAt),
+    updatedAt: _time(updatedAt),
+    deletedAt: _timeOrNull(deletedAt),
+  );
+}
+
+CommentsCompanion commentCompanion(Comment comment, {String? serverUpdatedAt}) => CommentsCompanion(
+  id: Value(comment.id),
+  spaceId: Value(comment.spaceId),
+  subjectType: Value(comment.subjectType),
+  subjectId: Value(comment.subjectId),
+  userId: Value(comment.userId),
+  body: Value(comment.body),
+  createdAt: Value(_iso(comment.createdAt)),
+  updatedAt: Value(_iso(comment.updatedAt)),
+  deletedAt: Value(_isoOrNull(comment.deletedAt)),
+  serverUpdatedAt: _serverStamp(serverUpdatedAt),
+);
+
+extension ReactionRowMapper on ReactionRow {
+  Reaction toModel() => Reaction(
+    id: id,
+    spaceId: spaceId,
+    subjectType: subjectType,
+    subjectId: subjectId,
+    userId: userId,
+    emoji: emoji,
+    createdAt: _time(createdAt),
+    updatedAt: _time(updatedAt),
+    deletedAt: _timeOrNull(deletedAt),
+  );
+}
+
+ReactionsCompanion reactionCompanion(Reaction reaction, {String? serverUpdatedAt}) => ReactionsCompanion(
+  id: Value(reaction.id),
+  spaceId: Value(reaction.spaceId),
+  subjectType: Value(reaction.subjectType),
+  subjectId: Value(reaction.subjectId),
+  userId: Value(reaction.userId),
+  emoji: Value(reaction.emoji),
+  createdAt: Value(_iso(reaction.createdAt)),
+  updatedAt: Value(_iso(reaction.updatedAt)),
+  deletedAt: Value(_isoOrNull(reaction.deletedAt)),
   serverUpdatedAt: _serverStamp(serverUpdatedAt),
 );
 

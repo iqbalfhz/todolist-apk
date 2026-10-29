@@ -14,10 +14,13 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/utils/money.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../comments/domain/conversation.dart';
+import '../../comments/presentation/comments_section.dart';
 import '../../spaces/domain/household.dart';
 import '../domain/savings_entry.dart';
 import '../domain/savings_views.dart';
 import 'deposit_sheet.dart';
+import 'entry_detail_sheet.dart';
 import 'goal_form_sheet.dart';
 import 'reminder_sheet.dart';
 
@@ -25,9 +28,12 @@ enum _GoalAction { edit, archive, delete }
 
 /// Detail tabungan: ringkasan dengan cincin progres, tombol Setor, setoran per bulan, dan riwayat.
 class GoalDetailScreen extends ConsumerStatefulWidget {
-  const GoalDetailScreen({super.key, required this.goalId, this.fromHome = false, this.backTo});
+  const GoalDetailScreen({super.key, required this.goalId, this.fromHome = false, this.backTo, this.openEntryId});
 
   final String goalId;
+
+  /// Setoran yang langsung dibuka detailnya, dari notifikasi komentar atau reaksi (v1.x).
+  final String? openEntryId;
 
   /// Dibuka dari Beranda; tombol kembali pulang ke sana.
   final bool fromHome;
@@ -45,6 +51,7 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
   static const int _historyPreview = 3;
 
   bool _showAllHistory = false;
+  bool _openedEntry = false;
 
   void _back() => context.go(widget.backTo ?? (widget.fromHome ? Routes.home : Routes.savings));
 
@@ -107,6 +114,17 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
       final goal = progress.goal;
       final entries = progress.entries;
       final shown = _showAllHistory ? entries : entries.take(_historyPreview).toList();
+      final shared = household.isShared(goal.spaceId);
+      final conversations = shared ? ref.watch(conversationsProvider) : null;
+
+      // Dari notifikasi komentar atau reaksi: buka detail setorannya sekali.
+      final openEntryId = widget.openEntryId;
+      if (openEntryId != null && !_openedEntry && shared && entries.any((entry) => entry.id == openEntryId)) {
+        _openedEntry = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) showEntryDetailSheet(context, goalId: goal.id, entryId: openEntryId, household: household);
+        });
+      }
 
       body = PageBody(
         onRefresh: () => refreshFromServer(ref),
@@ -211,13 +229,18 @@ class _GoalDetailScreenState extends ConsumerState<GoalDetailScreen> {
                     entry: entry,
                     progress: progress,
                     household: household,
-                    onTap: () => showDepositSheet(
-                      context,
-                      goal: goal,
-                      today: progress.today,
-                      saved: progress.saved,
-                      entry: entry,
-                    ),
+                    conversation: conversationOf(conversations, entry.id),
+                    // Di Ruang Bersama setoran punya reaksi dan komentar (v1.x), jadi dibuka
+                    // detailnya dulu; di Ruang Pribadi langsung diubah.
+                    onTap: () => shared
+                        ? showEntryDetailSheet(context, goalId: goal.id, entryId: entry.id, household: household)
+                        : showDepositSheet(
+                            context,
+                            goal: goal,
+                            today: progress.today,
+                            saved: progress.saved,
+                            entry: entry,
+                          ),
                   ),
                 ],
               ],
@@ -555,6 +578,7 @@ class _MonthlyChart extends StatelessWidget {
 class _EntryRow extends StatelessWidget {
   const _EntryRow({
     super.key,
+    required this.conversation,
     required this.entry,
     required this.progress,
     required this.household,
@@ -565,6 +589,9 @@ class _EntryRow extends StatelessWidget {
   final GoalProgress progress;
   final Household household;
   final VoidCallback onTap;
+
+  /// Reaksi dan komentar setoran ini (v1.x); kosong di Ruang Pribadi.
+  final Conversation conversation;
 
   @override
   Widget build(BuildContext context) {
@@ -601,6 +628,10 @@ class _EntryRow extends StatelessWidget {
                       formatDayShort(entry.entryDate, currentYear: parseYmd(progress.today).year),
                       style: text.small,
                     ),
+                    if (!conversation.isEmpty) ...[
+                      const SizedBox(height: AppDimens.gap2),
+                      ConversationBadge(conversation: conversation),
+                    ],
                   ],
                 ),
               ),

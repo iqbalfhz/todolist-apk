@@ -11,6 +11,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../comments/domain/comment.dart';
+import '../../comments/presentation/comments_section.dart';
 import '../../spaces/domain/household.dart';
 import '../domain/memory.dart';
 import '../domain/memory_views.dart';
@@ -21,14 +23,34 @@ import 'photo_imports.dart';
 
 enum _MemoryAction { edit, delete }
 
-/// Detail kenangan: sampul, tanggal dan tempat, perjalanannya, cerita, dan kisi foto.
-class MemoryDetailScreen extends ConsumerWidget {
-  const MemoryDetailScreen({super.key, required this.memoryId});
+/// Detail kenangan: sampul, tanggal dan tempat, perjalanannya, cerita, kisi foto, dan
+/// komentar serta reaksi (v1.x, hanya di Ruang Bersama).
+class MemoryDetailScreen extends ConsumerStatefulWidget {
+  const MemoryDetailScreen({super.key, required this.memoryId, this.showComments = false});
 
   final String memoryId;
 
+  /// Dibuka dari notifikasi komentar atau reaksi: langsung gulir ke bagian Komentar.
+  final bool showComments;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MemoryDetailScreen> createState() => _MemoryDetailScreenState();
+}
+
+class _MemoryDetailScreenState extends ConsumerState<MemoryDetailScreen> {
+  final ScrollController _scroll = ScrollController();
+  final GlobalKey _commentsKey = GlobalKey();
+  bool _scrolledToComments = false;
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final memoryId = widget.memoryId;
     final l10n = context.l10n;
     final household = ref.watch(householdProvider);
     final items = ref.watch(memoryItemsProvider);
@@ -69,9 +91,16 @@ class MemoryDetailScreen extends ConsumerWidget {
       final photos = item.photos;
       final total = photos.length + preparing;
       final full = total >= Limits.memoryPhotos;
+      final shared = household.isShared(memory.spaceId);
+
+      if (widget.showComments && !_scrolledToComments && shared) {
+        _scrolledToComments = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) => scrollToComments(_scroll, _commentsKey));
+      }
 
       body = PageBody(
         onRefresh: () => refreshFromServer(ref),
+        controller: _scroll,
         children: [
           ScreenHeader(
             title: memory.title,
@@ -197,6 +226,16 @@ class MemoryDetailScreen extends ConsumerWidget {
                       icon: const Icon(Symbols.add_photo_alternate_rounded, size: AppDimens.iconMd),
                       label: Text(l10n.memoryPhotosAdd),
                     ),
+            ),
+          ],
+          // Komentar dan reaksi (v1.x) hanya di Ruang Bersama.
+          if (shared) ...[
+            const SizedBox(height: AppDimens.gap16),
+            CommentsSection(
+              key: _commentsKey,
+              subject: Subject(SubjectType.memory, memory.id),
+              spaceId: memory.spaceId,
+              household: household,
             ),
           ],
         ],

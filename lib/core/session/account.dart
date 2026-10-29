@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../../features/auth/data/profile_repository.dart';
+import '../../features/comments/data/comment_repository.dart';
 import '../../features/memories/data/memory_photo_images.dart';
 import '../../features/memories/data/memory_repository.dart';
 import '../../features/savings/data/savings_repository.dart';
@@ -61,6 +62,7 @@ class Account {
     dates = SpecialDateRepository(writer: writer, userId: userId);
     trips = TripRepository(writer: writer, userId: userId);
     memories = MemoryRepository(writer: writer, api: api, applier: applier, files: files, userId: userId);
+    comments = CommentRepository(writer: writer, userId: userId);
     photoImages = MemoryPhotoImages(cache: photoCache, files: files, refreshUrls: memories.refreshPhotos, now: now);
     profile = ProfileRepository(writer: writer, api: api, applier: applier, userId: userId);
     spaces = SpaceRepository(store: store, api: api, applier: applier);
@@ -80,6 +82,9 @@ class Account {
   late final SpecialDateRepository dates;
   late final TripRepository trips;
   late final MemoryRepository memories;
+
+  /// Komentar dan reaksi (v1.x).
+  late final CommentRepository comments;
 
   /// Foto kenangan yang sudah dikompres dan menunggu diunggah.
   late final PhotoFiles photoFiles;

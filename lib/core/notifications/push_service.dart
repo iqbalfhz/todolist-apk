@@ -57,6 +57,17 @@ class PushMessage {
 
   bool get isAboutMemory => type == 'memory_created';
 
+  /// Subjek `comment_created` dan `reaction_created` (v1.x): `task`, `savings_entry`, atau `memory`.
+  String? get subjectType => _filled(data['subject_type']);
+
+  String? get subjectId => _filled(data['subject_id']);
+
+  /// Komentar atau reaksi baru (v1.x); saat diketuk membuka subjeknya beserta komentarnya.
+  bool get isAboutConversation => type == 'comment_created' || type == 'reaction_created';
+
+  /// Isinya disembunyikan di layar kunci: push tabungan, dan komentar atau reaksi pada setoran.
+  bool get isPrivate => isAboutSavings || subjectType == 'savings_entry';
+
   /// Push tanpa tampilan (v1.x): server memberi tahu ada perubahan di ruang bersama, supaya app
   /// yang sedang terbuka langsung sync. Pesan data tanpa judul dan isi juga dianggap begini,
   /// supaya tidak pernah muncul notifikasi kosong.
@@ -73,6 +84,9 @@ class PushMessage {
 
   /// Kunci yang membuat notifikasi untuk hal yang sama menimpa yang lama.
   String get tag {
+    // Komentar dan reaksi pada setoran juga membawa savings_goal_id, jadi dicek lebih dulu.
+    if (subjectId != null && type == 'comment_created') return 'comment-$subjectId';
+    if (subjectId != null && type == 'reaction_created') return 'reaction-$subjectId';
     if (taskId != null) return 'task-$taskId';
     if (goalId != null) return 'goal-$goalId';
     if (specialDateId != null) return 'date-$specialDateId';
@@ -218,7 +232,8 @@ class FirebasePushService implements PushService {
         const AndroidNotificationChannel(
           PushChannels.activity,
           'Aktivitas',
-          description: 'Titipan baru, tugas selesai, setoran tabungan, dan pasangan bergabung.',
+          description:
+              'Titipan baru, tugas selesai, setoran tabungan, kenangan baru, komentar, reaksi, dan pasangan bergabung.',
         ),
       );
     } on Object catch (error) {
@@ -326,7 +341,7 @@ class FirebasePushService implements PushService {
             priority: reminder ? Priority.high : Priority.defaultPriority,
             tag: message.tag,
             // Nominal tabungan tidak tampil di layar kunci.
-            visibility: message.isAboutSavings ? NotificationVisibility.private : null,
+            visibility: message.isPrivate ? NotificationVisibility.private : null,
           ),
         ),
       );

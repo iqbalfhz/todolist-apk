@@ -40,6 +40,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
     required this.axisStrong,
     required this.navLabel,
     required this.navLabelSelected,
+    required this.reaction,
+    required this.reactionLarge,
   });
 
   factory AppTextStyles.from(AppPalette palette) {
@@ -93,6 +95,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       axisStrong: style(11, bold),
       navLabel: style(12, medium, color: palette.muted),
       navLabelSelected: style(12, bold, color: palette.link),
+      reaction: style(18, regular),
+      reactionLarge: style(24, regular),
     );
   }
 
@@ -189,6 +193,12 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
   /// Label tab bawah yang aktif — 12 Bold.
   final TextStyle navLabelSelected;
 
+  /// Emoji di chip reaksi (v1.x) — 18.
+  final TextStyle reaction;
+
+  /// Emoji di pilihan reaksi (v1.x) — 24.
+  final TextStyle reactionLarge;
+
   @override
   AppTextStyles copyWith() => this;
 
@@ -229,6 +239,8 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> {
       axisStrong: mix(axisStrong, other.axisStrong),
       navLabel: mix(navLabel, other.navLabel),
       navLabelSelected: mix(navLabelSelected, other.navLabelSelected),
+      reaction: mix(reaction, other.reaction),
+      reactionLarge: mix(reactionLarge, other.reactionLarge),
     );
   }
 }

@@ -85,6 +85,9 @@ abstract final class AppDimens {
 
   // Avatar.
   static const double avatarSmall = 36;
+
+  /// Avatar di komentar (v1.x).
+  static const double avatarComment = 32;
   static const double avatarRow = 44;
   static const double avatarMedium = 80;
   static const double avatarLarge = 112;

@@ -154,7 +154,12 @@ void main() {
       expect(find.text('−Rp1.500.000'), findsOneWidget);
 
       // Mengubah penarikan: batasnya ditambah nominal penarikan itu sendiri.
+      // Target bersama: setoran dibuka detailnya dulu (v1.x), lalu Ubah penarikan.
       await tester.tap(find.text('Aku mengambil · Tiket kereta'));
+      await settle(tester);
+      expect(find.text('Penarikan'), findsOneWidget);
+      expect(find.text('−Rp1.500.000'), findsWidgets);
+      await tester.tap(find.text('Ubah penarikan'));
       await settle(tester);
       expect(find.text('Ubah penarikan'), findsOneWidget);
       expect(find.text('Terkumpul Rp4.500.000, jadi paling banyak segitu yang bisa diambil.'), findsOneWidget);

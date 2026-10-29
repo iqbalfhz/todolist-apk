@@ -192,6 +192,8 @@ class FakeApi implements ApiTransport {
           'deleted_at': null,
         };
         if (resource == 'tasks') return _taskReply(table, id, null, created, status: 201);
+        // Seperti server: penulis komentar dan pemilik reaksi adalah akun yang mengirim.
+        if (resource == 'comments' || resource == 'reactions') created['user_id'] = me?['id'] ?? created['user_id'];
         table[id] = created;
         return ApiResponse(status: 201, body: {'data': created});
 
@@ -397,6 +399,7 @@ class FakeApi implements ApiTransport {
     },
     'savings-entries' => {'space_id': 'space-shared', 'user_id': 'server-user', 'type': 'deposit', 'note': null},
     'special-dates' => {'created_by': 'server-user'},
+    'comments' || 'reactions' => {'space_id': 'space-shared', 'user_id': 'server-user'},
     'memories' => {'trip_id': null, 'place_name': null, 'story': null, 'created_by': 'server-user'},
     'trips' => {
       'destination': null,
@@ -420,6 +423,8 @@ class FakeApi implements ApiTransport {
     List<Map<String, dynamic>> trips = const [],
     List<Map<String, dynamic>> memories = const [],
     List<Map<String, dynamic>> memoryPhotos = const [],
+    List<Map<String, dynamic>> comments = const [],
+    List<Map<String, dynamic>> reactions = const [],
     String? serverTime,
     String? nextCursor,
   }) => {
@@ -433,6 +438,8 @@ class FakeApi implements ApiTransport {
       'trips': trips,
       'memories': memories,
       'memory_photos': memoryPhotos,
+      'comments': comments,
+      'reactions': reactions,
     },
     'meta': {'server_time': serverTime ?? stamp(), 'has_more': nextCursor != null, 'next_cursor': nextCursor},
   };
