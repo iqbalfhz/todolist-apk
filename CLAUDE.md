@@ -20,7 +20,7 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Warna gelap yang di `.claude/rules/tema.md` masih "belum ditetapkan" (`danger` dan lima warna diri) diisi sementara di `lib/core/theme/app_palette.dart`. Kontrasnya lolos tes, tetapi pilihan warnanya belum disahkan pemilik.
 - `ok` di atas `bg` Anggrek terang hanya 4,46:1, di bawah batas 4,5:1. Tokennya tidak diubah; di app, `ok` hanya dipakai di atas `surface`.
 
-- APK dengan penarikan tabungan dan pin lokasi (29 Oktober 2026) harus terpasang di HP pasangan sebelum penarikan pertama dicatat: app lama menghitung penarikan sebagai setoran. HP pasangan juga masih memakai APK lama yang koneksinya bisa disadap di Wi-Fi publik.
+- APK dengan penarikan tabungan dan pin lokasi sudah terpasang di HP pemilik (29 Oktober 2026, 13.24), dan harus terpasang juga di HP pasangan sebelum penarikan pertama dicatat: app lama menghitung penarikan sebagai setoran. HP pasangan juga masih memakai APK lama yang koneksinya bisa disadap di Wi-Fi publik.
 - Pin lokasi belum dicoba di HP sungguhan: ubin OpenStreetMap, cache ubin, dan cari tempat lewat Nominatim di server produksi.
 - Widget "Tugas hari ini" sudah terdaftar di HP pemilik, tetapi belum pernah ditambahkan ke layar utama, jadi tampilannya di launcher HyperOS dan pergantian harinya belum dilihat.
 - Sisa v1.x butuh sisi Laravel dulu: reaksi dan komentar (kontraknya sedang disusun di dokumen perencanaan), lalu masuk dengan Google (juga butuh klien OAuth dari pemilik).
