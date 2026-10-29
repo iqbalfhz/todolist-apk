@@ -53,6 +53,13 @@ String? _redirect(Ref ref, GoRouterState state) {
 
 bool _fromHome(GoRouterState state) => state.uri.queryParameters[Routes.fromParam] == Routes.fromHome;
 
+bool _showComments(GoRouterState state) => state.uri.queryParameters[Routes.commentsParam] == '1';
+
+/// Kunci layar detail yang ikut berganti saat dibuka lagi dari notifikasi dengan kueri lain,
+/// supaya gulir ke komentar atau setoran yang dibuka tetap terjadi.
+ValueKey<String> _detailKeyWithQuery(GoRouterState state) =>
+    ValueKey('${state.pathParameters['id']}?${state.uri.query}');
+
 /// Layar detail diberi kunci per ID. Tanpa itu, pindah langsung dari satu detail ke detail lain
 /// (misalnya lewat ketukan notifikasi) memakai ulang isian milik data sebelumnya.
 ValueKey<String> _detailKey(GoRouterState state, [String param = 'id']) => ValueKey(state.pathParameters[param]!);
@@ -109,9 +116,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: ':id',
                     builder: (_, state) => TaskDetailScreen(
-                      key: _detailKey(state),
+                      key: _detailKeyWithQuery(state),
                       taskId: state.pathParameters['id']!,
                       fromHome: _fromHome(state),
+                      showComments: _showComments(state),
                     ),
                   ),
                 ],
@@ -127,9 +135,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: ':id',
                     builder: (_, state) => GoalDetailScreen(
-                      key: _detailKey(state),
+                      key: _detailKeyWithQuery(state),
                       goalId: state.pathParameters['id']!,
                       fromHome: _fromHome(state),
+                      openEntryId: state.uri.queryParameters[Routes.entryParam],
                     ),
                   ),
                 ],
@@ -205,8 +214,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: ':id',
-                    builder: (_, state) =>
-                        MemoryDetailScreen(key: _detailKey(state), memoryId: state.pathParameters['id']!),
+                    builder: (_, state) => MemoryDetailScreen(
+                      key: _detailKeyWithQuery(state),
+                      memoryId: state.pathParameters['id']!,
+                      showComments: _showComments(state),
+                    ),
                     routes: [
                       GoRoute(
                         path: 'ubah',

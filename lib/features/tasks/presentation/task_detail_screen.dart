@@ -13,6 +13,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../comments/domain/comment.dart';
+import '../../comments/presentation/comments_section.dart';
 import '../../spaces/domain/household.dart';
 import '../domain/task_list.dart';
 import '../domain/task_views.dart';
@@ -26,9 +28,18 @@ import 'task_text.dart';
 /// Teks dikirim 1 detik setelah berhenti mengetik, dan langsung ditulis ke antrean
 /// saat app masuk ke latar belakang atau layar ditutup.
 class TaskDetailScreen extends ConsumerStatefulWidget {
-  const TaskDetailScreen({super.key, required this.taskId, this.fromHome = false, this.backTo});
+  const TaskDetailScreen({
+    super.key,
+    required this.taskId,
+    this.fromHome = false,
+    this.backTo,
+    this.showComments = false,
+  });
 
   final String taskId;
+
+  /// Dibuka dari notifikasi komentar atau reaksi (v1.x): langsung gulir ke bagian Komentar.
+  final bool showComments;
 
   /// Dibuka dari Beranda; tombol kembali pulang ke sana.
   final bool fromHome;
@@ -47,6 +58,9 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
   final TextEditingController _notes = TextEditingController();
   final FocusNode _titleFocus = FocusNode();
   final FocusNode _notesFocus = FocusNode();
+  final ScrollController _scroll = ScrollController();
+  final GlobalKey _commentsKey = GlobalKey();
+  bool _scrolledToComments = false;
 
   Timer? _debounce;
   bool _titleDirty = false;
@@ -76,6 +90,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
     _notes.dispose();
     _titleFocus.dispose();
     _notesFocus.dispose();
+    _scroll.dispose();
     super.dispose();
   }
 
@@ -222,7 +237,13 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
       final titleEmpty = _filled && _title.text.trim().isEmpty;
       final sameSpaceLists = lists.where((list) => list.spaceId == item.space.id).length;
 
+      if (widget.showComments && !_scrolledToComments && item.space.isShared) {
+        _scrolledToComments = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) => scrollToComments(_scroll, _commentsKey));
+      }
+
       body = PageBody(
+        controller: _scroll,
         children: [
           header,
           const SizedBox(height: AppDimens.gap12),
@@ -392,6 +413,16 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
           ),
           const SizedBox(height: AppDimens.gap16),
           Text(l10n.taskAutosaved, style: text.small, textAlign: TextAlign.center),
+          // Komentar dan reaksi (v1.x) hanya di Ruang Bersama.
+          if (item.space.isShared) ...[
+            const SizedBox(height: AppDimens.gap20),
+            CommentsSection(
+              key: _commentsKey,
+              subject: Subject(SubjectType.task, task.id),
+              spaceId: item.space.id,
+              household: household,
+            ),
+          ],
         ],
       );
     }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../features/auth/domain/user.dart';
+import '../../features/comments/domain/comment.dart';
 import '../../features/memories/domain/memory.dart';
 import '../../features/memories/domain/memory_photo.dart';
 import '../../features/savings/domain/savings_entry.dart';
@@ -77,6 +78,12 @@ class LocalStore {
       case EntityType.memoryPhoto:
         final row = await (db.select(db.memoryPhotos)..where((t) => t.id.equals(id))).getSingleOrNull();
         return row?.toModel().toJson();
+      case EntityType.comment:
+        final row = await (db.select(db.comments)..where((t) => t.id.equals(id))).getSingleOrNull();
+        return row?.toModel().toJson();
+      case EntityType.reaction:
+        final row = await (db.select(db.reactions)..where((t) => t.id.equals(id))).getSingleOrNull();
+        return row?.toModel().toJson();
       case EntityType.me:
         final raw = await meta(MetaKeys.profile);
         return raw == null ? null : jsonDecode(raw) as Map<String, dynamic>;
@@ -150,6 +157,20 @@ class LocalStore {
                   ..where(db.memoryPhotos.id.equals(id)))
                 .map((row) => row.read(db.memoryPhotos.serverUpdatedAt))
                 .getSingleOrNull();
+      case EntityType.comment:
+        stamp =
+            await (db.selectOnly(db.comments)
+                  ..addColumns([db.comments.serverUpdatedAt])
+                  ..where(db.comments.id.equals(id)))
+                .map((row) => row.read(db.comments.serverUpdatedAt))
+                .getSingleOrNull();
+      case EntityType.reaction:
+        stamp =
+            await (db.selectOnly(db.reactions)
+                  ..addColumns([db.reactions.serverUpdatedAt])
+                  ..where(db.reactions.id.equals(id)))
+                .map((row) => row.read(db.reactions.serverUpdatedAt))
+                .getSingleOrNull();
       case EntityType.me:
         stamp = null;
     }
@@ -200,6 +221,14 @@ class LocalStore {
         await db
             .into(db.memoryPhotos)
             .insertOnConflictUpdate(memoryPhotoCompanion(MemoryPhoto.fromJson(json), serverUpdatedAt: serverUpdatedAt));
+      case EntityType.comment:
+        await db
+            .into(db.comments)
+            .insertOnConflictUpdate(commentCompanion(Comment.fromJson(json), serverUpdatedAt: serverUpdatedAt));
+      case EntityType.reaction:
+        await db
+            .into(db.reactions)
+            .insertOnConflictUpdate(reactionCompanion(Reaction.fromJson(json), serverUpdatedAt: serverUpdatedAt));
       case EntityType.me:
         await setMeta(MetaKeys.profile, jsonEncode(User.fromJson(json).toJson()));
     }
@@ -237,37 +266,50 @@ class LocalStore {
         await (db.delete(db.memories)..where((t) => t.id.equals(id))).go();
       case EntityType.memoryPhoto:
         await (db.delete(db.memoryPhotos)..where((t) => t.id.equals(id))).go();
+      case EntityType.comment:
+        await (db.delete(db.comments)..where((t) => t.id.equals(id))).go();
+      case EntityType.reaction:
+        await (db.delete(db.reactions)..where((t) => t.id.equals(id))).go();
       case EntityType.me:
         break;
     }
   }
 
-  /// Tandai terhapus semua anak dari induk [parentId], kecuali ID di [except].
+  /// Tandai terhapus semua anak berjenis [childType] dari induk [parentId], kecuali ID di
+  /// [except]. Lihat [EntityType.children].
   Future<void> markChildrenDeleted(
-    EntityType parentType,
+    EntityType childType,
     String parentId, {
     required String deletedAt,
     Set<String> except = const {},
   }) async {
-    switch (parentType) {
-      case EntityType.list:
+    switch (childType) {
+      case EntityType.task:
         await (db.update(db.tasks)
               ..where((t) => t.taskListId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
             .write(TasksCompanion(deletedAt: Value(deletedAt)));
-      case EntityType.goal:
+      case EntityType.entry:
         await (db.update(db.savingsEntries)
               ..where((t) => t.savingsGoalId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
             .write(SavingsEntriesCompanion(deletedAt: Value(deletedAt)));
-      case EntityType.memory:
+      case EntityType.memoryPhoto:
         await (db.update(db.memoryPhotos)
               ..where((t) => t.memoryId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
             .write(MemoryPhotosCompanion(deletedAt: Value(deletedAt)));
+      case EntityType.comment:
+        await (db.update(db.comments)
+              ..where((t) => t.subjectId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
+            .write(CommentsCompanion(deletedAt: Value(deletedAt)));
+      case EntityType.reaction:
+        await (db.update(db.reactions)
+              ..where((t) => t.subjectId.equals(parentId) & t.deletedAt.isNull() & t.id.isNotIn(except)))
+            .write(ReactionsCompanion(deletedAt: Value(deletedAt)));
       case EntityType.space ||
-          EntityType.task ||
-          EntityType.entry ||
+          EntityType.list ||
+          EntityType.goal ||
           EntityType.specialDate ||
           EntityType.trip ||
-          EntityType.memoryPhoto ||
+          EntityType.memory ||
           EntityType.me:
         break;
     }
@@ -402,6 +444,30 @@ class LocalStore {
             ..orderBy([(t) => OrderingTerm(expression: t.position), (t) => OrderingTerm(expression: t.id)]))
           .watch()
           .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Komentar yang belum dihapus (v1.x), urut `created_at`.
+  Stream<List<Comment>> watchComments() =>
+      (db.select(db.comments)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm(expression: t.createdAt), (t) => OrderingTerm(expression: t.id)]))
+          .watch()
+          .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Reaksi yang belum dihapus (v1.x), urut `created_at`.
+  Stream<List<Reaction>> watchReactions() =>
+      (db.select(db.reactions)
+            ..where((t) => t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm(expression: t.createdAt), (t) => OrderingTerm(expression: t.id)]))
+          .watch()
+          .map((rows) => rows.map((row) => row.toModel()).toList());
+
+  /// Reaksi [userId] pada subjek [subjectId] yang belum dihapus. Biasanya paling banyak satu.
+  Future<List<Reaction>> reactionsBy(String userId, String subjectId) async {
+    final rows = await (db.select(
+      db.reactions,
+    )..where((t) => t.userId.equals(userId) & t.subjectId.equals(subjectId) & t.deletedAt.isNull())).get();
+    return rows.map((row) => row.toModel()).toList();
+  }
 
   /// Foto kenangan [memoryId] yang belum dihapus, urut `position`.
   Future<List<MemoryPhoto>> memoryPhotos(String memoryId) async {

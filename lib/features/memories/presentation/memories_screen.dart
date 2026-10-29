@@ -10,6 +10,8 @@ import '../../../core/sync/sync_actions.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../comments/domain/conversation.dart';
+import '../../comments/presentation/comments_section.dart';
 import '../../spaces/domain/household.dart';
 import '../domain/memory_views.dart';
 import 'memory_photo_view.dart';
@@ -102,7 +104,7 @@ class MemoriesScreen extends ConsumerWidget {
 }
 
 /// Kartu satu kenangan: sampul (kalau ada foto), judul, tanggal dan tempat, jumlah foto.
-class MemoryCard extends StatelessWidget {
+class MemoryCard extends ConsumerWidget {
   const MemoryCard({super.key, required this.item, required this.household, required this.currentYear});
 
   final MemoryItem item;
@@ -110,7 +112,8 @@ class MemoryCard extends StatelessWidget {
   final int currentYear;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final conversation = conversationOf(ref.watch(conversationsProvider), item.memory.id);
     final l10n = context.l10n;
     final text = context.text;
     final memory = item.memory;
@@ -148,6 +151,8 @@ class MemoryCard extends StatelessWidget {
                     _Meta(icon: Symbols.photo_library_rounded, label: l10n.memoryPhotoCount(item.photos.length)),
                     // Ruang Pribadi ditandai ikon gembok, bukan hanya teks.
                     if (private) _Meta(icon: Symbols.lock_rounded, label: l10n.labelPersonal),
+                    // Reaksi dan komentar (v1.x).
+                    if (!conversation.isEmpty) ConversationBadge(conversation: conversation),
                   ],
                 ),
               ],

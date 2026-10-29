@@ -22,9 +22,17 @@ abstract final class Routes {
   static const String fromParam = 'dari';
   static const String fromHome = 'beranda';
 
-  static String task(String id, {bool fromHome = false}) => '/tugas/$id${_origin(fromHome)}';
+  /// Parameter kueri: gulir langsung ke bagian Komentar (v1.x), dari notifikasi.
+  static const String commentsParam = 'komentar';
 
-  static String goal(String id, {bool fromHome = false}) => '/tabungan/$id${_origin(fromHome)}';
+  /// Parameter kueri: setoran yang langsung dibuka di Detail tabungan (v1.x), dari notifikasi.
+  static const String entryParam = 'setoran';
+
+  static String task(String id, {bool fromHome = false, bool comments = false}) =>
+      _with('/tugas/$id', {if (fromHome) fromParam: Routes.fromHome, if (comments) commentsParam: '1'});
+
+  static String goal(String id, {bool fromHome = false, String? entryId}) =>
+      _with('/tabungan/$id', {if (fromHome) fromParam: Routes.fromHome, entryParam: ?entryId});
 
   /// Detail perjalanan (v0.2).
   static String trip(String id) => '/liburan/$id';
@@ -48,7 +56,8 @@ abstract final class Routes {
   /// Kenangan baru, kosong atau diisi dari perjalanan [tripId].
   static String newMemory({String? tripId}) => tripId == null ? '/kenangan/baru' : '/kenangan/baru?$tripParam=$tripId';
 
-  static String memory(String id) => '/kenangan/$id';
+  static String memory(String id, {bool comments = false}) =>
+      _with('/kenangan/$id', {if (comments) commentsParam: '1'});
 
   /// Peta kenangan (v1.x), opsional langsung memilih kenangan [focusId].
   static String memoriesMap({String? focusId}) =>
@@ -62,5 +71,6 @@ abstract final class Routes {
   /// Galeri foto kenangan [memoryId], dibuka di foto [photoId]. Di luar tab bawah.
   static String memoryPhoto(String memoryId, String photoId) => '/kenangan/$memoryId/foto/$photoId';
 
-  static String _origin(bool fromHome) => fromHome ? '?$fromParam=${Routes.fromHome}' : '';
+  static String _with(String path, Map<String, String> query) =>
+      query.isEmpty ? path : Uri(path: path, queryParameters: query).toString();
 }

@@ -43,9 +43,18 @@ class ScreenHeader extends StatelessWidget {
 
 /// Halaman bergulir dengan padding samping 20 dan atas 24.
 class PageBody extends StatelessWidget {
-  const PageBody({super.key, required this.children, this.onRefresh, this.bottomPadding = AppDimens.pageBottom});
+  const PageBody({
+    super.key,
+    required this.children,
+    this.onRefresh,
+    this.bottomPadding = AppDimens.pageBottom,
+    this.controller,
+  });
 
   final List<Widget> children;
+
+  /// Untuk layar yang perlu menggulir sendiri, misalnya ke bagian Komentar.
+  final ScrollController? controller;
 
   /// Tarik untuk menyegarkan (menjalankan sync).
   final Future<void> Function()? onRefresh;
@@ -54,6 +63,7 @@ class PageBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final list = ListView(
+      controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(AppDimens.pageSide, AppDimens.pageTop, AppDimens.pageSide, bottomPadding),
       children: children,

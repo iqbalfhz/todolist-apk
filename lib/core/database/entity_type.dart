@@ -21,6 +21,12 @@ enum EntityType {
   /// Foto kenangan (v0.3). Dibuat lewat `POST` multipart, bukan `PUT`.
   memoryPhoto(apiPath: 'memory-photos', syncKey: 'memory_photos'),
 
+  /// Komentar pada tugas, setoran, atau kenangan di Ruang Bersama (v1.x).
+  comment(apiPath: 'comments', syncKey: 'comments'),
+
+  /// Reaksi emoji pada tugas, setoran, atau kenangan di Ruang Bersama (v1.x). Tanpa `PATCH`.
+  reaction(apiPath: 'reactions', syncKey: 'reactions'),
+
   /// Profil sendiri; hanya `PATCH /me` yang lewat antrean.
   me(apiPath: 'me');
 
@@ -30,17 +36,32 @@ enum EntityType {
   final String? syncKey;
 
   /// Urutan penerapan satu halaman sync: induk dulu, baru anak.
-  static const List<EntityType> syncOrder = [space, trip, list, task, goal, entry, specialDate, memory, memoryPhoto];
+  static const List<EntityType> syncOrder = [
+    space,
+    trip,
+    list,
+    task,
+    goal,
+    entry,
+    specialDate,
+    memory,
+    memoryPhoto,
+    comment,
+    reaction,
+  ];
 
-  /// Jenis anak yang ikut terhapus saat induknya dihapus, beserta kolom penunjuk induknya.
+  /// Jenis anak yang ikut terhapus saat induknya dihapus. Komentar dan reaksi (v1.x) menunjuk
+  /// induknya lewat `subject_id`.
   ///
   /// Perjalanan tidak tercantum: server ikut menghapus checklist dan tugasnya, dan
-  /// penghapusan itu sampai lewat sync bersama perjalanannya.
-  (EntityType, String)? get child => switch (this) {
-    EntityType.list => (EntityType.task, 'task_list_id'),
-    EntityType.goal => (EntityType.entry, 'savings_goal_id'),
-    EntityType.memory => (EntityType.memoryPhoto, 'memory_id'),
-    _ => null,
+  /// penghapusan itu sampai lewat sync bersama perjalanannya. Begitu pula komentar dan
+  /// reaksi pada anak dari induk yang dihapus berantai (daftar ke tugas, target ke setoran).
+  List<EntityType> get children => switch (this) {
+    EntityType.list => const [EntityType.task],
+    EntityType.goal => const [EntityType.entry],
+    EntityType.memory => const [EntityType.memoryPhoto, EntityType.comment, EntityType.reaction],
+    EntityType.task || EntityType.entry => const [EntityType.comment, EntityType.reaction],
+    _ => const [],
   };
 
   static EntityType byName(String name) => values.firstWhere((type) => type.name == name);

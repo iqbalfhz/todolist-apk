@@ -99,7 +99,7 @@ class TripRepository {
     final deletedAt = writer.nowIso();
     for (final checklist in await writer.store.checklistsOf(id)) {
       await writer.store.patch(EntityType.list, checklist.id, {'deleted_at': deletedAt});
-      await writer.store.markChildrenDeleted(EntityType.list, checklist.id, deletedAt: deletedAt);
+      await writer.store.markChildrenDeleted(EntityType.task, checklist.id, deletedAt: deletedAt);
     }
   });
 

@@ -126,7 +126,7 @@ void main() {
       await h.account.store.setMeta(MetaKeys.syncCollections, '5');
       h.api.syncPages.add(h.api.syncPage(serverTime: 'T-1', memories: [pinned(memoryJson(), -8.506853, 115.262477)]));
 
-      expect(SyncEngine.collectionsVersion, 6);
+      expect(SyncEngine.collectionsVersion, greaterThanOrEqualTo(6));
       await h.account.sync.sync();
 
       expect(
@@ -137,7 +137,7 @@ void main() {
         [null],
       );
       expect((await local(h))!.pin, const GeoPoint(-8.506853, 115.262477));
-      expect(await h.account.store.meta(MetaKeys.syncCollections), '6');
+      expect(await h.account.store.meta(MetaKeys.syncCollections), '${SyncEngine.collectionsVersion}');
     });
 
     test('database versi 5 dinaikkan ke versi 6: kolom pin di kenangan, isi lama tetap ada', () async {

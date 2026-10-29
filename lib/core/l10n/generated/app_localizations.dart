@@ -247,6 +247,126 @@ abstract class AppLocalizations {
   /// **'Navigasi utama'**
   String get navLabel;
 
+  /// No description provided for @commentsTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Komentar'**
+  String get commentsTitle;
+
+  /// No description provided for @commentsCount.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} komentar'**
+  String commentsCount(int count);
+
+  /// No description provided for @commentsEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada komentar. Tulis yang pertama.'**
+  String get commentsEmpty;
+
+  /// No description provided for @commentHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Tulis komentar…'**
+  String get commentHint;
+
+  /// No description provided for @commentSend.
+  ///
+  /// In id, this message translates to:
+  /// **'Kirim komentar'**
+  String get commentSend;
+
+  /// No description provided for @commentRequired.
+  ///
+  /// In id, this message translates to:
+  /// **'Komentarnya masih kosong.'**
+  String get commentRequired;
+
+  /// No description provided for @commentTooLong.
+  ///
+  /// In id, this message translates to:
+  /// **'Komentar paling banyak 1.000 karakter.'**
+  String get commentTooLong;
+
+  /// No description provided for @commentEdited.
+  ///
+  /// In id, this message translates to:
+  /// **'diedit'**
+  String get commentEdited;
+
+  /// No description provided for @commentOptions.
+  ///
+  /// In id, this message translates to:
+  /// **'Opsi komentar'**
+  String get commentOptions;
+
+  /// No description provided for @commentEditTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Ubah komentar'**
+  String get commentEditTitle;
+
+  /// No description provided for @commentDeleted.
+  ///
+  /// In id, this message translates to:
+  /// **'Komentar dihapus.'**
+  String get commentDeleted;
+
+  /// No description provided for @reactionAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Beri reaksi'**
+  String get reactionAdd;
+
+  /// No description provided for @reactionClose.
+  ///
+  /// In id, this message translates to:
+  /// **'Tutup pilihan reaksi'**
+  String get reactionClose;
+
+  /// No description provided for @reactionPick.
+  ///
+  /// In id, this message translates to:
+  /// **'Reaksi {emoji}'**
+  String reactionPick(String emoji);
+
+  /// No description provided for @reactionBy.
+  ///
+  /// In id, this message translates to:
+  /// **'Reaksi {emoji} dari {people}'**
+  String reactionBy(String emoji, String people);
+
+  /// No description provided for @listAnd.
+  ///
+  /// In id, this message translates to:
+  /// **' dan '**
+  String get listAnd;
+
+  /// No description provided for @conversationSummary.
+  ///
+  /// In id, this message translates to:
+  /// **'{reactions} reaksi, {comments} komentar'**
+  String conversationSummary(int reactions, int comments);
+
+  /// No description provided for @entryDetailDeposit.
+  ///
+  /// In id, this message translates to:
+  /// **'Setoran'**
+  String get entryDetailDeposit;
+
+  /// No description provided for @entryGone.
+  ///
+  /// In id, this message translates to:
+  /// **'Setoran ini sudah dihapus.'**
+  String get entryGone;
+
+  /// No description provided for @entryDetailWithdrawal.
+  ///
+  /// In id, this message translates to:
+  /// **'Penarikan'**
+  String get entryDetailWithdrawal;
+
   /// No description provided for @osmAttribution.
   ///
   /// In id, this message translates to:
@@ -1870,7 +1990,7 @@ abstract class AppLocalizations {
   /// No description provided for @notifPartnerActivitySub.
   ///
   /// In id, this message translates to:
-  /// **'Titipan baru, tugas selesai, dan kenangan baru'**
+  /// **'Titipan baru, tugas selesai, kenangan baru, komentar, dan reaksi'**
   String get notifPartnerActivitySub;
 
   /// No description provided for @notifSavingsActivity.

@@ -29,6 +29,60 @@
   "navTrips": "Liburan",
   "navMemories": "Kenangan",
   "navLabel": "Navigasi utama",
+  "commentsTitle": "Komentar",
+  "commentsCount": "{count} komentar",
+  "@commentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commentsEmpty": "Belum ada komentar. Tulis yang pertama.",
+  "commentHint": "Tulis komentar…",
+  "commentSend": "Kirim komentar",
+  "commentRequired": "Komentarnya masih kosong.",
+  "commentTooLong": "Komentar paling banyak 1.000 karakter.",
+  "commentEdited": "diedit",
+  "commentOptions": "Opsi komentar",
+  "commentEditTitle": "Ubah komentar",
+  "commentDeleted": "Komentar dihapus.",
+  "reactionAdd": "Beri reaksi",
+  "reactionClose": "Tutup pilihan reaksi",
+  "reactionPick": "Reaksi {emoji}",
+  "@reactionPick": {
+    "placeholders": {
+      "emoji": {
+        "type": "String"
+      }
+    }
+  },
+  "reactionBy": "Reaksi {emoji} dari {people}",
+  "@reactionBy": {
+    "placeholders": {
+      "emoji": {
+        "type": "String"
+      },
+      "people": {
+        "type": "String"
+      }
+    }
+  },
+  "listAnd": " dan ",
+  "conversationSummary": "{reactions} reaksi, {comments} komentar",
+  "@conversationSummary": {
+    "placeholders": {
+      "reactions": {
+        "type": "int"
+      },
+      "comments": {
+        "type": "int"
+      }
+    }
+  },
+  "entryDetailDeposit": "Setoran",
+  "entryGone": "Setoran ini sudah dihapus.",
+  "entryDetailWithdrawal": "Penarikan",
   "osmAttribution": "© OpenStreetMap contributors",
   "memoryPinLabel": "Tepatnya di titik mana?",
   "memoryPinHelp": "Opsional. Kenangan berpin tampil di Peta kenangan.",
@@ -614,7 +668,7 @@
   "notifTaskReminders": "Pengingat tugas",
   "notifTaskRemindersSub": "Saat tenggat tiba",
   "notifPartnerActivity": "Aktivitas pasangan",
-  "notifPartnerActivitySub": "Titipan baru, tugas selesai, dan kenangan baru",
+  "notifPartnerActivitySub": "Titipan baru, tugas selesai, kenangan baru, komentar, dan reaksi",
   "notifSavingsActivity": "Setoran tabungan",
   "notifSavingsActivitySub": "Setoran, penarikan, dan target tercapai",
   "notifSpecialDates": "Tanggal penting",

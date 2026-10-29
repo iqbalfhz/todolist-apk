@@ -10,7 +10,9 @@ import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/memories/presentation/location_picker_screen.dart';
 import 'package:todolist/features/memories/presentation/memory_form_screen.dart';
 import 'package:todolist/features/savings/domain/savings_views.dart';
+import 'package:todolist/features/savings/presentation/entry_detail_sheet.dart';
 import 'package:todolist/features/savings/presentation/goal_detail_screen.dart';
+import 'package:todolist/features/spaces/domain/household.dart';
 import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
 import 'package:todolist/features/savings/presentation/reminder_sheet.dart';
 import 'package:todolist/features/savings/presentation/savings_screen.dart';
@@ -111,6 +113,62 @@ void main() {
         memoryPhotoJson(id: '01m4drb7k0qz3n8st5vw2hx5zz', memory: '01m4dr8c50jk2mt7xw3pq9vb9z'),
         serverUpdatedAt: t0,
       );
+      // Komentar dan reaksi (v1.x): komentar panjang, yang diedit, dan beberapa reaksi.
+      final longComment = List.filled(
+        6,
+        'Sudah aku cek, tagihannya naik sedikit karena paket kuotanya berubah bulan ini.',
+      ).join(' ');
+      for (final (subjectType, subjectId, ids) in [
+        (
+          'task',
+          importantTaskId,
+          [
+            '01m4dt2k70f3qzr8vw5hx9cy7a',
+            '01m4dt2k70f3qzr8vw5hx9cy7b',
+            '01m4dt3f80g7mnp2xs6ty8vk7a',
+            '01m4dt3f80g7mnp2xs6ty8vk7b',
+          ],
+        ),
+        (
+          'memory',
+          longMemoryId,
+          [
+            '01m4dt2k70f3qzr8vw5hx9cy8a',
+            '01m4dt2k70f3qzr8vw5hx9cy8b',
+            '01m4dt3f80g7mnp2xs6ty8vk8a',
+            '01m4dt3f80g7mnp2xs6ty8vk8b',
+          ],
+        ),
+      ]) {
+        await h.account.store.write(
+          EntityType.comment,
+          commentJson(id: ids[0], subjectType: subjectType, subjectId: subjectId, body: longComment),
+          serverUpdatedAt: t0,
+        );
+        await h.account.store.write(
+          EntityType.comment,
+          commentJson(
+            id: ids[1],
+            subjectType: subjectType,
+            subjectId: subjectId,
+            userId: meId,
+            body: 'Oke, nanti aku yang bayar.',
+            createdAt: t1,
+            updatedAt: t2,
+          ),
+          serverUpdatedAt: t0,
+        );
+        await h.account.store.write(
+          EntityType.reaction,
+          reactionJson(id: ids[2], subjectType: subjectType, subjectId: subjectId, emoji: '😂'),
+          serverUpdatedAt: t0,
+        );
+        await h.account.store.write(
+          EntityType.reaction,
+          reactionJson(id: ids[3], subjectType: subjectType, subjectId: subjectId, userId: meId, emoji: '❤️'),
+          serverUpdatedAt: t0,
+        );
+      }
       final picker = FakePhotoPicker();
       final container = await pumpApp(tester, h, photoPicker: picker);
       await apply(tester, size: size, textScale: textScale);
@@ -138,6 +196,13 @@ void main() {
           dueDate: '2026-10-31',
         ).ignore();
       });
+      // Komentar dengan pilihan reaksi terbuka.
+      await visit(tester, container, Routes.task(importantTaskId, comments: true));
+      await tester.ensureVisible(find.byTooltip('Beri reaksi'));
+      await settle(tester);
+      await tester.tap(find.byTooltip('Beri reaksi'));
+      await settle(tester);
+      await scrollThrough(tester);
       await visit(tester, container, Routes.task(longTaskId));
       await visit(tester, container, Routes.task(doneRepeatTaskId));
 
@@ -180,6 +245,16 @@ void main() {
           tester.element(find.byType(GoalDetailScreen)),
           goal: goal,
           today: '2026-10-08',
+        ).ignore();
+      });
+      // Detail setoran di target bersama (v1.x), dengan komentar.
+      await withSheet(tester, container, () async {
+        final progress = container.read(goalProgressProvider)!.firstWhere((item) => item.goal.id == tripGoalId);
+        showEntryDetailSheet(
+          tester.element(find.byType(GoalDetailScreen)),
+          goalId: tripGoalId,
+          entryId: progress.entries.first.id,
+          household: container.read(householdProvider)!,
         ).ignore();
       });
       await visit(tester, container, Routes.goal(achievedGoalId));
@@ -243,7 +318,7 @@ void main() {
 
       // Kenangan (v0.3).
       await visit(tester, container, Routes.memories);
-      await visit(tester, container, Routes.memory(longMemoryId));
+      await visit(tester, container, Routes.memory(longMemoryId, comments: true));
       await visit(tester, container, Routes.memory(privateMemoryId));
       await visit(tester, container, Routes.memoryPhoto(longMemoryId, longMemoryCoverId));
       await visit(tester, container, Routes.editMemory(longMemoryId));

@@ -20,6 +20,9 @@ abstract final class Limits {
   static const int memoryPhotos = 50;
   static const int repeatInterval = 99;
   static const int emoji = 16;
+
+  /// Isi komentar (v1.x).
+  static const int commentBody = 1000;
   static const int passwordMin = 8;
   static const int invitationCode = 6;
 }

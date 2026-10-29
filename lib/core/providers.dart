@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/auth/data/auth_repository.dart';
 import '../features/auth/domain/user.dart';
+import '../features/comments/domain/comment.dart';
 import '../features/memories/domain/memory.dart';
 import '../features/memories/domain/memory_photo.dart';
 import '../features/savings/domain/savings_entry.dart';
@@ -162,6 +163,16 @@ final memoriesProvider = StreamProvider<List<Memory>>(
 /// Foto kenangan yang belum dihapus, urut `position` (v0.3).
 final memoryPhotosProvider = StreamProvider<List<MemoryPhoto>>(
   (ref) => ref.watch(accountProvider)?.memories.watchPhotos() ?? Stream.value(const []),
+);
+
+/// Komentar yang belum dihapus (v1.x), urut `created_at`.
+final commentsProvider = StreamProvider<List<Comment>>(
+  (ref) => ref.watch(accountProvider)?.comments.watchComments() ?? Stream.value(const []),
+);
+
+/// Reaksi yang belum dihapus (v1.x), urut `created_at`.
+final reactionsProvider = StreamProvider<List<Reaction>>(
+  (ref) => ref.watch(accountProvider)?.comments.watchReactions() ?? Stream.value(const []),
 );
 
 /// Memilih dan menyiapkan foto kenangan. Ditimpa di tes dengan versi palsu.

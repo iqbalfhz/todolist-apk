@@ -222,6 +222,42 @@ class MemoryPhotos extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// Komentar pada tugas, setoran, atau kenangan (v1.x).
+@DataClassName('CommentRow')
+class Comments extends Table {
+  TextColumn get id => text()();
+  TextColumn get spaceId => text()();
+  TextColumn get subjectType => text()();
+  TextColumn get subjectId => text()();
+  TextColumn get userId => text().nullable()();
+  TextColumn get body => text()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+  TextColumn get deletedAt => text().nullable()();
+  TextColumn get serverUpdatedAt => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
+/// Reaksi emoji pada tugas, setoran, atau kenangan (v1.x).
+@DataClassName('ReactionRow')
+class Reactions extends Table {
+  TextColumn get id => text()();
+  TextColumn get spaceId => text()();
+  TextColumn get subjectType => text()();
+  TextColumn get subjectId => text()();
+  TextColumn get userId => text().nullable()();
+  TextColumn get emoji => text()();
+  TextColumn get createdAt => text()();
+  TextColumn get updatedAt => text()();
+  TextColumn get deletedAt => text().nullable()();
+  TextColumn get serverUpdatedAt => text().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// Antrean operasi tulis yang belum sampai ke server, dikirim berurutan menurut `id`.
 @DataClassName('OutboxRow')
 class OutboxOps extends Table {
@@ -267,6 +303,8 @@ class MetaEntries extends Table {
     Trips,
     Memories,
     MemoryPhotos,
+    Comments,
+    Reactions,
     OutboxOps,
     MetaEntries,
   ],
@@ -280,8 +318,9 @@ class AppDatabase extends _$AppDatabase {
 
   /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
   /// dan jadwal pengingat setor di target (semuanya v0.2). 4: kenangan dan fotonya (v0.3).
+  /// 5: aturan ulang tugas (v1.0). 6: pin lokasi kenangan. 7: komentar dan reaksi (v1.x).
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -307,6 +346,10 @@ class AppDatabase extends _$AppDatabase {
       if (from >= 4 && from < 6) {
         await migrator.addColumn(memories, memories.latitude);
         await migrator.addColumn(memories, memories.longitude);
+      }
+      if (from < 7) {
+        await migrator.createTable(comments);
+        await migrator.createTable(reactions);
       }
     },
   );

@@ -15,6 +15,7 @@ import 'core/router/routes.dart';
 import 'core/session/account.dart';
 import 'core/session/session.dart';
 import 'core/session/token_revocations.dart';
+import 'features/comments/domain/comment.dart';
 import 'features/home/domain/home_widget_snapshot.dart';
 
 /// Menghubungkan akun yang sedang masuk dengan siklus hidup app.
@@ -242,6 +243,34 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
 
     // Lembar bawah atau dialog yang masih terbuka ditutup, supaya layar tujuan terlihat.
     router.routerDelegate.navigatorKey.currentState?.popUntil((route) => route is! PopupRoute);
+
+    // Komentar dan reaksi (v1.x): buka subjeknya dan langsung tampilkan komentarnya.
+    final subjectId = message.subjectId;
+    if (message.isAboutConversation && subjectId != null) {
+      switch (SubjectType.tryParse(message.subjectType)) {
+        case SubjectType.task:
+          if (await _exists(account, EntityType.task, subjectId)) {
+            return router.go(Routes.task(subjectId, comments: true));
+          }
+          router.go(Routes.tasks);
+          return _show(_l10n.notifTapMissingTask);
+        case SubjectType.memory:
+          if (await _exists(account, EntityType.memory, subjectId)) {
+            return router.go(Routes.memory(subjectId, comments: true));
+          }
+          router.go(Routes.memories);
+          return _show(_l10n.notifTapMissingMemory);
+        case SubjectType.savingsEntry:
+          if (goalId != null && await _exists(account, EntityType.goal, goalId)) {
+            final entryExists = await _exists(account, EntityType.entry, subjectId);
+            return router.go(Routes.goal(goalId, entryId: entryExists ? subjectId : null));
+          }
+          router.go(Routes.savings);
+          return _show(_l10n.notifTapMissingGoal);
+        case null:
+          break;
+      }
+    }
 
     if (message.isAboutTask && taskId != null) {
       if (await _exists(account, EntityType.task, taskId)) return router.go(Routes.task(taskId));

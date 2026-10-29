@@ -28,6 +28,8 @@ const String checklistId = '01m4dp5r21vbx9k3ws7ty6hn2r';
 const String memoryId = '01m4dr8c50jk2mt7xw3pq9vb6e';
 const String photoId = '01m4drb7k0qz3n8st5vw2hx4cy';
 const String photo2Id = '01m4drb7k1qz3n8st5vw2hx4cz';
+const String commentId = '01m4dt2k70f3qzr8vw5hx9cy4b';
+const String reactionId = '01m4dt3f80g7mnp2xs6ty8vk1d';
 
 const String t0 = '2026-10-08T10:00:00.000000Z';
 const String t1 = '2026-10-08T10:30:00.000000Z';
@@ -271,6 +273,50 @@ Map<String, dynamic> memoryJson({
 /// URL R2 bertanda tangan palsu, ditandatangani [signedAt] (`YYYYMMDDTHHMMSSZ`) dan berlaku 7 hari.
 String signedPhotoUrl(String id, {bool thumb = false, String signedAt = '20261008T100000Z'}) =>
     'https://r2.contoh.test/memories/$id${thumb ? '-thumb' : ''}.jpg?X-Amz-Date=$signedAt&X-Amz-Expires=604800&X-Amz-Signature=palsu';
+
+/// Komentar (v1.x), sama dengan contoh di kontrak, pada tugas di Ruang Bersama.
+Map<String, dynamic> commentJson({
+  String id = commentId,
+  String subjectType = 'task',
+  String subjectId = taskId,
+  String? userId = partnerId,
+  String body = 'Jangan lupa yang isi ulang, ya.',
+  String createdAt = t0,
+  String updatedAt = t0,
+  String? deletedAt,
+}) => {
+  'id': id,
+  'space_id': sharedSpaceId,
+  'subject_type': subjectType,
+  'subject_id': subjectId,
+  'user_id': userId,
+  'body': body,
+  'created_at': createdAt,
+  'updated_at': updatedAt,
+  'deleted_at': deletedAt,
+};
+
+/// Reaksi (v1.x), sama dengan contoh di kontrak, pada tugas di Ruang Bersama.
+Map<String, dynamic> reactionJson({
+  String id = reactionId,
+  String subjectType = 'task',
+  String subjectId = taskId,
+  String? userId = partnerId,
+  String emoji = '❤️',
+  String createdAt = t0,
+  String updatedAt = t0,
+  String? deletedAt,
+}) => {
+  'id': id,
+  'space_id': sharedSpaceId,
+  'subject_type': subjectType,
+  'subject_id': subjectId,
+  'user_id': userId,
+  'emoji': emoji,
+  'created_at': createdAt,
+  'updated_at': updatedAt,
+  'deleted_at': deletedAt,
+};
 
 Map<String, dynamic> memoryPhotoJson({
   String id = photoId,

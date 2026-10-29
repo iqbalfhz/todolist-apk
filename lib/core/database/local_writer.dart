@@ -134,6 +134,8 @@ class LocalWriter {
           EntityType.specialDate ||
           EntityType.trip ||
           EntityType.memory ||
+          EntityType.comment ||
+          EntityType.reaction ||
           EntityType.me:
         max = null;
     }

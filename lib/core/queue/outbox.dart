@@ -225,6 +225,34 @@ class Outbox {
     }
   }
 
+  /// Batalkan data [ids] yang dibuat lewat `PUT` tapi belum pernah dikirim: semua operasinya
+  /// dan barisnya dibuang, jadi server tidak pernah menerimanya. Mengembalikan ID yang batal;
+  /// yang sudah pernah dikirim dibiarkan. Dipakai saat reaksi diganti sebelum sempat terkirim.
+  Future<Set<String>> cancelUnsentCreates(EntityType type, Iterable<String> ids) async {
+    final wanted = ids.toSet();
+    if (wanted.isEmpty) return const {};
+
+    return store.transaction(() async {
+      final ops = await (_db.select(
+        _db.outboxOps,
+      )..where((t) => t.entityType.equals(type.name) & t.entityId.isIn(wanted))).get();
+      final unsent = {
+        for (final op in ops)
+          if (op.method == 'PUT' && !op.attempted) op.entityId,
+      };
+      // Yang punya operasi lain yang sudah pernah dikirim tidak dibatalkan.
+      unsent.removeWhere((id) => ops.any((op) => op.entityId == id && op.attempted));
+
+      for (final op in ops) {
+        if (unsent.contains(op.entityId)) await _delete(op.id);
+      }
+      for (final id in unsent) {
+        await store.remove(type, id);
+      }
+      return unsent;
+    });
+  }
+
   /// Urungkan: hapus operasi itu saja dan pulihkan nilai sebelumnya, jadi pasangan
   /// tidak menerima notifikasi yang dibatalkan. `false` kalau operasinya sudah dikirim.
   Future<bool> undo(int opId) async {
@@ -465,6 +493,11 @@ class Outbox {
         return FlushState.waitingRetry;
 
       case ApiErrorCode.parentDeleted || ApiErrorCode.parentArchived:
+        // Reaksi ke subjek yang sudah dihapus cukup dibuang, tanpa pesan (kontrak, v1.x).
+        if (type == EntityType.reaction) {
+          await _discard(op, error, silent: true);
+          return null;
+        }
         if (type != EntityType.task) {
           // Setoran ke target, atau foto ke kenangan, yang sudah dihapus: buang dan beri tahu.
           await _discard(op, error);
@@ -506,7 +539,7 @@ class Outbox {
   ///
   /// "Pakai `current`": kalau `null`, hapus versi lokal; kalau terisi, timpa versi
   /// lokal dengannya. Itu juga yang memulihkan daftar yang gagal dihapus.
-  Future<void> _discard(OutboxRow op, ApiError error) async {
+  Future<void> _discard(OutboxRow op, ApiError error, {bool silent = false}) async {
     final type = EntityType.byName(op.entityType);
 
     final removed = await store.transaction(() async {
@@ -533,7 +566,7 @@ class Outbox {
     });
 
     if (removed) await _forgetFile(type, op.entityId);
-    _emit(OutboxRejected(error.message));
+    if (!silent) _emit(OutboxRejected(error.message));
   }
 
   /// Pindahkan tugas ke daftar aktif pertama di ruangnya, lalu biarkan operasinya dikirim ulang.
