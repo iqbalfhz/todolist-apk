@@ -136,8 +136,10 @@ class DioApiTransport implements ApiTransport {
     final code = ApiErrorCode.tryParse(json?['code']);
 
     // 404 atau 502 tanpa JSON (misalnya dari proxy saat deploy) dan semua 5xx
-    // diperlakukan sebagai gangguan sementara, bukan jawaban API.
-    if (json == null || code == null || status >= 500 || code == ApiErrorCode.serverError) {
+    // diperlakukan sebagai gangguan sementara, bukan jawaban API, kecuali 503
+    // `places_unavailable` dari pencarian tempat (v1.x).
+    final placesUnavailable = status == 503 && code == ApiErrorCode.placesUnavailable;
+    if (json == null || code == null || (status >= 500 && !placesUnavailable) || code == ApiErrorCode.serverError) {
       throw NetworkFailure(status: status, detail: json?['message'] as String?);
     }
 

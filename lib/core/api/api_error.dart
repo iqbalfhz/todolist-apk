@@ -17,6 +17,10 @@ enum ApiErrorCode {
   invalidCredentials('invalid_credentials'),
   invitationInvalid('invitation_invalid'),
   tooManyRequests('too_many_requests'),
+
+  /// Pencarian tempat sedang tidak tersedia (503, v1.x). Satu-satunya 5xx yang dianggap jawaban
+  /// API: pesannya ditampilkan, dan pin tetap bisa dipasang langsung di peta.
+  placesUnavailable('places_unavailable'),
   serverError('server_error');
 
   const ApiErrorCode(this.value);

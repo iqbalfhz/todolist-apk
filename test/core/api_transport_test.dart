@@ -311,6 +311,27 @@ void main() {
       );
     });
 
+    test('503 places_unavailable dari cari tempat (v1.x) adalah jawaban API; 503 lain tetap gangguan', () async {
+      handler = (request) => json(request, 503, {
+        'message': 'Pencarian tempat sedang tidak tersedia. Pasang pin langsung di peta.',
+        'code': 'places_unavailable',
+      });
+      await expectLater(
+        transport().send('GET', '/places', query: {'q': 'ubud'}),
+        throwsA(
+          isA<ApiError>()
+              .having((error) => error.code, 'code', ApiErrorCode.placesUnavailable)
+              .having((error) => error.message, 'message', startsWith('Pencarian tempat')),
+        ),
+      );
+
+      handler = (request) => json(request, 503, {'message': 'Sedang perawatan.', 'code': 'server_error'});
+      await expectLater(
+        transport().send('GET', '/places', query: {'q': 'ubud'}),
+        throwsA(isA<NetworkFailure>().having((failure) => failure.status, 'status', 503)),
+      );
+    });
+
     test('JSON dengan code yang tidak dikenal versi app ini', () async {
       handler = (request) => json(request, 409, {'message': 'Aturan baru.', 'code': 'aturan_versi_depan'});
 

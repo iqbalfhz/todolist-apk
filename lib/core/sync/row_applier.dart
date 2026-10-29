@@ -53,6 +53,8 @@ class RowApplier {
     'end_date': ['start_date'],
     'reminder_frequency': ['reminder_day'],
     'reminder_day': ['reminder_frequency'],
+    'latitude': ['longitude'],
+    'longitude': ['latitude'],
   };
 
   Future<PendingIndex> loadPending() async => PendingIndex(await store.db.select(store.db.outboxOps).get());
