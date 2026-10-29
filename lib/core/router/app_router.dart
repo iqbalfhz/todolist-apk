@@ -6,6 +6,7 @@ import '../../features/auth/presentation/auth_screens.dart';
 import '../../features/auth/presentation/notification_permission_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/home/presentation/main_shell.dart';
+import '../../features/memories/presentation/memories_map_screen.dart';
 import '../../features/memories/presentation/memories_screen.dart';
 import '../../features/memories/presentation/memory_detail_screen.dart';
 import '../../features/memories/presentation/memory_form_screen.dart';
@@ -187,7 +188,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: Routes.memories,
                 builder: (_, _) => const MemoriesScreen(),
                 routes: [
-                  // Sebelum ':id', supaya "baru" tidak dianggap ID.
+                  // Sebelum ':id', supaya "peta" dan "baru" tidak dianggap ID.
+                  GoRoute(
+                    path: 'peta',
+                    builder: (_, state) {
+                      final focus = state.uri.queryParameters[Routes.focusParam];
+                      return MemoriesMapScreen(key: ValueKey('peta-$focus'), focusId: focus);
+                    },
+                  ),
                   GoRoute(
                     path: 'baru',
                     builder: (_, state) => MemoryFormScreen(

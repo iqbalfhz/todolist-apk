@@ -155,6 +155,18 @@ abstract final class AppDimens {
   static const double iconXxl = 34;
   static const double iconHero = 52;
 
+  // Peta (v1.x).
+  static const double mapPreviewHeight = 160;
+  static const double mapPin = 22;
+  static const double mapPinSelected = 30;
+  static const double mapPinBorder = 3;
+
+  /// Jarak pin terluar dari tepi peta saat semua pin ditampilkan.
+  static const double mapFitPadding = 56;
+
+  /// Jarak kartu kenangan terpilih dari bawah peta, di atas atribusi.
+  static const double mapCardBottom = 32;
+
   // Switch.
   static const double switchWidth = 44;
   static const double switchHeight = 26;

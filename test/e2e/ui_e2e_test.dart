@@ -38,10 +38,12 @@ import 'package:todolist/core/utils/dates.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/domain/user.dart';
+import 'package:todolist/features/memories/presentation/memory_map.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/special_dates/domain/special_date.dart';
 
 import '../helpers/app_harness.dart';
+import '../helpers/fake_map.dart';
 import '../helpers/fake_photos.dart';
 import '../helpers/fake_push.dart';
 import '../helpers/fixtures.dart';
@@ -202,6 +204,8 @@ void main() {
         spaceClockProvider.overrideWithValue(clock),
         pushServiceProvider.overrideWithValue(push),
         mediaCachesProvider.overrideWithValue(FakeMediaCaches()),
+        // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
+        mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
         revocationTransportProvider.overrideWithValue(
           (token) => RootZoneTransport(DioApiTransport(baseUrl: baseUrl, token: () => token)),
         ),

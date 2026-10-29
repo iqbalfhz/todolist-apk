@@ -17,7 +17,9 @@ import '../../../core/widgets/widgets.dart';
 import '../../spaces/domain/household.dart';
 import '../../trips/domain/trip.dart';
 import '../domain/memory.dart';
+import 'location_picker_screen.dart';
 import 'memory_actions.dart';
+import 'memory_map.dart';
 import 'memory_photo_view.dart';
 import 'photo_imports.dart';
 
@@ -44,6 +46,9 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
   final TextEditingController _place = TextEditingController();
   final TextEditingController _story = TextEditingController();
   String? _visitedOn;
+
+  /// Pin lokasi (v1.x); diisi dari kenangan yang diubah.
+  GeoPoint? _pin;
   bool _shared = true;
   final List<String> _paths = [];
   bool _filled = false;
@@ -98,6 +103,7 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
       _place.text = memory.placeName ?? '';
       _story.text = memory.story ?? '';
       _visitedOn = memory.visitedOn;
+      _pin = memory.pin;
     } else if (trip != null) {
       _title.text = trip.title;
       _place.text = trip.destination ?? '';
@@ -109,6 +115,21 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
   Future<void> _pickDate(String today) async {
     final picked = await pickDate(context, today: today, initial: _visitedOn ?? today, earliest: _earliestVisit);
     if (picked != null && mounted) setState(() => _visitedOn = picked);
+  }
+
+  /// Pilih lokasi. Titik dari hasil pencarian mengisi "Di mana?" kalau isian itu masih kosong.
+  Future<void> _pickPin() async {
+    final choice = await pickLocation(context, current: _pin);
+    if (!mounted || choice == null) return;
+    setState(() {
+      switch (choice) {
+        case PinSet(:final point, :final placeName):
+          _pin = point;
+          if (placeName != null && _place.text.trim().isEmpty) _place.text = placeName;
+        case PinCleared():
+          _pin = null;
+      }
+    });
   }
 
   Future<void> _pickPhotos() async {
@@ -163,7 +184,9 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
     final imports = ref.read(photoImportsProvider.notifier);
 
     if (memoryId != null) {
+      final before = ref.read(memoriesProvider).value?.where((item) => item.id == memoryId).firstOrNull;
       await account.memories.edit(memoryId, title: title, placeName: place, visitedOn: visitedOn, story: story);
+      if (before != null && before.pin != _pin) await account.memories.setPin(memoryId, _pin);
       router.go(Routes.memory(memoryId));
       return;
     }
@@ -175,6 +198,7 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
       visitedOn: visitedOn,
       story: story,
       tripId: widget.tripId,
+      pin: _pin,
     );
 
     // Foto disiapkan di latar belakang dan muncul satu per satu di Detail kenangan.
@@ -265,6 +289,12 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
                 if (_placeError != null) setState(() => _placeError = null);
               },
             ),
+          ),
+          const SizedBox(height: AppDimens.gap14),
+          LabeledField(
+            label: l10n.memoryPinLabel,
+            help: l10n.memoryPinHelp,
+            child: _PinField(pin: _pin, onPick: _pickPin, onRemove: () => setState(() => _pin = null)),
           ),
           const SizedBox(height: AppDimens.gap14),
           LabeledField(
@@ -371,6 +401,53 @@ class _MemoryFormScreenState extends ConsumerState<MemoryFormScreen> {
         if (!didPop) _back();
       },
       child: body,
+    );
+  }
+}
+
+/// Isian pin lokasi: tombol "Pasang pin di peta", atau peta kecil dengan Ubah pin dan Lepas pin.
+class _PinField extends StatelessWidget {
+  const _PinField({required this.pin, required this.onPick, required this.onRemove});
+
+  final GeoPoint? pin;
+  final VoidCallback onPick;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final point = pin;
+
+    if (point == null) {
+      return FieldButton(
+        label: l10n.memoryPinAdd,
+        filled: false,
+        icon: Symbols.add_location_alt_rounded,
+        onTap: onPick,
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        MemoryMapPreview(point: point, semanticLabel: l10n.memoryPinPreview, onTap: onPick),
+        Wrap(
+          spacing: AppDimens.gap8,
+          children: [
+            TextButton.icon(
+              onPressed: onPick,
+              icon: const Icon(Symbols.edit_location_alt_rounded, size: AppDimens.iconMd),
+              label: Text(l10n.memoryPinChange),
+            ),
+            TextButton.icon(
+              onPressed: onRemove,
+              style: TextButton.styleFrom(foregroundColor: context.palette.danger),
+              icon: const Icon(Symbols.location_off_rounded, size: AppDimens.iconMd),
+              label: Text(l10n.memoryPinRemove),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -247,6 +247,138 @@ abstract class AppLocalizations {
   /// **'Navigasi utama'**
   String get navLabel;
 
+  /// No description provided for @osmAttribution.
+  ///
+  /// In id, this message translates to:
+  /// **'© OpenStreetMap contributors'**
+  String get osmAttribution;
+
+  /// No description provided for @memoryPinLabel.
+  ///
+  /// In id, this message translates to:
+  /// **'Tepatnya di titik mana?'**
+  String get memoryPinLabel;
+
+  /// No description provided for @memoryPinHelp.
+  ///
+  /// In id, this message translates to:
+  /// **'Opsional. Kenangan berpin tampil di Peta kenangan.'**
+  String get memoryPinHelp;
+
+  /// No description provided for @memoryPinAdd.
+  ///
+  /// In id, this message translates to:
+  /// **'Pasang pin di peta'**
+  String get memoryPinAdd;
+
+  /// No description provided for @memoryPinChange.
+  ///
+  /// In id, this message translates to:
+  /// **'Ubah pin'**
+  String get memoryPinChange;
+
+  /// No description provided for @memoryPinRemove.
+  ///
+  /// In id, this message translates to:
+  /// **'Lepas pin'**
+  String get memoryPinRemove;
+
+  /// No description provided for @memoryPinPreview.
+  ///
+  /// In id, this message translates to:
+  /// **'Lokasi di peta. Ketuk untuk mengubah pin.'**
+  String get memoryPinPreview;
+
+  /// No description provided for @memoryMapPreview.
+  ///
+  /// In id, this message translates to:
+  /// **'Lokasi di peta. Ketuk untuk membuka Peta kenangan.'**
+  String get memoryMapPreview;
+
+  /// No description provided for @pickerTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih lokasi'**
+  String get pickerTitle;
+
+  /// No description provided for @pickerSearchHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Cari tempat, misalnya Ubud'**
+  String get pickerSearchHint;
+
+  /// No description provided for @pickerSearch.
+  ///
+  /// In id, this message translates to:
+  /// **'Cari tempat'**
+  String get pickerSearch;
+
+  /// No description provided for @pickerTapHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Ketuk peta untuk memasang pin'**
+  String get pickerTapHint;
+
+  /// No description provided for @pickerMapSemantic.
+  ///
+  /// In id, this message translates to:
+  /// **'Peta. Ketuk untuk memasang pin di titik itu.'**
+  String get pickerMapSemantic;
+
+  /// No description provided for @pickerUse.
+  ///
+  /// In id, this message translates to:
+  /// **'Pakai titik ini'**
+  String get pickerUse;
+
+  /// No description provided for @pickerQueryShort.
+  ///
+  /// In id, this message translates to:
+  /// **'Ketik paling sedikit {count} huruf, lalu ketuk Cari.'**
+  String pickerQueryShort(int count);
+
+  /// No description provided for @pickerNoResults.
+  ///
+  /// In id, this message translates to:
+  /// **'Tidak ada tempat yang cocok dengan \"{query}\". Coba kata lain, atau ketuk peta.'**
+  String pickerNoResults(String query);
+
+  /// No description provided for @pickerOffline.
+  ///
+  /// In id, this message translates to:
+  /// **'Mencari tempat butuh koneksi internet. Pin tetap bisa dipasang dengan mengetuk peta.'**
+  String get pickerOffline;
+
+  /// No description provided for @pickerTooOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Terlalu sering mencari. Coba lagi sebentar lagi, atau ketuk peta.'**
+  String get pickerTooOften;
+
+  /// No description provided for @memoriesMapTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Peta kenangan'**
+  String get memoriesMapTitle;
+
+  /// No description provided for @memoriesMapEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada kenangan berpin. Pasang pin lewat Ubah kenangan.'**
+  String get memoriesMapEmpty;
+
+  /// No description provided for @memoriesMapCount.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} kenangan berpin'**
+  String memoriesMapCount(int count);
+
+  /// No description provided for @memoriesMapOpen.
+  ///
+  /// In id, this message translates to:
+  /// **'Buka kenangan'**
+  String get memoriesMapOpen;
+
   /// No description provided for @searchHint.
   ///
   /// In id, this message translates to:

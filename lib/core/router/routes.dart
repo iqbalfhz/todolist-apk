@@ -50,6 +50,13 @@ abstract final class Routes {
 
   static String memory(String id) => '/kenangan/$id';
 
+  /// Peta kenangan (v1.x), opsional langsung memilih kenangan [focusId].
+  static String memoriesMap({String? focusId}) =>
+      focusId == null ? '/kenangan/peta' : '/kenangan/peta?$focusParam=$focusId';
+
+  /// Parameter kueri Peta kenangan: kenangan yang langsung dipilih.
+  static const String focusParam = 'fokus';
+
   static String editMemory(String id) => '/kenangan/$id/ubah';
 
   /// Galeri foto kenangan [memoryId], dibuka di foto [photoId]. Di luar tab bawah.

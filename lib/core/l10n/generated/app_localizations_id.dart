@@ -88,6 +88,78 @@ class AppLocalizationsId extends AppLocalizations {
   String get navLabel => 'Navigasi utama';
 
   @override
+  String get osmAttribution => '© OpenStreetMap contributors';
+
+  @override
+  String get memoryPinLabel => 'Tepatnya di titik mana?';
+
+  @override
+  String get memoryPinHelp => 'Opsional. Kenangan berpin tampil di Peta kenangan.';
+
+  @override
+  String get memoryPinAdd => 'Pasang pin di peta';
+
+  @override
+  String get memoryPinChange => 'Ubah pin';
+
+  @override
+  String get memoryPinRemove => 'Lepas pin';
+
+  @override
+  String get memoryPinPreview => 'Lokasi di peta. Ketuk untuk mengubah pin.';
+
+  @override
+  String get memoryMapPreview => 'Lokasi di peta. Ketuk untuk membuka Peta kenangan.';
+
+  @override
+  String get pickerTitle => 'Pilih lokasi';
+
+  @override
+  String get pickerSearchHint => 'Cari tempat, misalnya Ubud';
+
+  @override
+  String get pickerSearch => 'Cari tempat';
+
+  @override
+  String get pickerTapHint => 'Ketuk peta untuk memasang pin';
+
+  @override
+  String get pickerMapSemantic => 'Peta. Ketuk untuk memasang pin di titik itu.';
+
+  @override
+  String get pickerUse => 'Pakai titik ini';
+
+  @override
+  String pickerQueryShort(int count) {
+    return 'Ketik paling sedikit $count huruf, lalu ketuk Cari.';
+  }
+
+  @override
+  String pickerNoResults(String query) {
+    return 'Tidak ada tempat yang cocok dengan \"$query\". Coba kata lain, atau ketuk peta.';
+  }
+
+  @override
+  String get pickerOffline => 'Mencari tempat butuh koneksi internet. Pin tetap bisa dipasang dengan mengetuk peta.';
+
+  @override
+  String get pickerTooOften => 'Terlalu sering mencari. Coba lagi sebentar lagi, atau ketuk peta.';
+
+  @override
+  String get memoriesMapTitle => 'Peta kenangan';
+
+  @override
+  String get memoriesMapEmpty => 'Belum ada kenangan berpin. Pasang pin lewat Ubah kenangan.';
+
+  @override
+  String memoriesMapCount(int count) {
+    return '$count kenangan berpin';
+  }
+
+  @override
+  String get memoriesMapOpen => 'Buka kenangan';
+
+  @override
   String get searchHint => 'Mau cari apa?';
 
   @override
