@@ -37,6 +37,7 @@ Aturan:
 - Warna sorotan (`soft`, `accent`, `track`) selalu diberi teks gelap (`text`).
 - Status (ok, warn, danger) hanya untuk teks/ikon di atas `bg` atau `surface`, dan selalu ditemani ikon.
 - Pilihan tema (Mawar/Anggrek) dan mode (terang/gelap/ikuti sistem) disimpan di HP, bukan di server.
+- Tombol masuk dengan Google (v1.x) tidak memakai token di sini: warnanya dari panduan merek Google (`GoogleButtonColors` di `app_palette.dart`), dan logo G resmi (`assets/images/google_g.png`) tidak boleh diubah warna atau bentuknya.
 
 ## Warna diri dan warna daftar
 
