@@ -805,4 +805,52 @@ void main() {
 
     await other.close();
   }, skip: skipReason);
+
+  test('keluar dari Ruang Bersama: ditutup untuk berdua, lalu pulih utuh saat bergabung lagi', () async {
+    await a.syncNow();
+    await b.syncNow();
+    final shared = await a.sharedSpace();
+    Future<Set<String>> sharedTitles(Device device) async => {
+      for (final task in await device.tasks())
+        if (task.spaceId == shared.id) task.title,
+    };
+    final before = await sharedTitles(a);
+    expect(before, isNotEmpty);
+    expect(await sharedTitles(b), before);
+
+    // Perubahan B yang belum terkirim saat ruang ditutup.
+    final pending = (await b.tasks()).firstWhere((task) => task.spaceId == shared.id);
+    await b.account.tasks.rename(pending.id, 'Tidak sempat terkirim');
+
+    await a.account.spaces.leave(shared.id);
+    expect((await a.spaces()).map((space) => space.id), isNot(contains(shared.id)));
+    expect(await sharedTitles(a), isEmpty);
+    expect(
+      (await a.tasks()).map((task) => task.title),
+      contains('Kirim laporan bulanan'),
+      reason: 'Ruang Pribadi tetap',
+    );
+    // Diulang tetap 204; GET /spaces tidak lagi menampilkannya.
+    await a.account.spaces.leave(shared.id);
+    final listed = (await a.api.send('GET', '/spaces')).dataList;
+    expect(listed.map((space) => space['id']), isNot(contains(shared.id)));
+
+    // B: perubahannya dibalas 404 lalu dibuang, dan sync membawa ruang yang tertutup tanpa isinya.
+    await b.syncNow();
+    expect(await b.account.outbox.pendingCount(), 0);
+    expect((await b.spaces()).where((space) => space.isShared), isEmpty);
+    expect(await sharedTitles(b), isEmpty);
+
+    // Bergabung lagi lewat kode B: ruang lama pulih dengan id dan created_at aslinya.
+    final code = (await b.account.spaces.invitation()).code;
+    final restored = await a.account.spaces.accept(code);
+    expect((restored.id, restored.createdAt), (shared.id, shared.createdAt));
+
+    // Isinya kembali lewat sync biasa, karena server memperbarui updated_at-nya.
+    await a.syncNow();
+    await b.syncNow();
+    expect(await sharedTitles(a), before);
+    expect(await sharedTitles(b), before);
+    expect((await b.sharedSpace()).id, shared.id);
+  }, skip: skipReason);
 }

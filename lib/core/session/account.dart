@@ -65,7 +65,7 @@ class Account {
     comments = CommentRepository(writer: writer, userId: userId);
     photoImages = MemoryPhotoImages(cache: photoCache, files: files, refreshUrls: memories.refreshPhotos, now: now);
     profile = ProfileRepository(writer: writer, api: api, applier: applier, userId: userId);
-    spaces = SpaceRepository(store: store, api: api, applier: applier);
+    spaces = SpaceRepository(store: store, api: api, applier: applier, outbox: outbox);
   }
 
   final String userId;

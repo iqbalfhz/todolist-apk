@@ -33,7 +33,8 @@ class PendingIndex {
 /// - kolom yang masih punya operasi di antrean tidak ditimpa;
 /// - baris yang `DELETE`-nya masih di antrean tidak muncul lagi;
 /// - baris yang `updated_at`-nya lebih tua dari salinan lokal diabaikan;
-/// - induk yang tiba terhapus ikut menghapus anaknya, kecuali anak yang masih punya operasi.
+/// - induk yang tiba terhapus ikut menghapus anaknya, kecuali anak yang masih punya operasi;
+///   Ruang Bersama yang tiba tertutup (v1.0) ikut menghapus semua isinya.
 class RowApplier {
   RowApplier(this.store);
 
@@ -66,9 +67,9 @@ class RowApplier {
               (t) =>
                   (t.entityType.equals(type.name) & t.entityId.equals(id)) |
                   // Anak yang punya operasi tertunda tidak ikut terhapus bersama induknya.
-                  (type.children.isEmpty
+                  (type.dependents.isEmpty
                       ? const Constant(false)
-                      : t.entityType.isIn([for (final child in type.children) child.name])),
+                      : t.entityType.isIn([for (final child in type.dependents) child.name])),
             ))
             .get();
     return PendingIndex(ops);
@@ -112,6 +113,13 @@ class RowApplier {
     if (deletedAt != null) {
       for (final child in type.children) {
         await store.markChildrenDeleted(child, id, deletedAt: deletedAt, except: index.idsOf(child));
+      }
+      if (type == EntityType.space) {
+        await store.markSpaceContentDeleted(
+          id,
+          deletedAt: deletedAt,
+          except: {for (final content in EntityType.spaceContent) content: index.idsOf(content)},
+        );
       }
     }
   }

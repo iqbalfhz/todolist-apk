@@ -46,6 +46,7 @@ import 'package:todolist/features/memories/domain/memory.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
 import 'package:todolist/features/savings/domain/savings_entry.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
+import 'package:todolist/features/spaces/domain/household.dart';
 import 'package:todolist/features/special_dates/domain/special_date.dart';
 
 import '../helpers/app_harness.dart';
@@ -1329,6 +1330,42 @@ void main() {
     expect(find.text('Dibuat saat offline'), findsOneWidget);
     // Database akun ini sudah punya kursor, jadi sync-nya melanjutkan, bukan penuh.
     expect(await container.read(accountProvider)!.sync.hasSynced, isTrue);
+
+    // ---------------------------------------------------------------- keluar dari Ruang Bersama (v1.0)
+
+    await coolDown();
+    step('Keluar dari Ruang Bersama: konfirmasi, lalu kode undangan tampil lagi');
+    final sharedSpaceId = container.read(householdProvider)!.shared!.id;
+    await go(Routes.pairing);
+    expect(find.text('Kamu dan Sari berbagi tugas dan tabungan di sini.'), findsOneWidget);
+    await tap(find.text('Keluar dari Ruang Bersama'));
+    expect(find.text('Keluar dari Ruang Bersama?'), findsOneWidget);
+    await tap(find.widgetWithText(TextButton, 'Keluar'));
+    await net();
+    expect(find.text('Pakai berdua, lebih ringan'), findsOneWidget);
+    expect(container.read(householdProvider)!.isPaired, isFalse);
+    expect(transport.log.where((line) => line.startsWith('DELETE /spaces/')), hasLength(1));
+
+    step('HP pasangan: sync membawa ruang yang tertutup, dan isinya hilang');
+    await asPartner(() async {
+      await partner.syncNow();
+      expect((await partner.account.store.spaces()).where((space) => space.isShared), isEmpty);
+      expect((await partner.account.store.tasks()).map((task) => task.title), isNot(contains('Beli galon')));
+    });
+
+    step('Bergabung lagi dengan kode dari pasangan: Ruang Bersama lama kembali utuh di kedua HP');
+    final again = await asPartner(() async => (await partner.account.spaces.invitation()).code);
+    await tester.enterText(find.widgetWithText(TextField, 'Contoh: K7P2QM'), again);
+    await tap(find.widgetWithText(OutlinedButton, 'Gabung'));
+    await net();
+    expect(find.text('Tugas hari ini'), findsOneWidget);
+    expect(find.text('Beli galon'), findsOneWidget);
+    expect(container.read(householdProvider)!.shared!.id, sharedSpaceId);
+    await asPartner(() async {
+      await partner.syncNow();
+      expect((await partner.sharedSpace()).id, sharedSpaceId);
+      expect((await partner.account.store.tasks()).map((task) => task.title), contains('Beli galon'));
+    });
 
     // ---------------------------------------------------------------- selesai
 

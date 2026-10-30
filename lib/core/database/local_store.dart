@@ -315,6 +315,73 @@ class LocalStore {
     }
   }
 
+  // ---------------------------------------------------------------- isi ruang (v1.0)
+
+  /// Tabel isi ruang. Semuanya punya kolom `id`, `space_id`, dan `deleted_at`.
+  Map<EntityType, TableInfo<Table, Object?>> get _spaceContentTables => {
+    EntityType.list: db.taskLists,
+    EntityType.task: db.tasks,
+    EntityType.goal: db.savingsGoals,
+    EntityType.entry: db.savingsEntries,
+    EntityType.specialDate: db.specialDates,
+    EntityType.trip: db.trips,
+    EntityType.memory: db.memories,
+    EntityType.memoryPhoto: db.memoryPhotos,
+    EntityType.comment: db.comments,
+    EntityType.reaction: db.reactions,
+  };
+
+  /// ID semua isi ruang [spaceId] per jenis, termasuk yang sudah ditandai terhapus.
+  Future<Map<EntityType, Set<String>>> spaceContentIds(String spaceId) async {
+    final ids = <EntityType, Set<String>>{};
+    for (final MapEntry(key: type, value: table) in _spaceContentTables.entries) {
+      final rows = await db
+          .customSelect(
+            'SELECT id FROM ${table.actualTableName} WHERE space_id = ?',
+            variables: [Variable.withString(spaceId)],
+            readsFrom: {table},
+          )
+          .get();
+      ids[type] = {for (final row in rows) row.read<String>('id')};
+    }
+    return ids;
+  }
+
+  /// Ruang Bersama tiba tertutup (v1.0): tandai terhapus semua isinya, kecuali ID di [except].
+  Future<void> markSpaceContentDeleted(
+    String spaceId, {
+    required String deletedAt,
+    Map<EntityType, Set<String>> except = const {},
+  }) async {
+    for (final MapEntry(key: type, value: table) in _spaceContentTables.entries) {
+      final skip = except[type] ?? const <String>{};
+      final notIn = skip.isEmpty ? '' : ' AND id NOT IN (${List.filled(skip.length, '?').join(', ')})';
+      await db.customUpdate(
+        'UPDATE ${table.actualTableName} SET deleted_at = ? WHERE space_id = ? AND deleted_at IS NULL$notIn',
+        variables: [
+          Variable.withString(deletedAt),
+          Variable.withString(spaceId),
+          for (final id in skip) Variable.withString(id),
+        ],
+        updates: {table},
+        updateKind: UpdateKind.update,
+      );
+    }
+  }
+
+  /// Buang ruang [spaceId] beserta semua isinya dari cache (bukan sekadar menandai terhapus).
+  Future<void> removeSpace(String spaceId) async {
+    for (final table in _spaceContentTables.values) {
+      await db.customUpdate(
+        'DELETE FROM ${table.actualTableName} WHERE space_id = ?',
+        variables: [Variable.withString(spaceId)],
+        updates: {table},
+        updateKind: UpdateKind.delete,
+      );
+    }
+    await remove(EntityType.space, spaceId);
+  }
+
   // ---------------------------------------------------------------- meta
 
   Future<String?> meta(String key) async {

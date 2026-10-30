@@ -1,18 +1,21 @@
 import '../../../core/api/api_transport.dart';
 import '../../../core/database/entity_type.dart';
 import '../../../core/database/local_store.dart';
+import '../../../core/queue/outbox.dart';
 import '../../../core/sync/row_applier.dart';
 import '../../../core/utils/validators.dart';
 import '../../auth/domain/user.dart';
 import '../domain/space.dart';
 
-/// Ruang dan undangan. Endpoint undangan tidak lewat antrean dan butuh koneksi.
+/// Ruang dan undangan. Endpoint undangan dan keluar dari Ruang Bersama tidak lewat antrean dan
+/// butuh koneksi.
 class SpaceRepository {
-  SpaceRepository({required this.store, required this.api, required this.applier});
+  SpaceRepository({required this.store, required this.api, required this.applier, required this.outbox});
 
   final LocalStore store;
   final ApiTransport api;
   final RowApplier applier;
+  final Outbox outbox;
 
   Stream<List<Space>> watchAll() => store.watchSpaces();
 
@@ -45,5 +48,17 @@ class SpaceRepository {
     // Kode sendiri ikut dicabut server begitu Ruang Bersama terbentuk.
     await store.patch(EntityType.me, '', {'invitation': null});
     return Space.fromJson(response.data);
+  }
+
+  /// Keluar dari Ruang Bersama (v1.0): ruang ditutup untuk berdua, dan isinya disimpan server
+  /// 30 hari kalau kalian bergabung lagi.
+  ///
+  /// Antrean dikirim dulu, supaya perubahan terakhir ikut tersimpan. Setelah 204, ruang dan
+  /// isinya dihapus dari cache dan operasi yang tersisa untuk ruang itu dibuang. Error dari
+  /// server atau jaringan dilempar tanpa mengubah apa pun di HP.
+  Future<void> leave(String spaceId) async {
+    await outbox.flush(retryNow: true);
+    await api.send('DELETE', '/spaces/$spaceId');
+    await outbox.forgetSpace(spaceId);
   }
 }

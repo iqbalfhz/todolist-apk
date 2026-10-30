@@ -8,7 +8,7 @@
 
 ## Kondisi repo (per 30 Oktober 2026)
 
-Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3), tugas berulang (awal v1.0), dan bagian v1.x yang cukup di HP (lihat Cakupan). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, tugas berulang, kenangan tanpa foto dan "Simpan jadi kenangan", kontribusi dan penarikan tabungan, pin lokasi kenangan dan Peta kenangan, komentar dan reaksi antara dua HP, Cari, "Setahun lalu, hari ini", sync berkala, ringkasan widget, offline, keluar, masuk dengan Google yang ditolak server, dan masuk lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
+Seluruh cakupan v0.1 di bawah sudah dibangun: semua layar di `docs/layar.md`, cache lokal, antrean, sync, dan penanganan push. Dari v0.2, Tanggal penting, Perjalanan dengan checklist persiapan, dan pengingat setor rutin juga sudah dibangun, begitu pula Kenangan (v0.3), tugas berulang (awal v1.0), dan bagian v1.x yang cukup di HP (lihat Cakupan). Push sudah sampai ke HP sungguhan dalam uji pemilik dan pasangannya (`task_completed` dan `savings_deposit`, serta `partner_joined` yang dikirim dari server), dan pada 24 Oktober 2026 pukul 08.00 pengingat terjadwal `trip_reminder` dan `special_date_reminder` (H-1 dan hari H) juga sampai. `flutter analyze` bersih dan semua tes unit serta widget lulus. Tes ujung ke ujung di `test/e2e/` lulus terhadap API Laravel lokal: lapisan data dengan dua HP (`api_e2e_test.dart`), dan uji jalan penuh lewat layar (`ui_e2e_test.dart`: daftar, tugas, daftar, tabungan, pengaturan, profil, berpasangan, tanggal penting, perjalanan dan checklist, pengingat setor, tugas berulang, kenangan tanpa foto dan "Simpan jadi kenangan", kontribusi dan penarikan tabungan, pin lokasi kenangan dan Peta kenangan, komentar dan reaksi antara dua HP, Cari, "Setahun lalu, hari ini", sync berkala, ringkasan widget, offline, keluar, masuk dengan Google yang ditolak server, masuk lagi, serta keluar dari Ruang Bersama dan bergabung lagi, dengan setiap perubahan dicocokkan ke server). Build debug sudah dicoba di emulator Android 16 terhadap API lokal. Build rilis terbangun dan menyala di emulator yang sama sampai layar Masuk; layar sesudah masuk belum dicoba dalam mode rilis, karena build rilis menolak HTTP ke API lokal.
 
 Belum beres; semuanya butuh keputusan atau akses pemilik:
 
@@ -24,6 +24,7 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Pin lokasi belum dicoba di HP sungguhan: ubin OpenStreetMap, cache ubin, dan cari tempat lewat Nominatim di server produksi.
 - Widget "Tugas hari ini" sudah terdaftar di HP pemilik, tetapi belum pernah ditambahkan ke layar utama, jadi tampilannya di launcher HyperOS dan pergantian harinya belum dilihat.
 - Masuk dengan Google (30 Oktober 2026) belum dicoba di HP sungguhan: tes memakai pilihan akun palsu, dan uji ujung ke ujung hanya mencakup token yang ditolak server. Server produksi sudah membaca `GOOGLE_CLIENT_ID` (dicek 30 Oktober 2026: token palsu dibalas 422 `google_token_invalid`, bukan 500). Layar persetujuan Google masih berstatus Testing, jadi hanya pemilik dan pasangan yang bisa masuk dengan Google; ubah statusnya sebelum rilis publik.
+- Keluar dari Ruang Bersama (30 Oktober 2026) belum dicoba di HP sungguhan, termasuk push `partner_left` dan bergabung lagi. Uji di dua HP hanya dengan dua akun uji, jangan dengan Ruang Bersama pemilik dan pasangannya: keluar menutup ruang itu untuk berdua.
 - Komentar dan reaksi belum dicoba di HP sungguhan: emoji di chip reaksi (tes hanya merender kotak karena font tes tanpa emoji), push `comment_created` dan `reaction_created`, dan ketukannya.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
@@ -49,6 +50,7 @@ v0.3 yang sudah dibangun:
 
 v1.0 yang sudah dibangun:
 
+- Keluar dari Ruang Bersama (30 Oktober 2026): tombol "Keluar dari Ruang Bersama" di Ajak pasangan (yang sudah berpasangan, di luar alur pertama kali) dengan konfirmasi yang menyebut akibatnya. App mengirim antrean dulu, lalu `DELETE /spaces/{id}` (langsung, tidak lewat antrean); setelah 204, ruang dan isinya dibuang dari cache beserta sisa antreannya (`Outbox.forgetSpace`), lalu layar kembali menampilkan kode undangan. Ruang yang tiba tertutup lewat sync ikut menghapus semua isinya. Push `partner_left` (channel `aktivitas`) saat diketuk menjalankan sync lalu membuka Beranda. Bergabung lagi dalam 30 hari memulihkan ruang lama lewat `POST /invitations/accept` dan sync biasa, tanpa kode khusus di app.
 - Tugas berulang: aturan `repeat_frequency` (harian, mingguan, bulanan, tahunan) dan `repeat_interval` (1–99) dengan `due_date` sebagai patokan, chip "Ulangi" di Tugas baru dan Detail tugas, lembar Ulangi tugas, penanda "Tiap minggu" di baris tugas, dan tautan "Tugas berikutnya" di tugas yang sudah selesai. Tugas berikutnya dibuat server dan tiba di balasan centang; app tidak menghitung tenggatnya.
 
 v1.x yang sudah dibangun (diminta pemilik 25 Oktober 2026; semuanya cukup di HP):
@@ -63,7 +65,7 @@ v1.x yang sudah dibangun (diminta pemilik 25 Oktober 2026; semuanya cukup di HP)
 - Widget "Tugas hari ini" di layar utama Android (`TasksWidget.kt`, kanal `todolist/device`), dengan tombol sematkan di Pengaturan
 - Masuk dengan Google (30 Oktober 2026): tombol "Masuk dengan Google" dan "Daftar dengan Google" di bawah formulir Masuk dan Daftar (logo G resmi di `assets/images/`, warna dari panduan merek Google di `GoogleButtonColors`), lalu `POST /auth/google` dengan ID token dari `google_sign_in`. Pilihan akun dilupakan begitu ID token didapat, jadi masuk berikutnya bertanya lagi. Selama token ditukar, akun Google yang dipakai disebut di bawah tombol; balasan 201 (akun baru) memunculkan "Akun baru dibuat untuk {email}." Akun tanpa kata sandi tidak butuh penanganan khusus di app.
 
-Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kata sandi di app, keluar dari Ruang Bersama), dan iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
+Belum dibangun, jangan dibuat dulu: sisa v1.0 (ekspor data, hapus akun, lupa kata sandi di app), dan iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 
@@ -120,7 +122,7 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 ## Data offline (aturan wajib)
 
 - UI selalu membaca dari drift. Jaringan hanya mengisi drift.
-- Tulis: ubah drift dulu (UI langsung berubah), lalu masukkan operasi ke antrean. Hanya PUT/PATCH/DELETE untuk daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, foto kenangan, dan komentar, PUT/DELETE untuk reaksi, unggah foto kenangan (`POST /memory-photos/{id}`), dan `PATCH /me` yang lewat antrean; endpoint lain (termasuk `GET /memories/{id}/photos` dan `GET /places`) dipanggil langsung dan butuh koneksi.
+- Tulis: ubah drift dulu (UI langsung berubah), lalu masukkan operasi ke antrean. Hanya PUT/PATCH/DELETE untuk daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, foto kenangan, dan komentar, PUT/DELETE untuk reaksi, unggah foto kenangan (`POST /memory-photos/{id}`), dan `PATCH /me` yang lewat antrean; endpoint lain (termasuk `GET /memories/{id}/photos`, `GET /places`, dan `DELETE /spaces/{id}`) dipanggil langsung dan butuh koneksi.
 - ID dibuat di HP: ULID huruf kecil.
 - Waktu dikirim dengan `toUtc().toIso8601String()`. Tanggal `YYYY-MM-DD` dan jam `HH:MM` menurut zona waktu ruang; "hari ini" dihitung di zona waktu ruang (paket `timezone`).
 - Uang berupa `int` satuan terkecil. Desimal per mata uang dari tabel di kontrak (IDR 0, JPY 0, lainnya 2); selalu isi `decimalDigits` sendiri saat memformat, karena `intl` memakai 2 desimal untuk IDR.
@@ -149,14 +151,14 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 - Pengiriman antrean sebelum menarik data dibatasi 8 detik (`SyncEngine.flushLimit`), supaya unggahan foto yang lama tidak menahan data baru; antreannya tetap jalan di belakang.
 - Foto kenangan: cache gambar memakai kunci `photo-{id}` dan `photo-{id}-thumb`, bukan URL. Thumbnail yang belum ada diunduh setelah setiap sync yang berhasil; versi penuh saat foto dibuka. URL yang berumur 7 hari, atau yang ditolak R2 dengan 403, diganti lewat `GET /memories/{id}/photos`.
 - Saat menerapkan baris: tanpa foreign key check; kolom dengan operasi tertunda tidak ditimpa; baris dengan DELETE tertunda tidak muncul lagi; baris yang lebih tua dari salinan lokal diabaikan.
-- Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda. Anaknya didaftar di `EntityType.children`: komentar dan reaksi menunjuk tugas, setoran, atau kenangan lewat `subject_id`.
+- Induk tiba terhapus: hapus anak lokalnya, kecuali anak yang masih punya operasi tertunda. Anaknya didaftar di `EntityType.children`: komentar dan reaksi menunjuk tugas, setoran, atau kenangan lewat `subject_id`. Ruang Bersama yang tiba tertutup (v1.0) adalah induk dari semua isinya (`EntityType.spaceContent`, lewat `space_id`).
 - Pemicu: app dibuka atau kembali aktif, tarik untuk menyegarkan, push yang masuk saat app terbuka, dan setiap 30 detik selama app tampil di layar (`liveSyncInterval`, berhenti saat app tidak tampil). Push tanpa judul dan isi (termasuk `type` `sync`) hanya memicu sync, tanpa notifikasi.
 
 ### Notifikasi
 
 - Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, dan hari setor) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
 - Minta izin notifikasi (Android 13+) dengan penjelasan; sebelum Android 13 layarnya dilewati. Panduan mematikan optimasi baterai tidak ditampilkan (keputusan pemilik, 23 Oktober 2026): langkah manual di Pengaturan HP terlalu merepotkan untuk alur pertama kali.
-- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, pengingat setor membuka Detail target, dan `memory_created` membuka Detail kenangan.
+- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, pengingat setor membuka Detail target, `memory_created` membuka Detail kenangan, dan `partner_left` (v1.0) membuka Beranda setelah sync.
 
 ## Keamanan
 

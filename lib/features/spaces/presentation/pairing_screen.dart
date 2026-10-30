@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +26,7 @@ import 'member_avatar.dart';
 /// Ajak pasangan: kode undangan sendiri dan isian kode dari pasangan.
 ///
 /// Kalau sudah berpasangan, layar ini menampilkan Ruang Bersama dan kedua
-/// anggotanya, bukan kode.
+/// anggotanya, bukan kode, beserta tombol untuk keluar darinya (v1.0).
 class PairingScreen extends ConsumerStatefulWidget {
   const PairingScreen({super.key});
 
@@ -40,6 +42,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   bool _codeFailed = false;
   String? _joinError;
   bool _joining = false;
+  bool _leaving = false;
 
   /// Alur pertama kali: belum ada layar untuk kembali, dan "Nanti saja" menyelesaikan langkah ini.
   bool get _onboarding => !ref.read(onboardingProvider).pairingDone;
@@ -133,6 +136,44 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
   Future<void> _later() async {
     await ref.read(onboardingProvider.notifier).completePairing();
     if (mounted) context.go(Routes.home);
+  }
+
+  /// Keluar dari Ruang Bersama (v1.0), setelah konfirmasi yang menyebut akibatnya. Butuh koneksi.
+  Future<void> _leave(Household household) async {
+    final l10n = context.l10n;
+    final account = ref.read(accountProvider);
+    final shared = household.shared;
+    if (account == null || shared == null || _leaving) return;
+
+    final confirmed = await confirmDialog(
+      context,
+      title: l10n.pairedLeaveConfirmTitle,
+      body: l10n.pairedLeaveConfirmBody(household.partner?.name ?? l10n.labelPartner),
+      confirmLabel: l10n.pairedLeaveConfirm,
+      destructive: true,
+    );
+    if (!confirmed || !mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _leaving = true);
+    try {
+      await account.spaces.leave(shared.id);
+      // Halaman sync yang sedang berjalan bisa masih membawa ruang itu; sync berikutnya
+      // membawanya dalam keadaan tertutup.
+      account.sync.sync().ignore();
+      messenger.showSnackBar(SnackBar(content: Text(l10n.pairedLeft)));
+      // Layar ini kini kembali menampilkan kode undangan.
+      if (mounted) unawaited(_loadCode());
+    } on ApiError catch (error) {
+      // 404: ruang itu bukan milikmu lagi di server; cache menyusul lewat sync.
+      if (error.code == ApiErrorCode.notFound) account.sync.sync().ignore();
+      messenger.showSnackBar(SnackBar(content: Text(error.message)));
+    } on NetworkFailure catch (failure) {
+      final message = (failure.status ?? 0) >= 500 ? l10n.genericError : l10n.needsConnection;
+      messenger.showSnackBar(SnackBar(content: Text(message)));
+    } finally {
+      if (mounted) setState(() => _leaving = false);
+    }
   }
 
   void _back() => context.canPop() ? context.pop() : context.go(Routes.home);
@@ -338,6 +379,7 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
 
   List<Widget> _paired(BuildContext context, Household household, bool onboarding) {
     final l10n = context.l10n;
+    final palette = context.palette;
     final text = context.text;
     final shared = household.shared!;
     final partner = household.partner;
@@ -382,6 +424,25 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       if (onboarding) ...[
         const SizedBox(height: AppDimens.gap20),
         PrimaryButton(label: l10n.commonContinue, onPressed: _later),
+      ] else ...[
+        const SizedBox(height: AppDimens.gap24),
+        OutlinedButton.icon(
+          onPressed: _leaving ? null : () => _leave(household),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: palette.danger,
+            side: BorderSide(color: palette.line),
+            shape: const StadiumBorder(),
+          ),
+          icon: const Icon(Symbols.group_remove_rounded, size: AppDimens.iconLg),
+          label: Text(l10n.pairedLeave),
+        ),
+        if (_leaving) ...[
+          const SizedBox(height: AppDimens.gap8),
+          Semantics(
+            liveRegion: true,
+            child: Text(l10n.pairedLeaving, style: text.small, textAlign: TextAlign.center),
+          ),
+        ],
       ],
     ];
   }

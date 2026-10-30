@@ -1049,6 +1049,27 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get pairedLeave => 'Keluar dari Ruang Bersama';
+
+  @override
+  String get pairedLeaveConfirmTitle => 'Keluar dari Ruang Bersama?';
+
+  @override
+  String pairedLeaveConfirmBody(String name) {
+    return 'Ruang Bersama ditutup untukmu dan $name. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah.';
+  }
+
+  @override
+  String get pairedLeaveConfirm => 'Keluar';
+
+  @override
+  String get pairedLeaving => 'Mengirim perubahan terakhir, lalu menutup Ruang Bersama…';
+
+  @override
+  String get pairedLeft =>
+      'Kamu sudah keluar dari Ruang Bersama. Isinya disimpan 30 hari kalau kalian ingin bergabung lagi.';
+
+  @override
   String get settingsTitle => 'Pengaturan';
 
   @override
