@@ -15,6 +15,10 @@ enum ApiErrorCode {
   resourceDeleted('resource_deleted'),
   validationFailed('validation_failed'),
   invalidCredentials('invalid_credentials'),
+
+  /// ID token Google ditolak server (v1.x): salah, kedaluwarsa, untuk app lain, atau emailnya
+  /// belum terverifikasi. Pesannya ditampilkan, dan pengguna bisa mencoba lagi.
+  googleTokenInvalid('google_token_invalid'),
   invitationInvalid('invitation_invalid'),
   tooManyRequests('too_many_requests'),
 

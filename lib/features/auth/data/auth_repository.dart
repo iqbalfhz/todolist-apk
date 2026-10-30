@@ -2,7 +2,7 @@ import '../../../core/api/api_error.dart';
 import '../../../core/api/api_transport.dart';
 import '../domain/user.dart';
 
-/// Daftar, masuk, dan keluar. Ketiganya dipanggil langsung dan butuh koneksi.
+/// Daftar, masuk (juga dengan Google), dan keluar. Semuanya dipanggil langsung dan butuh koneksi.
 class AuthRepository {
   AuthRepository(this.api);
 
@@ -38,6 +38,22 @@ class AuthRepository {
       body: {'email': email.trim(), 'password': password, 'device_name': deviceName},
     );
     return AuthResult.fromJson(response.data);
+  }
+
+  /// Masuk atau daftar dengan ID token Google (v1.x). Balasannya sama dengan daftar dan masuk:
+  /// 201 kalau akun baru saja dibuat, 200 kalau masuk ke akun yang sudah ada. [timezone] hanya
+  /// dipakai untuk akun baru.
+  Future<({AuthResult result, bool created})> signInWithGoogle({
+    required String idToken,
+    required String deviceName,
+    String? timezone,
+  }) async {
+    final response = await api.send(
+      'POST',
+      '/auth/google',
+      body: {'id_token': idToken, 'device_name': deviceName, 'timezone': timezone},
+    );
+    return (result: AuthResult.fromJson(response.data), created: response.status == 201);
   }
 
   /// Cabut token HP ini dan hapus token FCM-nya di server.

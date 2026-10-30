@@ -313,6 +313,28 @@ class AppLocalizationsId extends AppLocalizations {
   String get registerHasAccount => 'Sudah punya akun?';
 
   @override
+  String get authOr => 'atau';
+
+  @override
+  String get googleSignIn => 'Masuk dengan Google';
+
+  @override
+  String get googleSignUp => 'Daftar dengan Google';
+
+  @override
+  String googleUsingAccount(String email) {
+    return 'Memakai akun Google $email…';
+  }
+
+  @override
+  String googleAccountCreated(String email) {
+    return 'Akun baru dibuat untuk $email.';
+  }
+
+  @override
+  String get googleSignInFailed => 'Masuk dengan Google gagal. Coba lagi.';
+
+  @override
   String get showPassword => 'Tampilkan kata sandi';
 
   @override

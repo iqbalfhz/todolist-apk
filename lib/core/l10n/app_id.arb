@@ -175,6 +175,26 @@
   "registerButton": "Daftar",
   "loginNoAccount": "Belum punya akun?",
   "registerHasAccount": "Sudah punya akun?",
+  "authOr": "atau",
+  "googleSignIn": "Masuk dengan Google",
+  "googleSignUp": "Daftar dengan Google",
+  "googleUsingAccount": "Memakai akun Google {email}…",
+  "@googleUsingAccount": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "googleAccountCreated": "Akun baru dibuat untuk {email}.",
+  "@googleAccountCreated": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "googleSignInFailed": "Masuk dengan Google gagal. Coba lagi.",
   "showPassword": "Tampilkan kata sandi",
   "hidePassword": "Sembunyikan kata sandi",
   "errorEmailInvalid": "Tulis email yang benar, misalnya nama@email.com.",

@@ -16,6 +16,7 @@ import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/time/space_clock.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
 
+import 'fake_google.dart';
 import 'fake_map.dart';
 import 'fixtures.dart';
 
@@ -53,11 +54,21 @@ Future<ProviderContainer> pumpApp(
   String? themeName,
   String? themeMode,
   FakeTileProvider? tiles,
+  FakeGoogleAccounts? google,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
+
+  // Zona waktu HP tidak terbaca di tes (daftar dan masuk dengan Google); server lalu memakai
+  // Asia/Jakarta. Tanpa ini, permintaannya menunggu kanal yang tidak pernah menjawab.
+  const timezoneChannel = MethodChannel('flutter_timezone');
+  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+    timezoneChannel,
+    (_) async => throw PlatformException(code: 'unavailable'),
+  );
+  addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(timezoneChannel, null));
 
   final container = ProviderContainer(
     retry: (_, _) => null,
@@ -80,6 +91,8 @@ Future<ProviderContainer> pumpApp(
       mediaCachesProvider.overrideWithValue(harness.mediaCaches),
       // Peta kenangan (v1.x) tidak pernah mengunduh ubin sungguhan di tes.
       mapTileProviderProvider.overrideWithValue(tiles ?? FakeTileProvider()),
+      // Masuk dengan Google (v1.x) tidak pernah membuka pilihan akun sungguhan di tes.
+      googleAccountsProvider.overrideWithValue(google ?? FakeGoogleAccounts()),
       revocationTransportProvider.overrideWithValue((token) {
         harness.revocationTokens.add(token);
         return harness.api;

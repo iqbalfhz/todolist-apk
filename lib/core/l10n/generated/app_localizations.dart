@@ -655,6 +655,42 @@ abstract class AppLocalizations {
   /// **'Sudah punya akun?'**
   String get registerHasAccount;
 
+  /// No description provided for @authOr.
+  ///
+  /// In id, this message translates to:
+  /// **'atau'**
+  String get authOr;
+
+  /// No description provided for @googleSignIn.
+  ///
+  /// In id, this message translates to:
+  /// **'Masuk dengan Google'**
+  String get googleSignIn;
+
+  /// No description provided for @googleSignUp.
+  ///
+  /// In id, this message translates to:
+  /// **'Daftar dengan Google'**
+  String get googleSignUp;
+
+  /// No description provided for @googleUsingAccount.
+  ///
+  /// In id, this message translates to:
+  /// **'Memakai akun Google {email}…'**
+  String googleUsingAccount(String email);
+
+  /// No description provided for @googleAccountCreated.
+  ///
+  /// In id, this message translates to:
+  /// **'Akun baru dibuat untuk {email}.'**
+  String googleAccountCreated(String email);
+
+  /// No description provided for @googleSignInFailed.
+  ///
+  /// In id, this message translates to:
+  /// **'Masuk dengan Google gagal. Coba lagi.'**
+  String get googleSignInFailed;
+
   /// No description provided for @showPassword.
   ///
   /// In id, this message translates to:

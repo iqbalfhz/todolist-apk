@@ -529,6 +529,8 @@ class Outbox {
           ApiErrorCode.sharedSpaceExists ||
           ApiErrorCode.validationFailed ||
           ApiErrorCode.invalidCredentials ||
+          // Hanya dari masuk dengan Google (v1.x), yang tidak lewat antrean.
+          ApiErrorCode.googleTokenInvalid ||
           ApiErrorCode.invitationInvalid:
         await _discard(op, error);
         return null;

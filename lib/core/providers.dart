@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/auth/data/auth_repository.dart';
+import '../features/auth/data/google_accounts.dart';
 import '../features/auth/domain/user.dart';
 import '../features/comments/domain/comment.dart';
 import '../features/memories/domain/memory.dart';
@@ -76,6 +77,11 @@ final apiTransportProvider = Provider<ApiTransport>((ref) {
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) => AuthRepository(ref.watch(apiTransportProvider)));
+
+/// Pilihan akun Google di HP untuk masuk dengan Google (v1.x). Ditimpa di tes.
+final googleAccountsProvider = Provider<GoogleAccounts>(
+  (ref) => PlatformGoogleAccounts(serverClientId: Env.googleServerClientId),
+);
 
 /// Cara membuka akun untuk sebuah ID pengguna. Ditimpa di tes dengan database di memori.
 final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
