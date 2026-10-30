@@ -64,5 +64,24 @@ enum EntityType {
     _ => const [],
   };
 
+  /// Isi ruang: semua jenis yang punya `space_id`. Saat Ruang Bersama tiba tertutup (v1.0),
+  /// semuanya ikut terhapus dari cache.
+  static const List<EntityType> spaceContent = [
+    list,
+    task,
+    goal,
+    entry,
+    specialDate,
+    trip,
+    memory,
+    memoryPhoto,
+    comment,
+    reaction,
+  ];
+
+  /// Jenis yang ikut terhapus saat data ini tiba terhapus: [children], atau untuk ruang (v1.0)
+  /// seluruh [spaceContent]. Yang masih punya operasi di antrean dibiarkan.
+  List<EntityType> get dependents => this == EntityType.space ? spaceContent : children;
+
   static EntityType byName(String name) => values.firstWhere((type) => type.name == name);
 }

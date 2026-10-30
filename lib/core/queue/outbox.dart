@@ -253,6 +253,24 @@ class Outbox {
     });
   }
 
+  /// Ruang Bersama ditutup (v1.0): buang semua operasi untuk isi ruang [spaceId], lalu hapus
+  /// ruang itu beserta isinya dari cache. Foto yang masih menunggu diunggah ikut dibuang.
+  Future<void> forgetSpace(String spaceId) async {
+    final photos = await store.transaction(() async {
+      final content = await store.spaceContentIds(spaceId);
+      final ops = await _db.select(_db.outboxOps).get();
+      for (final op in ops) {
+        if (content[EntityType.byName(op.entityType)]?.contains(op.entityId) ?? false) await _delete(op.id);
+      }
+      await store.removeSpace(spaceId);
+      return content[EntityType.memoryPhoto] ?? const <String>{};
+    });
+
+    for (final id in photos) {
+      await _forgetFile(EntityType.memoryPhoto, id);
+    }
+  }
+
   /// Urungkan: hapus operasi itu saja dan pulihkan nilai sebelumnya, jadi pasangan
   /// tidak menerima notifikasi yang dibatalkan. `false` kalau operasinya sudah dikirim.
   Future<bool> undo(int opId) async {

@@ -128,7 +128,17 @@ class FakeApi implements ApiTransport {
       return ApiResponse(status: 200, body: {'data': me});
     }
 
-    if (segments.first == 'spaces') return ApiResponse(status: 200, body: {'data': spaces});
+    if (segments.first == 'spaces') {
+      // Keluar dari Ruang Bersama (v1.0): ruangnya ditutup, dan diulang pun tetap 204.
+      if (request.method == 'DELETE') {
+        spaces = [
+          for (final space in spaces)
+            if (space['id'] != segments[1]) space,
+        ];
+        return const ApiResponse(status: 204);
+      }
+      return ApiResponse(status: 200, body: {'data': spaces});
+    }
 
     if (request.method == 'GET' && segments.first == 'places') {
       return ApiResponse(status: 200, body: {'data': places});

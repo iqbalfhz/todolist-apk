@@ -1891,6 +1891,42 @@ abstract class AppLocalizations {
   /// **'{name} (kamu)'**
   String pairedYou(String name);
 
+  /// No description provided for @pairedLeave.
+  ///
+  /// In id, this message translates to:
+  /// **'Keluar dari Ruang Bersama'**
+  String get pairedLeave;
+
+  /// No description provided for @pairedLeaveConfirmTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Keluar dari Ruang Bersama?'**
+  String get pairedLeaveConfirmTitle;
+
+  /// No description provided for @pairedLeaveConfirmBody.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Bersama ditutup untukmu dan {name}. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah.'**
+  String pairedLeaveConfirmBody(String name);
+
+  /// No description provided for @pairedLeaveConfirm.
+  ///
+  /// In id, this message translates to:
+  /// **'Keluar'**
+  String get pairedLeaveConfirm;
+
+  /// No description provided for @pairedLeaving.
+  ///
+  /// In id, this message translates to:
+  /// **'Mengirim perubahan terakhir, lalu menutup Ruang Bersama…'**
+  String get pairedLeaving;
+
+  /// No description provided for @pairedLeft.
+  ///
+  /// In id, this message translates to:
+  /// **'Kamu sudah keluar dari Ruang Bersama. Isinya disimpan 30 hari kalau kalian ingin bergabung lagi.'**
+  String get pairedLeft;
+
   /// No description provided for @settingsTitle.
   ///
   /// In id, this message translates to:

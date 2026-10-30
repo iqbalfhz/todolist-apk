@@ -665,6 +665,17 @@
       "name": {"type": "String"}
     }
   },
+  "pairedLeave": "Keluar dari Ruang Bersama",
+  "pairedLeaveConfirmTitle": "Keluar dari Ruang Bersama?",
+  "pairedLeaveConfirmBody": "Ruang Bersama ditutup untukmu dan {name}. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah.",
+  "@pairedLeaveConfirmBody": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "pairedLeaveConfirm": "Keluar",
+  "pairedLeaving": "Mengirim perubahan terakhir, lalu menutup Ruang Bersama…",
+  "pairedLeft": "Kamu sudah keluar dari Ruang Bersama. Isinya disimpan 30 hari kalau kalian ingin bergabung lagi.",
 
   "settingsTitle": "Pengaturan",
   "settingsProfile": "Profil",

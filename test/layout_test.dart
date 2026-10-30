@@ -269,6 +269,14 @@ void main() {
       await visit(tester, container, Routes.settings);
       await visit(tester, container, Routes.profile);
       await visit(tester, container, Routes.pairing);
+      // Konfirmasi keluar dari Ruang Bersama (v1.0), dengan penjelasan akibatnya yang panjang.
+      await tester.ensureVisible(find.text('Keluar dari Ruang Bersama'));
+      await tester.tap(find.text('Keluar dari Ruang Bersama'));
+      await settle(tester);
+      expect(find.text('Keluar dari Ruang Bersama?'), findsOneWidget);
+      await scrollThrough(tester);
+      await tester.tap(find.text('Batal'));
+      await settle(tester);
 
       await visit(tester, container, Routes.specialDates);
       await withSheet(tester, container, () async {
