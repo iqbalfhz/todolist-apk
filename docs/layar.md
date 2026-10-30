@@ -72,6 +72,7 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
 - "Nanti saja" → Beranda.
 - Kode diambil dari `POST /invitations` (atau `invitation` di `GET /me`). Setelah berhasil gabung: sync, lalu Beranda.
 - Kalau sudah berpasangan, layar ini menampilkan Ruang Bersama dan kedua anggotanya, bukan kode.
+- Keluar dari Ruang Bersama (v1.0): kalau sudah berpasangan dan bukan alur pertama kali, di bawah "Bersama sejak" ada tombol "Keluar dari Ruang Bersama" (bulat penuh, garis `line`, teks dan ikon `danger`). Konfirmasi "Keluar dari Ruang Bersama?" menyebut akibatnya: ruang ditutup untukmu dan pasangan, isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan, lalu dihapus permanen beserta fotonya; Ruang Pribadi tidak berubah. Selama berjalan, tombolnya nonaktif dengan keterangan "Mengirim perubahan terakhir, lalu menutup Ruang Bersama…". Berhasil → "Kamu sudah keluar dari Ruang Bersama. Isinya disimpan 30 hari kalau kalian ingin bergabung lagi.", dan layar ini kembali menampilkan kode undangan. Gagal → pesan server, atau "Butuh koneksi internet. Coba lagi saat online." Bergabung lagi dengan pasangan yang sama dalam 30 hari memulihkan ruang lama beserta isinya.
 
 ### Pengaturan — `Pengaturan.dc.html`
 
