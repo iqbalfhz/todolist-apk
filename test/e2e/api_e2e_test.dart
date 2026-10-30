@@ -164,6 +164,22 @@ void main() {
     expect(attempt.unauthenticated, 0);
   }, skip: skipReason);
 
+  test('masuk dengan Google: token yang bukan dari Google dibalas 422 google_token_invalid', () async {
+    final attempt = Device(baseUrl!);
+
+    // Kepala tokennya tidak terbaca, jadi server menolaknya tanpa menghubungi Google.
+    await expectLater(
+      AuthRepository(attempt.api).signInWithGoogle(idToken: 'bukan.token.google', deviceName: 'Tes'),
+      throwsA(
+        isA<ApiError>()
+            .having((error) => error.code, 'code', ApiErrorCode.googleTokenInvalid)
+            .having((error) => error.status, 'status', 422)
+            .having((error) => error.message, 'message', 'Masuk dengan Google gagal. Coba lagi.'),
+      ),
+    );
+    expect(attempt.unauthenticated, 0);
+  }, skip: skipReason);
+
   test('email yang sudah terdaftar ditolak 422 di kolom email', () async {
     final attempt = Device(baseUrl!);
 
