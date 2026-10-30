@@ -229,3 +229,32 @@ abstract final class PersonColors {
     return colors[key] ?? colors['mawar']!;
   }
 }
+
+/// Warna tombol masuk dengan Google (v1.x), dari panduan merek Google
+/// (developers.google.com/identity/branding-guidelines). Tidak mengikuti tema Mawar atau
+/// Anggrek, supaya tombolnya tetap dikenali sebagai tombol Google.
+@immutable
+class GoogleButtonColors {
+  const GoogleButtonColors._({required this.fill, required this.stroke, required this.text});
+
+  final Color fill;
+  final Color stroke;
+  final Color text;
+
+  static const GoogleButtonColors light = GoogleButtonColors._(
+    fill: Color(0xFFFFFFFF),
+    stroke: Color(0xFF747775),
+    text: Color(0xFF1F1F1F),
+  );
+
+  static const GoogleButtonColors dark = GoogleButtonColors._(
+    fill: Color(0xFF131314),
+    stroke: Color(0xFF8E918F),
+    text: Color(0xFFE3E3E3),
+  );
+
+  /// Logo dan teks tombol yang nonaktif, seperti contoh tombol dari Google.
+  static const double disabledOpacity = 0.38;
+
+  static GoogleButtonColors of(Brightness brightness) => brightness == Brightness.dark ? dark : light;
+}

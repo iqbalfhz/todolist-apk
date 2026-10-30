@@ -38,6 +38,8 @@ import 'package:todolist/core/time/space_clock.dart';
 import 'package:todolist/core/utils/dates.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
+import 'package:todolist/features/auth/data/google_accounts.dart';
+import 'package:todolist/features/auth/presentation/google_sign_in_button.dart';
 import 'package:todolist/features/auth/domain/user.dart';
 import 'package:todolist/features/comments/domain/comment.dart';
 import 'package:todolist/features/memories/domain/memory.dart';
@@ -47,6 +49,7 @@ import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/special_dates/domain/special_date.dart';
 
 import '../helpers/app_harness.dart';
+import '../helpers/fake_google.dart';
 import '../helpers/fake_map.dart';
 import '../helpers/fake_photos.dart';
 import '../helpers/fake_push.dart';
@@ -180,6 +183,8 @@ void main() {
     final dir = Directory.systemTemp.createTempSync('todolist-ui-e2e-');
     final storage = MemoryKeyValueStore();
     final push = FakePushService();
+    // Pilihan akun Google palsu: ID token sungguhan hanya bisa didapat dari Google.
+    final google = FakeGoogleAccounts();
 
     late final ProviderContainer container;
     final transport = RootZoneTransport(
@@ -210,6 +215,7 @@ void main() {
         mediaCachesProvider.overrideWithValue(FakeMediaCaches()),
         // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
         mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
+        googleAccountsProvider.overrideWithValue(google),
         revocationTransportProvider.overrideWithValue(
           (token) => RootZoneTransport(DioApiTransport(baseUrl: baseUrl, token: () => token)),
         ),
@@ -1297,6 +1303,15 @@ void main() {
     expect(find.text('Buat akun untuk mulai mencatat berdua.'), findsOneWidget);
     expect(tester.widget<TextField>(field('Email')).decoration!.errorText, isNotEmpty);
     await tap(find.widgetWithText(TextButton, 'Masuk'));
+
+    step('Masuk dengan Google: token yang ditolak server, pesannya di bawah tombol Google');
+    google.results.add(const GoogleIdentity(idToken: 'bukan.token.google', email: 'uji@contoh.test'));
+    await tap(find.widgetWithText(GoogleSignInButton, 'Masuk dengan Google'));
+    await net();
+    expect(google.picks, 1);
+    expect(find.text('Masuk dengan Google gagal. Coba lagi.'), findsOneWidget);
+    expect(find.text('Senang melihatmu lagi.'), findsOneWidget);
+    expect(storage.values.containsKey(StorageKeys.token), isFalse);
 
     step('Salah kata sandi: pesan dari server');
     await tester.enterText(field('Email'), email);

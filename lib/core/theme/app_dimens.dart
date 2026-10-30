@@ -158,6 +158,9 @@ abstract final class AppDimens {
   static const double iconXxl = 34;
   static const double iconHero = 52;
 
+  /// Logo G di tombol masuk dengan Google, seukuran di paket aset Google (v1.x).
+  static const double googleLogo = 20;
+
   // Peta (v1.x).
   static const double mapPreviewHeight = 160;
   static const double mapPin = 22;

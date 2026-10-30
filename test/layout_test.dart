@@ -1,12 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/database/entity_type.dart';
 import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
 import 'package:todolist/core/widgets/widgets.dart';
+import 'package:todolist/features/auth/data/google_accounts.dart';
+import 'package:todolist/features/auth/presentation/google_sign_in_button.dart';
 import 'package:todolist/features/memories/presentation/location_picker_screen.dart';
 import 'package:todolist/features/memories/presentation/memory_form_screen.dart';
 import 'package:todolist/features/savings/domain/savings_views.dart';
@@ -30,6 +35,8 @@ import 'package:todolist/features/trips/presentation/trip_form_sheet.dart';
 import 'package:todolist/features/trips/presentation/trips_screen.dart';
 
 import 'helpers/app_harness.dart';
+import 'helpers/fake_api.dart';
+import 'helpers/fake_google.dart';
 import 'helpers/fake_photos.dart';
 import 'helpers/fake_push.dart';
 import 'helpers/fixtures.dart';
@@ -404,6 +411,37 @@ void main() {
       await scrollThrough(tester);
 
       expect(find.text('Nama panggilan belum diisi.'), findsOneWidget);
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('$label: masuk dengan Google, dengan akun yang disebut lalu pesan error', (tester) async {
+      final h = Harness();
+      final reply = Completer<ApiResponse>();
+      h.api.enqueue((_) => reply.future);
+      const identity = GoogleIdentity(idToken: 'token', email: 'nama.yang.cukup.panjang.untuk.diuji@gmail.com');
+      await pumpApp(tester, h, signedIn: false, google: FakeGoogleAccounts([identity]));
+      await apply(tester, size: size, textScale: textScale);
+
+      await tester.ensureVisible(find.byType(GoogleSignInButton));
+      await tester.tap(find.byType(GoogleSignInButton));
+      await tester.pump();
+      await tester.pump();
+      expect(find.textContaining('Memakai akun Google'), findsOneWidget);
+      await scrollThrough(tester);
+
+      reply.completeError(
+        apiError(422, ApiErrorCode.googleTokenInvalid, message: 'Email akun Google ini belum terverifikasi.'),
+      );
+      await settle(tester);
+      await scrollThrough(tester);
+      expect(find.text('Email akun Google ini belum terverifikasi.'), findsOneWidget);
+
+      await tester.ensureVisible(find.widgetWithText(TextButton, 'Daftar'));
+      await tester.tap(find.widgetWithText(TextButton, 'Daftar'));
+      await settle(tester);
+      await scrollThrough(tester);
+      expect(find.widgetWithText(GoogleSignInButton, 'Daftar dengan Google'), findsOneWidget);
 
       await disposeApp(tester, h);
     });

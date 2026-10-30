@@ -12,9 +12,11 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../home/presentation/main_shell.dart';
+import '../data/google_accounts.dart';
 import 'auth_actions.dart';
+import 'google_sign_in_button.dart';
 
-/// Layar Masuk: email dan kata sandi.
+/// Layar Masuk: email dan kata sandi, atau akun Google (v1.x).
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -22,7 +24,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) => const _AuthForm(registering: false);
 }
 
-/// Layar Daftar: nama panggilan, email, dan kata sandi (minimal 8 karakter).
+/// Layar Daftar: nama panggilan, email, dan kata sandi (minimal 8 karakter), atau akun Google (v1.x).
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
@@ -48,6 +50,11 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
   String? _emailError;
   String? _passwordError;
   String? _formError;
+
+  /// Akun Google yang sedang ditukar di server. Email Google yang berbeda dari akun lama
+  /// membuat akun baru, jadi akunnya disebut di layar.
+  String? _googleEmail;
+  String? _googleError;
   bool _obscure = true;
   bool _busy = false;
 
@@ -66,6 +73,7 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
 
     setState(() {
       _formError = null;
+      _googleError = null;
       _nameError = !registering
           ? null
           : name.isEmpty
@@ -115,12 +123,59 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
         _passwordError = error.errors['password']?.firstOrNull;
         if (_nameError == null && _emailError == null && _passwordError == null) _formError = error.message;
       });
-    } on NetworkFailure {
-      if (mounted) setState(() => _formError = l10n.needsConnection);
+    } on NetworkFailure catch (failure) {
+      if (mounted) setState(() => _formError = _networkMessage(l10n, failure));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
   }
+
+  /// Masuk atau daftar dengan Google (v1.x): pilih akun di HP, lalu tukar ID tokennya di server.
+  Future<void> _signInWithGoogle() async {
+    if (_busy) return;
+
+    final l10n = context.l10n;
+    final container = ProviderScope.containerOf(context, listen: false);
+    final messenger = ScaffoldMessenger.of(context);
+    final deviceName = ref.read(deviceInfoProvider).name;
+    setState(() {
+      _busy = true;
+      _formError = null;
+      _googleError = null;
+    });
+
+    try {
+      final identity = await ref.read(googleAccountsProvider).pick();
+      if (identity == null || !mounted) return;
+      setState(() => _googleEmail = identity.email);
+
+      final signedIn = await ref
+          .read(authRepositoryProvider)
+          .signInWithGoogle(idToken: identity.idToken, deviceName: deviceName, timezone: await deviceTimezone());
+      // Layar berikutnya ditentukan router begitu sesi berubah.
+      await completeSignIn(container, signedIn.result);
+      if (signedIn.created) messenger.showSnackBar(SnackBar(content: Text(l10n.googleAccountCreated(identity.email))));
+    } on GoogleAccountsFailure catch (failure) {
+      debugPrint('Masuk dengan Google gagal di HP: ${failure.detail}');
+      if (mounted) setState(() => _googleError = l10n.googleSignInFailed);
+    } on ApiError catch (error) {
+      // Pesan error diambil dari `message` balasan API.
+      if (mounted) setState(() => _googleError = error.message);
+    } on NetworkFailure catch (failure) {
+      if (mounted) setState(() => _googleError = _networkMessage(l10n, failure));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _googleEmail = null;
+        });
+      }
+    }
+  }
+
+  /// Server yang membalas 5xx sedang bermasalah; itu bukan soal koneksi HP.
+  static String _networkMessage(AppLocalizations l10n, NetworkFailure failure) =>
+      (failure.status ?? 0) >= 500 ? l10n.genericError : l10n.needsConnection;
 
   @override
   Widget build(BuildContext context) {
@@ -212,6 +267,26 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
           ],
           const SizedBox(height: AppDimens.gap20),
           PrimaryButton(label: registering ? l10n.registerButton : l10n.loginButton, onPressed: _busy ? null : _submit),
+          const SizedBox(height: AppDimens.gap16),
+          _OrDivider(label: l10n.authOr),
+          const SizedBox(height: AppDimens.gap16),
+          GoogleSignInButton(
+            label: registering ? l10n.googleSignUp : l10n.googleSignIn,
+            onPressed: _busy ? null : _signInWithGoogle,
+          ),
+          if (_googleError != null || _googleEmail != null) ...[
+            const SizedBox(height: AppDimens.gap12),
+            Semantics(
+              liveRegion: true,
+              child: _googleError != null
+                  ? StatusText(text: _googleError!, icon: Symbols.error_rounded, color: palette.danger)
+                  : StatusText(
+                      text: l10n.googleUsingAccount(_googleEmail!),
+                      icon: Symbols.account_circle_rounded,
+                      color: palette.muted,
+                    ),
+            ),
+          ],
           const SizedBox(height: AppDimens.gap8),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -225,6 +300,28 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Garis pemisah "atau" di antara formulir email dan tombol Google.
+class _OrDivider extends StatelessWidget {
+  const _OrDivider({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final line = Divider(height: AppDimens.borderWidth, thickness: AppDimens.borderWidth, color: context.palette.line);
+    return Row(
+      children: [
+        Expanded(child: line),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppDimens.gap12),
+          child: Text(label, style: context.text.caption),
+        ),
+        Expanded(child: line),
+      ],
     );
   }
 }

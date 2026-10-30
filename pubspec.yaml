@@ -55,6 +55,7 @@ dependencies:
   timezone: ^0.11.1
   flutter_map: ^8.3.2
   latlong2: ^0.10.1
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +70,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+
+  assets:
+    # Logo G resmi dari paket aset panduan merek Google (tombol masuk dengan Google, v1.x),
+    # dirender tanpa latar dalam 1x sampai 4x.
+    - assets/images/
 
   fonts:
     - family: Plus Jakarta Sans
