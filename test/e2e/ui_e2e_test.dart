@@ -186,6 +186,8 @@ void main() {
     final push = FakePushService();
     // Berkas database akun ada di folder sementara tes; yang dicatat cukup akun mana yang dihapus.
     final accountFiles = FakeAccountFiles();
+    // Ekspor data (v1.0) tidak menulis ke folder unduhan sungguhan.
+    final exportFiles = FakeExportFiles();
     // Pilihan akun Google palsu: ID token sungguhan hanya bisa didapat dari Google.
     final google = FakeGoogleAccounts();
 
@@ -217,6 +219,8 @@ void main() {
         pushServiceProvider.overrideWithValue(push),
         mediaCachesProvider.overrideWithValue(FakeMediaCaches()),
         accountFilesProvider.overrideWithValue(accountFiles),
+        exportSaverProvider.overrideWithValue(exportFiles),
+        exportPhotoFetcherProvider.overrideWithValue(exportFiles),
         // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
         mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
         googleAccountsProvider.overrideWithValue(google),
@@ -1369,6 +1373,21 @@ void main() {
       expect((await partner.sharedSpace()).id, sharedSpaceId);
       expect((await partner.account.store.tasks()).map((task) => task.title), contains('Beli galon'));
     });
+
+    // ---------------------------------------------------------------- ekspor data (v1.0)
+
+    step('Ekspor data dari Pengaturan: berkas JSON dari server tersimpan apa adanya');
+    await go(Routes.exportData);
+    await tap(find.widgetWithText(FilledButton, 'Ekspor data'));
+    await net();
+    expect(find.text('File tersimpan'), findsOneWidget);
+    final exported = exportFiles.saved.entries.single;
+    expect(exported.key, matches(RegExp(r'^denly-days-[\d-]+/denly-days-[\d-]+\.json$')));
+    final exportedFile = jsonDecode(utf8.decode(exported.value)) as Map<String, dynamic>;
+    expect((exportedFile['user'] as Map<String, dynamic>)['email'], email);
+    expect([
+      for (final task in exportedFile['tasks'] as List<dynamic>) (task as Map<String, dynamic>)['title'],
+    ], contains('Beli galon'));
 
     // ---------------------------------------------------------------- hapus akun (v1.0)
 
