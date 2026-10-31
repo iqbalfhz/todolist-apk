@@ -12,6 +12,7 @@ import 'package:todolist/core/media/photo_picker.dart';
 import 'package:todolist/core/notifications/push_service.dart';
 import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
+import 'package:todolist/core/session/account_files.dart';
 import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/time/space_clock.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
@@ -55,6 +56,7 @@ Future<ProviderContainer> pumpApp(
   String? themeMode,
   FakeTileProvider? tiles,
   FakeGoogleAccounts? google,
+  FakeAccountFiles? accountFiles,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
@@ -93,6 +95,8 @@ Future<ProviderContainer> pumpApp(
       mapTileProviderProvider.overrideWithValue(tiles ?? FakeTileProvider()),
       // Masuk dengan Google (v1.x) tidak pernah membuka pilihan akun sungguhan di tes.
       googleAccountsProvider.overrideWithValue(google ?? FakeGoogleAccounts()),
+      // Hapus akun (v1.0) tidak pernah menyentuh berkas sungguhan di tes.
+      accountFilesProvider.overrideWithValue(accountFiles ?? FakeAccountFiles()),
       revocationTransportProvider.overrideWithValue((token) {
         harness.revocationTokens.add(token);
         return harness.api;
@@ -113,6 +117,14 @@ Future<ProviderContainer> pumpApp(
 }
 
 ProviderContainer? _container;
+
+/// Berkas akun palsu: mencatat akun yang berkasnya dihapus.
+class FakeAccountFiles implements AccountFiles {
+  final List<String> deleted = [];
+
+  @override
+  Future<void> delete(String userId) async => deleted.add(userId);
+}
 
 /// Biarkan kueri database, permintaan ke API palsu, dan animasi selesai.
 Future<void> settle(WidgetTester tester) async {

@@ -335,6 +335,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get googleSignInFailed => 'Masuk dengan Google gagal. Coba lagi.';
 
   @override
+  String get googleContinue => 'Lanjutkan dengan Google';
+
+  @override
   String get showPassword => 'Tampilkan kata sandi';
 
   @override
@@ -1186,6 +1189,63 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get settingsBackupInfo =>
       'Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.';
+
+  @override
+  String get settingsDeleteAccount => 'Hapus akun';
+
+  @override
+  String get settingsDeleteAccountSub => 'Hapus permanen akun dan semua datamu';
+
+  @override
+  String get deleteAccountTitle => 'Hapus akun';
+
+  @override
+  String get deleteAccountWarning => 'Semua datamu dihapus permanen dan tidak bisa dibatalkan.';
+
+  @override
+  String get deleteAccountWhatProfile => 'Akun dan profilmu, termasuk foto profil.';
+
+  @override
+  String get deleteAccountWhatPersonal =>
+      'Ruang Pribadi beserta semua tugas, tabungan, tanggal penting, perjalanan, kenangan, dan fotonya.';
+
+  @override
+  String deleteAccountWhatShared(String name) {
+    return 'Ruang Bersama ditutup, dan isinya beserta foto ikut terhapus untuk $name.';
+  }
+
+  @override
+  String get deleteAccountWhatDevices => 'Semua HP-mu langsung keluar dari akun ini.';
+
+  @override
+  String get deleteAccountAfter =>
+      'Email yang sama bisa dipakai untuk daftar lagi, tapi sebagai akun baru tanpa data lama.';
+
+  @override
+  String get deleteAccountVerifyTitle => 'Pastikan ini kamu';
+
+  @override
+  String get deleteAccountButton => 'Hapus akun';
+
+  @override
+  String get deleteAccountGoogleHint => 'Masuk dengan Google? Pilih akun Google yang tersambung ke akun ini.';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Hapus akun sekarang?';
+
+  @override
+  String get deleteAccountConfirmBody => 'Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan.';
+
+  @override
+  String deleteAccountConfirmGoogle(String email) {
+    return 'Akun yang tersambung ke $email beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.';
+  }
+
+  @override
+  String get deleteAccountWorking => 'Menghapus akun…';
+
+  @override
+  String get deleteAccountDone => 'Akunmu sudah dihapus beserta semua datanya.';
 
   @override
   String get settingsLogout => 'Keluar';

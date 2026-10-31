@@ -853,4 +853,43 @@ void main() {
     expect(await sharedTitles(b), before);
     expect((await b.sharedSpace()).id, shared.id);
   }, skip: skipReason);
+
+  test(
+    'hapus akun: konfirmasi salah ditolak, lalu semua data hilang dan Ruang Bersama tertutup untuk pasangan',
+    () async {
+      final shared = await a.sharedSpace();
+      final auth = AuthRepository(b.api);
+
+      Future<void> rejected(Future<void> attempt, ApiErrorCode code) => expectLater(
+        attempt,
+        throwsA(isA<ApiError>().having((error) => error.code, 'code', code).having((e) => e.status, 'status', 422)),
+      );
+      await rejected(auth.deleteAccount(password: 'salah-total'), ApiErrorCode.invalidCredentials);
+      await rejected(auth.deleteAccount(), ApiErrorCode.validationFailed);
+      // Akun ini tidak tersambung ke Google, dan tokennya pun bukan dari Google.
+      await rejected(auth.deleteAccount(idToken: 'bukan.token.google'), ApiErrorCode.googleTokenInvalid);
+      expect(b.unauthenticated, 0);
+
+      await auth.deleteAccount(password: 'rahasia-banget');
+
+      // Balasan 204 yang hilang lalu dikirim ulang dibalas 401.
+      await expectLater(
+        auth.deleteAccount(password: 'rahasia-banget'),
+        throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.unauthenticated)),
+      );
+
+      // A: Ruang Bersama tiba tertutup, isinya hilang, Ruang Pribadi tetap.
+      await a.syncNow();
+      expect((await a.spaces()).map((space) => space.id), isNot(contains(shared.id)));
+      expect((await a.tasks()).where((task) => task.spaceId == shared.id), isEmpty);
+      expect((await a.tasks()).map((task) => task.title), contains('Kirim laporan bulanan'));
+
+      // Email yang sama tidak bisa dipakai masuk lagi.
+      await expectLater(
+        AuthRepository(Device(baseUrl!).api).login(email: b.user.email, password: 'rahasia-banget', deviceName: 'Tes'),
+        throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.invalidCredentials)),
+      );
+    },
+    skip: skipReason,
+  );
 }

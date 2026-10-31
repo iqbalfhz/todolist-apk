@@ -268,7 +268,7 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
           const SizedBox(height: AppDimens.gap20),
           PrimaryButton(label: registering ? l10n.registerButton : l10n.loginButton, onPressed: _busy ? null : _submit),
           const SizedBox(height: AppDimens.gap16),
-          _OrDivider(label: l10n.authOr),
+          OrDivider(label: l10n.authOr),
           const SizedBox(height: AppDimens.gap16),
           GoogleSignInButton(
             label: registering ? l10n.googleSignUp : l10n.googleSignIn,
@@ -300,28 +300,6 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Garis pemisah "atau" di antara formulir email dan tombol Google.
-class _OrDivider extends StatelessWidget {
-  const _OrDivider({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    final line = Divider(height: AppDimens.borderWidth, thickness: AppDimens.borderWidth, color: context.palette.line);
-    return Row(
-      children: [
-        Expanded(child: line),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimens.gap12),
-          child: Text(label, style: context.text.caption),
-        ),
-        Expanded(child: line),
-      ],
     );
   }
 }

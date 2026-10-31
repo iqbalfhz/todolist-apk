@@ -691,6 +691,12 @@ abstract class AppLocalizations {
   /// **'Masuk dengan Google gagal. Coba lagi.'**
   String get googleSignInFailed;
 
+  /// No description provided for @googleContinue.
+  ///
+  /// In id, this message translates to:
+  /// **'Lanjutkan dengan Google'**
+  String get googleContinue;
+
   /// No description provided for @showPassword.
   ///
   /// In id, this message translates to:
@@ -2160,6 +2166,108 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.'**
   String get settingsBackupInfo;
+
+  /// No description provided for @settingsDeleteAccount.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus akun'**
+  String get settingsDeleteAccount;
+
+  /// No description provided for @settingsDeleteAccountSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus permanen akun dan semua datamu'**
+  String get settingsDeleteAccountSub;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus akun'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In id, this message translates to:
+  /// **'Semua datamu dihapus permanen dan tidak bisa dibatalkan.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @deleteAccountWhatProfile.
+  ///
+  /// In id, this message translates to:
+  /// **'Akun dan profilmu, termasuk foto profil.'**
+  String get deleteAccountWhatProfile;
+
+  /// No description provided for @deleteAccountWhatPersonal.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Pribadi beserta semua tugas, tabungan, tanggal penting, perjalanan, kenangan, dan fotonya.'**
+  String get deleteAccountWhatPersonal;
+
+  /// No description provided for @deleteAccountWhatShared.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Bersama ditutup, dan isinya beserta foto ikut terhapus untuk {name}.'**
+  String deleteAccountWhatShared(String name);
+
+  /// No description provided for @deleteAccountWhatDevices.
+  ///
+  /// In id, this message translates to:
+  /// **'Semua HP-mu langsung keluar dari akun ini.'**
+  String get deleteAccountWhatDevices;
+
+  /// No description provided for @deleteAccountAfter.
+  ///
+  /// In id, this message translates to:
+  /// **'Email yang sama bisa dipakai untuk daftar lagi, tapi sebagai akun baru tanpa data lama.'**
+  String get deleteAccountAfter;
+
+  /// No description provided for @deleteAccountVerifyTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Pastikan ini kamu'**
+  String get deleteAccountVerifyTitle;
+
+  /// No description provided for @deleteAccountButton.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus akun'**
+  String get deleteAccountButton;
+
+  /// No description provided for @deleteAccountGoogleHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Masuk dengan Google? Pilih akun Google yang tersambung ke akun ini.'**
+  String get deleteAccountGoogleHint;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Hapus akun sekarang?'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmBody.
+  ///
+  /// In id, this message translates to:
+  /// **'Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan.'**
+  String get deleteAccountConfirmBody;
+
+  /// No description provided for @deleteAccountConfirmGoogle.
+  ///
+  /// In id, this message translates to:
+  /// **'Akun yang tersambung ke {email} beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.'**
+  String deleteAccountConfirmGoogle(String email);
+
+  /// No description provided for @deleteAccountWorking.
+  ///
+  /// In id, this message translates to:
+  /// **'Menghapus akun…'**
+  String get deleteAccountWorking;
+
+  /// No description provided for @deleteAccountDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Akunmu sudah dihapus beserta semua datanya.'**
+  String get deleteAccountDone;
 
   /// No description provided for @settingsLogout.
   ///

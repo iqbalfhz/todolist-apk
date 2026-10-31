@@ -126,7 +126,11 @@ void main() {
 
       container.read(routerProvider).go(Routes.memories);
       await settle(tester);
-      expect(find.bySemanticsLabel(RegExp('1 reaksi, 0 komentar')), findsOneWidget, reason: 'penanda di kartu linimasa');
+      expect(
+        find.bySemanticsLabel(RegExp('1 reaksi, 0 komentar')),
+        findsOneWidget,
+        reason: 'penanda di kartu linimasa',
+      );
 
       container.read(routerProvider).go(Routes.memory(memoryId, comments: true));
       await settle(tester);

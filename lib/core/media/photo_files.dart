@@ -21,11 +21,12 @@ class PhotoFiles implements UploadFiles {
   /// Folder akun [userId] di penyimpanan app.
   factory PhotoFiles.forAccount(String userId, PhotoCache cache) {
     if (!ulidPattern.hasMatch(userId)) throw ArgumentError.value(userId, 'userId', 'Bukan ULID');
-    return PhotoFiles(
-      directory: () async => Directory('${(await getApplicationSupportDirectory()).path}/foto_kenangan/akun_$userId'),
-      cache: cache,
-    );
+    return PhotoFiles(directory: () => folderFor(userId), cache: cache);
   }
+
+  /// Folder foto akun [userId] di penyimpanan app.
+  static Future<Directory> folderFor(String userId) async =>
+      Directory('${(await getApplicationSupportDirectory()).path}/foto_kenangan/akun_$userId');
 
   /// Folder tempat berkas disimpan; dibuat saat foto pertama disimpan.
   final Future<Directory> Function() directory;

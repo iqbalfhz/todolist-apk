@@ -102,8 +102,14 @@ class SessionController extends Notifier<Session> {
   }
 
   /// Hapus token dari HP. Database lokal akun tidak dihapus.
+  ///
+  /// Keluar yang disengaja setelah sesi berakhir (misalnya akun yang baru dihapus dibalas 401)
+  /// menghapus tanda "sesi berakhir" di layar Masuk.
   Future<void> signOut({bool expired = false}) async {
-    if (!state.isSignedIn) return;
+    if (!state.isSignedIn) {
+      if (state.expired && !expired) state = const Session.signedOut();
+      return;
+    }
     state = Session.signedOut(expired: expired);
     await _storage.write(StorageKeys.token, null);
     await _storage.write(StorageKeys.userId, null);

@@ -5,8 +5,10 @@ import '../../../core/database/local_store.dart';
 import '../../../core/media/media_caches.dart';
 import '../../../core/notifications/push_service.dart';
 import '../../../core/providers.dart';
+import '../../../core/session/account.dart';
 import '../../../core/session/session.dart';
 import '../../../core/session/token_revocations.dart';
+import '../../../core/storage/key_value_store.dart';
 import '../domain/user.dart';
 
 /// Zona waktu IANA dari HP, dikirim saat daftar. `null` kalau tidak terbaca;
@@ -36,6 +38,32 @@ Future<void> completeSignIn(ProviderContainer container, AuthResult result) asyn
   await account.profile.save(result.user);
   // Tidak ditunggu: layar berikutnya menampilkan skeleton sampai data tiba.
   account.sync.sync().ignore();
+}
+
+/// Akun [userId] sudah dihapus di server (v1.0): buang semua datanya dari HP, yaitu database,
+/// antrean, foto yang menunggu diunggah, dan cache foto, hapus token FCM, lalu kembali ke layar
+/// Masuk. Token di server sudah ikut terhapus, jadi tidak ada yang perlu dicabut.
+///
+/// [userId] dan [account] diambil sebelum request, karena balasan 401 dari request lain bisa
+/// sudah mengeluarkan sesi lebih dulu.
+Future<void> completeAccountDeletion(ProviderContainer container, {required String userId, Account? account}) async {
+  await container.read(pushServiceProvider).deleteToken();
+  try {
+    await container.read(mediaCachesProvider).clear();
+  } on Object {
+    // Cache yang gagal dikosongkan tidak boleh menahan penghapusan.
+  }
+  await container.read(sessionProvider.notifier).signOut();
+  if (account != null) {
+    await account.dispose();
+    await account.closed;
+  }
+  await container.read(keyValueStoreProvider).write(StorageKeys.pairingOnboarded(userId), null);
+  try {
+    await container.read(accountFilesProvider).delete(userId);
+  } on Object {
+    // Berkas yang tertinggal tidak bisa dibuka lagi tanpa akunnya.
+  }
 }
 
 /// Keluar: cabut token di server, hapus token FCM di HP apa pun hasilnya, kosongkan cache

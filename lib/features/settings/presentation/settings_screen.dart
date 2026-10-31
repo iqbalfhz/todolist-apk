@@ -182,6 +182,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitle: l10n.settingsBackupSub,
                     onTap: () => showMessage(context, l10n.settingsBackupInfo),
                   ),
+                  const RowDivider(),
+                  _NavRow(
+                    title: l10n.settingsDeleteAccount,
+                    subtitle: l10n.settingsDeleteAccountSub,
+                    onTap: () => context.push(Routes.deleteAccount),
+                  ),
                 ],
               ),
             ),

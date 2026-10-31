@@ -18,6 +18,9 @@ abstract final class Routes {
   static const String profile = '/pengaturan/profil';
   static const String specialDates = '/pengaturan/tanggal-penting';
 
+  /// Hapus akun (v1.0). Halaman publik `/hapus-akun` menyebut langkah "Pengaturan > Hapus akun".
+  static const String deleteAccount = '/pengaturan/hapus-akun';
+
   /// Parameter kueri penanda layar asal, supaya tombol kembali pulang ke Beranda.
   static const String fromParam = 'dari';
   static const String fromHome = 'beranda';

@@ -3,6 +3,28 @@ import 'package:material_ui/material_ui.dart';
 
 import '../theme/app_theme.dart';
 
+/// Garis pemisah "atau" di antara dua cara melakukan hal yang sama.
+class OrDivider extends StatelessWidget {
+  const OrDivider({super.key, required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final line = Divider(height: AppDimens.borderWidth, thickness: AppDimens.borderWidth, color: context.palette.line);
+    return Row(
+      children: [
+        Expanded(child: line),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppDimens.gap12),
+          child: Text(label, style: context.text.caption),
+        ),
+        Expanded(child: line),
+      ],
+    );
+  }
+}
+
 /// Tombol utama: tinggi 52, bulat penuh, dengan ikon opsional.
 class PrimaryButton extends StatelessWidget {
   const PrimaryButton({super.key, required this.label, required this.onPressed, this.icon});

@@ -56,6 +56,14 @@ class AuthRepository {
     return (result: AuthResult.fromJson(response.data), created: response.status == 201);
   }
 
+  /// Hapus akun beserta semua datanya (v1.0), dikonfirmasi dengan [password] atau [idToken] dari
+  /// akun Google yang tersambung; kalau keduanya ada, server memakai kata sandi. Langsung, tidak
+  /// lewat antrean. Kata sandi salah dibalas 422 `invalid_credentials`, akun Google lain 422
+  /// `google_token_invalid`.
+  Future<void> deleteAccount({String? password, String? idToken}) async {
+    await api.send('DELETE', '/me', body: {'password': ?password, 'id_token': ?idToken});
+  }
+
   /// Cabut token HP ini dan hapus token FCM-nya di server.
   ///
   /// Keluar tetap dilanjutkan di HP walau server tidak terjangkau. Mengembalikan `false`
