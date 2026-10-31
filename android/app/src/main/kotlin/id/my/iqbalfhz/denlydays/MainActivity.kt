@@ -33,6 +33,26 @@ class MainActivity : FlutterActivity() {
 
                 "pinWidget" -> result.success(TasksWidget.requestPin(applicationContext))
 
+                // Ekspor data (v1.0): tulis di luar thread utama, karena foto bisa beberapa MB.
+                "saveDownload" -> {
+                    val folder = call.argument<String>("folder").orEmpty()
+                    val name = call.argument<String>("name").orEmpty()
+                    val mimeType = call.argument<String>("mimeType") ?: "application/octet-stream"
+                    val bytes = call.argument<ByteArray>("bytes")
+                    if (bytes == null) {
+                        result.error("invalid", "Isi berkas kosong", null)
+                    } else {
+                        Thread {
+                            try {
+                                val location = ExportFiles.save(applicationContext, folder, name, mimeType, bytes)
+                                runOnUiThread { result.success(location) }
+                            } catch (error: Exception) {
+                                runOnUiThread { result.error("save_failed", error.message, null) }
+                            }
+                        }.start()
+                    }
+                }
+
                 else -> result.notImplemented()
             }
         }

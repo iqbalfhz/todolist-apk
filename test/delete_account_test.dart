@@ -123,7 +123,8 @@ void main() {
         await settle(tester);
         expect(
           find.text(
-            'Akun yang tersambung ke iqbal@gmail.com beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.',
+            'Akun yang tersambung ke iqbal@gmail.com beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan. '
+            'Kalau perlu, simpan salinannya dulu lewat Ekspor data.',
           ),
           findsOneWidget,
         );

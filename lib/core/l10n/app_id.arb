@@ -668,7 +668,7 @@
   },
   "pairedLeave": "Keluar dari Ruang Bersama",
   "pairedLeaveConfirmTitle": "Keluar dari Ruang Bersama?",
-  "pairedLeaveConfirmBody": "Ruang Bersama ditutup untukmu dan {name}. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah.",
+  "pairedLeaveConfirmBody": "Ruang Bersama ditutup untukmu dan {name}. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah. Kalau perlu, simpan salinannya dulu lewat Ekspor data.",
   "@pairedLeaveConfirmBody": {
     "placeholders": {
       "name": {"type": "String"}
@@ -714,9 +714,58 @@
   "settingsWidget": "Widget di layar utama",
   "settingsWidgetSub": "Tugas hari ini dan target tabungan utama",
   "settingsWidgetManual": "Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days.",
-  "settingsBackup": "Backup dan ekspor",
-  "settingsBackupSub": "Tersimpan otomatis di server · ekspor di v1.0",
-  "settingsBackupInfo": "Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.",
+  "settingsExport": "Ekspor data",
+  "settingsExportSub": "Simpan salinan semua datamu ke HP",
+  "exportTitle": "Ekspor data",
+  "exportIntro": "Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.",
+  "exportPhotosNote": "Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.",
+  "exportServerNote": "Datamu juga tersimpan otomatis di server setiap kali online.",
+  "exportButton": "Ekspor data",
+  "exportAgain": "Ekspor lagi",
+  "exportWorking": "Menyiapkan file…",
+  "exportSaved": "File tersimpan",
+  "exportSavedIn": "Di folder {location}",
+  "@exportSavedIn": {
+    "placeholders": {
+      "location": {"type": "String"}
+    }
+  },
+  "exportSaveFailed": "File tidak bisa disimpan di HP. Pastikan penyimpanan masih cukup, lalu coba lagi.",
+  "exportTooOften": "Ekspor dibatasi 5 kali per jam. Coba lagi sekitar {minutes} menit lagi.",
+  "@exportTooOften": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "exportPhotosButton": "Unduh semua foto juga ({count} foto)",
+  "@exportPhotosButton": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "exportPhotosProgress": "Mengunduh foto {done} dari {total}",
+  "@exportPhotosProgress": {
+    "placeholders": {
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "exportPhotosDone": "{count} foto tersimpan di folder yang sama.",
+  "@exportPhotosDone": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "exportPhotosPartial": "{saved} dari {total} foto tersimpan. {failed} gagal diunduh.",
+  "@exportPhotosPartial": {
+    "placeholders": {
+      "saved": {"type": "int"},
+      "total": {"type": "int"},
+      "failed": {"type": "int"}
+    }
+  },
+  "exportShare": "Bagikan file",
+  "exportFirst": "Ekspor data dulu",
   "settingsDeleteAccount": "Hapus akun",
   "settingsDeleteAccountSub": "Hapus permanen akun dan semua datamu",
   "deleteAccountTitle": "Hapus akun",
@@ -735,8 +784,8 @@
   "deleteAccountButton": "Hapus akun",
   "deleteAccountGoogleHint": "Masuk dengan Google? Pilih akun Google yang tersambung ke akun ini.",
   "deleteAccountConfirmTitle": "Hapus akun sekarang?",
-  "deleteAccountConfirmBody": "Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan.",
-  "deleteAccountConfirmGoogle": "Akun yang tersambung ke {email} beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.",
+  "deleteAccountConfirmBody": "Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan. Kalau perlu, simpan salinannya dulu lewat Ekspor data.",
+  "deleteAccountConfirmGoogle": "Akun yang tersambung ke {email} beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan. Kalau perlu, simpan salinannya dulu lewat Ekspor data.",
   "@deleteAccountConfirmGoogle": {
     "placeholders": {
       "email": {"type": "String"}

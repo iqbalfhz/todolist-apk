@@ -1059,7 +1059,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String pairedLeaveConfirmBody(String name) {
-    return 'Ruang Bersama ditutup untukmu dan $name. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah.';
+    return 'Ruang Bersama ditutup untukmu dan $name. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah. Kalau perlu, simpan salinannya dulu lewat Ekspor data.';
   }
 
   @override
@@ -1181,14 +1181,74 @@ class AppLocalizationsId extends AppLocalizations {
   String get settingsWidgetManual => 'Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days.';
 
   @override
-  String get settingsBackup => 'Backup dan ekspor';
+  String get settingsExport => 'Ekspor data';
 
   @override
-  String get settingsBackupSub => 'Tersimpan otomatis di server · ekspor di v1.0';
+  String get settingsExportSub => 'Simpan salinan semua datamu ke HP';
 
   @override
-  String get settingsBackupInfo =>
-      'Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.';
+  String get exportTitle => 'Ekspor data';
+
+  @override
+  String get exportIntro =>
+      'Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.';
+
+  @override
+  String get exportPhotosNote => 'Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.';
+
+  @override
+  String get exportServerNote => 'Datamu juga tersimpan otomatis di server setiap kali online.';
+
+  @override
+  String get exportButton => 'Ekspor data';
+
+  @override
+  String get exportAgain => 'Ekspor lagi';
+
+  @override
+  String get exportWorking => 'Menyiapkan file…';
+
+  @override
+  String get exportSaved => 'File tersimpan';
+
+  @override
+  String exportSavedIn(String location) {
+    return 'Di folder $location';
+  }
+
+  @override
+  String get exportSaveFailed => 'File tidak bisa disimpan di HP. Pastikan penyimpanan masih cukup, lalu coba lagi.';
+
+  @override
+  String exportTooOften(int minutes) {
+    return 'Ekspor dibatasi 5 kali per jam. Coba lagi sekitar $minutes menit lagi.';
+  }
+
+  @override
+  String exportPhotosButton(int count) {
+    return 'Unduh semua foto juga ($count foto)';
+  }
+
+  @override
+  String exportPhotosProgress(int done, int total) {
+    return 'Mengunduh foto $done dari $total';
+  }
+
+  @override
+  String exportPhotosDone(int count) {
+    return '$count foto tersimpan di folder yang sama.';
+  }
+
+  @override
+  String exportPhotosPartial(int saved, int total, int failed) {
+    return '$saved dari $total foto tersimpan. $failed gagal diunduh.';
+  }
+
+  @override
+  String get exportShare => 'Bagikan file';
+
+  @override
+  String get exportFirst => 'Ekspor data dulu';
 
   @override
   String get settingsDeleteAccount => 'Hapus akun';
@@ -1234,11 +1294,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get deleteAccountConfirmTitle => 'Hapus akun sekarang?';
 
   @override
-  String get deleteAccountConfirmBody => 'Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan.';
+  String get deleteAccountConfirmBody =>
+      'Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan. Kalau perlu, simpan salinannya dulu lewat Ekspor data.';
 
   @override
   String deleteAccountConfirmGoogle(String email) {
-    return 'Akun yang tersambung ke $email beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.';
+    return 'Akun yang tersambung ke $email beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan. Kalau perlu, simpan salinannya dulu lewat Ekspor data.';
   }
 
   @override

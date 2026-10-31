@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/auth/data/auth_repository.dart';
 import '../features/auth/data/google_accounts.dart';
 import '../features/auth/domain/user.dart';
+import '../features/settings/data/data_export.dart';
 import '../features/comments/domain/comment.dart';
 import '../features/memories/domain/memory.dart';
 import '../features/memories/domain/memory_photo.dart';
@@ -95,6 +96,14 @@ final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
     photoFiles: PhotoFiles.forAccount(userId, DevicePhotoCache.instance),
   );
 });
+
+/// Tempat menyimpan hasil ekspor data di HP (v1.0). Ditimpa di tes.
+final exportSaverProvider = Provider<ExportSaver>((ref) => DeviceExportSaver(ref.watch(devicePlatformProvider)));
+
+/// Pengambil foto yang ikut diekspor (v1.0). Ditimpa di tes.
+final exportPhotoFetcherProvider = Provider<ExportPhotoFetcher>(
+  (ref) => CachedExportPhotoFetcher(DevicePhotoCache.instance),
+);
 
 /// Berkas akun di HP, dihapus setelah hapus akun (v1.0). Ditimpa di tes.
 final accountFilesProvider = Provider<AccountFiles>((ref) => const DeviceAccountFiles());

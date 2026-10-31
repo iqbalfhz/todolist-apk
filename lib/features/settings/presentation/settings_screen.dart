@@ -178,9 +178,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   _NavRow(title: l10n.settingsWidget, subtitle: l10n.settingsWidgetSub, onTap: _pinWidget),
                   const RowDivider(),
                   _NavRow(
-                    title: l10n.settingsBackup,
-                    subtitle: l10n.settingsBackupSub,
-                    onTap: () => showMessage(context, l10n.settingsBackupInfo),
+                    title: l10n.settingsExport,
+                    subtitle: l10n.settingsExportSub,
+                    onTap: () => context.push(Routes.exportData),
                   ),
                   const RowDivider(),
                   _NavRow(

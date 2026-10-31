@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -13,6 +14,7 @@ import 'package:todolist/core/notifications/push_service.dart';
 import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/session/account_files.dart';
+import 'package:todolist/features/settings/data/data_export.dart';
 import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/time/space_clock.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
@@ -57,6 +59,7 @@ Future<ProviderContainer> pumpApp(
   FakeTileProvider? tiles,
   FakeGoogleAccounts? google,
   FakeAccountFiles? accountFiles,
+  FakeExportFiles? exportFiles,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
@@ -97,6 +100,9 @@ Future<ProviderContainer> pumpApp(
       googleAccountsProvider.overrideWithValue(google ?? FakeGoogleAccounts()),
       // Hapus akun (v1.0) tidak pernah menyentuh berkas sungguhan di tes.
       accountFilesProvider.overrideWithValue(accountFiles ?? FakeAccountFiles()),
+      // Ekspor data (v1.0) tidak menulis ke folder unduhan sungguhan di tes.
+      exportSaverProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
+      exportPhotoFetcherProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
       revocationTransportProvider.overrideWithValue((token) {
         harness.revocationTokens.add(token);
         return harness.api;
@@ -117,6 +123,36 @@ Future<ProviderContainer> pumpApp(
 }
 
 ProviderContainer? _container;
+
+/// Folder unduhan dan foto palsu untuk ekspor data (v1.0).
+class FakeExportFiles implements ExportSaver, ExportPhotoFetcher {
+  /// Berkas yang tersimpan, per `{folder}/{nama}`.
+  final Map<String, Uint8List> saved = {};
+
+  /// Nama berkas foto yang gagal diunduh sekali.
+  final Set<String> failOnce = {};
+
+  /// Selama menyala, menyimpan gagal seperti penyimpanan penuh.
+  bool full = false;
+
+  @override
+  Future<String> save({
+    required String folder,
+    required String name,
+    required String mimeType,
+    required Uint8List bytes,
+  }) async {
+    if (full) throw PlatformException(code: 'save_failed', message: 'Penyimpanan penuh');
+    saved['$folder/$name'] = bytes;
+    return 'Download/Denly Days/$folder';
+  }
+
+  @override
+  Future<Uint8List> fetch(ExportPhoto photo) async {
+    if (failOnce.remove(photo.fileName)) throw const SocketException('Tanpa koneksi');
+    return Uint8List.fromList(utf8.encode(photo.url));
+  }
+}
 
 /// Berkas akun palsu: mencatat akun yang berkasnya dihapus.
 class FakeAccountFiles implements AccountFiles {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
@@ -46,6 +47,10 @@ class FakeApi implements ApiTransport {
 
   /// Kode yang dibalas `POST /invitations`.
   String invitationCode = 'K7M2QX';
+
+  /// Isi `GET /me/export` (v1.0), dan teks mentahnya kalau berbeda dari JSON yang ditulis ulang.
+  Map<String, dynamic>? exportFile;
+  String? exportRaw;
 
   /// Ruang Bersama yang dibalas `POST /invitations/accept`.
   Map<String, dynamic>? acceptedSpace;
@@ -121,6 +126,17 @@ class FakeApi implements ApiTransport {
     if (request.method == 'GET' && segments.first == 'sync') {
       if (syncPages.isEmpty) return ApiResponse(status: 200, body: syncPage());
       return ApiResponse(status: 200, body: syncPages.removeAt(0));
+    }
+
+    // Ekspor data (v1.0): berkas JSON tanpa pembungkus `data`, dengan nama dari header.
+    if (segments.first == 'me' && segments.length > 1 && segments[1] == 'export') {
+      final file = exportFile ?? {'app': 'Denly Days', 'format_version': 1, 'user': me};
+      return ApiResponse(
+        status: 200,
+        body: file,
+        raw: exportRaw ?? jsonEncode(file),
+        headers: {'content-disposition': 'attachment; filename="denly-days-2026-10-08.json"'},
+      );
     }
 
     if (segments.first == 'me') {

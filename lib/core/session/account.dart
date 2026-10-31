@@ -6,6 +6,7 @@ import '../../features/comments/data/comment_repository.dart';
 import '../../features/memories/data/memory_photo_images.dart';
 import '../../features/memories/data/memory_repository.dart';
 import '../../features/savings/data/savings_repository.dart';
+import '../../features/settings/data/data_export.dart';
 import '../../features/spaces/data/space_repository.dart';
 import '../../features/special_dates/data/special_date_repository.dart';
 import '../../features/tasks/data/task_list_repository.dart';
@@ -67,6 +68,7 @@ class Account {
     photoImages = MemoryPhotoImages(cache: photoCache, files: files, refreshUrls: memories.refreshPhotos, now: now);
     profile = ProfileRepository(writer: writer, api: api, applier: applier, userId: userId);
     spaces = SpaceRepository(store: store, api: api, applier: applier, outbox: outbox);
+    exports = ExportRepository(api);
   }
 
   final String userId;
@@ -94,6 +96,9 @@ class Account {
   late final MemoryPhotoImages photoImages;
   late final ProfileRepository profile;
   late final SpaceRepository spaces;
+
+  /// Ekspor data (v1.0).
+  late final ExportRepository exports;
 
   bool _disposed = false;
   final Completer<void> _closed = Completer<void>();
