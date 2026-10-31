@@ -184,6 +184,8 @@ void main() {
     final dir = Directory.systemTemp.createTempSync('todolist-ui-e2e-');
     final storage = MemoryKeyValueStore();
     final push = FakePushService();
+    // Berkas database akun ada di folder sementara tes; yang dicatat cukup akun mana yang dihapus.
+    final accountFiles = FakeAccountFiles();
     // Pilihan akun Google palsu: ID token sungguhan hanya bisa didapat dari Google.
     final google = FakeGoogleAccounts();
 
@@ -214,6 +216,7 @@ void main() {
         spaceClockProvider.overrideWithValue(clock),
         pushServiceProvider.overrideWithValue(push),
         mediaCachesProvider.overrideWithValue(FakeMediaCaches()),
+        accountFilesProvider.overrideWithValue(accountFiles),
         // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
         mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
         googleAccountsProvider.overrideWithValue(google),
@@ -1366,6 +1369,42 @@ void main() {
       expect((await partner.sharedSpace()).id, sharedSpaceId);
       expect((await partner.account.store.tasks()).map((task) => task.title), contains('Beli galon'));
     });
+
+    // ---------------------------------------------------------------- hapus akun (v1.0)
+
+    step('Hapus akun dari Pengaturan: kata sandi salah ditolak server');
+    final myId = container.read(sessionProvider).userId!;
+    await go(Routes.deleteAccount);
+    expect(find.text('Ruang Bersama ditutup, dan isinya beserta foto ikut terhapus untuk Sari.'), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'salah-sandi-123');
+    await tap(find.widgetWithText(OutlinedButton, 'Hapus akun'));
+    await tap(find.widgetWithText(TextButton, 'Hapus akun'));
+    await net();
+    expect(find.text('Kata sandi salah.'), findsOneWidget);
+
+    step('Kata sandi benar: akun terhapus, semua data di HP dibuang, kembali ke layar Masuk');
+    await tester.enterText(find.byType(TextField), password);
+    await tap(find.widgetWithText(OutlinedButton, 'Hapus akun'));
+    await tap(find.widgetWithText(TextButton, 'Hapus akun'));
+    await net();
+    expect(find.text('Senang melihatmu lagi.'), findsOneWidget);
+    expect(find.text('Akunmu sudah dihapus beserta semua datanya.'), findsOneWidget);
+    expect(storage.values.containsKey(StorageKeys.token), isFalse);
+    expect(accountFiles.deleted, [myId]);
+
+    step('HP pasangan: Ruang Bersama tiba tertutup dan isinya hilang');
+    await asPartner(() async {
+      await partner.syncNow();
+      expect((await partner.account.store.spaces()).where((space) => space.isShared), isEmpty);
+      expect((await partner.account.store.tasks()).map((task) => task.title), isNot(contains('Beli galon')));
+    });
+
+    step('Masuk dengan akun yang sudah dihapus ditolak');
+    await tester.enterText(field('Email'), email);
+    await tester.enterText(field('Kata sandi'), password);
+    await tap(find.widgetWithText(FilledButton, 'Masuk'));
+    await net();
+    expect(find.text('Email atau kata sandi salah.'), findsOneWidget);
 
     // ---------------------------------------------------------------- selesai
 
