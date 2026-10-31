@@ -278,6 +278,21 @@ void main() {
       await tester.tap(find.text('Batal'));
       await settle(tester);
 
+      // Hapus akun (v1.0): akibatnya, isian kata sandi dengan pesan error, dan konfirmasinya.
+      await visit(tester, container, Routes.deleteAccount);
+      await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Hapus akun'));
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Hapus akun'));
+      await settle(tester);
+      expect(find.text('Kata sandi belum diisi.'), findsOneWidget);
+      await scrollThrough(tester);
+      await tester.enterText(find.byType(TextField), 'rahasia-banget');
+      await tester.ensureVisible(find.widgetWithText(OutlinedButton, 'Hapus akun'));
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Hapus akun'));
+      await settle(tester);
+      expect(find.text('Hapus akun sekarang?'), findsOneWidget);
+      await tester.tap(find.text('Batal'));
+      await settle(tester);
+
       await visit(tester, container, Routes.specialDates);
       await withSheet(tester, container, () async {
         final date = container.read(specialDatesProvider).value!.firstWhere((date) => date.id == longDateId);

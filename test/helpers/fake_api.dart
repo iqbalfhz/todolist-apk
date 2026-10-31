@@ -124,6 +124,8 @@ class FakeApi implements ApiTransport {
     }
 
     if (segments.first == 'me') {
+      // Hapus akun (v1.0).
+      if (request.method == 'DELETE') return const ApiResponse(status: 204);
       if (request.method == 'PATCH') me = {...?me, ...?request.body, 'updated_at': stamp()};
       return ApiResponse(status: 200, body: {'data': me});
     }

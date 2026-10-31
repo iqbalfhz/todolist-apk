@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import '../../features/auth/data/profile_repository.dart';
@@ -95,6 +96,11 @@ class Account {
   late final SpaceRepository spaces;
 
   bool _disposed = false;
+  final Completer<void> _closed = Completer<void>();
+
+  /// Selesai begitu database akun ini tertutup, siapa pun yang menutupnya. Hapus akun (v1.0)
+  /// menunggu ini sebelum menghapus berkasnya.
+  Future<void> get closed => _closed.future;
 
   /// Aman dipanggil lebih dari sekali.
   Future<void> dispose() async {
@@ -102,6 +108,10 @@ class Account {
     _disposed = true;
     outbox.dispose();
     sync.dispose();
-    await db.close();
+    try {
+      await db.close();
+    } finally {
+      _closed.complete();
+    }
   }
 }

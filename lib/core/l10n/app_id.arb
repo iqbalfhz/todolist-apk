@@ -195,6 +195,7 @@
     }
   },
   "googleSignInFailed": "Masuk dengan Google gagal. Coba lagi.",
+  "googleContinue": "Lanjutkan dengan Google",
   "showPassword": "Tampilkan kata sandi",
   "hidePassword": "Sembunyikan kata sandi",
   "errorEmailInvalid": "Tulis email yang benar, misalnya nama@email.com.",
@@ -716,6 +717,33 @@
   "settingsBackup": "Backup dan ekspor",
   "settingsBackupSub": "Tersimpan otomatis di server · ekspor di v1.0",
   "settingsBackupInfo": "Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.",
+  "settingsDeleteAccount": "Hapus akun",
+  "settingsDeleteAccountSub": "Hapus permanen akun dan semua datamu",
+  "deleteAccountTitle": "Hapus akun",
+  "deleteAccountWarning": "Semua datamu dihapus permanen dan tidak bisa dibatalkan.",
+  "deleteAccountWhatProfile": "Akun dan profilmu, termasuk foto profil.",
+  "deleteAccountWhatPersonal": "Ruang Pribadi beserta semua tugas, tabungan, tanggal penting, perjalanan, kenangan, dan fotonya.",
+  "deleteAccountWhatShared": "Ruang Bersama ditutup, dan isinya beserta foto ikut terhapus untuk {name}.",
+  "@deleteAccountWhatShared": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "deleteAccountWhatDevices": "Semua HP-mu langsung keluar dari akun ini.",
+  "deleteAccountAfter": "Email yang sama bisa dipakai untuk daftar lagi, tapi sebagai akun baru tanpa data lama.",
+  "deleteAccountVerifyTitle": "Pastikan ini kamu",
+  "deleteAccountButton": "Hapus akun",
+  "deleteAccountGoogleHint": "Masuk dengan Google? Pilih akun Google yang tersambung ke akun ini.",
+  "deleteAccountConfirmTitle": "Hapus akun sekarang?",
+  "deleteAccountConfirmBody": "Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan.",
+  "deleteAccountConfirmGoogle": "Akun yang tersambung ke {email} beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.",
+  "@deleteAccountConfirmGoogle": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "deleteAccountWorking": "Menghapus akun…",
+  "deleteAccountDone": "Akunmu sudah dihapus beserta semua datanya.",
   "settingsLogout": "Keluar",
   "logoutConfirmTitle": "Keluar dari akun ini?",
   "logoutConfirmBody": "Kamu bisa masuk lagi kapan saja.",

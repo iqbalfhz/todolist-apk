@@ -22,6 +22,7 @@ import 'media/photo_cache.dart';
 import 'media/photo_files.dart';
 import 'media/photo_picker.dart';
 import 'session/account.dart';
+import 'session/account_files.dart';
 import 'session/session.dart';
 import 'time/space_clock.dart';
 
@@ -94,6 +95,9 @@ final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
     photoFiles: PhotoFiles.forAccount(userId, DevicePhotoCache.instance),
   );
 });
+
+/// Berkas akun di HP, dihapus setelah hapus akun (v1.0). Ditimpa di tes.
+final accountFilesProvider = Provider<AccountFiles>((ref) => const DeviceAccountFiles());
 
 /// Akun yang sedang masuk, atau `null`. Akun lain di HP yang sama membuka database yang berbeda.
 final accountProvider = Provider<Account?>((ref) {

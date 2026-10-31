@@ -314,7 +314,10 @@ class AppDatabase extends _$AppDatabase {
 
   /// Database milik satu akun. Akun lain di HP yang sama memakai berkas berbeda,
   /// jadi antrean akun sebelumnya tidak terkirim atas nama akun baru.
-  AppDatabase.forAccount(String userId) : super(driftDatabase(name: 'akun_$userId'));
+  AppDatabase.forAccount(String userId) : super(driftDatabase(name: fileNameFor(userId)));
+
+  /// Nama berkas database akun [userId], tanpa `.sqlite`.
+  static String fileNameFor(String userId) => 'akun_$userId';
 
   /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
   /// dan jadwal pengingat setor di target (semuanya v0.2). 4: kenangan dan fotonya (v0.3).

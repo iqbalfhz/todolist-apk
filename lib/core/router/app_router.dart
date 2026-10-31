@@ -14,6 +14,7 @@ import '../../features/memories/presentation/memory_gallery_screen.dart';
 import '../../features/savings/presentation/goal_detail_screen.dart';
 import '../../features/savings/presentation/savings_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
+import '../../features/settings/presentation/delete_account_screen.dart';
 import '../../features/settings/presentation/profile_screen.dart';
 import '../../features/settings/presentation/settings_screen.dart';
 import '../../features/spaces/presentation/pairing_screen.dart';
@@ -87,6 +88,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: 'profil', builder: (_, _) => const ProfileScreen()),
           GoRoute(path: 'tanggal-penting', builder: (_, _) => const SpecialDatesScreen()),
+          GoRoute(path: 'hapus-akun', builder: (_, _) => const DeleteAccountScreen()),
         ],
       ),
       // Galeri foto kenangan tampil tanpa tab bawah, jadi dicocokkan sebelum tab Kenangan.
