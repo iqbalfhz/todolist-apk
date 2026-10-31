@@ -207,7 +207,7 @@ void main() {
         find.text(
           'Ruang Bersama ditutup untukmu dan Sari. Isinya disimpan 30 hari dan kembali utuh kalau kalian '
           'bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\n'
-          'Ruang Pribadi milikmu tidak berubah.',
+          'Ruang Pribadi milikmu tidak berubah. Kalau perlu, simpan salinannya dulu lewat Ekspor data.',
         ),
         findsOneWidget,
       );

@@ -98,12 +98,18 @@ class NetworkFailure implements Exception {
 
 /// Balasan berhasil (2xx).
 class ApiResponse {
-  const ApiResponse({required this.status, this.body});
+  const ApiResponse({required this.status, this.body, this.raw, this.headers = const {}});
 
   final int status;
 
   /// JSON balasan; `null` untuk 204.
   final Map<String, dynamic>? body;
+
+  /// Isi balasan apa adanya, untuk balasan berupa berkas (ekspor data, v1.0).
+  final String? raw;
+
+  /// Header balasan, dengan nama huruf kecil.
+  final Map<String, String> headers;
 
   /// Isi kunci `data` saat berupa satu objek.
   Map<String, dynamic> get data => body!['data'] as Map<String, dynamic>;

@@ -130,7 +130,14 @@ class DioApiTransport implements ApiTransport {
       if (status != 204 && json == null) {
         throw NetworkFailure(status: status, detail: 'Balasan bukan JSON');
       }
-      return ApiResponse(status: status, body: json);
+      return ApiResponse(
+        status: status,
+        body: json,
+        raw: response.data,
+        headers: {
+          for (final MapEntry(:key, :value) in response.headers.map.entries) key.toLowerCase(): value.join(', '),
+        },
+      );
     }
 
     final code = ApiErrorCode.tryParse(json?['code']);

@@ -165,6 +165,8 @@ Future<bool> confirmDialog(
   required String body,
   required String confirmLabel,
   bool destructive = false,
+  String? alternativeLabel,
+  VoidCallback? onAlternative,
 }) async {
   final confirmed = await showDialog<bool>(
     context: context,
@@ -172,6 +174,15 @@ Future<bool> confirmDialog(
       title: Text(title),
       content: Text(body),
       actions: [
+        // Jalan lain sebelum tindakannya, misalnya "Ekspor data dulu" (v1.0): dialog ditutup dulu.
+        if (alternativeLabel != null)
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop(false);
+              onAlternative?.call();
+            },
+            child: Text(alternativeLabel),
+          ),
         TextButton(
           onPressed: () => Navigator.of(dialogContext).pop(false),
           child: Text(dialogContext.l10n.commonCancel),

@@ -1912,7 +1912,7 @@ abstract class AppLocalizations {
   /// No description provided for @pairedLeaveConfirmBody.
   ///
   /// In id, this message translates to:
-  /// **'Ruang Bersama ditutup untukmu dan {name}. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah.'**
+  /// **'Ruang Bersama ditutup untukmu dan {name}. Isinya disimpan 30 hari dan kembali utuh kalau kalian bergabung lagi dengan kode undangan. Setelah itu, isinya dihapus permanen beserta fotonya.\n\nRuang Pribadi milikmu tidak berubah. Kalau perlu, simpan salinannya dulu lewat Ekspor data.'**
   String pairedLeaveConfirmBody(String name);
 
   /// No description provided for @pairedLeaveConfirm.
@@ -2149,23 +2149,119 @@ abstract class AppLocalizations {
   /// **'Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days.'**
   String get settingsWidgetManual;
 
-  /// No description provided for @settingsBackup.
+  /// No description provided for @settingsExport.
   ///
   /// In id, this message translates to:
-  /// **'Backup dan ekspor'**
-  String get settingsBackup;
+  /// **'Ekspor data'**
+  String get settingsExport;
 
-  /// No description provided for @settingsBackupSub.
+  /// No description provided for @settingsExportSub.
   ///
   /// In id, this message translates to:
-  /// **'Tersimpan otomatis di server · ekspor di v1.0'**
-  String get settingsBackupSub;
+  /// **'Simpan salinan semua datamu ke HP'**
+  String get settingsExportSub;
 
-  /// No description provided for @settingsBackupInfo.
+  /// No description provided for @exportTitle.
   ///
   /// In id, this message translates to:
-  /// **'Datamu tersimpan otomatis di server setiap kali online. Ekspor data menyusul di v1.0.'**
-  String get settingsBackupInfo;
+  /// **'Ekspor data'**
+  String get exportTitle;
+
+  /// No description provided for @exportIntro.
+  ///
+  /// In id, this message translates to:
+  /// **'Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.'**
+  String get exportIntro;
+
+  /// No description provided for @exportPhotosNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.'**
+  String get exportPhotosNote;
+
+  /// No description provided for @exportServerNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Datamu juga tersimpan otomatis di server setiap kali online.'**
+  String get exportServerNote;
+
+  /// No description provided for @exportButton.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor data'**
+  String get exportButton;
+
+  /// No description provided for @exportAgain.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor lagi'**
+  String get exportAgain;
+
+  /// No description provided for @exportWorking.
+  ///
+  /// In id, this message translates to:
+  /// **'Menyiapkan file…'**
+  String get exportWorking;
+
+  /// No description provided for @exportSaved.
+  ///
+  /// In id, this message translates to:
+  /// **'File tersimpan'**
+  String get exportSaved;
+
+  /// No description provided for @exportSavedIn.
+  ///
+  /// In id, this message translates to:
+  /// **'Di folder {location}'**
+  String exportSavedIn(String location);
+
+  /// No description provided for @exportSaveFailed.
+  ///
+  /// In id, this message translates to:
+  /// **'File tidak bisa disimpan di HP. Pastikan penyimpanan masih cukup, lalu coba lagi.'**
+  String get exportSaveFailed;
+
+  /// No description provided for @exportTooOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor dibatasi 5 kali per jam. Coba lagi sekitar {minutes} menit lagi.'**
+  String exportTooOften(int minutes);
+
+  /// No description provided for @exportPhotosButton.
+  ///
+  /// In id, this message translates to:
+  /// **'Unduh semua foto juga ({count} foto)'**
+  String exportPhotosButton(int count);
+
+  /// No description provided for @exportPhotosProgress.
+  ///
+  /// In id, this message translates to:
+  /// **'Mengunduh foto {done} dari {total}'**
+  String exportPhotosProgress(int done, int total);
+
+  /// No description provided for @exportPhotosDone.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} foto tersimpan di folder yang sama.'**
+  String exportPhotosDone(int count);
+
+  /// No description provided for @exportPhotosPartial.
+  ///
+  /// In id, this message translates to:
+  /// **'{saved} dari {total} foto tersimpan. {failed} gagal diunduh.'**
+  String exportPhotosPartial(int saved, int total, int failed);
+
+  /// No description provided for @exportShare.
+  ///
+  /// In id, this message translates to:
+  /// **'Bagikan file'**
+  String get exportShare;
+
+  /// No description provided for @exportFirst.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor data dulu'**
+  String get exportFirst;
 
   /// No description provided for @settingsDeleteAccount.
   ///
@@ -2248,13 +2344,13 @@ abstract class AppLocalizations {
   /// No description provided for @deleteAccountConfirmBody.
   ///
   /// In id, this message translates to:
-  /// **'Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan.'**
+  /// **'Akun dan semua datamu dihapus permanen. Ini tidak bisa dibatalkan. Kalau perlu, simpan salinannya dulu lewat Ekspor data.'**
   String get deleteAccountConfirmBody;
 
   /// No description provided for @deleteAccountConfirmGoogle.
   ///
   /// In id, this message translates to:
-  /// **'Akun yang tersambung ke {email} beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan.'**
+  /// **'Akun yang tersambung ke {email} beserta semua datanya dihapus permanen. Ini tidak bisa dibatalkan. Kalau perlu, simpan salinannya dulu lewat Ekspor data.'**
   String deleteAccountConfirmGoogle(String email);
 
   /// No description provided for @deleteAccountWorking.

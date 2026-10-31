@@ -95,8 +95,12 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
       body: googleEmail == null ? l10n.deleteAccountConfirmBody : l10n.deleteAccountConfirmGoogle(googleEmail),
       confirmLabel: l10n.deleteAccountButton,
       destructive: true,
+      alternativeLabel: l10n.exportFirst,
+      onAlternative: _export,
     );
   }
+
+  void _export() => context.push(Routes.exportData);
 
   Future<void> _delete({String? password, String? idToken, required void Function(String message) onError}) async {
     final userId = ref.read(sessionProvider).userId;
@@ -163,6 +167,15 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
                 _Point(text: l10n.deleteAccountWhatDevices),
                 const SizedBox(height: AppDimens.gap8),
                 Text(l10n.deleteAccountAfter, style: text.caption),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton.icon(
+                    onPressed: _busy ? null : _export,
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                    icon: const Icon(Symbols.download_rounded, size: AppDimens.iconSm),
+                    label: Text(l10n.exportFirst),
+                  ),
+                ),
               ],
             ),
           ),

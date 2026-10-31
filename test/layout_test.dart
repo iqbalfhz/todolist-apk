@@ -293,6 +293,23 @@ void main() {
       await tester.tap(find.text('Batal'));
       await settle(tester);
 
+      // Ekspor data (v1.0): berkas tersimpan, lalu fotonya.
+      h.api.exportFile = {
+        'memory_photos': [
+          for (final id in [photoId, photo2Id]) {'id': id, 'url': 'https://r2.contoh/foto.jpg'},
+        ],
+      };
+      await visit(tester, container, Routes.exportData);
+      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor data'));
+      await settle(tester);
+      expect(find.text('File tersimpan'), findsOneWidget);
+      await scrollThrough(tester);
+      await tester.ensureVisible(find.text('Unduh semua foto juga (2 foto)'));
+      await tester.tap(find.text('Unduh semua foto juga (2 foto)'));
+      await settle(tester);
+      expect(find.text('2 foto tersimpan di folder yang sama.'), findsOneWidget);
+      await scrollThrough(tester);
+
       await visit(tester, container, Routes.specialDates);
       await withSheet(tester, container, () async {
         final date = container.read(specialDatesProvider).value!.firstWhere((date) => date.id == longDateId);

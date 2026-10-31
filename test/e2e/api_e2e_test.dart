@@ -854,6 +854,42 @@ void main() {
     expect((await b.sharedSpace()).id, shared.id);
   }, skip: skipReason);
 
+  test('ekspor data: satu berkas JSON berbentuk sync penuh, termasuk isi Ruang Bersama dari pasangan', () async {
+    final export = await a.account.exports.fetch();
+    expect(export.fileName, matches(RegExp(r'^denly-days-\d{4}-\d{2}-\d{2}\.json$')));
+
+    final file = jsonDecode(utf8.decode(export.bytes)) as Map<String, dynamic>;
+    expect((file['app'], file['format_version']), ('Denly Days', 1));
+    expect((file['user'] as Map<String, dynamic>)['id'], a.user.id);
+    expect(file.keys, containsAll(['exported_at', 'devices', 'spaces', 'task_lists', 'tasks', 'memory_photos']));
+    for (final device in file['devices'] as List<dynamic>) {
+      expect((device as Map<String, dynamic>).keys.toSet(), {'platform', 'created_at', 'updated_at'});
+    }
+    expect(utf8.decode(export.bytes), isNot(contains('rahasia-banget')));
+
+    final shared = await a.sharedSpace();
+    expect([
+      for (final space in file['spaces'] as List<dynamic>) (space as Map<String, dynamic>)['id'],
+    ], contains(shared.id));
+    final titles = {for (final task in file['tasks'] as List<dynamic>) (task as Map<String, dynamic>)['title']};
+    expect(titles, contains('Kirim laporan bulanan'), reason: 'Ruang Pribadi');
+    expect(
+      titles,
+      containsAll({
+        for (final task in await b.tasks())
+          if (task.spaceId == shared.id) task.title,
+      }),
+    );
+    // Ruang Pribadi pasangan tidak ikut: hanya Ruang Pribadi milikku.
+    expect(
+      [
+        for (final space in (file['spaces'] as List<dynamic>).cast<Map<String, dynamic>>())
+          if (space['type'] == 'personal') space['owner_id'],
+      ],
+      [a.user.id],
+    );
+  }, skip: skipReason);
+
   test(
     'hapus akun: konfirmasi salah ditolak, lalu semua data hilang dan Ruang Bersama tertutup untuk pasangan',
     () async {

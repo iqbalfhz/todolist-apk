@@ -151,6 +151,8 @@ class _PairingScreenState extends ConsumerState<PairingScreen> {
       body: l10n.pairedLeaveConfirmBody(household.partner?.name ?? l10n.labelPartner),
       confirmLabel: l10n.pairedLeaveConfirm,
       destructive: true,
+      alternativeLabel: l10n.exportFirst,
+      onAlternative: () => context.push(Routes.exportData),
     );
     if (!confirmed || !mounted) return;
 

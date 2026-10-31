@@ -21,6 +21,9 @@ abstract final class Routes {
   /// Hapus akun (v1.0). Halaman publik `/hapus-akun` menyebut langkah "Pengaturan > Hapus akun".
   static const String deleteAccount = '/pengaturan/hapus-akun';
 
+  /// Ekspor data (v1.0), juga disebut di halaman publik `/hapus-akun`.
+  static const String exportData = '/pengaturan/ekspor-data';
+
   /// Parameter kueri penanda layar asal, supaya tombol kembali pulang ke Beranda.
   static const String fromParam = 'dari';
   static const String fromHome = 'beranda';

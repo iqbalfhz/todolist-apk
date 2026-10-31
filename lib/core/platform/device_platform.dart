@@ -88,6 +88,22 @@ class DevicePlatform {
       return false;
     }
   }
+
+  /// Simpan berkas ekspor data (v1.0) ke `Download/Denly Days/{folder}` di HP. Mengembalikan
+  /// letak foldernya untuk ditunjukkan ke pengguna; melempar [PlatformException] kalau gagal.
+  Future<String> saveDownload({
+    required String folder,
+    required String name,
+    required String mimeType,
+    required Uint8List bytes,
+  }) async =>
+      await _channel.invokeMethod<String>('saveDownload', {
+        'folder': folder,
+        'name': name,
+        'mimeType': mimeType,
+        'bytes': bytes,
+      }) ??
+      folder;
 }
 
 /// Isi `photoInfo` dari `MainActivity.kt`.
