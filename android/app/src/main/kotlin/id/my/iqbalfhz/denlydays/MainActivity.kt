@@ -1,7 +1,10 @@
 package id.my.iqbalfhz.denlydays
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.ExifInterface
+import android.net.Uri
 import android.os.Build
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -32,6 +35,22 @@ class MainActivity : FlutterActivity() {
                 }
 
                 "pinWidget" -> result.success(TasksWidget.requestPin(applicationContext))
+
+                // Halaman kebijakan (v1.0) di browser. Hanya HTTPS, supaya kanal ini tidak bisa
+                // dipakai membuka skema lain.
+                "openUrl" -> {
+                    val uri = Uri.parse(call.argument<String>("url").orEmpty())
+                    if (uri.scheme != "https") {
+                        result.success(false)
+                    } else {
+                        try {
+                            startActivity(Intent(Intent.ACTION_VIEW, uri))
+                            result.success(true)
+                        } catch (_: ActivityNotFoundException) {
+                            result.success(false)
+                        }
+                    }
+                }
 
                 // Ekspor data (v1.0): tulis di luar thread utama, karena foto bisa beberapa MB.
                 "saveDownload" -> {

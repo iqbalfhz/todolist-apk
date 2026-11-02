@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../core/config/env.dart';
+
 import '../../../core/constants/currencies.dart';
 import '../../../core/l10n/l10n.dart';
 import '../../../core/providers.dart';
@@ -17,6 +19,7 @@ import '../../home/presentation/main_shell.dart';
 import '../../savings/presentation/goal_form_sheet.dart';
 import '../../spaces/domain/household.dart';
 import '../../spaces/presentation/member_avatar.dart';
+import 'policy_links.dart';
 
 /// Pengaturan: akun dan ruang, tema, notifikasi, mata uang, dan keluar.
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -181,6 +184,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     title: l10n.settingsExport,
                     subtitle: l10n.settingsExportSub,
                     onTap: () => context.push(Routes.exportData),
+                  ),
+                  const RowDivider(),
+                  _NavRow(
+                    title: l10n.policyPrivacy,
+                    subtitle: l10n.settingsPrivacySub,
+                    onTap: () => openPolicyPage(context, ref, Env.privacyUrl),
+                  ),
+                  const RowDivider(),
+                  _NavRow(
+                    title: l10n.policyTerms,
+                    subtitle: l10n.settingsTermsSub,
+                    onTap: () => openPolicyPage(context, ref, Env.termsUrl),
                   ),
                   const RowDivider(),
                   _NavRow(

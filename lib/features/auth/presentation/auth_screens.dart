@@ -12,6 +12,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../home/presentation/main_shell.dart';
+import '../../settings/presentation/policy_links.dart';
 import '../data/google_accounts.dart';
 import 'auth_actions.dart';
 import 'google_sign_in_button.dart';
@@ -298,6 +299,8 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
               ),
             ],
           ),
+          const SizedBox(height: AppDimens.gap16),
+          const PolicyNotice(),
         ],
       ),
     );

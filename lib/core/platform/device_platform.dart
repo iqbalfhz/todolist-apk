@@ -89,6 +89,17 @@ class DevicePlatform {
     }
   }
 
+  /// Buka [url] HTTPS di browser HP (v1.0). `false` kalau tidak ada yang bisa membukanya.
+  Future<bool> openUrl(String url) async {
+    try {
+      return await _channel.invokeMethod<bool>('openUrl', {'url': url}) ?? false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   /// Simpan berkas ekspor data (v1.0) ke `Download/Denly Days/{folder}` di HP. Mengembalikan
   /// letak foldernya untuk ditunjukkan ke pengguna; melempar [PlatformException] kalau gagal.
   Future<String> saveDownload({
