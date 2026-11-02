@@ -45,7 +45,7 @@ class PushMessage {
   /// Perjalanan yang diingatkan `trip_reminder` (v0.2).
   String? get tripId => _filled(data['trip_id']);
 
-  /// Kenangan baru dari `memory_created` (v0.3).
+  /// Kenangan baru dari `memory_created` (v0.3), atau yang diingatkan `memory_flashback` (v1.x).
   String? get memoryId => _filled(data['memory_id']);
 
   bool get isAboutTask => type.startsWith('task_');
@@ -55,7 +55,8 @@ class PushMessage {
 
   bool get isAboutTrip => type == 'trip_reminder';
 
-  bool get isAboutMemory => type == 'memory_created';
+  /// Kenangan baru (v0.3), atau kenangan di tanggal yang sama tahun-tahun sebelumnya (v1.x).
+  bool get isAboutMemory => type == 'memory_created' || type == 'memory_flashback';
 
   /// Subjek `comment_created` dan `reaction_created` (v1.x): `task`, `savings_entry`, atau `memory`.
   String? get subjectType => _filled(data['subject_type']);
@@ -78,6 +79,7 @@ class PushMessage {
     'special_date_reminder',
     'trip_reminder',
     'savings_reminder',
+    'memory_flashback',
   };
 
   String get channel => _reminderTypes.contains(type) ? PushChannels.reminders : PushChannels.activity;

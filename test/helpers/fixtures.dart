@@ -51,6 +51,7 @@ Map<String, dynamic> userJson({String id = meId, String name = 'Iqbal', String c
     'special_dates': true,
     'trip_reminders': true,
     'savings_reminders': true,
+    'memory_flashbacks': true,
   },
   'avatar_url': null,
   'avatar_version': 0,

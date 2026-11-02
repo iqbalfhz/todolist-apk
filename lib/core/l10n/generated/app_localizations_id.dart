@@ -1166,6 +1166,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get notifSavingsRemindersSub => 'Hari setor yang dipilih di target, pukul 08.00';
 
   @override
+  String get notifMemoryFlashbacks => 'Kenangan hari ini';
+
+  @override
+  String get notifMemoryFlashbacksSub => 'Kenangan di tanggal yang sama tahun-tahun sebelumnya, pukul 08.00';
+
+  @override
   String get settingsCurrency => 'Mata uang';
 
   @override

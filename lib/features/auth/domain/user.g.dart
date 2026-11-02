@@ -47,6 +47,7 @@ _NotificationPrefs _$NotificationPrefsFromJson(Map<String, dynamic> json) => _No
   specialDates: json['special_dates'] as bool? ?? true,
   tripReminders: json['trip_reminders'] as bool? ?? true,
   savingsReminders: json['savings_reminders'] as bool? ?? true,
+  memoryFlashbacks: json['memory_flashbacks'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$NotificationPrefsToJson(_NotificationPrefs instance) => <String, dynamic>{
@@ -56,6 +57,7 @@ Map<String, dynamic> _$NotificationPrefsToJson(_NotificationPrefs instance) => <
   'special_dates': instance.specialDates,
   'trip_reminders': instance.tripReminders,
   'savings_reminders': instance.savingsReminders,
+  'memory_flashbacks': instance.memoryFlashbacks,
 };
 
 _Invitation _$InvitationFromJson(Map<String, dynamic> json) =>

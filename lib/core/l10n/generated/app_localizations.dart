@@ -2119,6 +2119,18 @@ abstract class AppLocalizations {
   /// **'Hari setor yang dipilih di target, pukul 08.00'**
   String get notifSavingsRemindersSub;
 
+  /// No description provided for @notifMemoryFlashbacks.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan hari ini'**
+  String get notifMemoryFlashbacks;
+
+  /// No description provided for @notifMemoryFlashbacksSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Kenangan di tanggal yang sama tahun-tahun sebelumnya, pukul 08.00'**
+  String get notifMemoryFlashbacksSub;
+
   /// No description provided for @settingsCurrency.
   ///
   /// In id, this message translates to:

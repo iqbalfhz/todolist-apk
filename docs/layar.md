@@ -85,6 +85,7 @@ Mockup ada di `docs/mockup/*.dc.html`, satu file per layar berukuran 390 × 844 
   - Tanggal penting — H-7, H-1, dan hari H pukul 08.00 (`special_dates`, v0.2)
   - Pengingat perjalanan — H-7 dan H-1 pukul 08.00 (`trip_reminders`, v0.2)
   - Pengingat setor — Hari setor yang dipilih di target, pukul 08.00 (`savings_reminders`, v0.2)
+  - Kenangan hari ini — Kenangan di tanggal yang sama tahun-tahun sebelumnya, pukul 08.00 (`memory_flashbacks`, v1.x)
 - Lainnya: Mata uang ("Rupiah (IDR)"), Widget di layar utama ("Tugas hari ini dan target tabungan utama", v1.x; ketuk → dialog Android untuk menyematkan widget, atau pesan "Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days." kalau launcher tidak mendukungnya), Ekspor data ("Simpan salinan semua datamu ke HP", v1.0 → Ekspor data), Hapus akun ("Hapus permanen akun dan semua datamu", v1.0 → Hapus akun).
 - Keluar (belum ada di mockup): tombol di paling bawah; peringatkan kalau masih ada perubahan yang belum terkirim.
 

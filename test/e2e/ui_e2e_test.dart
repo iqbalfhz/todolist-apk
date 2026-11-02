@@ -627,6 +627,10 @@ void main() {
     );
     await tap(find.text('H-7, H-1, dan hari H pukul 08.00'));
     await net();
+    // Kenangan hari ini (v1.x) adalah sakelar terakhir.
+    await tester.scrollUntilVisible(find.text('Mata uang'), 200, scrollable: find.byType(Scrollable).first);
+    await tap(find.text('Kenangan hari ini'));
+    await net();
     await tap(find.text('Mata uang'));
     await tap(find.text('Dolar AS (USD)'));
     await net();
@@ -638,21 +642,26 @@ void main() {
       'special_dates': false,
       'trip_reminders': true,
       'savings_reminders': true,
-      // Kunci baru server (v1.x) yang bawaannya menyala; app yang belum mengenalnya tidak mengubahnya.
-      'memory_flashbacks': true,
+      'memory_flashbacks': false,
     });
     expect(profile['default_currency'], 'USD');
     expect(find.text('Dolar AS (USD)'), findsOneWidget);
 
     step('Tema disimpan di HP saja');
     final patchesBefore = transport.log.where((line) => line == 'PATCH /me').length;
-    await tap(find.text('Anggrek'));
+    // Kartu tema ada di atas sakelar notifikasi yang baru saja digulir.
+    Future<void> themeCard(String name) async {
+      await tester.scrollUntilVisible(find.text(name), -200, scrollable: find.byType(Scrollable).first);
+      await tap(find.text(name));
+    }
+
+    await themeCard('Anggrek');
     await tap(find.text('Gelap'));
     await net();
     expect(storage.values[StorageKeys.themeName], 'anggrek');
     expect(storage.values[StorageKeys.themeMode], 'dark');
     expect(transport.log.where((line) => line == 'PATCH /me').length, patchesBefore);
-    await tap(find.text('Mawar'));
+    await themeCard('Mawar');
     await tap(find.text('Terang'));
 
     step('Profil: nama, tanggal lahir tanpa tahun, dan warna diri');

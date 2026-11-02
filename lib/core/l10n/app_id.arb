@@ -709,6 +709,8 @@
   "notifTripRemindersSub": "H-7 dan H-1 pukul 08.00",
   "notifSavingsReminders": "Pengingat setor",
   "notifSavingsRemindersSub": "Hari setor yang dipilih di target, pukul 08.00",
+  "notifMemoryFlashbacks": "Kenangan hari ini",
+  "notifMemoryFlashbacksSub": "Kenangan di tanggal yang sama tahun-tahun sebelumnya, pukul 08.00",
   "settingsCurrency": "Mata uang",
   "settingsCurrencySheet": "Mata uang untuk target baru",
   "settingsWidget": "Widget di layar utama",
