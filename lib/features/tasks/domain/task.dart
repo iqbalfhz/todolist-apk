@@ -35,6 +35,10 @@ abstract class Task with _$Task {
 
     /// Setiap berapa hari, minggu, bulan, atau tahun (1–99); `null` kalau tidak berulang.
     int? repeatInterval,
+
+    /// Hari ISO 1–7 (1 = Senin) untuk tugas mingguan, urut naik (v1.x); `null` berarti hari
+    /// yang sama dengan tenggat patokan.
+    List<int>? repeatDays,
     DateTime? remindAt,
     DateTime? completedAt,
     String? completedBy,
@@ -55,7 +59,7 @@ abstract class Task with _$Task {
   bool get isImportant => priority >= priorityImportant;
 
   /// Aturan ulang yang dikenal app, atau `null` kalau tidak berulang.
-  TaskRepeat? get repeat => TaskRepeat.tryFrom(repeatFrequency, repeatInterval);
+  TaskRepeat? get repeat => TaskRepeat.tryFrom(repeatFrequency, repeatInterval, repeatDays);
 }
 
 /// Seberapa sering tugas diulang. Namanya sama dengan nilai `repeat_frequency` di kontrak.
@@ -64,29 +68,43 @@ enum RepeatFrequency { daily, weekly, monthly, yearly }
 /// Aturan ulang tugas (v1.0): setiap [interval] hari, minggu, bulan, atau tahun, dengan
 /// `due_date` sebagai patokan. Tugas berikutnya dibuat server saat tugas ini selesai.
 class TaskRepeat {
-  const TaskRepeat(this.frequency, [this.interval = 1]);
+  const TaskRepeat(this.frequency, [this.interval = 1, this.days]);
 
   final RepeatFrequency frequency;
   final int interval;
+
+  /// Hari ISO 1–7 (1 = Senin) untuk tugas mingguan, urut naik tanpa duplikat (v1.x).
+  /// `null` berarti hari yang sama dengan tenggat patokan.
+  final List<int>? days;
 
   /// Batas `repeat_interval` di kontrak.
   static const int maxInterval = 99;
 
   /// Aturan yang tidak dikenal atau di luar batas dianggap tidak ada. Tanpa `repeat_interval`,
-  /// bawaannya 1, sama dengan server.
-  static TaskRepeat? tryFrom(String? frequency, int? interval) {
+  /// bawaannya 1, sama dengan server. Hari hanya berlaku untuk tugas mingguan.
+  static TaskRepeat? tryFrom(String? frequency, int? interval, [List<int>? days]) {
     final parsed = RepeatFrequency.values.where((value) => value.name == frequency).firstOrNull;
     final every = interval ?? 1;
     if (parsed == null || every < 1 || every > maxInterval) return null;
-    return TaskRepeat(parsed, every);
+    return TaskRepeat(parsed, every, parsed == RepeatFrequency.weekly ? normalizeDays(days) : null);
+  }
+
+  /// Hari yang sah, urut naik tanpa duplikat; `null` kalau tidak ada yang sah.
+  static List<int>? normalizeDays(Iterable<int>? days) {
+    final valid = {...?days?.where((day) => day >= DateTime.monday && day <= DateTime.sunday)}.toList()..sort();
+    return valid.isEmpty ? null : List.unmodifiable(valid);
   }
 
   @override
-  bool operator ==(Object other) => other is TaskRepeat && other.frequency == frequency && other.interval == interval;
+  bool operator ==(Object other) =>
+      other is TaskRepeat &&
+      other.frequency == frequency &&
+      other.interval == interval &&
+      (other.days?.join(',') ?? '') == (days?.join(',') ?? '');
 
   @override
-  int get hashCode => Object.hash(frequency, interval);
+  int get hashCode => Object.hash(frequency, interval, days?.join(','));
 
   @override
-  String toString() => 'TaskRepeat($frequency, $interval)';
+  String toString() => 'TaskRepeat($frequency, $interval, $days)';
 }

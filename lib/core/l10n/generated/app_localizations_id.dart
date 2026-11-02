@@ -2037,6 +2037,24 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String repeatOnDays(String every, String days) {
+    return '$every, $days';
+  }
+
+  @override
+  String get repeatWhichDays => 'Di hari apa saja?';
+
+  @override
+  String listTwo(String first, String second) {
+    return '$first dan $second';
+  }
+
+  @override
+  String listMany(String rest, String last) {
+    return '$rest, dan $last';
+  }
+
+  @override
   String get repeatFewer => 'Kurangi';
 
   @override

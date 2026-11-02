@@ -581,6 +581,8 @@ void main() {
       'ALTER TABLE tasks DROP COLUMN repeat_frequency',
       'ALTER TABLE tasks DROP COLUMN repeat_interval',
       'ALTER TABLE tasks DROP COLUMN next_task_id',
+      // Hari ulang tugas mingguan baru ada di versi 8.
+      'ALTER TABLE tasks DROP COLUMN repeat_days',
       'PRAGMA user_version = 3',
     ]) {
       await old.customStatement(statement);

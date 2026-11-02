@@ -203,6 +203,14 @@ void main() {
           dueDate: '2026-10-31',
         ).ignore();
       });
+      // Mingguan di beberapa hari (v1.x): tujuh pilihan hari dan ringkasan yang panjang.
+      await withSheet(tester, container, () async {
+        showRepeatSheet(
+          tester.element(find.byType(TaskDetailScreen)),
+          current: const TaskRepeat(RepeatFrequency.weekly, 12, [1, 2, 3, 4, 5, 6]),
+          dueDate: '2026-10-31',
+        ).ignore();
+      });
       // Komentar dengan pilihan reaksi terbuka.
       await visit(tester, container, Routes.task(importantTaskId, comments: true));
       await tester.ensureVisible(find.byTooltip('Beri reaksi'));

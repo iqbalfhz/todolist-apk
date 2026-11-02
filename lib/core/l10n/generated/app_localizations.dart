@@ -3589,6 +3589,30 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{Tiap tahun} other{Tiap {count} tahun}}'**
   String repeatEveryYear(int count);
 
+  /// No description provided for @repeatOnDays.
+  ///
+  /// In id, this message translates to:
+  /// **'{every}, {days}'**
+  String repeatOnDays(String every, String days);
+
+  /// No description provided for @repeatWhichDays.
+  ///
+  /// In id, this message translates to:
+  /// **'Di hari apa saja?'**
+  String get repeatWhichDays;
+
+  /// No description provided for @listTwo.
+  ///
+  /// In id, this message translates to:
+  /// **'{first} dan {second}'**
+  String listTwo(String first, String second);
+
+  /// No description provided for @listMany.
+  ///
+  /// In id, this message translates to:
+  /// **'{rest}, dan {last}'**
+  String listMany(String rest, String last);
+
   /// No description provided for @repeatFewer.
   ///
   /// In id, this message translates to:

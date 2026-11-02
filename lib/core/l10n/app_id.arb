@@ -1217,6 +1217,28 @@
       "count": {"type": "int"}
     }
   },
+  "repeatOnDays": "{every}, {days}",
+  "@repeatOnDays": {
+    "placeholders": {
+      "every": {"type": "String"},
+      "days": {"type": "String"}
+    }
+  },
+  "repeatWhichDays": "Di hari apa saja?",
+  "listTwo": "{first} dan {second}",
+  "@listTwo": {
+    "placeholders": {
+      "first": {"type": "String"},
+      "second": {"type": "String"}
+    }
+  },
+  "listMany": "{rest}, dan {last}",
+  "@listMany": {
+    "placeholders": {
+      "rest": {"type": "String"},
+      "last": {"type": "String"}
+    }
+  },
   "repeatFewer": "Kurangi",
   "repeatMore": "Tambah",
   "repeatNote": "Begitu tugas ini selesai, tugas berikutnya dibuat dengan tenggat baru.",

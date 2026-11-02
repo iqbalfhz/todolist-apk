@@ -478,6 +478,44 @@ void main() {
     skip: skipReason,
   );
 
+  test('tugas berulang di beberapa hari: Selasa dan Jumat, tugas berikutnya di hari terpilih berikutnya', () async {
+    final list = await a.sharedList();
+    // Rabu 6 Januari 2027: tenggatnya tidak harus di hari terpilih; berikutnya Jumat minggu itu.
+    final task = await a.account.tasks.create(
+      list: list,
+      title: 'Siram tanaman',
+      dueDate: '2027-01-06',
+      repeat: const TaskRepeat(RepeatFrequency.weekly, 1, [2, 5]),
+    );
+    await a.syncNow();
+    // Baris di HP sudah diganti balasan server.
+    expect((await b.syncNow().then((_) => b.account.store.read(EntityType.task, task.id)))!['repeat_days'], [2, 5]);
+
+    await a.account.tasks.complete(task.id);
+    await a.syncNow();
+    final nextId = Task.fromJson((await a.account.store.read(EntityType.task, task.id))!).nextTaskId!;
+    final next = Task.fromJson((await a.account.store.read(EntityType.task, nextId))!);
+    expect((next.dueDate, next.repeat), ('2027-01-08', const TaskRepeat(RepeatFrequency.weekly, 1, [2, 5])));
+
+    // Hari di frekuensi selain mingguan ditolak; ganti ke bulanan ikut mengosongkan harinya.
+    await expectLater(
+      a.api.send(
+        'PATCH',
+        '/tasks/$nextId',
+        body: {
+          'repeat_frequency': 'monthly',
+          'repeat_days': [2],
+        },
+      ),
+      throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.validationFailed)),
+    );
+    await a.account.tasks.setRepeat(nextId, const TaskRepeat(RepeatFrequency.monthly));
+    await a.syncNow();
+    await b.syncNow();
+    final monthly = Task.fromJson((await b.account.store.read(EntityType.task, nextId))!);
+    expect((monthly.repeatFrequency, monthly.repeatDays), ('monthly', null));
+  }, skip: skipReason);
+
   test('arsip: tugas ke daftar arsip ditolak parent_archived dan dipindah', () async {
     final space = await a.sharedSpace();
     final archive = await a.account.lists.create(spaceId: space.id, name: 'Lama');

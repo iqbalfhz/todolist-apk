@@ -139,10 +139,14 @@ void main() {
       expect(
         [for (final request in h.api.sent('PATCH')) request.body],
         [
-          {'repeat_frequency': 'weekly', 'repeat_interval': 2},
+          {'repeat_frequency': 'weekly', 'repeat_interval': 2, 'repeat_days': null},
         ],
       );
-      expect(payloadOf((await h.ops()).single), {'repeat_frequency': null, 'repeat_interval': null});
+      expect(payloadOf((await h.ops()).single), {
+        'repeat_frequency': null,
+        'repeat_interval': null,
+        'repeat_days': null,
+      });
       expect((await h.task(taskId))!.repeat, isNull);
     });
 
@@ -156,6 +160,7 @@ void main() {
         'due_time': null,
         'repeat_frequency': null,
         'repeat_interval': null,
+        'repeat_days': null,
       });
       expect((await h.task(taskId))!.repeat, isNull);
     });
@@ -328,6 +333,8 @@ void main() {
       // Kolom pin lokasi kenangan baru ada di versi 6.
       'ALTER TABLE memories DROP COLUMN latitude',
       'ALTER TABLE memories DROP COLUMN longitude',
+      // Hari ulang tugas mingguan baru ada di versi 8.
+      'ALTER TABLE tasks DROP COLUMN repeat_days',
       'PRAGMA user_version = 4',
     ]) {
       await old.customStatement(statement);
@@ -447,7 +454,11 @@ void main() {
       await settle(tester);
 
       expect(find.text('Tiap bulan'), findsOneWidget);
-      expect(payloadOf((await h.ops()).single), {'repeat_frequency': 'monthly', 'repeat_interval': 1});
+      expect(payloadOf((await h.ops()).single), {
+        'repeat_frequency': 'monthly',
+        'repeat_interval': 1,
+        'repeat_days': null,
+      });
 
       await tester.tap(find.text('Tiap bulan'));
       await settle(tester);
@@ -509,11 +520,197 @@ void main() {
     });
   });
 
+  // ------------------------------------------------------------------ beberapa hari (v1.x)
+
+  group('beberapa hari (v1.x)', () {
+    test('hari hanya untuk mingguan, dirapikan urut naik tanpa duplikat; yang di luar 1–7 dibuang', () {
+      expect(TaskRepeat.tryFrom('weekly', 2, [5, 2, 2]), const TaskRepeat(RepeatFrequency.weekly, 2, [2, 5]));
+      expect(TaskRepeat.tryFrom('weekly', 1, [0, 8])!.days, isNull);
+      expect(TaskRepeat.tryFrom('daily', 1, [2])!.days, isNull);
+      expect(
+        Task.fromJson(taskJson(dueDate: '2026-10-08', repeatFrequency: 'weekly', repeatDays: [2, 5])).repeat!.days,
+        [2, 5],
+      );
+    });
+
+    test('kirim: frekuensi, selang, dan hari selalu bersama; hari di frekuensi lain ditolak di HP', () async {
+      final h = Harness();
+      addTearDown(h.dispose);
+      await h.seed();
+      await h.seedWeekly();
+
+      await h.account.tasks.setRepeat(taskId, const TaskRepeat(RepeatFrequency.weekly, 2, [2, 5]));
+      expect(payloadOf((await h.ops()).single), {
+        'repeat_frequency': 'weekly',
+        'repeat_interval': 2,
+        'repeat_days': [2, 5],
+      });
+      expect((await h.task(taskId))!.repeat, const TaskRepeat(RepeatFrequency.weekly, 2, [2, 5]));
+
+      for (final invalid in [
+        const TaskRepeat(RepeatFrequency.monthly, 1, [2]),
+        const TaskRepeat(RepeatFrequency.weekly, 1, [5, 2]),
+        const TaskRepeat(RepeatFrequency.weekly, 1, <int>[]),
+      ]) {
+        await expectLater(h.account.tasks.setRepeat(taskId, invalid), throwsArgumentError, reason: '$invalid');
+      }
+
+      final created = await h.account.tasks.create(
+        list: TaskList.fromJson(listJson()),
+        title: 'Lari pagi',
+        dueDate: '2026-10-08',
+        repeat: const TaskRepeat(RepeatFrequency.weekly, 1, [1, 3, 5]),
+      );
+      expect(payloadOf((await h.ops()).last)['repeat_days'], [1, 3, 5]);
+      expect(created.repeat!.days, [1, 3, 5]);
+    });
+
+    test('hari yang belum terkirim tidak ditimpa sync, termasuk frekuensi dan selangnya', () async {
+      final h = Harness();
+      addTearDown(h.dispose);
+      await h.seed();
+      await h.seedWeekly();
+      h.api.offline = true;
+      await h.account.tasks.setRepeat(taskId, const TaskRepeat(RepeatFrequency.weekly, 1, [2, 5]));
+      h.api.offline = false;
+
+      await h.account.store.setMeta(MetaKeys.syncSince, 'T-0');
+      await h.account.store.setMeta(MetaKeys.syncCollections, '${SyncEngine.collectionsVersion}');
+      h.api.enqueue((_) => throw const NetworkFailure());
+      h.api.syncPages.add(
+        h.api.syncPage(
+          tasks: [
+            taskJson(
+              title: 'Buang sampah besar',
+              dueDate: '2026-10-08',
+              repeatFrequency: 'weekly',
+              repeatInterval: 3,
+              updatedAt: t2,
+            ),
+          ],
+        ),
+      );
+      await h.account.sync.sync();
+
+      final task = (await h.task(taskId))!;
+      expect(task.title, 'Buang sampah besar');
+      expect(task.repeat, const TaskRepeat(RepeatFrequency.weekly, 1, [2, 5]));
+    });
+
+    test('sync penuh sekali setelah app mengenal hari ulang; database versi 7 dinaikkan ke 8', () async {
+      final h = Harness();
+      addTearDown(h.dispose);
+      await h.account.store.setMeta(MetaKeys.syncSince, 'T-lama');
+      await h.account.store.setMeta(MetaKeys.syncCollections, '7');
+      h.api.syncPages.add(
+        h.api.syncPage(
+          serverTime: 'T-1',
+          tasks: [
+            taskJson(dueDate: '2026-10-08', repeatFrequency: 'weekly', repeatDays: [2, 5]),
+          ],
+        ),
+      );
+
+      expect(SyncEngine.collectionsVersion, greaterThanOrEqualTo(8));
+      await h.account.sync.sync();
+      expect(
+        [
+          for (final request in h.api.requests)
+            if (request.path == '/sync') request.query,
+        ],
+        [null],
+      );
+      expect((await h.task(taskId))!.repeat!.days, [2, 5]);
+
+      driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+      final dir = await Directory.systemTemp.createTemp('denly_migrasi8');
+      addTearDown(() => dir.delete(recursive: true));
+      final file = File('${dir.path}/akun.sqlite');
+      final old = AppDatabase(NativeDatabase(file));
+      await old
+          .into(old.tasks)
+          .insert(taskCompanion(Task.fromJson(taskJson(dueDate: '2026-10-08', repeatFrequency: 'weekly'))));
+      for (final statement in ['ALTER TABLE tasks DROP COLUMN repeat_days', 'PRAGMA user_version = 7']) {
+        await old.customStatement(statement);
+      }
+      await old.close();
+
+      final upgraded = AppDatabase(NativeDatabase(file));
+      addTearDown(upgraded.close);
+      final before = (await upgraded.select(upgraded.tasks).getSingle()).toModel();
+      expect((before.title, before.repeat), ('Beli galon', const TaskRepeat(RepeatFrequency.weekly)));
+      await upgraded
+          .into(upgraded.tasks)
+          .insertOnConflictUpdate(
+            taskCompanion(
+              Task.fromJson(taskJson(dueDate: '2026-10-08', repeatFrequency: 'weekly', repeatDays: [6, 7])),
+            ),
+          );
+      expect((await upgraded.select(upgraded.tasks).getSingle()).toModel().repeatDays, [6, 7]);
+    });
+
+    testWidgets('lembar Ulangi tugas: pilih Selasa dan Jumat tiap 2 minggu, lalu kembali ke hari tenggat', (
+      tester,
+    ) async {
+      final h = Harness();
+      await h.seed();
+      await h.seedWeekly();
+      final container = await pumpApp(tester, h);
+      container.read(routerProvider).go(Routes.task(taskId));
+      await settle(tester);
+
+      // Tenggatnya Kamis, jadi Kamis yang terpilih selama hari lain belum dipilih.
+      await tester.tap(find.text('Tiap minggu'));
+      await settle(tester);
+      expect(find.text('Di hari apa saja?'), findsOneWidget);
+      expect(find.bySemanticsLabel('Kamis'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Tambah'));
+      await tester.tap(find.text('Sel'));
+      await tester.tap(find.text('Jum'));
+      await tester.tap(find.text('Kam'));
+      await settle(tester);
+      expect(find.text('Tiap 2 minggu, Selasa dan Jumat'), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilledButton, 'Simpan'));
+      await settle(tester);
+
+      expect(find.text('Tiap 2 minggu, Sel dan Jum'), findsOneWidget);
+      expect(payloadOf((await h.ops()).single), {
+        'repeat_frequency': 'weekly',
+        'repeat_interval': 2,
+        'repeat_days': [2, 5],
+      });
+
+      // Hari terakhir yang terpilih tidak bisa dilepas; hanya hari tenggat berarti null lagi.
+      await tester.tap(find.text('Tiap 2 minggu, Sel dan Jum'));
+      await settle(tester);
+      await tester.tap(find.text('Kam'));
+      await tester.tap(find.text('Sel'));
+      await tester.tap(find.text('Jum'));
+      await tester.tap(find.text('Kam'));
+      await settle(tester);
+      expect(find.text('Tiap 2 minggu, Kamis'), findsNothing);
+      await tester.tap(find.widgetWithText(FilledButton, 'Simpan'));
+      await settle(tester);
+
+      expect(find.text('Tiap 2 minggu'), findsOneWidget);
+      expect((await h.task(taskId))!.repeat, const TaskRepeat(RepeatFrequency.weekly, 2));
+
+      await disposeApp(tester, h);
+    });
+  });
+
   test('teks aturan ulang', () {
     final l10n = lookupAppLocalizations(const Locale('id'));
     expect(repeatText(l10n, const TaskRepeat(RepeatFrequency.daily)), 'Tiap hari');
     expect(repeatText(l10n, const TaskRepeat(RepeatFrequency.weekly, 2)), 'Tiap 2 minggu');
     expect(repeatText(l10n, const TaskRepeat(RepeatFrequency.monthly, 3)), 'Tiap 3 bulan');
     expect(repeatText(l10n, const TaskRepeat(RepeatFrequency.yearly)), 'Tiap tahun');
+    expect(repeatText(l10n, const TaskRepeat(RepeatFrequency.weekly, 2, [2, 5])), 'Tiap 2 minggu, Selasa dan Jumat');
+    expect(
+      repeatText(l10n, const TaskRepeat(RepeatFrequency.weekly, 1, [1, 3, 5]), short: true),
+      'Tiap minggu, Sen, Rab, dan Jum',
+    );
+    expect(repeatText(l10n, const TaskRepeat(RepeatFrequency.weekly, 1, [7])), 'Tiap minggu, Minggu');
   });
 }

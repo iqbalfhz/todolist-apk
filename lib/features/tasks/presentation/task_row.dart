@@ -137,7 +137,7 @@ class TaskRow extends ConsumerWidget {
           // Tugas berulang (v1.0): "Tiap minggu" dengan ikon ulang.
           if (repeat != null) ...[
             const TextSpan(text: '$_nbsp· '),
-            badge(Symbols.repeat_rounded, repeatText(l10n, repeat)),
+            badge(Symbols.repeat_rounded, repeatText(l10n, repeat, short: true)),
           ],
           if (item.task.isImportant) ...[
             const TextSpan(text: '$_nbsp· '),

@@ -638,6 +638,8 @@ void main() {
       'special_dates': false,
       'trip_reminders': true,
       'savings_reminders': true,
+      // Kunci baru server (v1.x) yang bawaannya menyala; app yang belum mengenalnya tidak mengubahnya.
+      'memory_flashbacks': true,
     });
     expect(profile['default_currency'], 'USD');
     expect(find.text('Dolar AS (USD)'), findsOneWidget);
@@ -1028,6 +1030,25 @@ void main() {
     expect((await serverRow('tasks', (row) => row['id'] == wateringId))['completed_at'], isNull);
     await go(Routes.tasks);
     expect(find.bySemanticsLabel('Tandai selesai: Siram tanaman'), findsOneWidget);
+
+    step('Mingguan di beberapa hari (v1.x): hari tenggat ditambah dua hari lain');
+    await go(Routes.task(wateringId));
+    await tap(find.text('Tiap hari'));
+    await tap(find.text('Mingguan'));
+    final dueDay = parseYmd(today()).weekday;
+    final extraDays = [
+      for (var day = 1; day <= 7; day++)
+        if (day != dueDay) day,
+    ].take(2).toList();
+    for (final day in extraDays) {
+      await tap(find.text(weekdayName(day, short: true)));
+    }
+    await tap(find.widgetWithText(FilledButton, 'Simpan'));
+    await advance(const Duration(seconds: 2));
+    expect(
+      (await serverRow('tasks', (row) => row['id'] == wateringId))['repeat_days'],
+      ([...extraDays, dueDay]..sort()),
+    );
 
     // ---------------------------------------------------------------- kenangan (v0.3)
     // Foto tidak diunggah di sini: API lokal tidak punya kunci R2.

@@ -1286,6 +1286,15 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _repeatDaysMeta = const VerificationMeta('repeatDays');
+  @override
+  late final GeneratedColumn<String> repeatDays = GeneratedColumn<String>(
+    'repeat_days',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _remindAtMeta = const VerificationMeta('remindAt');
   @override
   late final GeneratedColumn<String> remindAt = GeneratedColumn<String>(
@@ -1390,6 +1399,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
     assigneeIds,
     repeatFrequency,
     repeatInterval,
+    repeatDays,
     remindAt,
     completedAt,
     completedBy,
@@ -1466,6 +1476,9 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
         repeatInterval.isAcceptableOrUnknown(data['repeat_interval']!, _repeatIntervalMeta),
       );
     }
+    if (data.containsKey('repeat_days')) {
+      context.handle(_repeatDaysMeta, repeatDays.isAcceptableOrUnknown(data['repeat_days']!, _repeatDaysMeta));
+    }
     if (data.containsKey('remind_at')) {
       context.handle(_remindAtMeta, remindAt.isAcceptableOrUnknown(data['remind_at']!, _remindAtMeta));
     }
@@ -1527,6 +1540,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskRow> {
         data['${effectivePrefix}repeat_frequency'],
       ),
       repeatInterval: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}repeat_interval']),
+      repeatDays: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}repeat_days']),
       remindAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}remind_at']),
       completedAt: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}completed_at']),
       completedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}completed_by']),
@@ -1566,6 +1580,9 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
   /// Aturan ulang (v1.0).
   final String? repeatFrequency;
   final int? repeatInterval;
+
+  /// JSON larik hari ISO untuk tugas mingguan (v1.x), atau `null`.
+  final String? repeatDays;
   final String? remindAt;
   final String? completedAt;
   final String? completedBy;
@@ -1591,6 +1608,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     required this.assigneeIds,
     this.repeatFrequency,
     this.repeatInterval,
+    this.repeatDays,
     this.remindAt,
     this.completedAt,
     this.completedBy,
@@ -1626,6 +1644,9 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     }
     if (!nullToAbsent || repeatInterval != null) {
       map['repeat_interval'] = Variable<int>(repeatInterval);
+    }
+    if (!nullToAbsent || repeatDays != null) {
+      map['repeat_days'] = Variable<String>(repeatDays);
     }
     if (!nullToAbsent || remindAt != null) {
       map['remind_at'] = Variable<String>(remindAt);
@@ -1670,6 +1691,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       assigneeIds: Value(assigneeIds),
       repeatFrequency: repeatFrequency == null && nullToAbsent ? const Value.absent() : Value(repeatFrequency),
       repeatInterval: repeatInterval == null && nullToAbsent ? const Value.absent() : Value(repeatInterval),
+      repeatDays: repeatDays == null && nullToAbsent ? const Value.absent() : Value(repeatDays),
       remindAt: remindAt == null && nullToAbsent ? const Value.absent() : Value(remindAt),
       completedAt: completedAt == null && nullToAbsent ? const Value.absent() : Value(completedAt),
       completedBy: completedBy == null && nullToAbsent ? const Value.absent() : Value(completedBy),
@@ -1698,6 +1720,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       assigneeIds: serializer.fromJson<String>(json['assigneeIds']),
       repeatFrequency: serializer.fromJson<String?>(json['repeatFrequency']),
       repeatInterval: serializer.fromJson<int?>(json['repeatInterval']),
+      repeatDays: serializer.fromJson<String?>(json['repeatDays']),
       remindAt: serializer.fromJson<String?>(json['remindAt']),
       completedAt: serializer.fromJson<String?>(json['completedAt']),
       completedBy: serializer.fromJson<String?>(json['completedBy']),
@@ -1726,6 +1749,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       'assigneeIds': serializer.toJson<String>(assigneeIds),
       'repeatFrequency': serializer.toJson<String?>(repeatFrequency),
       'repeatInterval': serializer.toJson<int?>(repeatInterval),
+      'repeatDays': serializer.toJson<String?>(repeatDays),
       'remindAt': serializer.toJson<String?>(remindAt),
       'completedAt': serializer.toJson<String?>(completedAt),
       'completedBy': serializer.toJson<String?>(completedBy),
@@ -1752,6 +1776,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     String? assigneeIds,
     Value<String?> repeatFrequency = const Value.absent(),
     Value<int?> repeatInterval = const Value.absent(),
+    Value<String?> repeatDays = const Value.absent(),
     Value<String?> remindAt = const Value.absent(),
     Value<String?> completedAt = const Value.absent(),
     Value<String?> completedBy = const Value.absent(),
@@ -1775,6 +1800,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     assigneeIds: assigneeIds ?? this.assigneeIds,
     repeatFrequency: repeatFrequency.present ? repeatFrequency.value : this.repeatFrequency,
     repeatInterval: repeatInterval.present ? repeatInterval.value : this.repeatInterval,
+    repeatDays: repeatDays.present ? repeatDays.value : this.repeatDays,
     remindAt: remindAt.present ? remindAt.value : this.remindAt,
     completedAt: completedAt.present ? completedAt.value : this.completedAt,
     completedBy: completedBy.present ? completedBy.value : this.completedBy,
@@ -1800,6 +1826,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
       assigneeIds: data.assigneeIds.present ? data.assigneeIds.value : this.assigneeIds,
       repeatFrequency: data.repeatFrequency.present ? data.repeatFrequency.value : this.repeatFrequency,
       repeatInterval: data.repeatInterval.present ? data.repeatInterval.value : this.repeatInterval,
+      repeatDays: data.repeatDays.present ? data.repeatDays.value : this.repeatDays,
       remindAt: data.remindAt.present ? data.remindAt.value : this.remindAt,
       completedAt: data.completedAt.present ? data.completedAt.value : this.completedAt,
       completedBy: data.completedBy.present ? data.completedBy.value : this.completedBy,
@@ -1828,6 +1855,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
           ..write('assigneeIds: $assigneeIds, ')
           ..write('repeatFrequency: $repeatFrequency, ')
           ..write('repeatInterval: $repeatInterval, ')
+          ..write('repeatDays: $repeatDays, ')
           ..write('remindAt: $remindAt, ')
           ..write('completedAt: $completedAt, ')
           ..write('completedBy: $completedBy, ')
@@ -1856,6 +1884,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
     assigneeIds,
     repeatFrequency,
     repeatInterval,
+    repeatDays,
     remindAt,
     completedAt,
     completedBy,
@@ -1883,6 +1912,7 @@ class TaskRow extends DataClass implements Insertable<TaskRow> {
           other.assigneeIds == this.assigneeIds &&
           other.repeatFrequency == this.repeatFrequency &&
           other.repeatInterval == this.repeatInterval &&
+          other.repeatDays == this.repeatDays &&
           other.remindAt == this.remindAt &&
           other.completedAt == this.completedAt &&
           other.completedBy == this.completedBy &&
@@ -1908,6 +1938,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
   final Value<String> assigneeIds;
   final Value<String?> repeatFrequency;
   final Value<int?> repeatInterval;
+  final Value<String?> repeatDays;
   final Value<String?> remindAt;
   final Value<String?> completedAt;
   final Value<String?> completedBy;
@@ -1932,6 +1963,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     this.assigneeIds = const Value.absent(),
     this.repeatFrequency = const Value.absent(),
     this.repeatInterval = const Value.absent(),
+    this.repeatDays = const Value.absent(),
     this.remindAt = const Value.absent(),
     this.completedAt = const Value.absent(),
     this.completedBy = const Value.absent(),
@@ -1957,6 +1989,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     required String assigneeIds,
     this.repeatFrequency = const Value.absent(),
     this.repeatInterval = const Value.absent(),
+    this.repeatDays = const Value.absent(),
     this.remindAt = const Value.absent(),
     this.completedAt = const Value.absent(),
     this.completedBy = const Value.absent(),
@@ -1990,6 +2023,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     Expression<String>? assigneeIds,
     Expression<String>? repeatFrequency,
     Expression<int>? repeatInterval,
+    Expression<String>? repeatDays,
     Expression<String>? remindAt,
     Expression<String>? completedAt,
     Expression<String>? completedBy,
@@ -2015,6 +2049,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
       if (assigneeIds != null) 'assignee_ids': assigneeIds,
       if (repeatFrequency != null) 'repeat_frequency': repeatFrequency,
       if (repeatInterval != null) 'repeat_interval': repeatInterval,
+      if (repeatDays != null) 'repeat_days': repeatDays,
       if (remindAt != null) 'remind_at': remindAt,
       if (completedAt != null) 'completed_at': completedAt,
       if (completedBy != null) 'completed_by': completedBy,
@@ -2042,6 +2077,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     Value<String>? assigneeIds,
     Value<String?>? repeatFrequency,
     Value<int?>? repeatInterval,
+    Value<String?>? repeatDays,
     Value<String?>? remindAt,
     Value<String?>? completedAt,
     Value<String?>? completedBy,
@@ -2067,6 +2103,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
       assigneeIds: assigneeIds ?? this.assigneeIds,
       repeatFrequency: repeatFrequency ?? this.repeatFrequency,
       repeatInterval: repeatInterval ?? this.repeatInterval,
+      repeatDays: repeatDays ?? this.repeatDays,
       remindAt: remindAt ?? this.remindAt,
       completedAt: completedAt ?? this.completedAt,
       completedBy: completedBy ?? this.completedBy,
@@ -2120,6 +2157,9 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
     if (repeatInterval.present) {
       map['repeat_interval'] = Variable<int>(repeatInterval.value);
     }
+    if (repeatDays.present) {
+      map['repeat_days'] = Variable<String>(repeatDays.value);
+    }
     if (remindAt.present) {
       map['remind_at'] = Variable<String>(remindAt.value);
     }
@@ -2171,6 +2211,7 @@ class TasksCompanion extends UpdateCompanion<TaskRow> {
           ..write('assigneeIds: $assigneeIds, ')
           ..write('repeatFrequency: $repeatFrequency, ')
           ..write('repeatInterval: $repeatInterval, ')
+          ..write('repeatDays: $repeatDays, ')
           ..write('remindAt: $remindAt, ')
           ..write('completedAt: $completedAt, ')
           ..write('completedBy: $completedBy, ')
@@ -8341,6 +8382,7 @@ typedef $$TasksTableCreateCompanionBuilder = TasksCompanion Function({
   required String assigneeIds,
   Value<String?> repeatFrequency,
   Value<int?> repeatInterval,
+  Value<String?> repeatDays,
   Value<String?> remindAt,
   Value<String?> completedAt,
   Value<String?> completedBy,
@@ -8366,6 +8408,7 @@ typedef $$TasksTableUpdateCompanionBuilder = TasksCompanion Function({
   Value<String> assigneeIds,
   Value<String?> repeatFrequency,
   Value<int?> repeatInterval,
+  Value<String?> repeatDays,
   Value<String?> remindAt,
   Value<String?> completedAt,
   Value<String?> completedBy,
@@ -8421,6 +8464,9 @@ class $$TasksTableFilterComposer extends Composer<_$AppDatabase, $TasksTable> {
 
   ColumnFilters<int> get repeatInterval =>
       $composableBuilder(column: $table.repeatInterval, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get repeatDays =>
+      $composableBuilder(column: $table.repeatDays, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get remindAt =>
       $composableBuilder(column: $table.remindAt, builder: (column) => ColumnFilters(column));
@@ -8496,6 +8542,9 @@ class $$TasksTableOrderingComposer extends Composer<_$AppDatabase, $TasksTable> 
   ColumnOrderings<int> get repeatInterval =>
       $composableBuilder(column: $table.repeatInterval, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get repeatDays =>
+      $composableBuilder(column: $table.repeatDays, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get remindAt =>
       $composableBuilder(column: $table.remindAt, builder: (column) => ColumnOrderings(column));
 
@@ -8562,6 +8611,8 @@ class $$TasksTableAnnotationComposer extends Composer<_$AppDatabase, $TasksTable
   GeneratedColumn<int> get repeatInterval =>
       $composableBuilder(column: $table.repeatInterval, builder: (column) => column);
 
+  GeneratedColumn<String> get repeatDays => $composableBuilder(column: $table.repeatDays, builder: (column) => column);
+
   GeneratedColumn<String> get remindAt => $composableBuilder(column: $table.remindAt, builder: (column) => column);
 
   GeneratedColumn<String> get completedAt =>
@@ -8623,6 +8674,7 @@ class $$TasksTableTableManager
                 Value<String> assigneeIds = const Value.absent(),
                 Value<String?> repeatFrequency = const Value.absent(),
                 Value<int?> repeatInterval = const Value.absent(),
+                Value<String?> repeatDays = const Value.absent(),
                 Value<String?> remindAt = const Value.absent(),
                 Value<String?> completedAt = const Value.absent(),
                 Value<String?> completedBy = const Value.absent(),
@@ -8647,6 +8699,7 @@ class $$TasksTableTableManager
                 assigneeIds: assigneeIds,
                 repeatFrequency: repeatFrequency,
                 repeatInterval: repeatInterval,
+                repeatDays: repeatDays,
                 remindAt: remindAt,
                 completedAt: completedAt,
                 completedBy: completedBy,
@@ -8673,6 +8726,7 @@ class $$TasksTableTableManager
                 required String assigneeIds,
                 Value<String?> repeatFrequency = const Value.absent(),
                 Value<int?> repeatInterval = const Value.absent(),
+                Value<String?> repeatDays = const Value.absent(),
                 Value<String?> remindAt = const Value.absent(),
                 Value<String?> completedAt = const Value.absent(),
                 Value<String?> completedBy = const Value.absent(),
@@ -8697,6 +8751,7 @@ class $$TasksTableTableManager
                 assigneeIds: assigneeIds,
                 repeatFrequency: repeatFrequency,
                 repeatInterval: repeatInterval,
+                repeatDays: repeatDays,
                 remindAt: remindAt,
                 completedAt: completedAt,
                 completedBy: completedBy,
