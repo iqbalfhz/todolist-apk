@@ -53,8 +53,9 @@ void main() {
 
       container.read(routerProvider).go(Routes.settings);
       await settle(tester);
+      // Gulir sampai tombol Keluar di paling bawah, supaya barisnya tidak tertutup tab bawah.
       await tester.scrollUntilVisible(
-        find.text('Hapus permanen akun dan semua datamu'),
+        find.widgetWithText(OutlinedButton, 'Keluar'),
         300,
         scrollable: find.byType(Scrollable).first,
       );

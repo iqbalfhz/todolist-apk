@@ -49,6 +49,10 @@ abstract class NotificationPrefs with _$NotificationPrefs {
 
     /// Pengingat setor rutin per target (v0.2). Bawaannya menyala.
     @Default(true) bool savingsReminders,
+
+    /// Kenangan hari ini pukul 08.00 (`memory_flashback`, v1.x). Bawaannya menyala, juga untuk
+    /// akun yang dibuat sebelum kunci ini ada.
+    @Default(true) bool memoryFlashbacks,
   }) = _NotificationPrefs;
 
   factory NotificationPrefs.fromJson(Map<String, dynamic> json) => _$NotificationPrefsFromJson(json);

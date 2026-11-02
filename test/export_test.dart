@@ -84,8 +84,9 @@ void main() {
 
       container.read(routerProvider).go(Routes.settings);
       await settle(tester);
+      // Gulir sampai tombol Keluar di paling bawah, supaya barisnya tidak tertutup tab bawah.
       await tester.scrollUntilVisible(
-        find.text('Simpan salinan semua datamu ke HP'),
+        find.widgetWithText(OutlinedButton, 'Keluar'),
         300,
         scrollable: find.byType(Scrollable).first,
       );

@@ -129,8 +129,9 @@ void main() {
       container.read(routerProvider).go(Routes.settings);
       await settle(tester);
 
+      // Gulir sampai tombol Keluar di paling bawah, supaya barisnya tidak tertutup tab bawah.
       await tester.scrollUntilVisible(
-        find.text('Widget di layar utama'),
+        find.widgetWithText(OutlinedButton, 'Keluar'),
         200,
         scrollable: find.byType(Scrollable).first,
       );

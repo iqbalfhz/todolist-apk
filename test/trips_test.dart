@@ -1004,6 +1004,7 @@ void main() {
         'special_dates': true,
         'trip_reminders': false,
         'savings_reminders': false,
+        'memory_flashbacks': true,
       },
     });
 

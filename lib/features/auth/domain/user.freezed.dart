@@ -375,7 +375,9 @@ mixin _$NotificationPrefs {
 /// dibuat sebelum kunci ini ada.
  bool get specialDates;/// Pengingat perjalanan H-7 dan H-1 (v0.2). Bawaannya menyala.
  bool get tripReminders;/// Pengingat setor rutin per target (v0.2). Bawaannya menyala.
- bool get savingsReminders;
+ bool get savingsReminders;/// Kenangan hari ini pukul 08.00 (`memory_flashback`, v1.x). Bawaannya menyala, juga untuk
+/// akun yang dibuat sebelum kunci ini ada.
+ bool get memoryFlashbacks;
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -389,20 +391,20 @@ $NotificationPrefsCopyWith<NotificationPrefs> get copyWith => _$NotificationPref
 @override
 bool operator ==(Object other) {
   final _this = this as NotificationPrefs;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationPrefs&&(identical(other.taskReminders, _this.taskReminders) || other.taskReminders == _this.taskReminders)&&(identical(other.partnerActivity, _this.partnerActivity) || other.partnerActivity == _this.partnerActivity)&&(identical(other.savingsActivity, _this.savingsActivity) || other.savingsActivity == _this.savingsActivity)&&(identical(other.specialDates, _this.specialDates) || other.specialDates == _this.specialDates)&&(identical(other.tripReminders, _this.tripReminders) || other.tripReminders == _this.tripReminders)&&(identical(other.savingsReminders, _this.savingsReminders) || other.savingsReminders == _this.savingsReminders));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is NotificationPrefs&&(identical(other.taskReminders, _this.taskReminders) || other.taskReminders == _this.taskReminders)&&(identical(other.partnerActivity, _this.partnerActivity) || other.partnerActivity == _this.partnerActivity)&&(identical(other.savingsActivity, _this.savingsActivity) || other.savingsActivity == _this.savingsActivity)&&(identical(other.specialDates, _this.specialDates) || other.specialDates == _this.specialDates)&&(identical(other.tripReminders, _this.tripReminders) || other.tripReminders == _this.tripReminders)&&(identical(other.savingsReminders, _this.savingsReminders) || other.savingsReminders == _this.savingsReminders)&&(identical(other.memoryFlashbacks, _this.memoryFlashbacks) || other.memoryFlashbacks == _this.memoryFlashbacks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as NotificationPrefs;
-  return Object.hash(runtimeType,_this.taskReminders,_this.partnerActivity,_this.savingsActivity,_this.specialDates,_this.tripReminders,_this.savingsReminders);
+  return Object.hash(runtimeType,_this.taskReminders,_this.partnerActivity,_this.savingsActivity,_this.specialDates,_this.tripReminders,_this.savingsReminders,_this.memoryFlashbacks);
 }
 
 @override
 String toString() {
   final _this = this as NotificationPrefs;
-  return 'NotificationPrefs(taskReminders: ${_this.taskReminders}, partnerActivity: ${_this.partnerActivity}, savingsActivity: ${_this.savingsActivity}, specialDates: ${_this.specialDates}, tripReminders: ${_this.tripReminders}, savingsReminders: ${_this.savingsReminders})';
+  return 'NotificationPrefs(taskReminders: ${_this.taskReminders}, partnerActivity: ${_this.partnerActivity}, savingsActivity: ${_this.savingsActivity}, specialDates: ${_this.specialDates}, tripReminders: ${_this.tripReminders}, savingsReminders: ${_this.savingsReminders}, memoryFlashbacks: ${_this.memoryFlashbacks})';
 }
 
 
@@ -413,7 +415,7 @@ abstract mixin class $NotificationPrefsCopyWith<$Res>  {
   factory $NotificationPrefsCopyWith(NotificationPrefs value, $Res Function(NotificationPrefs) _then) = _$NotificationPrefsCopyWithImpl;
 @useResult
 $Res call({
- bool taskReminders, bool partnerActivity, bool savingsActivity, bool specialDates, bool tripReminders, bool savingsReminders
+ bool taskReminders, bool partnerActivity, bool savingsActivity, bool specialDates, bool tripReminders, bool savingsReminders, bool memoryFlashbacks
 });
 
 
@@ -430,7 +432,7 @@ class _$NotificationPrefsCopyWithImpl<$Res>
 
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,Object? specialDates = null,Object? tripReminders = null,Object? savingsReminders = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,Object? specialDates = null,Object? tripReminders = null,Object? savingsReminders = null,Object? memoryFlashbacks = null,}) {
   return _then(NotificationPrefs(
 taskReminders: null == taskReminders ? _self.taskReminders : taskReminders // ignore: cast_nullable_to_non_nullable
 as bool,partnerActivity: null == partnerActivity ? _self.partnerActivity : partnerActivity // ignore: cast_nullable_to_non_nullable
@@ -438,6 +440,7 @@ as bool,savingsActivity: null == savingsActivity ? _self.savingsActivity : savin
 as bool,specialDates: null == specialDates ? _self.specialDates : specialDates // ignore: cast_nullable_to_non_nullable
 as bool,tripReminders: null == tripReminders ? _self.tripReminders : tripReminders // ignore: cast_nullable_to_non_nullable
 as bool,savingsReminders: null == savingsReminders ? _self.savingsReminders : savingsReminders // ignore: cast_nullable_to_non_nullable
+as bool,memoryFlashbacks: null == memoryFlashbacks ? _self.memoryFlashbacks : memoryFlashbacks // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -523,10 +526,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates,  bool tripReminders,  bool savingsReminders)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates,  bool tripReminders,  bool savingsReminders,  bool memoryFlashbacks)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _NotificationPrefs() when $default != null:
-return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates,_that.tripReminders,_that.savingsReminders);case _:
+return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates,_that.tripReminders,_that.savingsReminders,_that.memoryFlashbacks);case _:
   return orElse();
 
 }
@@ -544,10 +547,10 @@ return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates,  bool tripReminders,  bool savingsReminders)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates,  bool tripReminders,  bool savingsReminders,  bool memoryFlashbacks)  $default,) {final _that = this;
 switch (_that) {
 case _NotificationPrefs():
-return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates,_that.tripReminders,_that.savingsReminders);case _:
+return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates,_that.tripReminders,_that.savingsReminders,_that.memoryFlashbacks);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -564,10 +567,10 @@ return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates,  bool tripReminders,  bool savingsReminders)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool taskReminders,  bool partnerActivity,  bool savingsActivity,  bool specialDates,  bool tripReminders,  bool savingsReminders,  bool memoryFlashbacks)?  $default,) {final _that = this;
 switch (_that) {
 case _NotificationPrefs() when $default != null:
-return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates,_that.tripReminders,_that.savingsReminders);case _:
+return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,_that.specialDates,_that.tripReminders,_that.savingsReminders,_that.memoryFlashbacks);case _:
   return null;
 
 }
@@ -579,7 +582,7 @@ return $default(_that.taskReminders,_that.partnerActivity,_that.savingsActivity,
 @JsonSerializable()
 
 class _NotificationPrefs implements NotificationPrefs {
-  const _NotificationPrefs({this.taskReminders = true, this.partnerActivity = true, this.savingsActivity = true, this.specialDates = true, this.tripReminders = true, this.savingsReminders = true});
+  const _NotificationPrefs({this.taskReminders = true, this.partnerActivity = true, this.savingsActivity = true, this.specialDates = true, this.tripReminders = true, this.savingsReminders = true, this.memoryFlashbacks = true});
   factory _NotificationPrefs.fromJson(Map<String, dynamic> json) => _$NotificationPrefsFromJson(json);
 
 @override@JsonKey() final  bool taskReminders;
@@ -592,6 +595,9 @@ class _NotificationPrefs implements NotificationPrefs {
 @override@JsonKey() final  bool tripReminders;
 /// Pengingat setor rutin per target (v0.2). Bawaannya menyala.
 @override@JsonKey() final  bool savingsReminders;
+/// Kenangan hari ini pukul 08.00 (`memory_flashback`, v1.x). Bawaannya menyala, juga untuk
+/// akun yang dibuat sebelum kunci ini ada.
+@override@JsonKey() final  bool memoryFlashbacks;
 
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
@@ -606,18 +612,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationPrefs&&(identical(other.taskReminders, taskReminders) || other.taskReminders == taskReminders)&&(identical(other.partnerActivity, partnerActivity) || other.partnerActivity == partnerActivity)&&(identical(other.savingsActivity, savingsActivity) || other.savingsActivity == savingsActivity)&&(identical(other.specialDates, specialDates) || other.specialDates == specialDates)&&(identical(other.tripReminders, tripReminders) || other.tripReminders == tripReminders)&&(identical(other.savingsReminders, savingsReminders) || other.savingsReminders == savingsReminders));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _NotificationPrefs&&(identical(other.taskReminders, taskReminders) || other.taskReminders == taskReminders)&&(identical(other.partnerActivity, partnerActivity) || other.partnerActivity == partnerActivity)&&(identical(other.savingsActivity, savingsActivity) || other.savingsActivity == savingsActivity)&&(identical(other.specialDates, specialDates) || other.specialDates == specialDates)&&(identical(other.tripReminders, tripReminders) || other.tripReminders == tripReminders)&&(identical(other.savingsReminders, savingsReminders) || other.savingsReminders == savingsReminders)&&(identical(other.memoryFlashbacks, memoryFlashbacks) || other.memoryFlashbacks == memoryFlashbacks));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,taskReminders,partnerActivity,savingsActivity,specialDates,tripReminders,savingsReminders);
+    return Object.hash(runtimeType,taskReminders,partnerActivity,savingsActivity,specialDates,tripReminders,savingsReminders,memoryFlashbacks);
 }
 
 @override
 String toString() {
-    return 'NotificationPrefs(taskReminders: $taskReminders, partnerActivity: $partnerActivity, savingsActivity: $savingsActivity, specialDates: $specialDates, tripReminders: $tripReminders, savingsReminders: $savingsReminders)';
+    return 'NotificationPrefs(taskReminders: $taskReminders, partnerActivity: $partnerActivity, savingsActivity: $savingsActivity, specialDates: $specialDates, tripReminders: $tripReminders, savingsReminders: $savingsReminders, memoryFlashbacks: $memoryFlashbacks)';
 }
 
 
@@ -628,7 +634,7 @@ abstract mixin class _$NotificationPrefsCopyWith<$Res> implements $NotificationP
   factory _$NotificationPrefsCopyWith(_NotificationPrefs value, $Res Function(_NotificationPrefs) _then) = __$NotificationPrefsCopyWithImpl;
 @override @useResult
 $Res call({
- bool taskReminders, bool partnerActivity, bool savingsActivity, bool specialDates, bool tripReminders, bool savingsReminders
+ bool taskReminders, bool partnerActivity, bool savingsActivity, bool specialDates, bool tripReminders, bool savingsReminders, bool memoryFlashbacks
 });
 
 
@@ -645,7 +651,7 @@ class __$NotificationPrefsCopyWithImpl<$Res>
 
 /// Create a copy of NotificationPrefs
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,Object? specialDates = null,Object? tripReminders = null,Object? savingsReminders = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? taskReminders = null,Object? partnerActivity = null,Object? savingsActivity = null,Object? specialDates = null,Object? tripReminders = null,Object? savingsReminders = null,Object? memoryFlashbacks = null,}) {
   return _then(_NotificationPrefs(
 taskReminders: null == taskReminders ? _self.taskReminders : taskReminders // ignore: cast_nullable_to_non_nullable
 as bool,partnerActivity: null == partnerActivity ? _self.partnerActivity : partnerActivity // ignore: cast_nullable_to_non_nullable
@@ -653,6 +659,7 @@ as bool,savingsActivity: null == savingsActivity ? _self.savingsActivity : savin
 as bool,specialDates: null == specialDates ? _self.specialDates : specialDates // ignore: cast_nullable_to_non_nullable
 as bool,tripReminders: null == tripReminders ? _self.tripReminders : tripReminders // ignore: cast_nullable_to_non_nullable
 as bool,savingsReminders: null == savingsReminders ? _self.savingsReminders : savingsReminders // ignore: cast_nullable_to_non_nullable
+as bool,memoryFlashbacks: null == memoryFlashbacks ? _self.memoryFlashbacks : memoryFlashbacks // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

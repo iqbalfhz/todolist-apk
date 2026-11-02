@@ -439,6 +439,13 @@ class _NotificationSwitches extends ConsumerWidget {
             value: prefs.savingsReminders,
             onChanged: (value) => save(prefs.copyWith(savingsReminders: value)),
           ),
+          const RowDivider(),
+          SwitchRow(
+            title: l10n.notifMemoryFlashbacks,
+            subtitle: l10n.notifMemoryFlashbacksSub,
+            value: prefs.memoryFlashbacks,
+            onChanged: (value) => save(prefs.copyWith(memoryFlashbacks: value)),
+          ),
         ],
       ),
     );

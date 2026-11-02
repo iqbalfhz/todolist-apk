@@ -485,6 +485,7 @@ void main() {
         'special_dates': false,
         'trip_reminders': true,
         'savings_reminders': true,
+        'memory_flashbacks': true,
       },
     });
 
