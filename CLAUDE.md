@@ -69,7 +69,7 @@ v1.x yang sudah dibangun (diminta pemilik 25 Oktober 2026; semuanya cukup di HP)
 - Widget "Tugas hari ini" di layar utama Android (`TasksWidget.kt`, kanal `todolist/device`), dengan tombol sematkan di Pengaturan
 - Masuk dengan Google (30 Oktober 2026): tombol "Masuk dengan Google" dan "Daftar dengan Google" di bawah formulir Masuk dan Daftar (logo G resmi di `assets/images/`, warna dari panduan merek Google di `GoogleButtonColors`), lalu `POST /auth/google` dengan ID token dari `google_sign_in`. Pilihan akun dilupakan begitu ID token didapat, jadi masuk berikutnya bertanya lagi. Selama token ditukar, akun Google yang dipakai disebut di bawah tombol; balasan 201 (akun baru) memunculkan "Akun baru dibuat untuk {email}." Akun tanpa kata sandi tidak butuh penanganan khusus di app.
 
-Belum dibangun, jangan dibuat dulu: sisa v1.0 (lupa kata sandi di app), dan iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
+Belum dibangun, jangan dibuat dulu: iOS. Tabel `activities` (feed aktivitas) ditunda juga di server.
 
 **Sudah disetujui pemilik (11 Oktober 2026):** semua butir "Perubahan dari rancangan awal" dan dua pertanyaan yang dulu ada di "Masih terbuka" (kini "Sudah diputuskan") di akhir kontrak.
 

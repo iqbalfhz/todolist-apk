@@ -1,18 +1,22 @@
 # Kontrak API v0.1
 
-> Salinan dari dokumen perencanaan di claude.ai (tab "Kontrak API v0.1"), per 30 Oktober 2026. Kalau berbeda, dokumen itu yang berlaku. Setiap kali kontrak berubah, perbarui salinan ini di repo `api` dan `mobile`.
+> Salinan dari dokumen perencanaan di claude.ai (tab "Kontrak API v0.1"), per 2 November 2026. Kalau berbeda, dokumen itu yang berlaku. Setiap kali kontrak berubah, perbarui salinan ini di repo `api` dan `mobile`.
 
-Rilis v0.1 butuh 25 endpoint di bawah `/api/v1`: semua data dibaca lewat satu pintu, `GET /sync`, dan setiap perubahan data dari antrean offline aman dikirim ulang. Laravel membangunnya persis seperti di sini, dan Flutter memanggilnya dengan bentuk data yang sama. Setelah endpoint jadi, dokumentasi otomatis Scramble menjadi acuan harian. Rilis v0.2 menambah 6 endpoint: 3 untuk Tanggal penting dan 3 untuk Perjalanan. Rilis v0.3 menambah 7 endpoint untuk Kenangan dan fotonya. Rilis v1.0 dimulai dari tugas berulang, tanpa endpoint baru, lalu keluar dari Ruang Bersama, hapus akun, dan ekspor data, yang masing-masing menambah satu endpoint. Rilis v1.x dimulai dari push sinkron, lalu penarikan tabungan, keduanya tanpa endpoint baru. Pin lokasi kenangan menambah satu endpoint baca untuk mencari tempat, dan reaksi serta komentar menambah 5 endpoint tulis. Masuk dengan Google menambah satu endpoint tanpa token.
+Rilis v0.1 butuh 25 endpoint di bawah `/api/v1`: semua data dibaca lewat satu pintu, `GET /sync`, dan setiap perubahan data dari antrean offline aman dikirim ulang. Laravel membangunnya persis seperti di sini, dan Flutter memanggilnya dengan bentuk data yang sama. Setelah endpoint jadi, dokumentasi otomatis Scramble menjadi acuan harian. Rilis v0.2 menambah 6 endpoint: 3 untuk Tanggal penting dan 3 untuk Perjalanan. Rilis v0.3 menambah 7 endpoint untuk Kenangan dan fotonya. Rilis v1.0 dimulai dari tugas berulang, tanpa endpoint baru, lalu keluar dari Ruang Bersama, hapus akun, dan ekspor data, yang masing-masing menambah satu endpoint. Penghapusan permanen catatan lama tidak menambah endpoint, dan lupa kata sandi serta verifikasi email menambah 4 endpoint, 2 di antaranya tanpa token. Rilis v1.x dimulai dari push sinkron, lalu penarikan tabungan, keduanya tanpa endpoint baru. Pin lokasi kenangan menambah satu endpoint baca untuk mencari tempat, dan reaksi serta komentar menambah 5 endpoint tulis. Masuk dengan Google menambah satu endpoint tanpa token. Tugas berulang di beberapa hari dan kenangan hari ini tidak menambah endpoint.
 
 ## Ringkasan endpoint
 
-Semua endpoint butuh token Sanctum, kecuali daftar, masuk, dan masuk dengan Google. Hanya enam yang membaca data (`GET /me`, `GET /spaces`, `GET /sync`, `GET /memories/{id}/photos` sejak v0.3, `GET /places` sejak v1.x, dan `GET /me/export` sejak v1.0); sisanya menulis.
+Semua endpoint butuh token Sanctum, kecuali daftar, masuk, masuk dengan Google, dan atur ulang kata sandi (v1.0). Hanya enam yang membaca data (`GET /me`, `GET /spaces`, `GET /sync`, `GET /memories/{id}/photos` sejak v0.3, `GET /places` sejak v1.x, dan `GET /me/export` sejak v1.0); sisanya menulis.
 
 | Modul | Method | Endpoint | Fungsi |
 | --- | --- | --- | --- |
 | Akun | POST | `/auth/register` | Daftar, membuat Ruang Pribadi, menerima token |
 | Akun | POST | `/auth/login` | Masuk, menerima token |
 | Akun | POST | `/auth/google` | Masuk atau daftar dengan akun Google, menerima token (v1.x) |
+| Akun | POST | `/auth/forgot-password` | Minta kode atur ulang kata sandi lewat email (v1.0) |
+| Akun | POST | `/auth/reset-password` | Atur ulang kata sandi dengan kode, menerima token (v1.0) |
+| Akun | POST | `/me/email-verification` | Kirim kode verifikasi email (v1.0) |
+| Akun | POST | `/me/email-verification/confirm` | Verifikasi email dengan kode (v1.0) |
 | Akun | POST | `/auth/logout` | Mencabut token HP ini dan menghapus token FCM-nya |
 | Akun | GET | `/me` | Profil sendiri, preferensi notifikasi, dan kode undangan aktif |
 | Akun | PATCH | `/me` | Ubah nama, warna diri, zona waktu, mata uang, preferensi, tanggal lahir |
@@ -68,7 +72,7 @@ Semua request dan balasan memakai JSON dengan nama kolom `snake_case`, sama deng
 | Header | Isi | Kapan |
 | --- | --- | --- |
 | `Accept` | `application/json` | Selalu |
-| `Authorization` | `Bearer <token>` | Semua endpoint kecuali daftar, masuk, dan masuk dengan Google |
+| `Authorization` | `Bearer <token>` | Semua endpoint kecuali daftar, masuk, masuk dengan Google, dan atur ulang kata sandi (v1.0) |
 | `Content-Type` | `application/json` | Request yang punya body; `multipart/form-data` untuk foto profil dan foto kenangan |
 
 Pesan error selalu berbahasa Indonesia (`APP_LOCALE=id`, terjemahan dari paket laravel-lang). Semua route `api/*` dibalas JSON walau header `Accept` terlewat, lewat `shouldRenderJsonWhen()` di `bootstrap/app.php`.
@@ -136,8 +140,12 @@ Nominal disimpan sebagai bilangan bulat dalam satuan terkecil, ditambah kode ISO
 | `/places` | 20 per menit per akun (v1.x) |
 | `DELETE /me` | 5 per menit per akun (v1.0) |
 | `GET /me/export` | 5 per jam per akun (v1.0) |
+| `/auth/forgot-password` | 3 per 15 menit per email, dan 10 per jam per IP (v1.0) |
+| `/auth/reset-password` | 10 per menit per IP (v1.0) |
+| `POST /me/email-verification` | 3 per 15 menit per akun (v1.0) |
+| `POST /me/email-verification/confirm` | 10 per menit per akun (v1.0) |
 
-Di luar `/api/v1` ada `GET /up` (bawaan Laravel) untuk health check Coolify, `GET /` yang mengalihkan ke halaman masuk panel admin, `GET /hapus-akun` yang menjelaskan cara menghapus akun (v1.0), dan `/docs/api` untuk dokumentasi Scramble, yang secara bawaan hanya terbuka di environment lokal.
+Di luar `/api/v1` ada `GET /up` (bawaan Laravel) untuk health check Coolify, `GET /` yang mengalihkan ke halaman masuk panel admin, `GET /hapus-akun` yang menjelaskan cara menghapus akun (v1.0), `GET /privasi` dan `GET /syarat` untuk kebijakan privasi dan syarat layanan (v1.0), dan `/docs/api` untuk dokumentasi Scramble, yang secara bawaan hanya terbuka di environment lokal.
 
 ## Error
 
@@ -167,6 +175,7 @@ Contoh untuk `PUT /tasks/{id}` yang belum ada di server, sehingga `current` bern
 | 409 | `trip_checklist` (v0.2) | Checklist perjalanan dihapus atau diarsipkan sendiri | Buang dari antrean, pakai `current`, tampilkan pesan |
 | 409 | `shared_space_exists` | Sudah punya Ruang Bersama dengan orang lain | Tampilkan pesan; endpoint undangan tidak lewat antrean |
 | 410 | `resource_deleted` | Sudah dihapus, biasanya oleh pasangan | Buang dari antrean, hapus data itu dari cache |
+| 410 | `sync_expired` (v1.0) | `since` atau `cursor` lebih tua dari 29 hari, jadi sebagian catatan terhapus sudah dihapus permanen | Kosongkan cache akun itu kecuali yang masih di antrean, hapus `since` tersimpan, lalu sync penuh |
 | 422 | `validation_failed`, `invalid_credentials`, `invitation_invalid` | Isi request tidak valid | Tampilkan pesan; kalau dari antrean, buang dan pakai `current` |
 | 422 | `google_token_invalid` (v1.x) | Token Google salah, kedaluwarsa, untuk app lain, emailnya belum terverifikasi, atau saat hapus akun bukan dari akun Google yang tersambung (v1.0) | Tampilkan pesan; pengguna bisa mencoba masuk dengan Google lagi |
 | 429 | `too_many_requests` | Terlalu sering | Tunggu sesuai header `Retry-After`, lalu coba lagi |
@@ -225,14 +234,36 @@ Request `POST /auth/google`, tanpa token Sanctum:
     2. Akun yang emailnya sama dengan email Google: akun itu disambungkan ke akun Google tersebut, lalu masuk. Kata sandinya tetap berlaku.
     3. Belum ada: akun baru dibuat seperti daftar, dengan Ruang Pribadi berisi daftar "Tugas", nama dari Google (paling banyak 50 karakter; bagian email sebelum @ kalau Google tidak memberi nama), dan tanpa kata sandi.
 - Kalau email Google berbeda dari email akun lama, server membuat akun baru yang terpisah. App sebaiknya menyebut akun Google yang sedang dipakai di layar Masuk.
-- Akun tanpa kata sandi bisa memakai semua fitur, tetapi hanya bisa masuk dengan Google; masuk dengan kata sandi dibalas `invalid_credentials`. Sampai ada fitur kata sandi di app, admin bisa membuatkannya lewat "Reset kata sandi".
+- Akun tanpa kata sandi bisa memakai semua fitur, tetapi hanya bisa masuk dengan Google; masuk dengan kata sandi dibalas `invalid_credentials`. Kata sandi bisa dibuat lewat lupa kata sandi di app (v1.0), atau oleh admin lewat "Reset kata sandi".
 - Server hanya menyimpan ID akun Google (`sub`). Nama dan email diambil saat akun dibuat, dan email akun tidak ikut berubah kalau email Google berubah. Foto profil Google tidak diambil.
 - Sumber user tidak berubah, jadi fitur ini tidak membuat app perlu sync penuh.
 - Batasnya 5 per menit per IP.
 - Server membaca client ID dari `GOOGLE_CLIENT_ID`, dan app memakai nilai yang sama untuk `serverClientId`. Selama layar persetujuan Google berstatus Testing, hanya pengguna uji (pemilik dan pasangan) yang bisa masuk dengan Google.
 
-### Sumber user
+### Lupa kata sandi dan verifikasi email (v1.0)
 
+Server mengirim email berisi kode 6 angka untuk mengatur ulang kata sandi dan untuk memverifikasi email akun. Kode diketik di app, jadi email tidak berisi tautan.
+
+| Endpoint | Body | Berhasil | Ditolak |
+| --- | --- | --- | --- |
+| `POST /auth/forgot-password` | `{"email": "..."}` | 202 tanpa isi, juga untuk email yang tidak terdaftar | 422 `validation_failed`, 429 `too_many_requests` |
+| `POST /auth/reset-password` | `{"email": "...", "code": "482913", "password": "...", "device_name": "..."}` | 200, bentuknya sama dengan `POST /auth/login` | 422 `validation_failed`, dengan kode yang salah atau kedaluwarsa di `errors.code`; 429 `too_many_requests` |
+| `POST /me/email-verification` | Tanpa body | 202, kode baru dikirim; 204 kalau email sudah terverifikasi | 429 `too_many_requests` |
+| `POST /me/email-verification/confirm` | `{"code": "482913"}` | 200, sumber user dengan `email_verified_at` terisi | 422 `validation_failed` di `errors.code`, 429 `too_many_requests` |
+
+- Kode berisi 6 angka acak, berlaku 60 menit, dan hanya bisa dipakai sekali. Server menyimpannya sebagai hash, bukan angka aslinya. Meminta kode baru membatalkan kode lama untuk keperluan yang sama, dan lima kali salah memasukkan kode membuat kode itu batal, jadi pengguna perlu meminta kode baru.
+- `forgot-password` selalu membalas 202, terdaftar atau tidak, supaya orang lain tidak bisa mengecek email siapa yang punya akun. Email hanya dikirim kalau akunnya ada. App lalu menulis "Kalau email itu terdaftar, kode sudah dikirim. Cek juga folder spam."
+- `reset-password` mengganti kata sandi, mencabut token di semua HP beserta token FCM-nya (jadi HP lain berhenti menerima push), menandai email terverifikasi, lalu membalas token baru untuk HP ini. App mendaftarkan token FCM-nya lagi seperti setelah masuk. Akun dari Masuk dengan Google yang belum punya kata sandi juga bisa memakainya untuk membuat kata sandi. `password` minimal 8 karakter, sama dengan daftar.
+- Saat daftar dengan email dan kata sandi, server langsung mengirim kode verifikasi. Akun dari Masuk dengan Google, termasuk akun lama yang baru disambungkan ke Google, langsung terverifikasi karena Google sudah memeriksa emailnya.
+- Sumber user punya kolom baru `email_verified_at`. Selama `null`, app menampilkan ajakan verifikasi di Pengaturan, dengan tombol kirim kode dan kolom kode. Email yang belum diverifikasi tidak membatasi apa pun.
+- Email dikirim lewat antrean, jadi balasan tidak menunggu pengiriman, dan pengiriman yang gagal dicoba lagi. Pengirimnya "Denly Days <noreply@denlydays.iqbalfhz.my.id>" lewat SMTP Resend, diatur dengan variabel `MAIL_*` di Coolify, tanpa paket baru. Sebelum variabel itu diisi, email hanya ditulis ke log server, jadi app yang memakai fitur ini dirilis setelah pemilik memastikan email sampai.
+- Email kode atur ulang: subjek "Kode atur ulang kata sandi Denly Days", isi "Kode untuk mengatur ulang kata sandi Denly Days: {kode}. Kode ini berlaku 60 menit. Kalau kamu tidak memintanya, abaikan email ini; kata sandimu tidak berubah."
+- Email verifikasi: subjek "Kode verifikasi email Denly Days", isi "Kode untuk memverifikasi email akun Denly Days: {kode}. Kode ini berlaku 60 menit. Kalau kamu tidak membuat akun Denly Days, abaikan email ini."
+- Kode yang kedaluwarsa dihapus `records:purge`, dan semua kode ikut terhapus saat akunnya dihapus.
+- Halaman `/privasi` diperbarui dengan tanggal berlaku baru. Resend ditambahkan ke penyedia layanan ("Resend mengirim email berisi kode verifikasi dan kode atur ulang kata sandi, jadi menerima alamat emailmu dan isi email itu."), dan masa simpan ditambah "Kode verifikasi dan kode atur ulang kata sandi disimpan sebagai hash, lalu dihapus setelah dipakai atau paling lama sehari setelah kedaluwarsa."
+- Mengubah email dan mengubah kata sandi dari Pengaturan belum ada. Reset manual oleh admin lewat panel tetap bisa.
+
+### Sumber user
 Dipakai oleh `GET /me`, `PATCH /me`, dan balasan daftar atau masuk.
 
 ```json
@@ -240,6 +271,7 @@ Dipakai oleh `GET /me`, `PATCH /me`, dan balasan daftar atau masuk.
   "id": "01m4dg5jegv6sp4xav8efqzcqe",
   "name": "Iqbal",
   "email": "nama@email.com",
+  "email_verified_at": null,
   "color": "mawar",
   "timezone": "Asia/Jakarta",
   "locale": "id",
@@ -251,7 +283,8 @@ Dipakai oleh `GET /me`, `PATCH /me`, dan balasan daftar atau masuk.
     "savings_activity": true,
     "special_dates": true,
     "trip_reminders": true,
-    "savings_reminders": true
+    "savings_reminders": true,
+    "memory_flashbacks": true
   },
   "avatar_url": null,
   "avatar_version": 0,
@@ -276,6 +309,8 @@ Dipakai oleh `GET /me`, `PATCH /me`, dan balasan daftar atau masuk.
 - `invitation` adalah kode undanganmu yang masih berlaku, atau `null`. Rinciannya di bagian Ruang dan undangan.
 - `birth_date` dicek dengan pola dan kalender (`--02-30` ditolak, `--02-29` boleh), lalu disimpan sebagai teks. Pengingat v0.2 memakai bagian `MM-DD`; 29 Februari diingatkan 28 Februari di tahun biasa.
 - Email dan kata sandi belum bisa diubah di v0.1. Tema (Mawar atau Anggrek, terang atau gelap) disimpan di HP saja.
+
+`email_verified_at` (v1.0) berisi waktu email diverifikasi, atau `null` selama belum. Rinciannya di bagian Lupa kata sandi dan verifikasi email.
 
 ### Foto profil
 
@@ -350,6 +385,22 @@ Salinan semua data yang bisa kamu lihat di app bisa diunduh kapan saja sebagai s
 - Foto tidak ikut sebagai file. Setiap baris `memory_photos` membawa `url` dan `thumb_url` baru yang berlaku 7 hari, jadi app bisa menawarkan unduh semua foto. Foto profil ikut lewat `avatar_url` di `user`.
 - Di app, Pengaturan > Ekspor data menyimpan file itu ke HP, lalu menawarkan unduh fotonya. Konfirmasi keluar dari Ruang Bersama dan hapus akun menyarankan ekspor dulu, dan halaman `/hapus-akun` juga menyebutnya.
 - File ini memenuhi hak atas salinan data (Pasal 7 UU PDP) dalam format yang dapat dibaca sistem elektronik (Pasal 13), langsung tanpa menunggu batas 3 × 24 jam di Pasal 32. Impor dari file ini belum ada.
+
+### Kebijakan privasi dan syarat layanan (v1.0)
+
+Dua halaman publik di server menjelaskan data apa yang dipakai Denly Days dan aturan memakainya. Isinya ditulis dari cara app dan server benar-benar bekerja.
+
+| Halaman | Isi pokok |
+| --- | --- |
+| `GET /privasi` | Pengelola data dan kontak, data yang disimpan dan yang tidak, tujuannya, dasar pemrosesan, siapa yang bisa melihat, penyedia layanan, masa simpan, hak pengguna, keamanan, usia, dan perubahan kebijakan |
+| `GET /syarat` | Siapa yang boleh memakai, akun, Ruang Bersama, kepemilikan isi, larangan, layanan dan ketersediaannya, penghentian, batas tanggung jawab, hukum yang berlaku, dan perubahan syarat |
+
+- Keduanya berbahasa Indonesia, satu gaya dengan `/hapus-akun`, dan saling bertaut di bagian bawah. Setiap halaman menulis tanggal berlakunya.
+- Pengelola data adalah Iqbal Fahrozi, dengan kontak di `SUPPORT_EMAIL`. Pertanyaan dan permintaan hak dijawab paling lambat 3 × 24 jam.
+- Denly Days untuk pengguna berusia 18 tahun ke atas.
+- Yang disebut tidak dipakai: lokasi GPS (app tidak meminta izin lokasi), kontak, iklan, dan analytics.
+- Penyedia layanan yang disebut: Cloudflare (jaringan, penyimpanan foto, dan cadangan), Google (notifikasi lewat Firebase Cloud Messaging dan Masuk dengan Google), OpenStreetMap (peta yang dimuat langsung oleh HP, dan pencarian tempat yang hanya menerima kata kuncinya lewat server), Resend (email berisi kode verifikasi dan kode atur ulang kata sandi, v1.0), dan penyedia server. Data bisa diproses di luar Indonesia oleh penyedia itu.
+- URL `/privasi` dipakai di Play Console, layar persetujuan Google, dan app. Di app, layar Daftar dan Masuk menulis "Dengan mendaftar atau masuk dengan Google, kamu menyetujui Syarat layanan dan Kebijakan privasi" dengan tautan ke kedua halaman, dan Pengaturan menautkan keduanya.
 
 ## Ruang dan undangan
 
@@ -484,6 +535,7 @@ Setiap ruang selalu punya minimal satu daftar aktif (tidak diarsipkan). Tambah c
   "due_time": "17:00",
   "repeat_frequency": "weekly",
   "repeat_interval": 1,
+  "repeat_days": null,
   "priority": 0,
   "position": 2048,
   "assignee_ids": ["01m4dga4y03c5ratqsc31zc916"],
@@ -512,6 +564,7 @@ Setiap ruang selalu punya minimal satu daftar aktif (tidak diarsipkan). Tambah c
 | `completed_at` | opsional | Waktu dicentang di HP, dengan `Z` atau offset; `null` berarti batal selesai. Server mengisi `completed_by` |
 | `repeat_frequency` | opsional | `daily`, `weekly`, `monthly`, `yearly`, atau `null` (tidak berulang, bawaan); butuh `due_date` (v1.0) |
 | `repeat_interval` | opsional | Setiap berapa hari, minggu, bulan, atau tahun: 1–99, bawaan 1; `null` kalau tidak berulang (v1.0) |
+| `repeat_days` | opsional | Hari ISO 1–7 (1 = Senin) untuk tugas `weekly`, urut naik tanpa duplikat, atau `null` untuk hari tenggat patokan (v1.x) |
 | `next_task_id` | – | Diisi server: tugas berikutnya yang dibuat saat tugas berulang ini selesai (v1.0) |
 
 ### Pengingat
@@ -536,14 +589,34 @@ Tugas berulang dibuat ulang oleh server: begitu satu kejadian diselesaikan, serv
 - Tugas berikutnya dibuat server, sekali saja, saat tugas berulang menjadi selesai: `completed_at` berubah dari kosong menjadi terisi, lewat `PATCH` atau `PUT`. Server mengunci baris tugasnya, jadi dua HP yang mencentang tugas yang sama tidak membuat dua tugas berikutnya. Saat offline, tugas berikutnya baru muncul setelah centangnya terkirim.
 - Tenggat berikutnya adalah kejadian pertama sesudah tanggal yang lebih akhir antara `due_date` tugas itu dan tanggal selesainya, menurut zona waktu ruang. Kejadian yang terlewat tidak menumpuk: tugas harian bertenggat 20 Oktober yang baru selesai 24 Oktober berikutnya bertenggat 25 Oktober.
 - Kejadian dihitung dari tanggal patokan, yaitu `due_date` terakhir yang dipilih pengguna. Tanggal yang tidak ada di bulan yang lebih pendek jatuh ke hari terakhir bulan itu, lalu kembali ke tanggal aslinya: 31 Januari, 28 Februari, 31 Maret. 29 Februari jatuh ke 28 Februari di tahun biasa.
-- Mengubah `due_date`, `repeat_frequency`, atau `repeat_interval` menjadikan `due_date` saat itu patokan baru.
+- Mengubah `due_date`, `repeat_frequency`, `repeat_interval`, atau `repeat_days` (v1.x) menjadikan `due_date` saat itu patokan baru.
 - Tugas berikutnya masuk ke daftar yang sama dan membawa judul, catatan, prioritas, penanggung jawab, `due_time`, `position`, dan aturan ulangnya. `created_by` tetap pembuat aslinya, `updated_by` diisi orang yang menyelesaikan, dan `remind_at` dihitung seperti biasa. Tugas berikutnya tidak memicu push `task_assigned`.
 - Balasan `PUT` dan `PATCH /tasks/{id}` berbentuk `{"data": {...}, "next_task": {...}}`. `next_task` adalah tugas berikutnya kalau ada dan belum dihapus, dalam bentuk sumber tugas, atau `null`. App langsung menampilkannya tanpa menunggu sync.
 - Urungkan setelah centangnya terkirim: app mengirim `completed_at: null`. Kalau tugas berikutnya belum disentuh siapa pun (belum diubah, belum selesai, dan sejak v1.x belum diberi komentar atau reaksi), server ikut menghapusnya dan mengosongkan `next_task_id`, jadi centang ulang membuat tugas berikutnya yang baru. Kalau sudah disentuh, tugas berikutnya dibiarkan, dan centang ulang tidak membuat yang kedua.
 - Pengulangan berhenti kalau `repeat_frequency` dikosongkan, atau tugas yang belum selesai dihapus. Tugas yang sudah selesai tetap ada sebagai riwayat, dan mengubah aturan ulangnya tidak membuat apa-apa lagi.
-- Mengosongkan `due_date` ikut mengosongkan `repeat_frequency` dan `repeat_interval`. Mengisi `repeat_frequency` di tugas tanpa `due_date`, dicek bersama yang sudah tersimpan, ditolak 422.
+- Mengosongkan `due_date` ikut mengosongkan `repeat_frequency`, `repeat_interval`, dan `repeat_days`. Mengisi `repeat_frequency` di tugas tanpa `due_date`, dicek bersama yang sudah tersimpan, ditolak 422.
 - Checklist perjalanan tidak bisa berulang: aturan ulang di daftar dengan `trip_id` ditolak 422, termasuk saat tugas berulang dipindah ke checklist.
 - Kolom baru di sumber tugas berarti app versi baru menjalankan sync penuh sekali, seperti saat ada koleksi baru (lihat Aturan di HP).
+
+### Tugas berulang di beberapa hari (v1.x)
+
+Tugas mingguan bisa berulang di beberapa hari sekaligus, misalnya setiap Selasa dan Jumat, lewat `repeat_days`.
+
+```json
+{
+  "repeat_frequency": "weekly",
+  "repeat_interval": 2,
+  "repeat_days": [2, 5]
+}
+```
+
+- `repeat_days` berisi hari ISO 1–7 (1 = Senin, 7 = Minggu), urut naik tanpa duplikat, minimal satu hari. `null`, yaitu bawaannya, berarti hari yang sama dengan tenggat patokan, seperti tugas mingguan sebelumnya, jadi tugas yang sudah ada tidak berubah.
+- Minggu dihitung Senin–Minggu dari minggu tenggat patokan. Dengan `repeat_interval` N, tugas berulang di setiap hari terpilih pada minggu ke-0, N, 2N, dan seterusnya. Contoh di atas berarti Selasa dan Jumat, dua minggu sekali.
+- Tugas berikutnya jatuh di hari terpilih pertama sesudah tanggal yang lebih akhir antara `due_date` dan tanggal selesai. Tenggat sekarang tidak harus jatuh di hari terpilih: tugas bertenggat Rabu dengan hari Selasa dan Jumat berikutnya bertenggat Jumat.
+- Setiap kejadian tetap satu tugas, jadi menyelesaikannya membuat satu tugas berikutnya, bukan semua hari sekaligus.
+- `repeat_days` hanya untuk `weekly`. Dikirim untuk frekuensi lain atau di tugas yang tidak berulang, ditolak 422. Mengganti frekuensi ke selain mingguan atau mengosongkan aturan ulang ikut mengosongkan `repeat_days`.
+- Mengubah `repeat_days` menjadikan `due_date` saat itu patokan baru, seperti aturan ulang lainnya. Tugas berikutnya membawa `repeat_days` yang sama.
+- Ini kolom baru di sumber tugas, jadi app versi baru menjalankan sync penuh sekali. App lama tetap aman, karena tugas berikutnya dihitung server.
 
 ## Tabungan
 
@@ -862,6 +935,21 @@ Foto diunggah lewat `POST /memory-photos/{id}` dengan `multipart/form-data`:
 - Hanya dikirim kalau `notification_prefs.partner_activity` penerima menyala, tanpa kunci baru.
 - Judul push adalah judul kenangan, isinya "{nama} menyimpan kenangan baru".
 
+### Kenangan hari ini (v1.x)
+
+Pagi hari, server mengingatkan kenangan yang terjadi di tanggal yang sama pada tahun-tahun sebelumnya, seperti "Hari ini setahun lalu".
+
+- Push baru `memory_flashback` dikirim pukul 08.00 di zona waktu ruang kalau ruang itu punya kenangan yang `visited_on`-nya jatuh di tanggal dan bulan hari ini pada tahun sebelumnya. Penerimanya kedua anggota Ruang Bersama, atau pemilik Ruang Pribadi.
+- Kenangan 29 Februari diingatkan 28 Februari di tahun biasa, seperti ulang tahun anggota.
+- Satu push per ruang per hari, walau kenangannya lebih dari satu. Yang ditampilkan adalah kenangan dari tahun paling dekat; kalau ada beberapa di tahun yang sama, yang paling dulu dibuat.
+- Judulnya "Hari ini setahun lalu", atau "Hari ini {n} tahun lalu" untuk 2 tahun atau lebih, menurut kenangan yang ditampilkan. Isinya judul kenangan itu, ditambah "dan {k} kenangan lain" kalau ada lebih dari satu, misalnya "Liburan ke Bali dan 2 kenangan lain".
+- Data push berisi `type`, `space_id`, dan `memory_id` kenangan yang ditampilkan, dengan `tag` `memory-{id}`, channel `pengingat`, dan prioritas tinggi seperti pengingat pukul 08.00 lain. Saat diketuk, app membuka Detail kenangan itu.
+- Hanya dikirim kalau `notification_prefs.memory_flashbacks` penerima menyala. Kunci baru ini bawaannya menyala, juga untuk akun lama, dan app menambah sakelar "Kenangan hari ini" di Pengaturan > Notifikasi.
+- Kenangan yang sudah dihapus dan Ruang Bersama yang ditutup tidak diingatkan. Setiap ruang diklaim sekali sehari di `daily_reminders` dengan kunci `flashback:{space_id}`, jadi push tidak terkirim dua kali, dan yang terlewat lebih dari 30 menit, misalnya karena server mati, tidak dikirim menyusul.
+- Notifikasi tidak membawa foto, supaya foto kenangan tidak ikut dikirim ke Google. Judul kenangan sudah dikirim lewat `memory_created`, jadi kebijakan privasi tidak berubah.
+- Perintah terjadwal baru `memories:remind` berjalan tiap menit, seperti pengingat pukul 08.00 lain.
+- App lama tetap menampilkan push ini, hanya saja sakelarnya belum ada dan mengetuknya cuma membuka app. Tidak ada kolom atau koleksi baru, jadi app tidak perlu sync penuh.
+
 ## Reaksi dan komentar (v1.x)
 
 Tugas, setoran, dan kenangan di Ruang Bersama bisa diberi komentar dan reaksi emoji. Keduanya memakai ID dari HP dan lewat antrean, jadi bisa dibuat saat offline dan aman dikirim ulang.
@@ -995,6 +1083,7 @@ Halaman pertama: `GET /sync?since=<server_time tersimpan>`, atau tanpa `since` u
 - Ruang Bersama yang ditutup (v1.0) tiba di `spaces` dengan `deleted_at` terisi, tetapi isinya tidak dikirim lagi. Ruang yang dipulihkan tiba lagi dengan `deleted_at` kosong, dan semua isinya ikut terkirim lewat `since`, karena server memperbarui `updated_at`-nya saat memulihkan.
 - `cursor` yang bukan buatan server dibalas 422 `validation_failed`. App lalu mengulang sync dari `since` yang tersimpan.
 - Kalau `cursor` dikirim, `since` tidak dibaca.
+- `since` yang lebih tua dari 29 hari, atau `cursor` dari sync seperti itu, dibalas 410 `sync_expired` (v1.0), karena catatan terhapus yang lebih tua dari 30 hari sudah dihapus permanen. Lihat Penghapusan permanen catatan lama.
 - Saat koleksi baru ditambahkan (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`; v1.x: `comments` dan `reactions`), `cursor` yang dibuat sebelum deploy ditolak sekali dengan 422, lalu app mengulang dari `since`.
 
 ### Aturan di HP
@@ -1007,8 +1096,9 @@ Halaman pertama: `GET /sync?since=<server_time tersimpan>`, atau tanpa `since` u
 - Saat induk tiba dengan `deleted_at` terisi, app ikut menghapus anak-anaknya di cache, kecuali anak yang masih punya operasi di antrean; nasibnya ditentukan balasan server (`parent_deleted`).
 - Ruang adalah induk dari semua isinya (v1.0). Saat Ruang Bersama tiba dengan `deleted_at` terisi, app menghapus ruang itu beserta semua daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, foto, komentar, dan reaksinya dari cache, dengan pengecualian yang sama.
 - Sync penuh hanya menambah dan memperbarui.
+- Kalau `GET /sync` dibalas 410 `sync_expired` (v1.0), app mengosongkan cache akun itu kecuali baris yang masih punya operasi di antrean, menghapus `since` yang tersimpan, lalu menjalankan sync penuh.
 - Sync berjalan saat app dibuka atau kembali aktif, saat layar ditarik untuk menyegarkan, saat push masuk ketika app terbuka, termasuk push sinkron (v1.x), dan tiap 30 detik selama app tampil (v1.x).
-- App versi baru yang mengenal koleksi atau kolom baru (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`; v1.0: aturan ulang di `tasks`; v1.x: lokasi di `memories`, lalu `comments` dan `reactions`) menjalankan sync penuh sekali sebelum kembali memakai `since`. Tanpa itu, data yang dibuat atau diubah pasangan selama app masih versi lama tidak pernah sampai lengkap, karena `since` sudah melewatinya.
+- App versi baru yang mengenal koleksi atau kolom baru (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`; v1.0: aturan ulang di `tasks`; v1.x: lokasi di `memories`, lalu `comments` dan `reactions`, lalu `repeat_days` di `tasks`) menjalankan sync penuh sekali sebelum kembali memakai `since`. Tanpa itu, data yang dibuat atau diubah pasangan selama app masih versi lama tidak pernah sampai lengkap, karena `since` sudah melewatinya.
 
 ### Antrean di HP
 
@@ -1044,6 +1134,22 @@ Push `sync` memberi tahu HP pasangan bahwa ada data baru di Ruang Bersama, supay
 - Sesekali push bisa datang tanpa ada yang baru, misalnya saat penyimpanan dibatalkan di tengah jalan. App cukup menjalankan sync seperti biasa.
 - Tidak ada kolom atau koleksi baru, jadi app tidak perlu sync penuh.
 
+### Penghapusan permanen catatan lama (v1.0)
+
+Data yang dihapus di app hanya ditandai terhapus (`deleted_at` terisi), supaya HP lain ikut menghapusnya lewat `since`. Catatan itu dihapus permanen 30 hari kemudian, jadi tidak tersimpan selamanya di server.
+
+- Setiap hari pukul 00.30 UTC, perintah terjadwal `records:purge` menghapus permanen daftar, tugas, target, setoran, tanggal penting, perjalanan, kenangan, foto kenangan, komentar, dan reaksi yang `deleted_at`-nya lebih dari 30 hari lalu, termasuk yang ikut terhapus berantai.
+- Baris yang masih menjadi induk baris lain, termasuk induk dari baris yang juga sudah terhapus, menunggu sampai anaknya ikut dihapus permanen, jadi tidak ada data yang kehilangan induknya. Biasanya keduanya terhapus pada hari yang sama.
+- Saat tugas berikutnya dari tugas berulang dihapus permanen, `next_task_id` tugas sebelumnya kembali `null` dengan `updated_at` baru. Membatalkan lalu mencentang ulang tugas lama itu sesudahnya membuat tugas berikutnya lagi.
+- File foto kenangan sudah dibuang dari penyimpanan saat fotonya dihapus. Saat barisnya dihapus permanen, server mencoba membuangnya sekali lagi, untuk berjaga kalau penghapusan pertama gagal.
+- Perintah yang sama membersihkan catatan server yang sudah tidak dipakai: pengingat harian yang terkirim lebih dari 30 hari lalu, kode undangan yang kedaluwarsa lebih dari 30 hari lalu (terpakai atau tidak), dan cache yang sudah kedaluwarsa. Push yang gagal terkirim, yang menyimpan judul dan isi notifikasinya, dihapus 30 hari kemudian lewat `queue:prune-failed`.
+- Ruang Bersama yang ditutup tetap dihapus `spaces:purge` 30 hari setelah ditutup, dan hapus akun tetap langsung menghapus semuanya.
+- `since` yang lebih tua dari 29 hari, atau `cursor` dari sync seperti itu, dibalas 410 `sync_expired`. Batasnya sehari lebih awal dari penghapusan permanen, supaya sync yang sedang berjalan tidak kehilangan catatan. Sync tanpa `since` tidak terpengaruh.
+- Saat menerima `sync_expired`, app menghapus semua data akun itu dari cache lokal kecuali baris yang masih punya operasi di antrean, menghapus `since` yang tersimpan, lalu menjalankan sync penuh tanpa `since`. Tanpa langkah ini, data yang dihapus selama HP itu tidak sync tetap tampil, karena sync penuh hanya menambah dan memperbarui. Ini hanya terjadi kalau HP itu tidak sync lebih dari 29 hari, misalnya app tidak dibuka selama itu atau masuk lagi setelah lama keluar. Foto yang sudah tersimpan di HP boleh dipakai lagi kalau barisnya masih ada.
+- Antrean dari HP yang offline lebih dari 30 hari bisa mengenai data yang sudah dihapus permanen. Server tidak lagi mengenal ID-nya, jadi `PATCH` dan `DELETE` dibalas 404 `not_found`, data baru untuk induk yang sudah dihapus permanen juga dibalas 404 (bukan 409 `parent_deleted`), sehingga app membuangnya, dan `PUT` ulang untuk data yang pernah terkirim lalu dihapus membuatnya lagi (201). Server sengaja tidak menyimpan daftar ID yang sudah dihapus permanen, supaya memang tidak ada yang tersisa.
+- Halaman `/privasi` ikut diperbarui dengan tanggal berlaku baru. Butir masa simpan untuk data yang dihapus menjadi "Yang kamu hapus di app ditandai terhapus dan disimpan 30 hari sebagai catatan sinkron, supaya HP lain ikut menghapusnya, lalu dihapus permanen. Foto yang dihapus langsung dibuang dari penyimpanan.", dan butir catatan teknis ditambah "Notifikasi yang gagal terkirim, beserta isinya, dihapus paling lama 30 hari kemudian."
+- Tidak ada kolom atau koleksi baru, jadi app tidak perlu sync penuh. Yang baru di app hanya penanganan `sync_expired`.
+
 ## Notifikasi push
 
 Server mengirim push lewat FCM HTTP v1 dari job antrean, ke semua token perangkat milik penerima, dan hanya kalau preferensi penerima menyala. Teksnya mengikuti bagian Bahasa dan microcopy di tab utama.
@@ -1065,6 +1171,7 @@ Server mengirim push lewat FCM HTTP v1 dari job antrean, ke semua token perangka
 | `comment_created` | Komentar baru dibuat (v1.x) | Anggota lain | `partner_activity` | `aktivitas` | Normal |
 | `reaction_created` | Reaksi baru disimpan, paling banyak satu per subjek per 10 menit (v1.x) | Anggota lain | `partner_activity` | `aktivitas` | Normal |
 | `partner_left` | Pasangan keluar dari Ruang Bersama atau menghapus akunnya (v1.0) | Anggota lain | Selalu dikirim | `aktivitas` | Normal |
+| `memory_flashback` | Ada kenangan di tanggal dan bulan yang sama pada tahun sebelumnya, pukul 08.00 (v1.x) | Kedua anggota; pemilik ruang untuk Ruang Pribadi | `memory_flashbacks` | `pengingat` | Tinggi |
 
 Isi pesan yang diterima app, disederhanakan:
 
@@ -1095,6 +1202,7 @@ Isi pesan yang diterima app, disederhanakan:
 - `trip_reminder` (v0.2) membawa `trip_id`, dengan `tag` `trip-{id}`; saat diketuk app membuka Detail perjalanan.
 - `savings_reminder` (v0.2) membawa `savings_goal_id`, dengan `tag` `goal-{id}` dan `visibility` `PRIVATE` seperti push tabungan lain; saat diketuk app membuka Detail target.
 - `memory_created` (v0.3) membawa `memory_id`, dengan `tag` `memory-{id}`; saat diketuk app membuka Detail kenangan. Judulnya judul kenangan, isinya "{nama} menyimpan kenangan baru".
+- `memory_flashback` (v1.x) membawa `memory_id`, dengan `tag` `memory-{id}`; saat diketuk app membuka Detail kenangan. Judulnya "Hari ini setahun lalu" atau "Hari ini {n} tahun lalu", isinya judul kenangan, ditambah "dan {k} kenangan lain" kalau lebih dari satu. Rinciannya di bagian Kenangan hari ini.
 - `comment_created` dan `reaction_created` (v1.x) membawa `subject_type` dan `subject_id`, ditambah `savings_goal_id` untuk setoran, dengan `tag` `comment-{subject_id}` atau `reaction-{subject_id}`; saat diketuk app membuka detail subjeknya beserta komentarnya. Rinciannya di bagian Reaksi dan komentar.
 - Pengingat tanpa jam berbunyi "Tenggat hari ini". Teks `partner_joined`: "{nama} sudah bergabung. Ruang Bersama kalian siap."
 - `partner_left` (v1.0) membawa `space_id`, dengan `tag` `space-{id}`. Judulnya "Ruang Bersama", isinya "{nama} keluar dari Ruang Bersama. Isinya disimpan 30 hari kalau kalian ingin bergabung lagi." Saat diketuk, app menjalankan sync lalu membuka Beranda. Saat ruang dipulihkan, `partner_joined` berbunyi "{nama} sudah bergabung lagi. Isi Ruang Bersama kalian kembali utuh."
@@ -1311,3 +1419,73 @@ Sepuluh butir ini merancang ekspor data, bagian "Ekspor data + hapus akun" di li
 - [x] Nama filenya `denly-days-{tanggal}.json`, dengan tanggal di zona waktu akun.
 - [x] Halaman `/hapus-akun` dan konfirmasi keluar serta hapus akun di app menyarankan ekspor dulu.
 - [x] Panel admin tidak punya ekspor, karena admin tidak boleh melihat isi data pengguna. Impor dari file ekspor belum ada.
+
+### Kebijakan privasi dan syarat layanan (v1.0)
+
+Sepuluh butir ini merancang kebijakan privasi dan syarat layanan, syarat sebelum rilis publik di tab utama, dan disetujui pada 1 November 2026. Butir kedua dan ketiga adalah pilihan pemilik.
+
+- [x] Dua halaman publik di server, `GET /privasi` dan `GET /syarat`, berbahasa Indonesia dan satu gaya dengan `/hapus-akun`. URL `/privasi` dipakai di Play Console, layar persetujuan Google, dan app.
+- [x] Pengelola data disebut dengan nama lengkap, Iqbal Fahrozi, dengan kontak di `SUPPORT_EMAIL`. Pertanyaan dan permintaan hak dijawab paling lambat 3 × 24 jam.
+- [x] Denly Days untuk pengguna berusia 18 tahun ke atas, jadi tidak perlu izin orang tua untuk data anak.
+- [x] Kebijakan menyebut data yang benar-benar disimpan dan yang tidak dipakai (lokasi GPS, kontak, iklan, analytics), serta penyedia layanannya: Cloudflare, Google, OpenStreetMap, dan penyedia server. Data bisa diproses di luar Indonesia oleh penyedia itu.
+- [x] Masa simpan ditulis apa adanya. Data yang dihapus di app tetap tersimpan sebagai catatan sinkron sampai akun dihapus, sedangkan fotonya langsung dihapus dari penyimpanan. Ruang Bersama yang ditutup disimpan 30 hari, dan cadangan database 30 hari. Penghapusan otomatis catatan lama bisa jadi fitur berikutnya.
+- [x] Dasar pemrosesannya pelaksanaan perjanjian layanan, ditambah kepentingan yang sah untuk keamanan, jadi server tidak menyimpan kolom persetujuan baru. App menulis kalimat persetujuan beserta tautan kedua halaman di layar Daftar dan Masuk.
+- [x] Syarat layanan mengatur akun, Ruang Bersama (tepat dua orang, keluar menutup ruang untuk berdua), kepemilikan isi oleh pengguna, larangan, layanan gratis tanpa jaminan selalu tersedia, penghentian akun, batas tanggung jawab (tabungan hanya catatan, bukan uang sungguhan), dan hukum Indonesia.
+- [x] Kebocoran data diberitahukan ke pengguna dan lembaga yang berwenang paling lambat 3 × 24 jam, sesuai Pasal 46 UU PDP.
+- [x] Tanggal berlaku ditulis di kedua halaman, dan perubahan penting diberitahukan lewat app sebelum berlaku.
+- [x] Teks ini disusun dari cara app benar-benar bekerja, bukan nasihat hukum. Sebaiknya diperiksa ahli hukum sebelum rilis publik.
+
+### Tugas berulang di beberapa hari (v1.x)
+
+Delapan butir ini menambah pilihan beberapa hari di tugas mingguan, yang ditunda di Tugas berulang (v1.0), dan disetujui pada 1 November 2026.
+
+- [x] Hari dipilih lewat kolom baru `repeat_days` di tugas mingguan, berisi hari ISO 1–7 (1 = Senin). `null` berarti hari tenggat patokan, jadi tugas mingguan yang sudah ada tidak berubah.
+- [x] Minggu Senin–Minggu dihitung dari minggu tenggat patokan, dan "setiap N minggu" berlaku per minggu, bukan per kejadian. "Setiap 2 minggu, Selasa dan Jumat" berarti Selasa dan Jumat di minggu ke-0, 2, 4, dan seterusnya.
+- [x] Tugas berikutnya jatuh di hari terpilih pertama sesudah tenggat lama atau tanggal selesai, mana yang lebih akhir, jadi yang terlewat tidak menumpuk. Tenggat sekarang tidak harus jatuh di hari terpilih.
+- [x] Setiap kejadian tetap satu tugas, dan menyelesaikannya membuat satu tugas berikutnya, seperti tugas berulang lain.
+- [x] Minimal satu hari, tanpa duplikat, dan disimpan urut naik. `repeat_days` di frekuensi selain mingguan atau di tugas yang tidak berulang ditolak 422.
+- [x] Mengganti frekuensi ke selain mingguan, mengosongkan aturan ulang, atau mengosongkan `due_date` ikut mengosongkan `repeat_days`. Mengubah `repeat_days` menjadikan `due_date` saat itu patokan baru.
+- [x] Sumber tugas punya kolom baru `repeat_days`, jadi app versi baru sync penuh sekali. App lama tetap aman, karena tugas berikutnya tetap dihitung server dengan hari yang tersimpan.
+- [x] Checklist perjalanan tetap tidak bisa berulang.
+
+### Penghapusan permanen catatan lama (v1.0)
+
+Sembilan butir ini merancang penghapusan otomatis catatan lama, yang disebut sebagai fitur berikutnya di Kebijakan privasi dan syarat layanan (v1.0), dan disetujui pada 2 November 2026. Butir pertama adalah pilihan pemilik soal masa simpan.
+
+- [x] Catatan yang dihapus di app disimpan 30 hari, lalu dihapus permanen oleh perintah harian `records:purge`. Ini sama dengan masa simpan Ruang Bersama yang ditutup dan cadangan database, jadi semua yang dihapus hilang dari server dalam 30 hari dan dari cadangan 30 hari sesudahnya.
+- [x] Baris yang masih menjadi induk baris lain menunggu anaknya ikut dihapus permanen, jadi tidak ada data yang kehilangan induk.
+- [x] Saat tugas berikutnya dihapus permanen, `next_task_id` tugas sebelumnya kembali `null`, jadi mencentang ulang tugas lama sesudahnya membuat tugas berikutnya lagi.
+- [x] Kode error baru 410 `sync_expired` untuk `since` atau `cursor` yang lebih tua dari 29 hari. App lalu mengosongkan cache akun itu kecuali yang masih di antrean, dan menjalankan sync penuh. App lama yang belum mengenal kode ini tidak bisa sync sampai diperbarui, tetapi itu hanya terjadi kalau HP tidak sync lebih dari 29 hari.
+- [x] Server tidak menyimpan daftar ID yang sudah dihapus permanen. Akibatnya, antrean dari HP yang offline lebih dari 30 hari untuk data seperti itu dibalas 404 dan dibuang, dan `PUT` ulang untuk data yang pernah terkirim lalu dihapus membuatnya lagi.
+- [x] File foto kenangan dicoba dibuang sekali lagi saat barisnya dihapus permanen.
+- [x] Ikut dibersihkan: pengingat harian yang terkirim dan kode undangan yang kedaluwarsa lebih dari 30 hari lalu, cache yang sudah kedaluwarsa, dan push yang gagal terkirim beserta judul dan isinya setelah 30 hari.
+- [x] Teks masa simpan di `/privasi` diperbarui seperti di atas, dengan tanggal berlaku baru.
+- [x] Tidak ada kolom atau koleksi baru, jadi app tidak perlu sync penuh; yang baru di app hanya penanganan `sync_expired`.
+
+### Kenangan hari ini (v1.x)
+
+Delapan butir ini merancang push "hari ini setahun lalu" untuk kenangan di lingkup v1.x, dan disetujui pada 2 November 2026.
+
+- [x] Push baru `memory_flashback` pukul 08.00 di zona waktu ruang, untuk kenangan yang `visited_on`-nya jatuh di tanggal dan bulan hari ini pada tahun sebelumnya, ke kedua anggota Ruang Bersama atau pemilik Ruang Pribadi.
+- [x] Satu push per ruang per hari. Yang ditampilkan kenangan dari tahun paling dekat, dan sisanya disebut jumlahnya.
+- [x] Teks: judul "Hari ini setahun lalu" atau "Hari ini {n} tahun lalu", isi "{judul}" atau "{judul} dan {k} kenangan lain".
+- [x] Preferensi baru `memory_flashbacks` di `notification_prefs`, bawaannya menyala untuk semua akun, dengan sakelar "Kenangan hari ini" di app.
+- [x] Channel `pengingat` dan prioritas tinggi seperti pengingat pukul 08.00 lain; saat diketuk app membuka Detail kenangan.
+- [x] Kenangan 29 Februari diingatkan 28 Februari di tahun biasa.
+- [x] Notifikasi tanpa foto, jadi kebijakan privasi tidak berubah.
+- [x] Tidak ada kolom atau koleksi baru. App lama tetap menampilkan push ini dan hanya membuka app saat diketuk.
+
+### Lupa kata sandi dan verifikasi email (v1.0)
+
+Sepuluh butir ini merancang lupa kata sandi di app, yang sejak v0.1 masih lewat reset manual oleh admin, dan verifikasi email, dan disetujui pada 2 November 2026. Butir ketujuh adalah pilihan pemilik soal penyedia dan alamat pengirim email.
+
+- [x] Email berisi kode 6 angka yang diketik di app, bukan tautan, karena app tidak memakai tautan dalam (deep link).
+- [x] Kode berlaku 60 menit, sekali pakai, disimpan sebagai hash, dan batal setelah 5 kali salah. Kode baru membatalkan kode lama.
+- [x] `POST /auth/forgot-password` selalu membalas 202, supaya tidak membocorkan email mana yang terdaftar.
+- [x] Atur ulang kata sandi mencabut token di semua HP, menandai email terverifikasi, dan langsung memberi token baru untuk HP ini. Akun Google tanpa kata sandi bisa membuat kata sandi lewat jalur ini.
+- [x] Verifikasi email tidak membatasi apa pun; app hanya mengajak. Kode dikirim otomatis saat daftar, dan akun dari Masuk dengan Google langsung terverifikasi.
+- [x] Sumber user punya kolom baru `email_verified_at`. Tidak ada kode error baru: kode yang salah dibalas 422 `validation_failed` di `errors.code`.
+- [x] Email dikirim lewat SMTP Resend dari "Denly Days <noreply@denlydays.iqbalfhz.my.id>", tanpa paket baru. Pemilik membuat akun Resend, memverifikasi domain di DNS Cloudflare, lalu mengisi `MAIL_*` di Coolify.
+- [x] Batas baru: `forgot-password` 3 per 15 menit per email dan 10 per jam per IP, `reset-password` 10 per menit per IP, kirim kode verifikasi 3 per 15 menit per akun, dan `confirm` 10 per menit per akun.
+- [x] Teks kedua email dan perubahan `/privasi` seperti di atas, dengan tanggal berlaku baru.
+- [x] Ubah email dan ubah kata sandi dari Pengaturan belum termasuk.
