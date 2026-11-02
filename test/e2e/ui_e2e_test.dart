@@ -10,6 +10,10 @@
 // satu menit sebelum menjalankan tes ujung ke ujung mana pun lagi. Lupa kata sandi dan
 // verifikasi email (v1.0) memakai kode dari email hanya kalau E2E_MAIL_LOG diisi
 // (`mail_log.dart`); tanpa itu, hanya kode yang salah yang dicoba.
+//
+// Jangan jalankan dalam 15 menit sebelum tengah malam WIB: jam app dimajukan beberapa menit
+// untuk melewati jeda Urungkan, jadi "hari ini" bisa berganti di tengah tes, dan tugas hari
+// itu yang sudah selesai tidak tampil lagi di Beranda.
 
 import 'dart:async';
 import 'dart:convert';
