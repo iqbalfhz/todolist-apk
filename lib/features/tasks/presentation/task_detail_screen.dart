@@ -363,7 +363,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> with Widget
                     // berarti apa-apa lagi di tugas yang sudah selesai.
                     if (task.dueDate != null && !item.isChecklistItem && !item.isCompleted)
                       AppFilterChip(
-                        label: repeat == null ? l10n.repeatAdd : repeatText(l10n, repeat),
+                        label: repeat == null ? l10n.repeatAdd : repeatText(l10n, repeat, short: true),
                         icon: Symbols.repeat_rounded,
                         selected: repeat != null,
                         onTap: () => _pickRepeat(item),

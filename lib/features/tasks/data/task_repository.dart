@@ -53,6 +53,7 @@ class TaskRepository {
       'assignee_ids': assignees,
       'repeat_frequency': repeat?.frequency.name,
       'repeat_interval': repeat?.interval,
+      'repeat_days': repeat?.days,
     };
 
     final row = <String, dynamic>{
@@ -91,11 +92,11 @@ class TaskRepository {
   Future<void> setDue(String id, {required String? date, required String? time}) => writer.update(EntityType.task, id, {
     'due_date': date,
     'due_time': date == null ? null : time,
-    if (date == null) ...{'repeat_frequency': null, 'repeat_interval': null},
+    if (date == null) ...{'repeat_frequency': null, 'repeat_interval': null, 'repeat_days': null},
   }, sendTogether: true);
 
-  /// Aturan ulang (v1.0); `null` menghentikan pengulangan. Frekuensi dan selangnya selalu
-  /// dikirim berdua. Tugas berulang butuh tenggat, dan item checklist perjalanan tidak bisa berulang.
+  /// Aturan ulang (v1.0); `null` menghentikan pengulangan. Frekuensi, selang, dan hari (v1.x)
+  /// selalu dikirim bersama. Tugas berulang butuh tenggat, dan item checklist perjalanan tidak bisa berulang.
   Future<void> setRepeat(String id, TaskRepeat? repeat) async {
     if (repeat != null) {
       final task = await writer.store.read(EntityType.task, id);
@@ -107,6 +108,7 @@ class TaskRepository {
     await writer.update(EntityType.task, id, {
       'repeat_frequency': repeat?.frequency.name,
       'repeat_interval': repeat?.interval,
+      'repeat_days': repeat?.days,
     }, sendTogether: true);
   }
 
@@ -116,6 +118,13 @@ class TaskRepository {
     if (checklist) throw ArgumentError.value(repeat, 'repeat', 'Checklist perjalanan tidak bisa berulang.');
     if (repeat.interval < 1 || repeat.interval > Limits.repeatInterval) {
       throw ArgumentError.value(repeat, 'repeat', 'Selang ulang 1–${Limits.repeatInterval}.');
+    }
+    final days = repeat.days;
+    if (days != null &&
+        (repeat.frequency != RepeatFrequency.weekly ||
+            days.isEmpty ||
+            TaskRepeat.normalizeDays(days)?.join(',') != days.join(','))) {
+      throw ArgumentError.value(repeat, 'repeat', 'Hari ulang hanya untuk tugas mingguan, 1–7 urut naik.');
     }
   }
 

@@ -234,7 +234,7 @@ class _AddTaskSheetState extends ConsumerState<AddTaskSheet> {
                       onTap: () => setState(() => _time = null),
                     ),
                     AppFilterChip(
-                      label: _repeat == null ? l10n.repeatAdd : repeatText(l10n, _repeat!),
+                      label: _repeat == null ? l10n.repeatAdd : repeatText(l10n, _repeat!, short: true),
                       icon: Symbols.repeat_rounded,
                       selected: _repeat != null,
                       onTap: () => _pickRepeat(date),

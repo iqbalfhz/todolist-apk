@@ -151,6 +151,8 @@ void main() {
       for (final statement in [
         'ALTER TABLE memories DROP COLUMN latitude',
         'ALTER TABLE memories DROP COLUMN longitude',
+        // Hari ulang tugas mingguan baru ada di versi 8.
+        'ALTER TABLE tasks DROP COLUMN repeat_days',
         'PRAGMA user_version = 5',
       ]) {
         await old.customStatement(statement);

@@ -69,6 +69,9 @@ class Tasks extends Table {
   /// Aturan ulang (v1.0).
   TextColumn get repeatFrequency => text().nullable()();
   IntColumn get repeatInterval => integer().nullable()();
+
+  /// JSON larik hari ISO untuk tugas mingguan (v1.x), atau `null`.
+  TextColumn get repeatDays => text().nullable()();
   TextColumn get remindAt => text().nullable()();
   TextColumn get completedAt => text().nullable()();
   TextColumn get completedBy => text().nullable()();
@@ -322,8 +325,9 @@ class AppDatabase extends _$AppDatabase {
   /// 1: v0.1. 2: tabel tanggal penting. 3: tabel perjalanan, `trip_id` di daftar,
   /// dan jadwal pengingat setor di target (semuanya v0.2). 4: kenangan dan fotonya (v0.3).
   /// 5: aturan ulang tugas (v1.0). 6: pin lokasi kenangan. 7: komentar dan reaksi (v1.x).
+  /// 8: hari ulang tugas mingguan (v1.x).
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -354,6 +358,7 @@ class AppDatabase extends _$AppDatabase {
         await migrator.createTable(comments);
         await migrator.createTable(reactions);
       }
+      if (from < 8) await migrator.addColumn(tasks, tasks.repeatDays);
     },
   );
 }

@@ -46,8 +46,9 @@ class RowApplier {
   /// jadwal setor kosong tanpa frekuensinya, dan aturan ulang tugas selalu dikirim berdua.
   static const Map<String, List<String>> _linkedColumns = {
     'completed_at': ['completed_by', 'next_task_id'],
-    'repeat_frequency': ['repeat_interval'],
-    'repeat_interval': ['repeat_frequency'],
+    'repeat_frequency': ['repeat_interval', 'repeat_days'],
+    'repeat_interval': ['repeat_frequency', 'repeat_days'],
+    'repeat_days': ['repeat_frequency', 'repeat_interval'],
     'due_date': ['due_time', 'remind_at'],
     'due_time': ['due_date', 'remind_at'],
     'start_date': ['end_date'],

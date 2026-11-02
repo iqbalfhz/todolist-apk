@@ -205,7 +205,7 @@ void main() {
         h.api.syncPage(serverTime: 'T-1', tasks: [taskJson()], comments: [commentJson()], reactions: [reactionJson()]),
       );
 
-      expect(SyncEngine.collectionsVersion, 7);
+      expect(SyncEngine.collectionsVersion, greaterThanOrEqualTo(7));
       await h.account.sync.sync();
 
       expect(
@@ -217,7 +217,7 @@ void main() {
       );
       expect((await h.local(EntityType.comment, commentId))!['body'], 'Jangan lupa yang isi ulang, ya.');
       expect((await h.local(EntityType.reaction, reactionId))!['emoji'], '❤️');
-      expect(await h.account.store.meta(MetaKeys.syncCollections), '7');
+      expect(await h.account.store.meta(MetaKeys.syncCollections), '${SyncEngine.collectionsVersion}');
     });
 
     test('subjek tiba terhapus: komentar dan reaksinya ikut terhapus, kecuali yang masih di antrean', () async {
@@ -254,7 +254,12 @@ void main() {
 
       final old = AppDatabase(NativeDatabase(file));
       await old.into(old.tasks).insert(taskCompanion(Task.fromJson(taskJson())));
-      for (final statement in ['DROP TABLE comments', 'DROP TABLE reactions', 'PRAGMA user_version = 6']) {
+      for (final statement in [
+        'DROP TABLE comments',
+        'DROP TABLE reactions',
+        'ALTER TABLE tasks DROP COLUMN repeat_days',
+        'PRAGMA user_version = 6',
+      ]) {
         await old.customStatement(statement);
       }
       await old.close();
