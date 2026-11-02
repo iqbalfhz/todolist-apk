@@ -27,6 +27,7 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Keluar dari Ruang Bersama (30 Oktober 2026) belum dicoba di HP sungguhan, termasuk push `partner_left` dan bergabung lagi. Uji di dua HP hanya dengan dua akun uji, jangan dengan Ruang Bersama pemilik dan pasangannya: keluar menutup ruang itu untuk berdua.
 - Ekspor data (31 Oktober 2026) belum dicoba di HP sungguhan: berkas dan foto di `Download/Denly Days` lewat MediaStore, unduh foto dari R2 produksi, dan lembar bagikan. Di tes, penyimpanan dan pengambil fotonya palsu.
 - Hapus akun (31 Oktober 2026) belum dicoba di HP sungguhan, termasuk konfirmasi dengan akun Google dan penghapusan berkas database di HP. Uji hanya dengan akun uji, jangan akun pemilik dan pasangannya.
+- Lupa kata sandi dan verifikasi email (2 November 2026) sudah dibangun di branch `feat/lupa-kata-sandi`, tetapi sengaja belum di-merge ke `main` dan belum dirilis: email baru terkirim setelah pemilik selesai menyiapkan Resend. Setelah pemilik mengabari, uji ke produksi dengan akun uji (minta kode, kode salah, atur ulang kata sandi, verifikasi email), lalu merge, bangun APK, dan pasang di kedua HP.
 - Komentar dan reaksi belum dicoba di HP sungguhan: emoji di chip reaksi (tes hanya merender kotak karena font tes tanpa emoji), push `comment_created` dan `reaction_created`, dan ketukannya.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
