@@ -115,6 +115,7 @@ class SyncEngine {
 
   Future<void> _pull() async {
     var restarted = false;
+    var expired = false;
 
     while (true) {
       final known = int.tryParse(await store.meta(MetaKeys.syncCollections) ?? '') ?? 1;
@@ -146,6 +147,13 @@ class SyncEngine {
           restarted = true;
           continue;
         }
+        // HP ini tidak sync lebih dari 29 hari (v1.0): catatan terhapus yang belum sampai ke sini
+        // sudah dihapus permanen, jadi sync penuh saja tidak cukup untuk menghapusnya dari HP.
+        if (error.code == ApiErrorCode.syncExpired && !expired) {
+          expired = true;
+          await _clearForFullSync();
+          continue;
+        }
         rethrow;
       }
 
@@ -154,6 +162,14 @@ class SyncEngine {
       return;
     }
   }
+
+  /// Kosongkan cache akun ini kecuali baris yang masih punya operasi di antrean, lalu lupakan
+  /// `since`, supaya sync berikutnya penuh.
+  Future<void> _clearForFullSync() => store.transaction(() async {
+    final pending = await applier.loadPending();
+    await store.clearSyncedData(keep: {for (final type in EntityType.syncOrder) type: pending.idsOf(type)});
+    await store.setMeta(MetaKeys.syncSince, null);
+  });
 
   /// Terapkan satu halaman dalam satu transaksi, induk lebih dulu.
   Future<void> _applyPage(Map<String, dynamic> data) => store.transaction(() async {

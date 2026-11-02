@@ -13,6 +13,10 @@ enum ApiErrorCode {
   tripChecklist('trip_checklist'),
   sharedSpaceExists('shared_space_exists'),
   resourceDeleted('resource_deleted'),
+
+  /// `since` atau `cursor` sync lebih tua dari 29 hari (410, v1.0): sebagian catatan terhapus
+  /// sudah dihapus permanen di server. Bukan [resourceDeleted].
+  syncExpired('sync_expired'),
   validationFailed('validation_failed'),
   invalidCredentials('invalid_credentials'),
 

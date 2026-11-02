@@ -369,6 +369,22 @@ class LocalStore {
     }
   }
 
+  /// Kosongkan semua ruang dan isinya dari cache, kecuali ID di [keep] per jenis, sebelum sync
+  /// penuh setelah `sync_expired` (v1.0). Profil sendiri dan antrean tidak disentuh.
+  Future<void> clearSyncedData({Map<EntityType, Set<String>> keep = const {}}) async {
+    final tables = {EntityType.space: db.spaces, ..._spaceContentTables};
+    for (final MapEntry(key: type, value: table) in tables.entries) {
+      final skip = keep[type] ?? const <String>{};
+      final notIn = skip.isEmpty ? '' : ' WHERE id NOT IN (${List.filled(skip.length, '?').join(', ')})';
+      await db.customUpdate(
+        'DELETE FROM ${table.actualTableName}$notIn',
+        variables: [for (final id in skip) Variable.withString(id)],
+        updates: {table},
+        updateKind: UpdateKind.delete,
+      );
+    }
+  }
+
   /// Buang ruang [spaceId] beserta semua isinya dari cache (bukan sekadar menandai terhapus).
   Future<void> removeSpace(String spaceId) async {
     for (final table in _spaceContentTables.values) {
