@@ -370,6 +370,77 @@ class AppLocalizationsId extends AppLocalizations {
   String get errorPasswordShort => 'Kata sandi minimal 8 karakter.';
 
   @override
+  String get errorEmailCode => 'Kodenya 6 angka, sesuai email yang kami kirim.';
+
+  @override
+  String get forgotLink => 'Lupa kata sandi?';
+
+  @override
+  String get forgotTitle => 'Lupa kata sandi';
+
+  @override
+  String get forgotSubtitle => 'Kami kirim kode 6 angka ke emailmu untuk membuat kata sandi baru.';
+
+  @override
+  String get forgotSend => 'Kirim kode';
+
+  @override
+  String get forgotSent => 'Kalau email itu terdaftar, kode sudah dikirim. Cek juga folder spam.';
+
+  @override
+  String get forgotCode => 'Kode dari email';
+
+  @override
+  String get forgotCodeHint => '6 angka';
+
+  @override
+  String get forgotNewPassword => 'Kata sandi baru';
+
+  @override
+  String get forgotSave => 'Simpan kata sandi baru';
+
+  @override
+  String get forgotResend => 'Kirim ulang kode';
+
+  @override
+  String get forgotDone => 'Kata sandi baru tersimpan, dan kamu sudah masuk.';
+
+  @override
+  String codeTooOften(int minutes) {
+    return 'Kode sudah beberapa kali diminta. Coba lagi sekitar $minutes menit lagi.';
+  }
+
+  @override
+  String get verifyTitle => 'Verifikasi email';
+
+  @override
+  String verifyCardBody(String email) {
+    return '$email belum diverifikasi.';
+  }
+
+  @override
+  String get verifyAction => 'Verifikasi';
+
+  @override
+  String verifySheetBody(String email) {
+    return 'Kami kirim kode 6 angka ke $email.';
+  }
+
+  @override
+  String verifySent(String email) {
+    return 'Kode sudah dikirim ke $email. Cek juga folder spam.';
+  }
+
+  @override
+  String get verifyConfirm => 'Verifikasi';
+
+  @override
+  String get verifyDone => 'Email sudah terverifikasi.';
+
+  @override
+  String get verifyAlready => 'Email ini ternyata sudah terverifikasi.';
+
+  @override
   String get errorNameRequired => 'Nama panggilan belum diisi.';
 
   @override

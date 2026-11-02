@@ -64,6 +64,29 @@ class AuthRepository {
     await api.send('DELETE', '/me', body: {'password': ?password, 'id_token': ?idToken});
   }
 
+  /// Minta kode atur ulang kata sandi lewat email (v1.0). Selalu dibalas 202, terdaftar atau
+  /// tidak, supaya orang lain tidak bisa mengecek email siapa yang punya akun.
+  Future<void> forgotPassword(String email) async {
+    await api.send('POST', '/auth/forgot-password', body: {'email': email.trim()});
+  }
+
+  /// Atur ulang kata sandi dengan kode 6 angka dari email (v1.0). Balasannya sama dengan masuk;
+  /// server mencabut token di semua HP. Kode dikirim sebagai teks 6 digit, bukan angka.
+  /// Kode yang salah atau kedaluwarsa dibalas 422 dengan pesan di `errors.code`.
+  Future<AuthResult> resetPassword({
+    required String email,
+    required String code,
+    required String password,
+    required String deviceName,
+  }) async {
+    final response = await api.send(
+      'POST',
+      '/auth/reset-password',
+      body: {'email': email.trim(), 'code': code.trim(), 'password': password, 'device_name': deviceName},
+    );
+    return AuthResult.fromJson(response.data);
+  }
+
   /// Cabut token HP ini dan hapus token FCM-nya di server.
   ///
   /// Keluar tetap dilanjutkan di HP walau server tidak terjangkau. Mengembalikan `false`

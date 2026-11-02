@@ -20,6 +20,7 @@ import '../../savings/presentation/goal_form_sheet.dart';
 import '../../spaces/domain/household.dart';
 import '../../spaces/presentation/member_avatar.dart';
 import 'policy_links.dart';
+import 'verify_email_sheet.dart';
 
 /// Pengaturan: akun dan ruang, tema, notifikasi, mata uang, dan keluar.
 class SettingsScreen extends ConsumerStatefulWidget {
@@ -79,6 +80,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         children: [
           ScreenHeader(title: l10n.settingsTitle, onBack: _back),
           const SizedBox(height: AppDimens.gap10),
+          // Ajakan verifikasi email (v1.0) selama emailnya belum terverifikasi.
+          if (household != null && household.me.emailVerifiedAt == null) ...[
+            VerifyEmailCard(me: household.me),
+            const SizedBox(height: AppDimens.gap10),
+          ],
           if (household == null)
             const SkeletonCard(lines: 2)
           else

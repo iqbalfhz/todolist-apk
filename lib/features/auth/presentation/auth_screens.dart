@@ -256,6 +256,15 @@ class _AuthFormState extends ConsumerState<_AuthForm> {
                     ),
                   ),
                 ),
+                // Lupa kata sandi (v1.0), hanya di layar Masuk.
+                if (!registering)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _busy ? null : () => context.go(Routes.forgotPasswordFor(_email.text)),
+                      child: Text(l10n.forgotLink),
+                    ),
+                  ),
               ],
             ),
           ),

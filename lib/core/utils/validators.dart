@@ -50,6 +50,9 @@ final RegExp _email = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
 
 bool isValidEmail(String value) => _email.hasMatch(value.trim());
 
+/// Kode 6 angka dari email untuk atur ulang kata sandi dan verifikasi email (v1.0).
+bool isValidEmailCode(String code) => RegExp(r'^\d{6}$').hasMatch(code.trim());
+
 /// Alfabet kode undangan: tanpa 0, O, 1, dan I.
 const String invitationAlphabet = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 

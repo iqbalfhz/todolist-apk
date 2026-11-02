@@ -12,6 +12,9 @@ abstract class User with _$User {
     required String id,
     required String name,
     required String email,
+
+    /// Waktu email diverifikasi (v1.0), atau `null` selama belum. Tidak membatasi apa pun.
+    DateTime? emailVerifiedAt,
     required String color,
     required String timezone,
     required String locale,

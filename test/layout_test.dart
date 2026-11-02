@@ -76,6 +76,19 @@ void main() {
     }
   }
 
+  /// Gulir sampai [finder] tampil, karena isi halaman hanya dibangun saat dekat layar: ke paling
+  /// atas dulu, lalu turun sedikit demi sedikit.
+  Future<void> reveal(WidgetTester tester, Finder finder) async {
+    final scrollable = find.byType(Scrollable).first;
+    if (finder.evaluate().isEmpty) {
+      await tester.drag(scrollable, const Offset(0, 5000), warnIfMissed: false);
+      await settle(tester);
+    }
+    if (finder.evaluate().isEmpty) await tester.scrollUntilVisible(finder, 200, scrollable: scrollable);
+    await tester.ensureVisible(finder);
+    await settle(tester);
+  }
+
   Future<void> visit(WidgetTester tester, ProviderContainer container, String path) async {
     await go(tester, container, path);
     await scrollThrough(tester);
@@ -274,7 +287,23 @@ void main() {
       });
       await visit(tester, container, Routes.goal(achievedGoalId));
 
-      await visit(tester, container, Routes.settings);
+      // Ajakan verifikasi email (v1.0) dengan email panjang, lalu lembarnya dengan kode yang salah.
+      final unverified = {...userJson(emailVerifiedAt: null), 'email': 'nama.yang.cukup.panjang.untuk.diuji@gmail.com'};
+      h.api.me = unverified;
+      await h.account.store.write(EntityType.me, unverified);
+      // Ajakannya di paling atas, jadi lembarnya dibuka sebelum Pengaturan digulir.
+      await go(tester, container, Routes.settings);
+      await withSheet(tester, container, () async {
+        await tester.tap(find.widgetWithText(TextButton, 'Verifikasi'));
+        await settle(tester);
+        await tester.tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+        await settle(tester);
+        await tester.enterText(find.byType(TextField), '111111');
+        await tester.tap(find.widgetWithText(FilledButton, 'Verifikasi'));
+        await settle(tester);
+        expect(find.text('Kode salah atau sudah tidak berlaku. Minta kode baru kalau perlu.'), findsOneWidget);
+      });
+      await scrollThrough(tester);
       await visit(tester, container, Routes.profile);
       await visit(tester, container, Routes.pairing);
       // Konfirmasi keluar dari Ruang Bersama (v1.0), dengan penjelasan akibatnya yang panjang.
@@ -459,6 +488,52 @@ void main() {
       await scrollThrough(tester);
 
       expect(find.text('Nama panggilan belum diisi.'), findsOneWidget);
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('$label: Lupa kata sandi dengan kode dan pesan error', (tester) async {
+      final h = Harness();
+      await pumpApp(tester, h, signedIn: false);
+      await apply(tester, size: size, textScale: textScale);
+
+      await tester.ensureVisible(find.text('Lupa kata sandi?'));
+      await tester.tap(find.text('Lupa kata sandi?'));
+      await settle(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+      await settle(tester);
+      await scrollThrough(tester);
+      expect(find.text('Tulis email yang benar, misalnya nama@email.com.'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'nama.yang.cukup.panjang.untuk.diuji@gmail.com');
+      await tester.ensureVisible(find.widgetWithText(FilledButton, 'Kirim kode'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+      await settle(tester);
+
+      // Kode dan kata sandi yang belum benar, lalu kirim ulang yang dibatasi; semuanya juga
+      // diperiksa dengan keyboard terbuka.
+      await tester.enterText(find.byType(TextField).at(1), '1234');
+      await reveal(tester, find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+      await settle(tester);
+      await reveal(tester, find.text('Kodenya 6 angka, sesuai email yang kami kirim.'));
+      tester.view.viewInsets = const FakeViewPadding(bottom: keyboard);
+      addTearDown(tester.view.resetViewInsets);
+      await settle(tester);
+      await scrollThrough(tester);
+      h.api.failNext(
+        const ApiError(
+          status: 429,
+          code: ApiErrorCode.tooManyRequests,
+          message: 'Terlalu sering. Coba lagi sebentar lagi.',
+          retryAfter: Duration(minutes: 15),
+        ),
+      );
+      await reveal(tester, find.widgetWithText(TextButton, 'Kirim ulang kode'));
+      await tester.tap(find.widgetWithText(TextButton, 'Kirim ulang kode'));
+      await settle(tester);
+      await reveal(tester, find.textContaining('Kode sudah beberapa kali diminta'));
+      await scrollThrough(tester);
 
       await disposeApp(tester, h);
     });

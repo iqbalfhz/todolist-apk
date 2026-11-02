@@ -211,6 +211,47 @@
   "errorEmailInvalid": "Tulis email yang benar, misalnya nama@email.com.",
   "errorPasswordRequired": "Kata sandi belum diisi.",
   "errorPasswordShort": "Kata sandi minimal 8 karakter.",
+  "errorEmailCode": "Kodenya 6 angka, sesuai email yang kami kirim.",
+  "forgotLink": "Lupa kata sandi?",
+  "forgotTitle": "Lupa kata sandi",
+  "forgotSubtitle": "Kami kirim kode 6 angka ke emailmu untuk membuat kata sandi baru.",
+  "forgotSend": "Kirim kode",
+  "forgotSent": "Kalau email itu terdaftar, kode sudah dikirim. Cek juga folder spam.",
+  "forgotCode": "Kode dari email",
+  "forgotCodeHint": "6 angka",
+  "forgotNewPassword": "Kata sandi baru",
+  "forgotSave": "Simpan kata sandi baru",
+  "forgotResend": "Kirim ulang kode",
+  "forgotDone": "Kata sandi baru tersimpan, dan kamu sudah masuk.",
+  "codeTooOften": "Kode sudah beberapa kali diminta. Coba lagi sekitar {minutes} menit lagi.",
+  "@codeTooOften": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "verifyTitle": "Verifikasi email",
+  "verifyCardBody": "{email} belum diverifikasi.",
+  "@verifyCardBody": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "verifyAction": "Verifikasi",
+  "verifySheetBody": "Kami kirim kode 6 angka ke {email}.",
+  "@verifySheetBody": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "verifySent": "Kode sudah dikirim ke {email}. Cek juga folder spam.",
+  "@verifySent": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "verifyConfirm": "Verifikasi",
+  "verifyDone": "Email sudah terverifikasi.",
+  "verifyAlready": "Email ini ternyata sudah terverifikasi.",
   "errorNameRequired": "Nama panggilan belum diisi.",
   "errorNameLong": "Paling banyak 50 karakter.",
 
