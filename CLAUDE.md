@@ -60,6 +60,7 @@ v1.0 yang sudah dibangun:
 v1.x yang sudah dibangun (diminta pemilik 25 Oktober 2026; semuanya cukup di HP):
 
 - Tugas berulang di beberapa hari (2 November 2026): `repeat_days` (hari ISO 1–7, urut naik, atau `null` untuk hari tenggat) di `TaskRepeat.days`, pilihan hari di lembar Ulangi tugas saat Mingguan, dan ringkasan "Tiap 2 minggu, Selasa dan Jumat". Kolom baru di `tasks` (skema 8), jadi sync penuh sekali. Tugas berikutnya tetap dihitung server.
+- Kenangan hari ini (2 November 2026): push `memory_flashback` pukul 08.00 dari server (channel `pengingat`, tag `memory-{id}`, ketuk membuka Detail kenangan), dan sakelar "Kenangan hari ini" di Pengaturan > Notifikasi (`notification_prefs.memory_flashbacks`, bawaannya menyala). Kartu Beranda "Setahun lalu, hari ini" tetap seperti sebelumnya.
 - Kontribusi tabungan bersama: kartu Kontribusi di Detail tabungan untuk target di Ruang Bersama, berisi bagian Aku dan Pasangan (bar terbagi warna diri, persen yang selalu berjumlah 100, dan nominal) serta Total
 - "Setahun lalu, hari ini": kartu kenangan dari tanggal dan bulan yang sama di tahun sebelumnya di Beranda
 - Cari (`/cari`, dari kepala Beranda): tugas, target, setoran, perjalanan, kenangan, dan tanggal penting di cache lokal, juga saat offline
@@ -162,9 +163,9 @@ Widget tidak memanggil API langsung; selalu lewat repository.
 
 ### Notifikasi
 
-- Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, dan hari setor) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
+- Dua channel Android: `pengingat` (penting, bersuara: tenggat tugas, tanggal penting, perjalanan, hari setor, dan kenangan hari ini) dan `aktivitas` (normal), dibuat saat app pertama dibuka.
 - Minta izin notifikasi (Android 13+) dengan penjelasan; sebelum Android 13 layarnya dilewati. Panduan mematikan optimasi baterai tidak ditampilkan (keputusan pemilik, 23 Oktober 2026): langkah manual di Pengaturan HP terlalu merepotkan untuk alur pertama kali.
-- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, pengingat setor membuka Detail target, `memory_created` membuka Detail kenangan, dan `partner_left` (v1.0) membuka Beranda setelah sync.
+- Ketuk notifikasi: sync paling lama 3 detik, lalu buka layar sesuai `type`; kalau data belum ada, buka layar induk dengan pesan singkat. Pengingat tanggal penting membuka Beranda, pengingat perjalanan membuka Detail perjalanan, pengingat setor membuka Detail target, `memory_created` dan `memory_flashback` (v1.x) membuka Detail kenangan, dan `partner_left` (v1.0) membuka Beranda setelah sync.
 
 ## Keamanan
 
