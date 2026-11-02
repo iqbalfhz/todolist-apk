@@ -24,6 +24,7 @@ import 'package:todolist/app.dart';
 import 'package:todolist/app_services.dart';
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
+import 'package:todolist/core/config/env.dart';
 import 'package:todolist/core/database/app_database.dart';
 import 'package:todolist/core/media/media_caches.dart';
 import 'package:todolist/core/notifications/push_service.dart';
@@ -166,10 +167,16 @@ void main() {
 
     // Widget layar utama (v1.x): ringkasan yang dikirim app ke Android dicatat di sini.
     final widgetSnapshots = <Map<String, dynamic>>[];
+    // Halaman kebijakan (v1.0) yang diminta dibuka di browser.
+    final openedUrls = <String>[];
     const deviceChannel = MethodChannel('todolist/device');
     tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(deviceChannel, (call) async {
       if (call.method == 'updateWidget') {
         widgetSnapshots.add(jsonDecode((call.arguments as Map)['json'] as String) as Map<String, dynamic>);
+      }
+      if (call.method == 'openUrl') {
+        openedUrls.add((call.arguments as Map)['url'] as String);
+        return true;
       }
       return null;
     });
@@ -1330,6 +1337,14 @@ void main() {
       }
     });
     expect(rejected, ApiErrorCode.unauthenticated);
+
+    step('Tautan Kebijakan privasi di layar Masuk, dan halamannya ada di server');
+    await tap(find.widgetWithText(TextButton, 'Kebijakan privasi'));
+    expect(openedUrls, [Env.privacyUrl]);
+    final privacyPage = await tester.runAsync(
+      () => HttpClient().getUrl(Uri.parse(baseUrl).replace(path: '/privasi')).then((request) => request.close()),
+    );
+    expect(privacyPage!.statusCode, 200);
 
     step('Daftar dengan email yang sudah terdaftar: pesan server tampil di isian Email');
     await tap(find.widgetWithText(TextButton, 'Daftar'));
