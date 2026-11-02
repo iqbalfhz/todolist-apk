@@ -175,6 +175,16 @@
   "registerButton": "Daftar",
   "loginNoAccount": "Belum punya akun?",
   "registerHasAccount": "Sudah punya akun?",
+  "policyAgree": "Dengan mendaftar atau masuk dengan Google, kamu menyetujui",
+  "policyTerms": "Syarat layanan",
+  "policyAnd": "dan",
+  "policyPrivacy": "Kebijakan privasi",
+  "linkOpenFailed": "Tautan tidak bisa dibuka. Buka {url} di browser.",
+  "@linkOpenFailed": {
+    "placeholders": {
+      "url": {"type": "String"}
+    }
+  },
   "authOr": "atau",
   "googleSignIn": "Masuk dengan Google",
   "googleSignUp": "Daftar dengan Google",
@@ -718,6 +728,8 @@
   "settingsWidgetManual": "Tekan lama layar utama HP, pilih Widget, lalu cari Denly Days.",
   "settingsExport": "Ekspor data",
   "settingsExportSub": "Simpan salinan semua datamu ke HP",
+  "settingsPrivacySub": "Data yang dipakai Denly Days dan hakmu",
+  "settingsTermsSub": "Aturan memakai Denly Days",
   "exportTitle": "Ekspor data",
   "exportIntro": "Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.",
   "exportPhotosNote": "Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.",

@@ -655,6 +655,36 @@ abstract class AppLocalizations {
   /// **'Sudah punya akun?'**
   String get registerHasAccount;
 
+  /// No description provided for @policyAgree.
+  ///
+  /// In id, this message translates to:
+  /// **'Dengan mendaftar atau masuk dengan Google, kamu menyetujui'**
+  String get policyAgree;
+
+  /// No description provided for @policyTerms.
+  ///
+  /// In id, this message translates to:
+  /// **'Syarat layanan'**
+  String get policyTerms;
+
+  /// No description provided for @policyAnd.
+  ///
+  /// In id, this message translates to:
+  /// **'dan'**
+  String get policyAnd;
+
+  /// No description provided for @policyPrivacy.
+  ///
+  /// In id, this message translates to:
+  /// **'Kebijakan privasi'**
+  String get policyPrivacy;
+
+  /// No description provided for @linkOpenFailed.
+  ///
+  /// In id, this message translates to:
+  /// **'Tautan tidak bisa dibuka. Buka {url} di browser.'**
+  String linkOpenFailed(String url);
+
   /// No description provided for @authOr.
   ///
   /// In id, this message translates to:
@@ -2172,6 +2202,18 @@ abstract class AppLocalizations {
   /// In id, this message translates to:
   /// **'Simpan salinan semua datamu ke HP'**
   String get settingsExportSub;
+
+  /// No description provided for @settingsPrivacySub.
+  ///
+  /// In id, this message translates to:
+  /// **'Data yang dipakai Denly Days dan hakmu'**
+  String get settingsPrivacySub;
+
+  /// No description provided for @settingsTermsSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Aturan memakai Denly Days'**
+  String get settingsTermsSub;
 
   /// No description provided for @exportTitle.
   ///

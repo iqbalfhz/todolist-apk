@@ -313,6 +313,23 @@ class AppLocalizationsId extends AppLocalizations {
   String get registerHasAccount => 'Sudah punya akun?';
 
   @override
+  String get policyAgree => 'Dengan mendaftar atau masuk dengan Google, kamu menyetujui';
+
+  @override
+  String get policyTerms => 'Syarat layanan';
+
+  @override
+  String get policyAnd => 'dan';
+
+  @override
+  String get policyPrivacy => 'Kebijakan privasi';
+
+  @override
+  String linkOpenFailed(String url) {
+    return 'Tautan tidak bisa dibuka. Buka $url di browser.';
+  }
+
+  @override
   String get authOr => 'atau';
 
   @override
@@ -1191,6 +1208,12 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get settingsExportSub => 'Simpan salinan semua datamu ke HP';
+
+  @override
+  String get settingsPrivacySub => 'Data yang dipakai Denly Days dan hakmu';
+
+  @override
+  String get settingsTermsSub => 'Aturan memakai Denly Days';
 
   @override
   String get exportTitle => 'Ekspor data';
