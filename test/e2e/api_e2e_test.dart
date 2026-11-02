@@ -8,6 +8,9 @@
 // Sekali jalan memakai tiga permintaan daftar dan batas server 5 per menit, jadi beri jeda
 // satu menit sebelum menjalankannya lagi. Kalau terlalu cepat, tes "email yang sudah
 // terdaftar" gagal karena dibalas 429.
+//
+// Lupa kata sandi dan verifikasi email (v1.0) diuji sampai kodenya dipakai hanya kalau
+// E2E_MAIL_LOG diisi; caranya di `mail_log.dart`. Tanpa itu, hanya kode yang salah.
 
 import 'dart:convert';
 import 'dart:io';
@@ -32,6 +35,8 @@ import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/tasks/domain/task.dart';
 import 'package:todolist/features/tasks/domain/task_list.dart';
 import 'package:todolist/features/trips/domain/trip.dart';
+
+import 'mail_log.dart';
 
 /// JPEG 2 × 2 px yang sah, untuk unggahan yang ditolak sebelum fotonya disimpan.
 /// API lokal tidak punya kunci R2, jadi foto yang benar-benar tersimpan tidak diuji di sini.
@@ -92,6 +97,8 @@ class Device {
 void main() {
   final baseUrl = Platform.environment['E2E_API_URL'];
   final skipReason = baseUrl == null ? 'E2E_API_URL belum diisi' : null;
+  final mail = MailLog.fromEnvironment();
+  final mailSkip = skipReason ?? (mail == null ? 'E2E_MAIL_LOG belum diisi' : null);
 
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
 
@@ -966,4 +973,74 @@ void main() {
     },
     skip: skipReason,
   );
+
+  // ---------------------------------------------------------------- lupa kata sandi dan verifikasi email (v1.0)
+
+  final wrongCode = isA<ApiError>()
+      .having((error) => error.code, 'code', ApiErrorCode.validationFailed)
+      .having((error) => error.status, 'status', 422)
+      .having((error) => error.errors['code'], 'errors.code', [
+        'Kode salah atau sudah tidak berlaku. Minta kode baru kalau perlu.',
+      ]);
+
+  test('lupa kata sandi: email yang tidak terdaftar pun dibalas 202; kode yang salah ditolak', () async {
+    final auth = AuthRepository(Device(baseUrl!).api);
+
+    await auth.forgotPassword('belum-terdaftar-$run@contoh.test');
+    await expectLater(
+      auth.resetPassword(email: a.user.email, code: '000000', password: 'rahasia-banget', deviceName: 'Tes'),
+      throwsA(wrongCode),
+    );
+  }, skip: skipReason);
+
+  test('verifikasi email: akun hasil daftar belum terverifikasi, dan kode yang salah ditolak', () async {
+    expect(a.user.emailVerifiedAt, isNull);
+    expect((await a.account.profile.current())!.emailVerifiedAt, isNull);
+
+    expect(await a.account.profile.requestEmailVerification(), isTrue);
+    await expectLater(a.account.profile.confirmEmailVerification('000000'), throwsA(wrongCode));
+    expect(a.unauthenticated, 0);
+  }, skip: skipReason);
+
+  test('verifikasi email dengan kode dari email; sesudahnya permintaan kode dibalas 204', () async {
+    final profile = a.account.profile;
+    mail!.mark();
+    expect(await profile.requestEmailVerification(), isTrue);
+
+    final user = await profile.confirmEmailVerification(await mail.code(a.user.email, MailLog.verification));
+    expect(user.emailVerifiedAt, isNotNull);
+    expect((await profile.current())!.emailVerifiedAt, user.emailVerifiedAt);
+    expect(await profile.requestEmailVerification(), isFalse);
+  }, skip: mailSkip);
+
+  test('atur ulang kata sandi dengan kode dari email: token lama dicabut, kata sandi baru dipakai masuk', () async {
+    final auth = AuthRepository(Device(baseUrl!).api);
+    mail!.mark();
+    await auth.forgotPassword(a.user.email);
+
+    final result = await auth.resetPassword(
+      email: a.user.email,
+      code: await mail.code(a.user.email, MailLog.passwordReset),
+      password: 'sandi-baru-456',
+      deviceName: 'Tes E2E A',
+    );
+    expect(result.user.id, a.user.id);
+    expect(result.user.emailVerifiedAt, isNotNull);
+
+    // Token lama HP ini ikut dicabut; token barunya berlaku.
+    await expectLater(
+      a.api.send('GET', '/me'),
+      throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.unauthenticated)),
+    );
+    a.token = result.token;
+    expect((await a.api.send('GET', '/me')).data['id'], a.user.id);
+
+    await expectLater(
+      AuthRepository(Device(baseUrl).api).login(email: a.user.email, password: 'rahasia-banget', deviceName: 'Tes'),
+      throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.invalidCredentials)),
+    );
+    final login = await AuthRepository(Device(baseUrl).api)
+        .login(email: a.user.email, password: 'sandi-baru-456', deviceName: 'Tes');
+    expect(login.user.id, a.user.id);
+  }, skip: mailSkip);
 }

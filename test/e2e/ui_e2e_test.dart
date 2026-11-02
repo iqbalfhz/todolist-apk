@@ -7,7 +7,9 @@
 //
 // Dilewati kecuali E2E_API_URL diisi; cara menjalankan dan batasannya sama dengan
 // `api_e2e_test.dart`. Sekali jalan memakai tiga permintaan daftar, jadi beri jeda
-// satu menit sebelum menjalankan tes ujung ke ujung mana pun lagi.
+// satu menit sebelum menjalankan tes ujung ke ujung mana pun lagi. Lupa kata sandi dan
+// verifikasi email (v1.0) memakai kode dari email hanya kalau E2E_MAIL_LOG diisi
+// (`mail_log.dart`); tanpa itu, hanya kode yang salah yang dicoba.
 
 import 'dart:async';
 import 'dart:convert';
@@ -56,6 +58,7 @@ import '../helpers/fake_map.dart';
 import '../helpers/fake_photos.dart';
 import '../helpers/fake_push.dart';
 import '../helpers/fixtures.dart';
+import 'mail_log.dart';
 
 /// Menjalankan request di zone akar. Tes widget memakai jam palsu, dan HTTP sungguhan
 /// hanya selesai kalau berjalan di luar zone itu.
@@ -134,6 +137,8 @@ class PartnerDevice {
 void main() {
   final baseUrl = Platform.environment['E2E_API_URL'];
   final skipReason = baseUrl == null ? 'E2E_API_URL belum diisi' : null;
+  final mail = MailLog.fromEnvironment();
+  const wrongCode = 'Kode salah atau sudah tidak berlaku. Minta kode baru kalau perlu.';
 
   final stamp = DateTime.now().millisecondsSinceEpoch;
   final email = 'ui-aku-$stamp@contoh.test';
@@ -622,8 +627,30 @@ void main() {
 
     // ---------------------------------------------------------------- pengaturan dan profil
 
-    step('Pengaturan: preferensi notifikasi dan mata uang lewat PATCH /me');
+    step('Verifikasi email dari ajakan di Pengaturan: kode yang salah ditolak server');
     await go(Routes.settings);
+    expect(find.text('$email belum diverifikasi.'), findsOneWidget);
+    mail?.mark();
+    await tap(find.widgetWithText(TextButton, 'Verifikasi'));
+    await tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+    expect(find.text('Kode sudah dikirim ke $email. Cek juga folder spam.'), findsOneWidget);
+    expect(transport.log.last, 'POST /me/email-verification');
+    await tester.enterText(find.byType(TextField), '000000');
+    await tap(find.widgetWithText(FilledButton, 'Verifikasi'));
+    expect(find.text(wrongCode), findsOneWidget);
+    if (mail == null) {
+      await tap(find.byTooltip('Tutup'));
+    } else {
+      step('Kode dari email: email terverifikasi dan ajakannya hilang');
+      final code = await tester.runAsync(() => mail.code(email, MailLog.verification));
+      await tester.enterText(find.byType(TextField), code!);
+      await tap(find.widgetWithText(FilledButton, 'Verifikasi'));
+      expect(find.text('Email sudah terverifikasi.'), findsOneWidget);
+      expect(find.text('$email belum diverifikasi.'), findsNothing);
+      expect(((await server('/me'))['data'] as Map<String, dynamic>)['email_verified_at'], isNotNull);
+    }
+
+    step('Pengaturan: preferensi notifikasi dan mata uang lewat PATCH /me');
     await tap(find.text('Aktivitas pasangan'));
     await net();
     // Switch keempat (v0.2) ada di bawah; daftar baru membangunnya setelah digulir.
@@ -1373,7 +1400,49 @@ void main() {
     await net();
     expect(find.text('Email atau kata sandi salah.'), findsOneWidget);
 
+    step('Lupa kata sandi: email ikut dari layar Masuk, dan kode yang salah ditolak server');
+    mail?.mark();
+    await tap(find.text('Lupa kata sandi?'));
+    expect(find.text('Lupa kata sandi'), findsOneWidget);
+    expect(tester.widget<TextField>(field('Email')).controller!.text, email);
+    await tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+    expect(find.text('Kalau email itu terdaftar, kode sudah dikirim. Cek juga folder spam.'), findsOneWidget);
+    expect(transport.log.last, 'POST /auth/forgot-password');
+    await tester.enterText(field('Kode dari email'), '000000');
+    await tester.enterText(field('Kata sandi baru'), password);
+    await tap(find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+    expect(find.text(wrongCode), findsOneWidget);
+    expect(storage.values.containsKey(StorageKeys.token), isFalse);
+
+    if (mail == null) {
+      await tap(find.byTooltip('Kembali'));
+    } else {
+      step('Kode dari email: kata sandi tersimpan dan langsung masuk, lalu keluar lagi');
+      final code = await tester.runAsync(() => mail.code(email, MailLog.passwordReset));
+      await tester.enterText(field('Kode dari email'), code!);
+      await tap(find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+      await net();
+      expect(find.text('Kata sandi baru tersimpan, dan kamu sudah masuk.'), findsOneWidget);
+      expect(find.text('Tugas hari ini'), findsOneWidget);
+      expect(storage.values[StorageKeys.token], isNotNull);
+      // Snackbar-nya menutupi tombol Keluar di bawah layar sampai hilang sendiri.
+      await tester.pump(const Duration(seconds: 5));
+      await net();
+
+      await go(Routes.settings);
+      await tester.scrollUntilVisible(
+        find.widgetWithText(OutlinedButton, 'Keluar'),
+        200,
+        scrollable: find.byType(Scrollable).first,
+      );
+      await tap(find.widgetWithText(OutlinedButton, 'Keluar'));
+      await tap(find.widgetWithText(TextButton, 'Keluar'));
+      await net();
+    }
+    expect(find.text('Senang melihatmu lagi.'), findsOneWidget);
+
     step('Masuk lagi: langsung ke Beranda dengan data dari cache dan sync lanjutan');
+    await tester.enterText(field('Email'), email);
     await tester.enterText(field('Kata sandi'), password);
     await tap(find.widgetWithText(FilledButton, 'Masuk'));
     await net();
