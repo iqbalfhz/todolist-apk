@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../features/auth/presentation/auth_screens.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/notification_permission_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/home/presentation/main_shell.dart';
@@ -44,7 +45,7 @@ String? _redirect(Ref ref, GoRouterState state) {
   final session = ref.read(sessionProvider);
   final onboarding = ref.read(onboardingProvider);
   final path = state.uri.path;
-  final atAuth = path == Routes.login || path == Routes.register;
+  final atAuth = path == Routes.login || path == Routes.register || path == Routes.forgotPassword;
 
   if (!session.isSignedIn) return atAuth ? null : Routes.login;
   if (!onboarding.notificationsDone) return path == Routes.notifications ? null : Routes.notifications;
@@ -80,6 +81,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', redirect: (_, _) => Routes.home),
       GoRoute(path: Routes.login, builder: (_, _) => const LoginScreen()),
       GoRoute(path: Routes.register, builder: (_, _) => const RegisterScreen()),
+      GoRoute(
+        path: Routes.forgotPassword,
+        builder: (_, state) => ForgotPasswordScreen(email: state.uri.queryParameters['email']),
+      ),
       GoRoute(path: Routes.notifications, builder: (_, _) => const NotificationPermissionScreen()),
       GoRoute(path: Routes.pairing, builder: (_, _) => const PairingScreen()),
       GoRoute(path: Routes.search, builder: (_, _) => const SearchScreen()),

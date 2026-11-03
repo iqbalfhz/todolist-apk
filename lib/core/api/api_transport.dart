@@ -126,8 +126,10 @@ class DioApiTransport implements ApiTransport {
     final json = _decode(response.data);
 
     if (status >= 200 && status < 300) {
-      // 204 tidak punya body. 2xx lain wajib JSON; halaman login Wi-Fi publik pun membalas 200.
-      if (status != 204 && json == null) {
+      // 204 tidak punya body, begitu juga 202 dari permintaan kode lewat email (v1.0). 2xx lain
+      // wajib JSON; halaman login Wi-Fi publik pun membalas 200.
+      final empty = (response.data ?? '').trim().isEmpty;
+      if (json == null && status != 204 && !(status == 202 && empty)) {
         throw NetworkFailure(status: status, detail: 'Balasan bukan JSON');
       }
       return ApiResponse(

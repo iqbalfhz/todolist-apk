@@ -757,6 +757,132 @@ abstract class AppLocalizations {
   /// **'Kata sandi minimal 8 karakter.'**
   String get errorPasswordShort;
 
+  /// No description provided for @errorEmailCode.
+  ///
+  /// In id, this message translates to:
+  /// **'Kodenya 6 angka, sesuai email yang kami kirim.'**
+  String get errorEmailCode;
+
+  /// No description provided for @forgotLink.
+  ///
+  /// In id, this message translates to:
+  /// **'Lupa kata sandi?'**
+  String get forgotLink;
+
+  /// No description provided for @forgotTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Lupa kata sandi'**
+  String get forgotTitle;
+
+  /// No description provided for @forgotSubtitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Kami kirim kode 6 angka ke emailmu untuk membuat kata sandi baru.'**
+  String get forgotSubtitle;
+
+  /// No description provided for @forgotSend.
+  ///
+  /// In id, this message translates to:
+  /// **'Kirim kode'**
+  String get forgotSend;
+
+  /// No description provided for @forgotSent.
+  ///
+  /// In id, this message translates to:
+  /// **'Kalau email itu terdaftar, kode sudah dikirim. Cek juga folder spam.'**
+  String get forgotSent;
+
+  /// No description provided for @forgotCode.
+  ///
+  /// In id, this message translates to:
+  /// **'Kode dari email'**
+  String get forgotCode;
+
+  /// No description provided for @forgotCodeHint.
+  ///
+  /// In id, this message translates to:
+  /// **'6 angka'**
+  String get forgotCodeHint;
+
+  /// No description provided for @forgotNewPassword.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi baru'**
+  String get forgotNewPassword;
+
+  /// No description provided for @forgotSave.
+  ///
+  /// In id, this message translates to:
+  /// **'Simpan kata sandi baru'**
+  String get forgotSave;
+
+  /// No description provided for @forgotResend.
+  ///
+  /// In id, this message translates to:
+  /// **'Kirim ulang kode'**
+  String get forgotResend;
+
+  /// No description provided for @forgotDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi baru tersimpan, dan kamu sudah masuk.'**
+  String get forgotDone;
+
+  /// No description provided for @codeTooOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Kode sudah beberapa kali diminta. Coba lagi sekitar {minutes} menit lagi.'**
+  String codeTooOften(int minutes);
+
+  /// No description provided for @verifyTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Verifikasi email'**
+  String get verifyTitle;
+
+  /// No description provided for @verifyCardBody.
+  ///
+  /// In id, this message translates to:
+  /// **'{email} belum diverifikasi.'**
+  String verifyCardBody(String email);
+
+  /// No description provided for @verifyAction.
+  ///
+  /// In id, this message translates to:
+  /// **'Verifikasi'**
+  String get verifyAction;
+
+  /// No description provided for @verifySheetBody.
+  ///
+  /// In id, this message translates to:
+  /// **'Kami kirim kode 6 angka ke {email}.'**
+  String verifySheetBody(String email);
+
+  /// No description provided for @verifySent.
+  ///
+  /// In id, this message translates to:
+  /// **'Kode sudah dikirim ke {email}. Cek juga folder spam.'**
+  String verifySent(String email);
+
+  /// No description provided for @verifyConfirm.
+  ///
+  /// In id, this message translates to:
+  /// **'Verifikasi'**
+  String get verifyConfirm;
+
+  /// No description provided for @verifyDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Email sudah terverifikasi.'**
+  String get verifyDone;
+
+  /// No description provided for @verifyAlready.
+  ///
+  /// In id, this message translates to:
+  /// **'Email ini ternyata sudah terverifikasi.'**
+  String get verifyAlready;
+
   /// No description provided for @errorNameRequired.
   ///
   /// In id, this message translates to:

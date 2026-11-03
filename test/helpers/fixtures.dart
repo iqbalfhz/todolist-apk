@@ -35,10 +35,16 @@ const String t0 = '2026-10-08T10:00:00.000000Z';
 const String t1 = '2026-10-08T10:30:00.000000Z';
 const String t2 = '2026-10-08T11:00:00.000000Z';
 
-Map<String, dynamic> userJson({String id = meId, String name = 'Iqbal', String color = 'mawar'}) => {
+Map<String, dynamic> userJson({
+  String id = meId,
+  String name = 'Iqbal',
+  String color = 'mawar',
+  String? emailVerifiedAt = t0,
+}) => {
   'id': id,
   'name': name,
   'email': 'nama@email.com',
+  'email_verified_at': emailVerifiedAt,
   'color': color,
   'timezone': 'Asia/Jakarta',
   'locale': 'id',

@@ -174,6 +174,25 @@ void main() {
       expect(response.body, isNull);
     });
 
+    test('202 tanpa body diterima (minta kode lewat email, v1.0); 202 berisi HTML tetap gangguan', () async {
+      handler = (request) async {
+        request.response.statusCode = 202;
+        request.response.headers.contentType = ContentType.html;
+        await request.response.close();
+      };
+
+      final response = await transport().send('POST', '/auth/forgot-password', body: {'email': 'nama@email.com'});
+
+      expect(response.status, 202);
+      expect(response.body, isNull);
+
+      handler = (request) => html(request, 202);
+      await expectLater(
+        transport().send('POST', '/me/email-verification'),
+        throwsA(isA<NetworkFailure>().having((failure) => failure.status, 'status', 202)),
+      );
+    });
+
     test('200 yang bukan JSON dianggap gangguan, misalnya halaman login Wi-Fi publik', () async {
       handler = (request) => html(request, 200);
 

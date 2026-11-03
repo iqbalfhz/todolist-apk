@@ -48,6 +48,19 @@ class FakeApi implements ApiTransport {
   /// Kode yang dibalas `POST /invitations`.
   String invitationCode = 'K7M2QX';
 
+  /// Kode 6 angka yang benar untuk atur ulang kata sandi dan verifikasi email (v1.0).
+  String resetCode = '482913';
+  String emailCode = '135790';
+
+  static ApiError _codeRejected() => const ApiError(
+    status: 422,
+    code: ApiErrorCode.validationFailed,
+    message: 'Data yang dikirim belum benar.',
+    errors: {
+      'code': ['Kode salah atau sudah tidak berlaku. Minta kode baru kalau perlu.'],
+    },
+  );
+
   /// Isi `GET /me/export` (v1.0), dan teks mentahnya kalau berbeda dari JSON yang ditulis ulang.
   Map<String, dynamic>? exportFile;
   String? exportRaw;
@@ -139,6 +152,16 @@ class FakeApi implements ApiTransport {
       );
     }
 
+    // Verifikasi email (v1.0): 204 kalau sudah terverifikasi; kode benar mengisi waktunya.
+    if (segments.first == 'me' && segments.length > 1 && segments[1] == 'email-verification') {
+      if (segments.length == 2) {
+        return ApiResponse(status: me?['email_verified_at'] == null ? 202 : 204);
+      }
+      if (request.body?['code'] != emailCode) throw _codeRejected();
+      me = {...?me, 'email_verified_at': stamp(), 'updated_at': stamp()};
+      return ApiResponse(status: 200, body: {'data': me});
+    }
+
     if (segments.first == 'me') {
       // Hapus akun (v1.0).
       if (request.method == 'DELETE') return const ApiResponse(status: 204);
@@ -188,6 +211,9 @@ class FakeApi implements ApiTransport {
 
     if (segments.first == 'auth') {
       if (segments[1] == 'logout') return const ApiResponse(status: 204);
+      // Lupa kata sandi (v1.0): selalu 202, lalu kode yang benar membalas seperti masuk.
+      if (segments[1] == 'forgot-password') return const ApiResponse(status: 202);
+      if (segments[1] == 'reset-password' && request.body?['code'] != resetCode) throw _codeRejected();
       return ApiResponse(
         status: 200,
         body: {

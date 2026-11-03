@@ -2,6 +2,13 @@
 abstract final class Routes {
   static const String login = '/masuk';
   static const String register = '/daftar';
+
+  /// Lupa kata sandi (v1.0), bisa dibuka tanpa masuk. `?email=` mengisi emailnya.
+  static const String forgotPassword = '/lupa-kata-sandi';
+
+  static String forgotPasswordFor(String email) =>
+      email.trim().isEmpty ? forgotPassword : _with(forgotPassword, {'email': email.trim()});
+
   static const String notifications = '/izin-notifikasi';
   static const String pairing = '/ajak-pasangan';
 

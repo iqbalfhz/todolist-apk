@@ -51,6 +51,25 @@ class ProfileRepository {
   Future<void> updateNotificationPrefs(NotificationPrefs prefs) =>
       writer.update(EntityType.me, userId, {'notification_prefs': prefs.toJson()});
 
+  /// Kirim kode verifikasi email (v1.0). `false` kalau emailnya ternyata sudah terverifikasi
+  /// (204); profilnya lalu diambil ulang supaya ajakan verifikasi hilang.
+  Future<bool> requestEmailVerification() async {
+    final response = await api.send('POST', '/me/email-verification');
+    if (response.status == 204) {
+      await refresh();
+      return false;
+    }
+    return true;
+  }
+
+  /// Verifikasi email dengan kode 6 angka (v1.0). Kode yang salah dibalas 422 dengan pesan di
+  /// `errors.code`.
+  Future<User> confirmEmailVerification(String code) async {
+    final response = await api.send('POST', '/me/email-verification/confirm', body: {'code': code.trim()});
+    await applier.apply(EntityType.me, response.data);
+    return User.fromJson(response.data);
+  }
+
   /// Unggah foto profil yang sudah dipotong persegi dan dikecilkan ke 512 × 512 (JPEG).
   Future<User> uploadAvatar(Uint8List jpegBytes) async {
     final response = await api.send(
