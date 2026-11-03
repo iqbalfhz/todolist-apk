@@ -9,7 +9,8 @@
 // `api_e2e_test.dart`. Sekali jalan memakai tiga permintaan daftar, jadi beri jeda
 // satu menit sebelum menjalankan tes ujung ke ujung mana pun lagi. Lupa kata sandi dan
 // verifikasi email (v1.0) memakai kode dari email hanya kalau E2E_MAIL_LOG diisi
-// (`mail_log.dart`); tanpa itu, hanya kode yang salah yang dicoba.
+// (`mail_log.dart`); tanpa itu, hanya kode yang salah yang dicoba. Perkiraan kurs (v1.x) butuh
+// kurs di API lokal: jalankan `php artisan exchange-rates:fetch` sekali untuk database tes.
 //
 // Jangan jalankan dalam 15 menit sebelum tengah malam WIB: jam app dimajukan beberapa menit
 // untuk melewati jeda Urungkan, jadi "hari ini" bisa berganti di tengah tes, dan tugas hari
@@ -43,6 +44,7 @@ import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/storage/key_value_store.dart';
 import 'package:todolist/core/time/space_clock.dart';
 import 'package:todolist/core/utils/dates.dart';
+import 'package:todolist/core/utils/money.dart';
 import 'package:todolist/core/widgets/widgets.dart';
 import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/data/google_accounts.dart';
@@ -51,6 +53,7 @@ import 'package:todolist/features/auth/domain/user.dart';
 import 'package:todolist/features/comments/domain/comment.dart';
 import 'package:todolist/features/memories/domain/memory.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
+import 'package:todolist/features/savings/domain/exchange_rates.dart';
 import 'package:todolist/features/savings/domain/savings_entry.dart';
 import 'package:todolist/features/spaces/domain/space.dart';
 import 'package:todolist/features/spaces/domain/household.dart';
@@ -777,8 +780,17 @@ void main() {
     await tap(find.text('Semua'));
     expect(find.text('Beli galon'), findsOneWidget);
 
-    step('Target bersama: setoran pasangan tampil di riwayat');
+    step('Perkiraan kurs: target rupiah kini punya perkiraan dalam dolar, dengan kurs ECB dari server');
     await go(Routes.savings);
+    // Mata uang bawaan sudah dolar, jadi kurs diambil sekali begitu target rupiah butuh perkiraan.
+    expect(transport.log.where((line) => line == 'GET /exchange-rates'), hasLength(1));
+    final ecb = ExchangeRates.fromJson((await server('/exchange-rates'))['data'] as Map<String, dynamic>);
+    final ecbTarget = formatMoney(ecb.convert(2000000, from: 'IDR', to: 'USD')!, 'USD');
+    final ecbDate = formatDayMonth(ecb.date, currentYear: DateTime.now().year);
+    expect(find.text('Rp0 dari Rp2.000.000'), findsOneWidget);
+    expect(find.text('≈ US\$0,00 dari $ecbTarget · kurs ECB $ecbDate'), findsOneWidget);
+
+    step('Target bersama: setoran pasangan tampil di riwayat');
     await tap(find.byTooltip('Tambah target'));
     await tester.enterText(field('Menabung untuk apa?'), 'Dana Darurat');
     await tester.enterText(field('Berapa targetnya?'), '500');
@@ -1044,6 +1056,9 @@ void main() {
 
     // ---------------------------------------------------------------- tugas berulang (v1.0)
 
+    // Bagian ini rapat (centang, batal, dan tugas berikutnya dari server), dan sejak langkah
+    // verifikasi email dan perkiraan kurs ditambahkan, bisa melewati batas 120 per menit.
+    await coolDown();
     step('Tugas berulang dari tambah cepat: tiap hari, mulai hari ini');
     await go(Routes.home);
     await tap(find.byType(FloatingActionButton));
