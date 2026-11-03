@@ -553,6 +553,12 @@
     }
   },
   "savingsCollected": "terkumpul",
+  "savingsExcess": "Lebih {amount} dari target",
+  "@savingsExcess": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
   "savingsRemaining": "Sisa {amount}",
   "@savingsRemaining": {
     "placeholders": {

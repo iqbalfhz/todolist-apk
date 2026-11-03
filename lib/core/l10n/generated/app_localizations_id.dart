@@ -895,6 +895,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get savingsCollected => 'terkumpul';
 
   @override
+  String savingsExcess(String amount) {
+    return 'Lebih $amount dari target';
+  }
+
+  @override
   String savingsRemaining(String amount) {
     return 'Sisa $amount';
   }

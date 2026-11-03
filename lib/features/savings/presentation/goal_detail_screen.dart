@@ -303,6 +303,9 @@ class _SummaryCard extends StatelessWidget {
         GoalEstimate(currency: goal.currency, saved: progress.saved, target: goal.targetAmount),
         const SizedBox(height: AppDimens.gap6),
         Text(l10n.savingsRemaining(formatMoney(progress.remaining, goal.currency)), style: text.captionStrong),
+        // Setoran yang melewati target: "Sisa Rp0" lalu kelebihannya.
+        if (progress.excess > 0)
+          Text(l10n.savingsExcess(formatMoney(progress.excess, goal.currency)), style: text.caption),
         if (goal.targetDate != null)
           Text(l10n.savingsTargetDate(formatDateMedium(goal.targetDate!)), style: text.caption),
         // Hanya kalau target punya tanggal yang belum lewat.

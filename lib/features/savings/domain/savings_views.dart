@@ -31,6 +31,10 @@ class GoalProgress {
 
   int get remaining => math.max(0, goal.targetAmount - saved);
 
+  /// Yang terkumpul melewati target, misalnya Rp10.000 dari Rp1.010.000 untuk target
+  /// Rp1.000.000; 0 selama belum melewatinya.
+  int get excess => math.max(0, saved - goal.targetAmount);
+
   bool get isAchieved => saved >= goal.targetAmount;
 
   /// Bagian yang terkumpul, 0 sampai 1.
