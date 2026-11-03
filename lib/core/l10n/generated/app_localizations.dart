@@ -1645,6 +1645,12 @@ abstract class AppLocalizations {
   /// **'terkumpul'**
   String get savingsCollected;
 
+  /// No description provided for @savingsExcess.
+  ///
+  /// In id, this message translates to:
+  /// **'Lebih {amount} dari target'**
+  String savingsExcess(String amount);
+
   /// No description provided for @savingsRemaining.
   ///
   /// In id, this message translates to:

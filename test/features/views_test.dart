@@ -236,6 +236,23 @@ void main() {
       expect(achieved.weeklyNeed, isNull);
     });
 
+    test('kelebihan: yang terkumpul melewati target, 0 kalau belum atau pas', () {
+      expect(progress(target: 1000000, entries: [entryJson(amount: 950000)]).excess, 0);
+      expect(progress(target: 1000000, entries: [entryJson(amount: 1000000)]).excess, 0);
+
+      final over = progress(
+        target: 1000000,
+        entries: [
+          entryJson(id: 'a', amount: 950000),
+          entryJson(id: 'b', amount: 60000),
+        ],
+      );
+      expect(over.saved, 1010000);
+      expect(over.remaining, 0);
+      expect(over.excess, 10000);
+      expect(over.isAchieved, isTrue);
+    });
+
     test('setoran per minggu hanya kalau ada tanggal target yang belum lewat', () {
       expect(progress(targetDate: null).weeklyNeed, isNull);
       expect(progress(targetDate: '2026-10-01').weeklyNeed, isNull);
