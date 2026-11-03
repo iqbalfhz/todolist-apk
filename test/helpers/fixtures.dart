@@ -209,6 +209,14 @@ Map<String, dynamic> goalJson({
   'deleted_at': deletedAt,
 };
 
+/// Kurs ECB contoh dari kontrak (v1.x): US$100,00 ≈ Rp1.813.610.
+Map<String, dynamic> exchangeRatesJson({String date = '2026-10-07', String idr = '20341.45'}) => {
+  'base': 'EUR',
+  'date': date,
+  'fetched_at': '2026-10-08T07:00:03.512345Z',
+  'rates': {'EUR': '1', 'IDR': idr, 'JPY': '177.10', 'MYR': '4.5655', 'SGD': '1.4344', 'USD': '1.1216'},
+};
+
 Map<String, dynamic> entryJson({
   String id = entryId,
   String savingsGoalId = goalId,

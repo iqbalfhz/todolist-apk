@@ -534,9 +534,13 @@ class Outbox {
         _wakeAt(_retryAt!);
         return FlushState.waitingRetry;
 
-      // `places_unavailable` hanya datang dari pencarian tempat dan `sync_expired` dari `GET /sync`,
-      // yang tidak lewat antrean; kalau pun sampai di sini, perlakukan seperti gangguan server.
-      case ApiErrorCode.serverError || ApiErrorCode.placesUnavailable || ApiErrorCode.syncExpired:
+      // `places_unavailable` hanya datang dari pencarian tempat, `exchange_rates_unavailable` dari
+      // kurs, dan `sync_expired` dari `GET /sync`, yang tidak lewat antrean; kalau pun sampai di
+      // sini, perlakukan seperti gangguan server.
+      case ApiErrorCode.serverError ||
+          ApiErrorCode.placesUnavailable ||
+          ApiErrorCode.exchangeRatesUnavailable ||
+          ApiErrorCode.syncExpired:
         _scheduleRetry();
         return FlushState.waitingRetry;
 

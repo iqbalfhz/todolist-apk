@@ -516,6 +516,36 @@
       "target": {"type": "String"}
     }
   },
+  "estimateGoal": "≈ {saved} dari {target} · kurs ECB {date}",
+  "@estimateGoal": {
+    "placeholders": {
+      "saved": {"type": "String"},
+      "target": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "estimateGoalSpoken": "Kira-kira {saved} dari {target}, kurs ECB {date}",
+  "@estimateGoalSpoken": {
+    "placeholders": {
+      "saved": {"type": "String"},
+      "target": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "estimateAmount": "≈ {amount} · kurs ECB {date}",
+  "@estimateAmount": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "estimateAmountSpoken": "Kira-kira {amount}, kurs ECB {date}",
+  "@estimateAmountSpoken": {
+    "placeholders": {
+      "amount": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
   "savingsFrom": "dari {target}",
   "@savingsFrom": {
     "placeholders": {

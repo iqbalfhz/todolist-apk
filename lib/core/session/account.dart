@@ -5,6 +5,7 @@ import '../../features/auth/data/profile_repository.dart';
 import '../../features/comments/data/comment_repository.dart';
 import '../../features/memories/data/memory_photo_images.dart';
 import '../../features/memories/data/memory_repository.dart';
+import '../../features/savings/data/exchange_rate_repository.dart';
 import '../../features/savings/data/savings_repository.dart';
 import '../../features/settings/data/data_export.dart';
 import '../../features/spaces/data/space_repository.dart';
@@ -69,6 +70,7 @@ class Account {
     profile = ProfileRepository(writer: writer, api: api, applier: applier, userId: userId);
     spaces = SpaceRepository(store: store, api: api, applier: applier, outbox: outbox);
     exports = ExportRepository(api);
+    exchangeRates = ExchangeRateRepository(store: store, api: api, now: now);
   }
 
   final String userId;
@@ -99,6 +101,9 @@ class Account {
 
   /// Ekspor data (v1.0).
   late final ExportRepository exports;
+
+  /// Kurs ECB untuk perkiraan di Tabungan (v1.x).
+  late final ExchangeRateRepository exchangeRates;
 
   bool _disposed = false;
   final Completer<void> _closed = Completer<void>();

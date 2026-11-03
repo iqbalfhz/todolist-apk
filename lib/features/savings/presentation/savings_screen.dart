@@ -12,6 +12,7 @@ import '../../../core/widgets/widgets.dart';
 import '../../home/presentation/home_screen.dart' show goalTitle;
 import '../../spaces/domain/household.dart';
 import '../domain/savings_views.dart';
+import 'currency_estimate.dart';
 import 'goal_form_sheet.dart';
 
 /// Tab Tabungan: kartu untuk setiap target beserta progresnya.
@@ -174,6 +175,8 @@ class _GoalCard extends StatelessWidget {
               ),
             ],
           ),
+          // Perkiraan dalam mata uang bawaan (v1.x), kalau mata uang targetnya lain.
+          GoalEstimate(currency: goal.currency, saved: progress.saved, target: goal.targetAmount),
           if (progress.isAchieved) ...[
             const SizedBox(height: AppDimens.gap8),
             StatusText(

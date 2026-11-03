@@ -16,6 +16,7 @@ import '../../../core/utils/money.dart';
 import '../../../core/widgets/widgets.dart';
 import '../../comments/domain/conversation.dart';
 import '../../comments/presentation/comments_section.dart';
+import 'currency_estimate.dart';
 import '../../spaces/domain/household.dart';
 import '../domain/savings_entry.dart';
 import '../domain/savings_views.dart';
@@ -298,6 +299,8 @@ class _SummaryCard extends StatelessWidget {
           child: Text(formatMoney(progress.saved, goal.currency), style: text.amountLarge, maxLines: 1),
         ),
         Text(l10n.savingsFrom(formatMoney(goal.targetAmount, goal.currency)), style: text.caption),
+        // Perkiraan dalam mata uang bawaan (v1.x), kalau mata uang targetnya lain.
+        GoalEstimate(currency: goal.currency, saved: progress.saved, target: goal.targetAmount),
         const SizedBox(height: AppDimens.gap6),
         Text(l10n.savingsRemaining(formatMoney(progress.remaining, goal.currency)), style: text.captionStrong),
         if (goal.targetDate != null)
@@ -354,6 +357,9 @@ class _SummaryCard extends StatelessWidget {
 class _ContributionsCard extends StatelessWidget {
   const _ContributionsCard({required this.progress, required this.household});
 
+  /// Bagian lebar baris yang paling banyak dipakai nominal; sisanya untuk nama dan persen.
+  static const double _amountMaxShare = 0.6;
+
   final GoalProgress progress;
   final Household household;
 
@@ -380,16 +386,27 @@ class _ContributionsCard extends StatelessWidget {
     Widget row({Color? color, required String label, String? share, required int amount}) => MergeSemantics(
       child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: AppDimens.rowMinHeightHistory),
-        child: Row(
-          children: [
-            if (color != null) ...[
-              ColorDot(color: color, size: AppDimens.dotLarge),
-              const SizedBox(width: AppDimens.gap10),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Row(
+            children: [
+              if (color != null) ...[
+                ColorDot(color: color, size: AppDimens.dotLarge),
+                const SizedBox(width: AppDimens.gap10),
+              ],
+              Expanded(child: Text(label, style: text.bodyStrong)),
+              if (share != null) ...[Text(share, style: text.captionStrong), const SizedBox(width: AppDimens.gap10)],
+              // Nominal panjang (misalnya dolar dengan sen) tidak pernah terpotong: mengecil kalau
+              // lebih lebar dari sebagian besar baris.
+              ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: constraints.maxWidth * _amountMaxShare),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Text(formatMoney(amount, currency), style: text.amount, maxLines: 1),
+                ),
+              ),
             ],
-            Expanded(child: Text(label, style: text.bodyStrong)),
-            if (share != null) ...[Text(share, style: text.captionStrong), const SizedBox(width: AppDimens.gap10)],
-            Text(formatMoney(amount, currency), style: text.amount),
-          ],
+          ),
         ),
       ),
     );

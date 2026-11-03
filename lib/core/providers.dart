@@ -9,6 +9,7 @@ import '../features/settings/data/data_export.dart';
 import '../features/comments/domain/comment.dart';
 import '../features/memories/domain/memory.dart';
 import '../features/memories/domain/memory_photo.dart';
+import '../features/savings/domain/exchange_rates.dart';
 import '../features/savings/domain/savings_entry.dart';
 import '../features/savings/domain/savings_goal.dart';
 import '../features/spaces/domain/space.dart';
@@ -162,6 +163,11 @@ final goalsProvider = StreamProvider<List<SavingsGoal>>(
 
 final entriesProvider = StreamProvider<List<SavingsEntry>>(
   (ref) => ref.watch(accountProvider)?.savings.watchEntries() ?? Stream.value(const []),
+);
+
+/// Kurs ECB tersimpan untuk perkiraan di Tabungan (v1.x); `null` selama belum pernah diambil.
+final exchangeRatesProvider = StreamProvider<ExchangeRates?>(
+  (ref) => ref.watch(accountProvider)?.exchangeRates.watch() ?? Stream.value(null),
 );
 
 /// Tanggal penting yang belum dihapus (v0.2).

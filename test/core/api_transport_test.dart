@@ -351,6 +351,17 @@ void main() {
       );
     });
 
+    test('503 exchange_rates_unavailable dari kurs (v1.x) juga jawaban API', () async {
+      handler = (request) => json(request, 503, {
+        'message': 'Kurs belum tersedia. Coba lagi nanti.',
+        'code': 'exchange_rates_unavailable',
+      });
+      await expectLater(
+        transport().send('GET', '/exchange-rates'),
+        throwsA(isA<ApiError>().having((error) => error.code, 'code', ApiErrorCode.exchangeRatesUnavailable)),
+      );
+    });
+
     test('JSON dengan code yang tidak dikenal versi app ini', () async {
       handler = (request) => json(request, 409, {'message': 'Aturan baru.', 'code': 'aturan_versi_depan'});
 
