@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -72,6 +73,50 @@ void main() {
       ]);
       expect(snapshot['goal'], {'label': '✈️ Dana Liburan', 'percent': 45});
       expect(jsonEncode(snapshot), isNot(contains('4500000')));
+    });
+  });
+
+  group('tata letak Android', () {
+    // Kelas yang boleh dimuat launcher dari RemoteViews (beranotasi @RemoteView). View biasa
+    // tidak termasuk; dulu dipakai sebagai pengisi ruang, dan launcher HyperOS hanya
+    // menampilkan "Can't load widget" (3 November 2026).
+    const allowed = {
+      'FrameLayout',
+      'LinearLayout',
+      'RelativeLayout',
+      'GridLayout',
+      'AnalogClock',
+      'Button',
+      'Chronometer',
+      'ImageButton',
+      'ImageView',
+      'ProgressBar',
+      'TextClock',
+      'TextView',
+      'ViewFlipper',
+      'ListView',
+      'GridView',
+      'StackView',
+      'AdapterViewFlipper',
+      'ViewStub',
+    };
+
+    test('tata letak widget hanya memakai view yang boleh dimuat launcher', () {
+      final layouts = [
+        for (final entity in Directory('android/app/src/main/res').listSync(recursive: true))
+          if (entity is File &&
+              entity.parent.uri.pathSegments.any((segment) => segment.startsWith('layout')) &&
+              entity.uri.pathSegments.last.startsWith('widget_'))
+            entity,
+      ];
+      expect(layouts, isNotEmpty);
+
+      for (final layout in layouts) {
+        final tags = {
+          for (final match in RegExp(r'<([A-Za-z][\w.]*)').allMatches(layout.readAsStringSync())) match.group(1)!,
+        };
+        expect(tags.difference(allowed), isEmpty, reason: '${layout.path} memakai view yang tidak boleh di widget');
+      }
     });
   });
 
