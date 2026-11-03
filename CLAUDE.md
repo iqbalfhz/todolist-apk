@@ -29,7 +29,7 @@ Belum beres; semuanya butuh keputusan atau akses pemilik:
 - Hapus akun (31 Oktober 2026) belum dicoba di HP sungguhan, termasuk konfirmasi dengan akun Google dan penghapusan berkas database di HP. Uji hanya dengan akun uji, jangan akun pemilik dan pasangannya.
 - Lupa kata sandi dan verifikasi email (dirilis 3 November 2026): email dari Resend sampai dengan cepat di kotak masuk, bukan spam (dicek pemilik 3 November 2026 lewat Verifikasi email di Pengaturan). Atur ulang kata sandi lewat app belum dicoba di HP sungguhan; coba dengan akun uji, karena atur ulang mengeluarkan akun itu dari semua HP.
 - Perkiraan kurs (3 November 2026) belum dicoba di HP sungguhan terhadap produksi, yang kursnya terisi mulai pukul 15.00 WIB hari itu. ECB menerbitkan kurs sekali tiap hari kerja, jadi angkanya tidak berubah tiap menit.
-- Notifikasi target tercapai (`savings_achieved`) masih berisi "Target tabungan ini tercapai" tanpa penyetor dan kelebihannya. Pemilik ingin isinya menyebut kelebihan setoran (3 November 2026); usulan teksnya ditulis untuk sesi Laravel, karena teks push dibuat server dan app tidak perlu diubah.
+- Isi baru push `savings_achieved` (live 3 November 2026, 17.03 WIB): "Iqbal menabung Rp60.000. Target tercapai, lebih Rp10.000!", atau tanpa nama kalau tercapai bukan karena setoran baru (kontrak, bagian Isi push target tercapai). Teksnya dibuat server, jadi app tidak diubah, tetapi tampilannya belum dilihat di HP sungguhan.
 - Komentar dan reaksi belum dicoba di HP sungguhan: emoji di chip reaksi (tes hanya merender kotak karena font tes tanpa emoji), push `comment_created` dan `reaction_created`, dan ketukannya.
 
 Perbarui atau hapus butir di atas begitu selesai dikerjakan.
