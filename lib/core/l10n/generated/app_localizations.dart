@@ -1609,6 +1609,30 @@ abstract class AppLocalizations {
   /// **'{saved} dari {target}'**
   String savingsOf(String saved, String target);
 
+  /// No description provided for @estimateGoal.
+  ///
+  /// In id, this message translates to:
+  /// **'≈ {saved} dari {target} · kurs ECB {date}'**
+  String estimateGoal(String saved, String target, String date);
+
+  /// No description provided for @estimateGoalSpoken.
+  ///
+  /// In id, this message translates to:
+  /// **'Kira-kira {saved} dari {target}, kurs ECB {date}'**
+  String estimateGoalSpoken(String saved, String target, String date);
+
+  /// No description provided for @estimateAmount.
+  ///
+  /// In id, this message translates to:
+  /// **'≈ {amount} · kurs ECB {date}'**
+  String estimateAmount(String amount, String date);
+
+  /// No description provided for @estimateAmountSpoken.
+  ///
+  /// In id, this message translates to:
+  /// **'Kira-kira {amount}, kurs ECB {date}'**
+  String estimateAmountSpoken(String amount, String date);
+
   /// No description provided for @savingsFrom.
   ///
   /// In id, this message translates to:

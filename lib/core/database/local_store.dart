@@ -32,6 +32,11 @@ abstract final class MetaKeys {
   /// Koleksi baru (v0.2: `special_dates`, lalu `trips`; v0.3: `memories` dan `memory_photos`)
   /// membuat sync berikutnya berjalan penuh sekali.
   static const String syncCollections = 'sync_collections';
+
+  /// Kurs ECB terakhir dari `GET /exchange-rates` (v1.x) sebagai JSON, dan waktu HP ini
+  /// menyimpannya (untuk batas sekali per 6 jam).
+  static const String exchangeRates = 'exchange_rates';
+  static const String exchangeRatesSavedAt = 'exchange_rates_saved_at';
 }
 
 /// Satu-satunya pintu ke cache lokal.

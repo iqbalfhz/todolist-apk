@@ -867,6 +867,26 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String estimateGoal(String saved, String target, String date) {
+    return '≈ $saved dari $target · kurs ECB $date';
+  }
+
+  @override
+  String estimateGoalSpoken(String saved, String target, String date) {
+    return 'Kira-kira $saved dari $target, kurs ECB $date';
+  }
+
+  @override
+  String estimateAmount(String amount, String date) {
+    return '≈ $amount · kurs ECB $date';
+  }
+
+  @override
+  String estimateAmountSpoken(String amount, String date) {
+    return 'Kira-kira $amount, kurs ECB $date';
+  }
+
+  @override
   String savingsFrom(String target) {
     return 'dari $target';
   }

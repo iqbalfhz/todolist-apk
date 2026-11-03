@@ -11,6 +11,9 @@
 //
 // Lupa kata sandi dan verifikasi email (v1.0) diuji sampai kodenya dipakai hanya kalau
 // E2E_MAIL_LOG diisi; caranya di `mail_log.dart`. Tanpa itu, hanya kode yang salah.
+//
+// Perkiraan kurs (v1.x) butuh kurs di API lokal: jalankan `php artisan exchange-rates:fetch`
+// sekali untuk database tes (perintah itu mengambil file harian dari ECB).
 
 import 'dart:convert';
 import 'dart:io';
@@ -973,6 +976,31 @@ void main() {
     },
     skip: skipReason,
   );
+
+  // ---------------------------------------------------------------- perkiraan kurs (v1.x)
+
+  test('perkiraan kurs: kurs ECB untuk keenam mata uang, disimpan di HP, paling sering sekali per 6 jam', () async {
+    final repository = a.account.exchangeRates;
+    expect(
+      await repository.refresh(),
+      isTrue,
+      reason: 'API lokal belum punya kurs: jalankan php artisan exchange-rates:fetch sekali',
+    );
+
+    final rates = (await repository.current())!;
+    expect(rates.base, 'EUR');
+    expect(rates.rates.keys, unorderedEquals(['EUR', 'IDR', 'JPY', 'MYR', 'SGD', 'USD']));
+    expect(rates.rates['EUR'], '1');
+    expect(RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(rates.date), isTrue);
+    // Teks desimal persis dari ECB, jadi perkiraannya bisa dihitung tanpa float.
+    for (final rate in rates.rates.values) {
+      expect(RegExp(r'^\d+(\.\d+)?$').hasMatch(rate), isTrue, reason: rate);
+    }
+    expect(rates.convert(10000, from: 'USD', to: 'IDR'), greaterThan(0));
+
+    expect(await repository.refresh(), isFalse);
+    expect(a.unauthenticated, 0);
+  }, skip: skipReason);
 
   // ---------------------------------------------------------------- lupa kata sandi dan verifikasi email (v1.0)
 

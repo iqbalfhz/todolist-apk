@@ -17,6 +17,7 @@ import 'core/session/session.dart';
 import 'core/session/token_revocations.dart';
 import 'features/comments/domain/comment.dart';
 import 'features/home/domain/home_widget_snapshot.dart';
+import 'features/savings/domain/savings_views.dart';
 
 /// Menghubungkan akun yang sedang masuk dengan siklus hidup app.
 ///
@@ -66,6 +67,12 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     // dikosongkan saat keluar.
     ref.listenManual(homeWidgetJsonProvider, (_, json) => _updateWidget(json), fireImmediately: true);
 
+    // Perkiraan kurs (v1.x): kurs hanya diambil kalau ada target yang mata uangnya bukan mata
+    // uang bawaan, misalnya begitu target dolar dibuat atau tiba dari pasangan.
+    ref.listenManual(needsExchangeRatesProvider, (_, needed) {
+      if (needed) unawaited(_refreshExchangeRates());
+    });
+
     final push = ref.read(pushServiceProvider);
     _pushSubscriptions
       ..add(push.foregroundMessages.listen(_onForegroundMessage))
@@ -101,6 +108,7 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
       case AppLifecycleState.resumed:
         _account?.sync.sync(retryNow: true).ignore();
         unawaited(_revokeLeftoverTokens());
+        unawaited(_refreshExchangeRates());
         _startLiveSync();
       // Tidak tampil lagi: berhenti sync berkala supaya tidak menguras baterai dan kuota.
       case AppLifecycleState.hidden || AppLifecycleState.paused || AppLifecycleState.detached:
@@ -144,6 +152,19 @@ class _AppServicesState extends ConsumerState<AppServices> with WidgetsBindingOb
     account.sync.sync().ignore();
     unawaited(_refreshSignedUrls(account));
     unawaited(_registerDevice(account, null));
+    unawaited(_refreshExchangeRates());
+  }
+
+  /// Kurs ECB untuk perkiraan di Tabungan (v1.x), hanya kalau ada target bermata uang lain.
+  /// Batas paling sering sekali per 6 jam diurus repository-nya.
+  Future<void> _refreshExchangeRates() async {
+    final account = ref.read(accountProvider);
+    if (account == null || !ref.read(needsExchangeRatesProvider)) return;
+    try {
+      await account.exchangeRates.refresh();
+    } on Object {
+      // 401 ditangani lewat sesi; selain itu dicoba lagi saat app kembali aktif.
+    }
   }
 
   /// `avatar_url` hanya berlaku 7 hari, jadi diambil ulang setiap app dibuka dari awal.

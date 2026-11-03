@@ -21,9 +21,9 @@ class MailLog {
     return path == null || path.isEmpty ? null : MailLog(path);
   }
 
-  /// Potongan kalimat di email atur ulang kata sandi dan email verifikasi.
-  static const String passwordReset = 'mengatur ulang kata sandi';
-  static const String verification = 'memverifikasi email';
+  /// Subjek email atur ulang kata sandi dan email verifikasi (kontrak, bagian Lupa kata sandi).
+  static const String passwordReset = 'Kode atur ulang kata sandi Denly Days';
+  static const String verification = 'Kode verifikasi email Denly Days';
 
   final String path;
   int _offset = 0;
@@ -31,7 +31,7 @@ class MailLog {
   /// Tandai akhir log saat ini; [code] hanya membaca email yang ditulis sesudahnya.
   void mark() => _offset = File(path).lengthSync();
 
-  /// Kode terakhir untuk [email] sejak [mark], dari email yang memuat [purpose]. Ditunggu sampai
+  /// Kode terakhir untuk [email] sejak [mark], dari email bersubjek [purpose]. Ditunggu sampai
   /// pekerja antrean selesai mengirimnya.
   Future<String> code(String email, String purpose, {Duration timeout = const Duration(seconds: 20)}) async {
     final deadline = DateTime.now().add(timeout);
@@ -63,8 +63,13 @@ class MailLog {
     final address = RegExp('(?<![\\w.+-])${RegExp.escape(email)}');
     String? found;
     for (final entry in text.split(RegExp(r'^\[\d{4}-', multiLine: true))) {
-      if (!address.hasMatch(entry) || !entry.contains(purpose)) continue;
-      found = RegExp(r'Denly Days: (\d{6})\.').firstMatch(entry)?.group(1) ?? found;
+      if (!address.hasMatch(entry) || !entry.contains('Subject: $purpose')) continue;
+      // Sejak 3 November 2026 kodenya di baris tersendiri di versi teks biasa; sebelumnya di
+      // akhir kalimat "... Denly Days: 482913.".
+      final code =
+          RegExp(r'^\s*(\d{6})\s*$', multiLine: true).firstMatch(entry)?.group(1) ??
+          RegExp(r'Denly Days: (\d{6})\.').firstMatch(entry)?.group(1);
+      found = code ?? found;
     }
     return found;
   }

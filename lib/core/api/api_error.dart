@@ -29,6 +29,10 @@ enum ApiErrorCode {
   /// Pencarian tempat sedang tidak tersedia (503, v1.x). Satu-satunya 5xx yang dianggap jawaban
   /// API: pesannya ditampilkan, dan pin tetap bisa dipasang langsung di peta.
   placesUnavailable('places_unavailable'),
+
+  /// Server belum pernah berhasil mengambil kurs ECB (503, v1.x). Kurs yang tersimpan di HP
+  /// tetap dipakai; kalau belum ada, perkiraan kurs tidak ditampilkan.
+  exchangeRatesUnavailable('exchange_rates_unavailable'),
   serverError('server_error');
 
   const ApiErrorCode(this.value);

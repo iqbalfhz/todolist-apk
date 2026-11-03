@@ -43,6 +43,12 @@ String formatDayShort(String ymd, {required int currentYear}) {
   return DateFormat(pattern, dateLocale).format(date);
 }
 
+/// "2 Nov", ditambah tahun kalau bukan [currentYear].
+String formatDayMonth(String ymd, {required int currentYear}) {
+  final date = parseYmd(ymd);
+  return DateFormat(date.year == currentYear ? 'd MMM' : 'd MMM y', dateLocale).format(date);
+}
+
 /// "28 Feb 2027".
 String formatDateMedium(String ymd) => DateFormat('d MMM y', dateLocale).format(parseYmd(ymd));
 

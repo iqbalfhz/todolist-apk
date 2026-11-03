@@ -13,6 +13,7 @@ import '../../../core/widgets/widgets.dart';
 import '../../tasks/presentation/task_text.dart';
 import '../domain/savings_entry.dart';
 import '../domain/savings_goal.dart';
+import 'currency_estimate.dart';
 import 'goal_form_sheet.dart';
 
 /// Buka lembar setor untuk [goal], lembar ambil kalau [withdrawal] (v1.x), atau ubah [entry]
@@ -143,6 +144,7 @@ class _DepositSheetState extends ConsumerState<DepositSheet> {
     final l10n = context.l10n;
     final entry = widget.entry;
     final withdrawal = widget.withdrawal;
+    final estimates = ref.watch(estimateContextProvider);
 
     return AppSheet(
       title: withdrawal
@@ -153,14 +155,35 @@ class _DepositSheetState extends ConsumerState<DepositSheet> {
         LabeledField(
           label: withdrawal ? l10n.withdrawAmountLabel : l10n.depositAmountLabel,
           help: withdrawal ? l10n.withdrawAvailable(formatMoney(widget.withdrawable, widget.goal.currency)) : null,
-          child: MoneyField(
-            controller: _amount,
-            currency: widget.goal.currency,
-            autofocus: entry == null,
-            errorText: _amountError,
-            onChanged: () {
-              if (_amountError != null) setState(() => _amountError = null);
-            },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              MoneyField(
+                controller: _amount,
+                currency: widget.goal.currency,
+                autofocus: entry == null,
+                errorText: _amountError,
+                onChanged: () {
+                  if (_amountError != null) setState(() => _amountError = null);
+                },
+              ),
+              // Perkiraan dalam mata uang bawaan (v1.x), ikut berubah selama nominal diketik.
+              if (estimates != null)
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _amount,
+                  builder: (context, value, _) {
+                    final amount = parseMoneyInput(value.text, widget.goal.currency);
+                    final estimate = amount == null || amount <= 0
+                        ? null
+                        : estimates.of(l10n, from: widget.goal.currency, amount: amount);
+                    if (estimate == null) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(top: AppDimens.gap6),
+                      child: Text(estimate.text, semanticsLabel: estimate.spoken, style: context.text.small),
+                    );
+                  },
+                ),
+            ],
           ),
         ),
         LabeledField(

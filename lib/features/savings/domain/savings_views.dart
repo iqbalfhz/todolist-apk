@@ -183,6 +183,15 @@ GoalProgress? primaryGoal(List<GoalProgress> goals) {
   return active.where((progress) => !progress.isAchieved).firstOrNull ?? active.firstOrNull;
 }
 
+/// Ada target, termasuk yang diarsipkan, yang mata uangnya bukan mata uang bawaan, sehingga
+/// perkiraan kurs perlu ditampilkan dan kurs perlu diambil (v1.x).
+final needsExchangeRatesProvider = Provider<bool>((ref) {
+  final me = ref.watch(householdProvider)?.me;
+  final goals = ref.watch(goalsProvider).value;
+  if (me == null || goals == null) return false;
+  return goals.any((goal) => goal.currency != me.defaultCurrency);
+});
+
 /// Semua target beserta progresnya; `null` selama cache belum terbaca.
 final goalProgressProvider = Provider<List<GoalProgress>?>((ref) {
   final goals = ref.watch(goalsProvider).value;

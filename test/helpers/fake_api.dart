@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
 
+import 'fixtures.dart';
+
 /// Satu request yang diterima [FakeApi].
 class SentRequest {
   SentRequest(this.method, this.path, this.body, this.query, [this.upload]);
@@ -70,6 +72,9 @@ class FakeApi implements ApiTransport {
 
   /// Hasil `GET /places` (v1.x).
   List<Map<String, dynamic>> places = [];
+
+  /// Isi `GET /exchange-rates` (v1.x); `null` berarti server belum pernah mengambil kurs (503).
+  Map<String, dynamic>? exchangeRates = exchangeRatesJson();
 
   /// Selama menyala, semua request gagal seperti HP tanpa koneksi.
   bool offline = false;
@@ -179,6 +184,19 @@ class FakeApi implements ApiTransport {
         return const ApiResponse(status: 204);
       }
       return ApiResponse(status: 200, body: {'data': spaces});
+    }
+
+    // Perkiraan kurs (v1.x): 503 selama server belum pernah berhasil mengambil kurs.
+    if (request.method == 'GET' && segments.first == 'exchange-rates') {
+      final rates = exchangeRates;
+      if (rates == null) {
+        throw const ApiError(
+          status: 503,
+          code: ApiErrorCode.exchangeRatesUnavailable,
+          message: 'Kurs belum tersedia. Coba lagi nanti.',
+        );
+      }
+      return ApiResponse(status: 200, body: {'data': rates});
     }
 
     if (request.method == 'GET' && segments.first == 'places') {

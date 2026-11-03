@@ -240,6 +240,34 @@ void main() {
         showListFormSheet(tester.element(find.byType(ManageListsScreen)), list: list).ignore();
       });
 
+      // Target dolar (v1.x): perkiraan dalam rupiah di kartu, Detail, dan saat setor, dengan
+      // nominal yang panjang.
+      const usdGoalId = '01m4dfr0yg0n6e2k5f3m8t1q2j';
+      await h.account.store.write(
+        EntityType.goal,
+        goalJson(id: usdGoalId, name: 'Tiket pesawat ke Jepang', currency: 'USD', targetAmount: 1234567890),
+        serverUpdatedAt: t0,
+      );
+      await h.account.store.write(
+        EntityType.entry,
+        entryJson(id: '01m4dfr2e3b7w9x1y5z8a0c4d6', savingsGoalId: usdGoalId, amount: 987654321),
+        serverUpdatedAt: t0,
+      );
+      await h.account.exchangeRates.refresh();
+      await go(tester, container, Routes.goal(usdGoalId));
+      expect(find.textContaining('kurs ECB'), findsWidgets);
+      await scrollThrough(tester);
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, 4000), warnIfMissed: false);
+      await settle(tester);
+      await withSheet(tester, container, () async {
+        await reveal(tester, find.text('Setor'));
+        await tester.tap(find.text('Setor'));
+        await settle(tester);
+        await tester.enterText(find.byType(TextField).first, '9876543,21');
+        await settle(tester);
+        expect(find.textContaining(RegExp(r'^≈ Rp[\d.]+ · kurs ECB')), findsOneWidget);
+      });
+
       await visit(tester, container, Routes.savings);
       await tester.tap(find.textContaining('Diarsipkan ('));
       await settle(tester);

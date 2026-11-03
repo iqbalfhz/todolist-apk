@@ -1,12 +1,12 @@
 # Kontrak API v0.1
 
-> Salinan dari dokumen perencanaan di claude.ai (tab "Kontrak API v0.1"), per 2 November 2026. Kalau berbeda, dokumen itu yang berlaku. Setiap kali kontrak berubah, perbarui salinan ini di repo `api` dan `mobile`.
+> Salinan dari dokumen perencanaan di claude.ai (tab "Kontrak API v0.1"), per 3 November 2026. Kalau berbeda, dokumen itu yang berlaku. Setiap kali kontrak berubah, perbarui salinan ini di repo `api` dan `mobile`.
 
-Rilis v0.1 butuh 25 endpoint di bawah `/api/v1`: semua data dibaca lewat satu pintu, `GET /sync`, dan setiap perubahan data dari antrean offline aman dikirim ulang. Laravel membangunnya persis seperti di sini, dan Flutter memanggilnya dengan bentuk data yang sama. Setelah endpoint jadi, dokumentasi otomatis Scramble menjadi acuan harian. Rilis v0.2 menambah 6 endpoint: 3 untuk Tanggal penting dan 3 untuk Perjalanan. Rilis v0.3 menambah 7 endpoint untuk Kenangan dan fotonya. Rilis v1.0 dimulai dari tugas berulang, tanpa endpoint baru, lalu keluar dari Ruang Bersama, hapus akun, dan ekspor data, yang masing-masing menambah satu endpoint. Penghapusan permanen catatan lama tidak menambah endpoint, dan lupa kata sandi serta verifikasi email menambah 4 endpoint, 2 di antaranya tanpa token. Rilis v1.x dimulai dari push sinkron, lalu penarikan tabungan, keduanya tanpa endpoint baru. Pin lokasi kenangan menambah satu endpoint baca untuk mencari tempat, dan reaksi serta komentar menambah 5 endpoint tulis. Masuk dengan Google menambah satu endpoint tanpa token. Tugas berulang di beberapa hari dan kenangan hari ini tidak menambah endpoint.
+Rilis v0.1 butuh 25 endpoint di bawah `/api/v1`: semua data dibaca lewat satu pintu, `GET /sync`, dan setiap perubahan data dari antrean offline aman dikirim ulang. Laravel membangunnya persis seperti di sini, dan Flutter memanggilnya dengan bentuk data yang sama. Setelah endpoint jadi, dokumentasi otomatis Scramble menjadi acuan harian. Rilis v0.2 menambah 6 endpoint: 3 untuk Tanggal penting dan 3 untuk Perjalanan. Rilis v0.3 menambah 7 endpoint untuk Kenangan dan fotonya. Rilis v1.0 dimulai dari tugas berulang, tanpa endpoint baru, lalu keluar dari Ruang Bersama, hapus akun, dan ekspor data, yang masing-masing menambah satu endpoint. Penghapusan permanen catatan lama tidak menambah endpoint, dan lupa kata sandi serta verifikasi email menambah 4 endpoint, 2 di antaranya tanpa token. Rilis v1.x dimulai dari push sinkron, lalu penarikan tabungan, keduanya tanpa endpoint baru. Pin lokasi kenangan menambah satu endpoint baca untuk mencari tempat, dan reaksi serta komentar menambah 5 endpoint tulis. Masuk dengan Google menambah satu endpoint tanpa token. Tugas berulang di beberapa hari dan kenangan hari ini tidak menambah endpoint. Perkiraan kurs menambah satu endpoint baca.
 
 ## Ringkasan endpoint
 
-Semua endpoint butuh token Sanctum, kecuali daftar, masuk, masuk dengan Google, dan atur ulang kata sandi (v1.0). Hanya enam yang membaca data (`GET /me`, `GET /spaces`, `GET /sync`, `GET /memories/{id}/photos` sejak v0.3, `GET /places` sejak v1.x, dan `GET /me/export` sejak v1.0); sisanya menulis.
+Semua endpoint butuh token Sanctum, kecuali daftar, masuk, masuk dengan Google, dan atur ulang kata sandi (v1.0). Hanya tujuh yang membaca data (`GET /me`, `GET /spaces`, `GET /sync`, `GET /memories/{id}/photos` sejak v0.3, `GET /places` dan `GET /exchange-rates` sejak v1.x, dan `GET /me/export` sejak v1.0); sisanya menulis.
 
 | Modul | Method | Endpoint | Fungsi |
 | --- | --- | --- | --- |
@@ -43,6 +43,7 @@ Semua endpoint butuh token Sanctum, kecuali daftar, masuk, masuk dengan Google, 
 | Tabungan | PUT | `/savings-entries/{id}` | Catat setoran |
 | Tabungan | PATCH | `/savings-entries/{id}` | Ubah setoran |
 | Tabungan | DELETE | `/savings-entries/{id}` | Hapus setoran |
+| Tabungan | GET | `/exchange-rates` | Kurs referensi harian untuk perkiraan nominal dalam mata uang bawaan (v1.x) |
 | Tanggal penting | PUT | `/special-dates/{id}` | Buat tanggal penting (v0.2) |
 | Tanggal penting | PATCH | `/special-dates/{id}` | Ubah tanggal penting (v0.2) |
 | Tanggal penting | DELETE | `/special-dates/{id}` | Hapus tanggal penting (v0.2) |
@@ -181,6 +182,7 @@ Contoh untuk `PUT /tasks/{id}` yang belum ada di server, sehingga `current` bern
 | 429 | `too_many_requests` | Terlalu sering | Tunggu sesuai header `Retry-After`, lalu coba lagi |
 | 5xx, tanpa koneksi, atau balasan bukan JSON | `server_error` atau tidak ada | Server, proxy, atau jaringan bermasalah | Coba lagi dengan jeda 2, 4, 8 detik dan seterusnya, maksimal 5 menit |
 | 503 | `places_unavailable` (v1.x) | Pencarian tempat sedang tidak tersedia: layanannya gangguan atau dimatikan di server | Tampilkan pesan; pin tetap bisa dipasang langsung di peta |
+| 503 | `exchange_rates_unavailable` (v1.x) | Server belum pernah berhasil mengambil kurs, misalnya dalam sejam pertama setelah fitur ini di-deploy | Pakai kurs yang tersimpan di HP kalau ada; kalau tidak, jangan tampilkan perkiraan dan coba lagi nanti |
 
 - App hanya menghapus data atau membuang isi antrean kalau balasannya JSON dengan `code` yang dikenal. 404 atau 502 tanpa JSON, misalnya dari Traefik saat Coolify sedang deploy, diperlakukan seperti 5xx.
 - "Pakai `current`" berarti: kalau `null`, hapus versi lokal; kalau terisi, timpa versi lokal dengannya. Kalau DELETE daftar ditolak, app juga memulihkan tugas yang tadi ikut terhapus di cache.
@@ -257,8 +259,8 @@ Server mengirim email berisi kode 6 angka untuk mengatur ulang kata sandi dan un
 - Saat daftar dengan email dan kata sandi, server langsung mengirim kode verifikasi. Akun dari Masuk dengan Google, termasuk akun lama yang baru disambungkan ke Google, langsung terverifikasi karena Google sudah memeriksa emailnya.
 - Sumber user punya kolom baru `email_verified_at`. Selama `null`, app menampilkan ajakan verifikasi di Pengaturan, dengan tombol kirim kode dan kolom kode. Email yang belum diverifikasi tidak membatasi apa pun.
 - Email dikirim lewat antrean, jadi balasan tidak menunggu pengiriman, dan pengiriman yang gagal dicoba lagi. Pengirimnya "Denly Days <noreply@denlydays.iqbalfhz.my.id>" lewat SMTP Resend, diatur dengan variabel `MAIL_*` di Coolify, tanpa paket baru. Sebelum variabel itu diisi, email hanya ditulis ke log server, jadi app yang memakai fitur ini dirilis setelah pemilik memastikan email sampai.
-- Email kode atur ulang: subjek "Kode atur ulang kata sandi Denly Days", isi "Kode untuk mengatur ulang kata sandi Denly Days: {kode}. Kode ini berlaku 60 menit. Kalau kamu tidak memintanya, abaikan email ini; kata sandimu tidak berubah."
-- Email verifikasi: subjek "Kode verifikasi email Denly Days", isi "Kode untuk memverifikasi email akun Denly Days: {kode}. Kode ini berlaku 60 menit. Kalau kamu tidak membuat akun Denly Days, abaikan email ini."
+- Email berformat HTML, dengan versi teks biasa untuk aplikasi email yang tidak menampilkan HTML: kepala bertuliskan Denly Days berwarna mawar, kode dalam kotak besar di tengah, dan catatan kaki. Email atur ulang bersubjek "Kode atur ulang kata sandi Denly Days" dan berisi "Halo {nama},", lalu "Kami menerima permintaan untuk mengatur ulang kata sandi akun Denly Days yang memakai email ini. Masukkan kode berikut di app untuk membuat kata sandi baru:", kodenya, "Kode ini berlaku selama 60 menit dan hanya bisa dipakai sekali. Demi keamanan akunmu, jangan berikan kode ini kepada siapa pun, termasuk orang yang mengaku dari Denly Days.", "Kalau kamu tidak meminta pengaturan ulang kata sandi, abaikan saja email ini. Kata sandimu tidak berubah dan akunmu tetap aman.", dan penutup "Salam hangat, Denly Days" (diperbarui 3 November 2026).
+- Email verifikasi bersubjek "Kode verifikasi email Denly Days" dengan pola yang sama, tetapi pembukanya "Terima kasih sudah memakai Denly Days. Untuk memastikan email ini benar milikmu, masukkan kode berikut di app:" dan kalimat sebelum penutupnya "Kalau kamu tidak membuat akun Denly Days, abaikan saja email ini." Kedua email diakhiri catatan kaki "Email ini dikirim otomatis, jadi balasan ke alamat ini tidak dibaca. Butuh bantuan? Hubungi {SUPPORT_EMAIL}."; kalimat bantuan itu tidak ditulis selama SUPPORT_EMAIL kosong.
 - Kode yang kedaluwarsa dihapus `records:purge`, dan semua kode ikut terhapus saat akunnya dihapus.
 - Halaman `/privasi` diperbarui dengan tanggal berlaku baru. Resend ditambahkan ke penyedia layanan ("Resend mengirim email berisi kode verifikasi dan kode atur ulang kata sandi, jadi menerima alamat emailmu dan isi email itu."), dan masa simpan ditambah "Kode verifikasi dan kode atur ulang kata sandi disimpan sebagai hash, lalu dihapus setelah dipakai atau paling lama sehari setelah kedaluwarsa."
 - Mengubah email dan mengubah kata sandi dari Pengaturan belum ada. Reset manual oleh admin lewat panel tetap bisa.
@@ -708,6 +710,41 @@ Penarikan dicatat sebagai setoran dengan `type` `withdrawal`, jadi tidak ada end
 - Hanya dikirim kalau `notification_prefs.savings_reminders` penerima menyala. Kunci ini baru di v0.2 dan bawaannya menyala.
 - Judul push adalah nama target, isinya "Waktunya menabung. Terkumpul {persen}% dari target." Persen dihitung dari total bersih, dibulatkan ke bawah, dan paling kecil 0 (v1.x).
 - Paling banyak sekali per target per hari. Yang telat lebih dari 30 menit dilewati.
+
+### Perkiraan kurs (v1.x)
+
+Target yang mata uangnya berbeda dari `default_currency` menampilkan perkiraan nominalnya dalam mata uang bawaan, misalnya "$100,00" lalu "≈ Rp1.813.610 · kurs ECB 2 Nov". Ini hanya tampilan: target dan setoran tetap disimpan dalam mata uang target, dan tidak ada data yang dikonversi.
+
+`GET /exchange-rates` dipanggil langsung, tidak lewat antrean, jadi butuh koneksi:
+
+```json
+{
+  "data": {
+    "base": "EUR",
+    "date": "2026-11-02",
+    "fetched_at": "2026-11-03T07:00:03.512345Z",
+    "rates": {
+      "EUR": "1",
+      "IDR": "20341.45",
+      "JPY": "177.10",
+      "MYR": "4.5655",
+      "SGD": "1.4344",
+      "USD": "1.1216"
+    }
+  }
+}
+```
+
+- `rates` berisi banyaknya satuan utama tiap mata uang untuk 1 `base`, sebagai teks desimal persis seperti diterbitkan ECB, supaya tidak ada pembulatan float di JSON. Isinya selalu keenam kode di tabel Uang, dan `base` selalu `EUR`.
+- Perkiraan = nominal ÷ `rates[mata uang target]` × `rates[default_currency]`, dengan nominal dalam satuan utama (satuan terkecil dibagi menurut desimal di tabel Uang), lalu dibulatkan ke desimal mata uang bawaan. Contoh di atas: 100 ÷ 1,1216 × 20.341,45 = 1.813.610,02, jadi Rp1.813.610.
+- `date` adalah tanggal kurs dari ECB, dan `fetched_at` waktu terakhir server berhasil mengambilnya.
+- Sumbernya kurs referensi harian Bank Sentral Eropa (ECB), yang diambil server langsung dari situs ECB, jadi HP tidak menghubungi pihak ketiga. ECB menerbitkannya setiap hari kerja sekitar pukul 16.00 waktu Frankfurt (21.00–22.00 WIB); di akhir pekan dan hari libur, `date` tetap tanggal hari kerja terakhir.
+- Server mengambil kurs sekali sejam dan menyimpan yang terakhir, jadi `GET /exchange-rates` tidak pernah menunggu ECB, dan kurs baru tersedia paling lambat sejam setelah terbit. Kalau pengambilan gagal atau isinya tidak lengkap, server tetap membalas kurs terakhir dengan `date` lamanya.
+- Kalau server belum pernah berhasil mengambil kurs, misalnya dalam sejam pertama setelah fitur ini di-deploy, balasannya 503 `exchange_rates_unavailable`, dan app tidak menampilkan perkiraan.
+- Endpoint ini ikut batas umum 120 per menit per akun. App mengambil kurs paling sering sekali per 6 jam dan menyimpannya di HP, supaya perkiraan tetap tampil saat offline beserta tanggal kursnya.
+- Di app, perkiraan tampil di kartu target pada tab Tabungan, di Detail tabungan (terkumpul dan target), dan di bawah isian nominal saat setor atau ambil, selalu dengan "ECB" dan tanggal kursnya.
+- Statistik ECB boleh dipakai gratis selama angkanya tidak diubah dan sumbernya disebut ([kebijakan pemakaian ulang ECB](https://www.ecb.europa.eu/stats/ecb_statistics/governance_and_quality_framework/html/usage_policy.en.html)). `/syarat` mendapat satu kalimat di bagian Layanan: "Perkiraan kurs di Tabungan memakai kurs referensi harian Bank Sentral Eropa (ECB) dan hanya gambaran. Kurs di bank atau tempat penukaran uang bisa berbeda." `/privasi` tidak berubah, karena tidak ada data pengguna yang dikirim ke ECB.
+- Tidak ada kolom atau koleksi sync baru, jadi app tidak perlu sync penuh.
 
 ## Tanggal penting (v0.2)
 
@@ -1477,7 +1514,7 @@ Delapan butir ini merancang push "hari ini setahun lalu" untuk kenangan di lingk
 
 ### Lupa kata sandi dan verifikasi email (v1.0)
 
-Sepuluh butir ini merancang lupa kata sandi di app, yang sejak v0.1 masih lewat reset manual oleh admin, dan verifikasi email, dan disetujui pada 2 November 2026. Butir ketujuh adalah pilihan pemilik soal penyedia dan alamat pengirim email.
+Sepuluh butir ini merancang lupa kata sandi di app, yang sejak v0.1 masih lewat reset manual oleh admin, dan verifikasi email, dan disetujui pada 2 November 2026. Butir ketujuh adalah pilihan pemilik soal penyedia dan alamat pengirim email. Butir kesebelas ditambahkan dan disetujui pada 3 November 2026, setelah email pertama sampai.
 
 - [x] Email berisi kode 6 angka yang diketik di app, bukan tautan, karena app tidak memakai tautan dalam (deep link).
 - [x] Kode berlaku 60 menit, sekali pakai, disimpan sebagai hash, dan batal setelah 5 kali salah. Kode baru membatalkan kode lama.
@@ -1489,3 +1526,18 @@ Sepuluh butir ini merancang lupa kata sandi di app, yang sejak v0.1 masih lewat 
 - [x] Batas baru: `forgot-password` 3 per 15 menit per email dan 10 per jam per IP, `reset-password` 10 per menit per IP, kirim kode verifikasi 3 per 15 menit per akun, dan `confirm` 10 per menit per akun.
 - [x] Teks kedua email dan perubahan `/privasi` seperti di atas, dengan tanggal berlaku baru.
 - [x] Ubah email dan ubah kata sandi dari Pengaturan belum termasuk.
+- [x] Email kode berformat HTML berwarna mawar dengan versi teks biasa, menyapa nama akun, dan memuat pesan keamanan serta catatan kaki, sesuai teks di atas, supaya terlihat profesional.
+
+### Perkiraan kurs (v1.x)
+
+Sembilan butir ini merancang perkiraan kurs di Tabungan, dari usulan sesi Flutter atas permintaan pemilik, dan disetujui pada 3 November 2026.
+
+- [x] Hanya tampilan: target dan setoran tetap disimpan dalam mata uang target, tanpa kolom baru dan tanpa konversi data.
+- [x] Endpoint baca baru `GET /exchange-rates` berisi `base`, `date`, `fetched_at`, dan `rates` untuk keenam kode di tabel Uang sebagai teks desimal. Namanya `/exchange-rates`, bukan `/rates` seperti di usulan, supaya jelas isinya kurs mata uang.
+- [x] Sumbernya kurs referensi harian ECB, diambil server langsung dari situs ECB, bukan lewat Frankfurter. Angkanya sama, karena Frankfurter menyalin kurs ECB, tetapi tanpa layanan perantara yang bisa berhenti sewaktu-waktu.
+- [x] Server mengambil kurs sekali sejam, bukan sekali sehari, supaya gangguan sesaat atau deploy tidak membuat kurs telat sehari. `GET /exchange-rates` selalu membalas kurs tersimpan tanpa menunggu ECB.
+- [x] Pengambilan yang gagal atau tidak lengkap tidak menimpa kurs terakhir, begitu juga kurs yang tanggalnya lebih lama dari yang tersimpan.
+- [x] Kode error baru 503 `exchange_rates_unavailable`, hanya saat server belum pernah berhasil mengambil kurs.
+- [x] Tanpa batas khusus: ikut batas umum 120 per menit per akun, karena server hanya membaca kurs tersimpan. App mengambilnya paling sering sekali per 6 jam dan menyimpannya di HP untuk dipakai saat offline.
+- [x] App menulis "ECB" dan tanggal kurs di dekat setiap perkiraan, sesuai syarat pemakaian ulang statistik ECB, dan `/syarat` mendapat satu kalimat bahwa perkiraan kurs hanya gambaran, dengan tanggal berlaku baru. `/privasi` tidak berubah.
+- [x] Tidak ada koleksi sync baru, jadi app tidak perlu sync penuh.
