@@ -63,6 +63,41 @@ class FakeApi implements ApiTransport {
     },
   );
 
+  /// Kata sandi akun "di server", untuk konfirmasi ganti kata sandi dan ganti email (v1.x).
+  String password = 'sandi-lama-123';
+
+  /// ID token dari akun Google yang tersambung; token lain dibalas `google_token_invalid`.
+  String googleIdToken = 'eyJhbGciOiJSUzI1NiJ9.palsu.tanda';
+
+  /// Email yang sudah dipakai akun lain (v1.x).
+  Set<String> takenEmails = {'dipakai@email.com'};
+
+  /// Email tujuan kode ganti email terakhir (v1.x).
+  String? pendingEmail;
+
+  /// Akun admin: tidak bisa mengganti email atau menghapus akunnya lewat app (v1.x).
+  bool admin = false;
+
+  static ApiError _emailRejected(String message) => ApiError(
+    status: 422,
+    code: ApiErrorCode.validationFailed,
+    message: message,
+    errors: {
+      'email': [message],
+    },
+  );
+
+  /// Konfirmasi pemilik akun seperti server: kata sandi kalau dikirim, selain itu ID token Google.
+  void _confirmOwner(Object? password, Object? idToken, String wrongPassword) {
+    if (password != null) {
+      if (password != this.password) throw apiError(422, ApiErrorCode.invalidCredentials, message: wrongPassword);
+      return;
+    }
+    if (idToken != googleIdToken) {
+      throw apiError(422, ApiErrorCode.googleTokenInvalid, message: 'Pilih akun Google yang tersambung ke akun ini.');
+    }
+  }
+
   /// Isi `GET /me/export` (v1.0), dan teks mentahnya kalau berbeda dari JSON yang ditulis ulang.
   Map<String, dynamic>? exportFile;
   String? exportRaw;
@@ -167,9 +202,41 @@ class FakeApi implements ApiTransport {
       return ApiResponse(status: 200, body: {'data': me});
     }
 
+    // Ganti atau buat kata sandi (v1.x): 204, dan HP ini tetap masuk.
+    if (segments.first == 'me' && segments.length > 1 && segments[1] == 'password') {
+      _confirmOwner(request.body?['current_password'], request.body?['id_token'], 'Kata sandi saat ini salah.');
+      password = request.body!['password'] as String;
+      me = {...?me, 'has_password': true, 'updated_at': stamp()};
+      return const ApiResponse(status: 204);
+    }
+
+    // Ganti email (v1.x): kode ke email baru, lalu kode yang benar mengganti emailnya.
+    if (segments.first == 'me' && segments.length > 1 && segments[1] == 'email-change') {
+      if (segments.length == 2) {
+        final email = (request.body?['email'] as String? ?? '').trim().toLowerCase();
+        if (admin) throw _emailRejected('Email akun admin hanya bisa diganti lewat server.');
+        if (email == (me?['email'] as String? ?? '').toLowerCase()) {
+          throw _emailRejected('Email baru sama dengan email sekarang.');
+        }
+        if (takenEmails.contains(email)) throw _emailRejected('Email ini sudah dipakai akun lain.');
+        _confirmOwner(request.body?['password'], request.body?['id_token'], 'Kata sandi salah.');
+        pendingEmail = email;
+        return const ApiResponse(status: 202);
+      }
+      final email = pendingEmail;
+      if (email == null || request.body?['code'] != emailCode) throw _codeRejected();
+      if (takenEmails.contains(email)) throw _emailRejected('Email ini sudah dipakai akun lain.');
+      me = {...?me, 'email': email, 'email_verified_at': stamp(), 'updated_at': stamp()};
+      pendingEmail = null;
+      return ApiResponse(status: 200, body: {'data': me});
+    }
+
     if (segments.first == 'me') {
-      // Hapus akun (v1.0).
-      if (request.method == 'DELETE') return const ApiResponse(status: 204);
+      // Hapus akun (v1.0). Akun admin ditolak (v1.x).
+      if (request.method == 'DELETE') {
+        if (admin) throw _emailRejected('Akun admin hanya bisa dihapus lewat server.');
+        return const ApiResponse(status: 204);
+      }
       if (request.method == 'PATCH') me = {...?me, ...?request.body, 'updated_at': stamp()};
       return ApiResponse(status: 200, body: {'data': me});
     }

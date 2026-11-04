@@ -2473,6 +2473,138 @@ abstract class AppLocalizations {
   /// **'Ekspor data dulu'**
   String get exportFirst;
 
+  /// No description provided for @settingsAccountData.
+  ///
+  /// In id, this message translates to:
+  /// **'Akun dan data'**
+  String get settingsAccountData;
+
+  /// No description provided for @settingsChangeEmail.
+  ///
+  /// In id, this message translates to:
+  /// **'Ganti email'**
+  String get settingsChangeEmail;
+
+  /// No description provided for @settingsChangePassword.
+  ///
+  /// In id, this message translates to:
+  /// **'Ganti kata sandi'**
+  String get settingsChangePassword;
+
+  /// No description provided for @settingsChangePasswordSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Akunmu otomatis keluar dari HP lain'**
+  String get settingsChangePasswordSub;
+
+  /// No description provided for @settingsCreatePassword.
+  ///
+  /// In id, this message translates to:
+  /// **'Buat kata sandi'**
+  String get settingsCreatePassword;
+
+  /// No description provided for @settingsCreatePasswordSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Supaya bisa masuk dengan email juga, tanpa Google'**
+  String get settingsCreatePasswordSub;
+
+  /// No description provided for @passwordChangeTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Ganti kata sandi'**
+  String get passwordChangeTitle;
+
+  /// No description provided for @passwordCreateTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Buat kata sandi'**
+  String get passwordCreateTitle;
+
+  /// No description provided for @passwordChangeIntro.
+  ///
+  /// In id, this message translates to:
+  /// **'Setelah diganti, akunmu keluar dari HP lain. HP ini tetap masuk.'**
+  String get passwordChangeIntro;
+
+  /// No description provided for @passwordCreateIntro.
+  ///
+  /// In id, this message translates to:
+  /// **'Akunmu dibuat lewat Google. Buat kata sandi supaya bisa masuk dengan {email} dan kata sandi juga. Setelah itu, akunmu keluar dari HP lain, dan HP ini tetap masuk.'**
+  String passwordCreateIntro(String email);
+
+  /// No description provided for @fieldCurrentPassword.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi saat ini'**
+  String get fieldCurrentPassword;
+
+  /// No description provided for @accountGoogleHint.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih akun Google yang tersambung ke akun ini.'**
+  String get accountGoogleHint;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi baru tersimpan. Akunmu sudah keluar dari HP lain.'**
+  String get passwordChanged;
+
+  /// No description provided for @passwordCreated.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi tersimpan. Sekarang kamu juga bisa masuk dengan email dan kata sandi.'**
+  String get passwordCreated;
+
+  /// No description provided for @passwordTooOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Kata sandi sudah beberapa kali diganti. Coba lagi sekitar {minutes} menit lagi.'**
+  String passwordTooOften(int minutes);
+
+  /// No description provided for @emailChangeTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Ganti email'**
+  String get emailChangeTitle;
+
+  /// No description provided for @emailChangeIntro.
+  ///
+  /// In id, this message translates to:
+  /// **'Email akunmu sekarang {email}. Kami kirim kode 6 angka ke email baru untuk memastikan alamatnya benar.'**
+  String emailChangeIntro(String email);
+
+  /// No description provided for @emailChangeGoogleNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Masuk dengan Google tetap memakai akun Google yang sama.'**
+  String get emailChangeGoogleNote;
+
+  /// No description provided for @fieldNewEmail.
+  ///
+  /// In id, this message translates to:
+  /// **'Email baru'**
+  String get fieldNewEmail;
+
+  /// No description provided for @errorEmailSame.
+  ///
+  /// In id, this message translates to:
+  /// **'Email baru sama dengan email sekarang.'**
+  String get errorEmailSame;
+
+  /// No description provided for @emailChangeConfirm.
+  ///
+  /// In id, this message translates to:
+  /// **'Ganti email'**
+  String get emailChangeConfirm;
+
+  /// No description provided for @emailChanged.
+  ///
+  /// In id, this message translates to:
+  /// **'Email akunmu sekarang {email}.'**
+  String emailChanged(String email);
+
   /// No description provided for @settingsDeleteAccount.
   ///
   /// In id, this message translates to:

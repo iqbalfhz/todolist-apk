@@ -8,7 +8,7 @@
 // Dilewati kecuali E2E_API_URL diisi; cara menjalankan dan batasannya sama dengan
 // `api_e2e_test.dart`. Sekali jalan memakai tiga permintaan daftar, jadi beri jeda
 // satu menit sebelum menjalankan tes ujung ke ujung mana pun lagi. Lupa kata sandi dan
-// verifikasi email (v1.0) memakai kode dari email hanya kalau E2E_MAIL_LOG diisi
+// verifikasi email (v1.0), serta ganti email (v1.x), memakai kode dari email hanya kalau E2E_MAIL_LOG diisi
 // (`mail_log.dart`); tanpa itu, hanya kode yang salah yang dicoba. Perkiraan kurs (v1.x) butuh
 // kurs di API lokal: jalankan `php artisan exchange-rates:fetch` sekali untuk database tes.
 //
@@ -148,9 +148,10 @@ void main() {
   const wrongCode = 'Kode salah atau sudah tidak berlaku. Minta kode baru kalau perlu.';
 
   final stamp = DateTime.now().millisecondsSinceEpoch;
-  final email = 'ui-aku-$stamp@contoh.test';
+  var email = 'ui-aku-$stamp@contoh.test';
   final partnerEmail = 'ui-pasangan-$stamp@contoh.test';
-  const password = 'rahasia-banget';
+  // Keduanya diganti di tengah tes (v1.x).
+  var password = 'rahasia-banget';
 
   setUpAll(() async {
     await prepareAppTests();
@@ -317,6 +318,15 @@ void main() {
     Future<void> go(String path) async {
       container.read(routerProvider).go(path);
       await net();
+    }
+
+    /// Tunggu sampai [finder] tampil. [net] bisa selesai terlalu cepat kalau app membaca
+    /// database dulu sebelum mengirim request, misalnya token FCM saat ganti kata sandi.
+    Future<void> until(Finder finder) async {
+      for (var i = 0; i < 20 && finder.evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+        await net();
+      }
     }
 
     Future<void> pullToRefresh() async {
@@ -720,6 +730,72 @@ void main() {
     expect(profile['birth_date'], '--01-01');
     expect(profile['color'], 'biru');
     expect(find.text('Profil disimpan.'), findsOneWidget);
+
+    step('Ganti kata sandi (v1.x): yang salah ditolak server; HP lain keluar, HP ini tetap masuk');
+    // "HP lain": token kedua untuk akun yang sama.
+    final otherPhone = await asPartner(
+      () =>
+          AuthRepository(DioApiTransport(baseUrl: baseUrl, token: () => null))
+              .login(email: email, password: password, deviceName: 'HP lain'),
+    );
+    await go(Routes.settings);
+    await reveal(find.text('Ganti kata sandi'));
+    await tap(find.text('Ganti kata sandi'));
+    const newPassword = 'kata-sandi-baru-123';
+    await tester.enterText(field('Kata sandi saat ini'), 'bukan-kata-sandinya');
+    await tester.enterText(field('Kata sandi baru'), newPassword);
+    await tap(find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+    await until(find.text('Kata sandi saat ini salah.'));
+    expect(find.text('Kata sandi saat ini salah.'), findsOneWidget);
+    await tester.enterText(field('Kata sandi saat ini'), password);
+    await tap(find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+    await until(find.text('Kata sandi baru tersimpan. Akunmu sudah keluar dari HP lain.'));
+    expect(find.text('Kata sandi baru tersimpan. Akunmu sudah keluar dari HP lain.'), findsOneWidget);
+    // Sync berkala bisa menyelip sesudahnya, jadi yang dicek isi log, bukan baris terakhirnya.
+    expect(transport.log.where((line) => line == 'PUT /me/password'), hasLength(2));
+    password = newPassword;
+    final otherPhoneAnswer = await asPartner(() async {
+      try {
+        await DioApiTransport(baseUrl: baseUrl, token: () => otherPhone.token).send('GET', '/me');
+        return 'masih masuk';
+      } on ApiError catch (error) {
+        return error.code.value;
+      }
+    });
+    expect(otherPhoneAnswer, 'unauthenticated');
+    expect(((await server('/me'))['data'] as Map<String, dynamic>)['has_password'], isTrue);
+    // Snackbar-nya bisa menutupi baris berikutnya.
+    await tester.pump(const Duration(seconds: 5));
+    await net();
+
+    step('Ganti email (v1.x): kode yang salah untuk email baru ditolak server');
+    final newEmail = 'ui-aku-baru-$stamp@contoh.test';
+    await reveal(find.text('Ganti email'));
+    await tap(find.text('Ganti email'));
+    await tester.enterText(field('Email baru'), newEmail);
+    await tester.enterText(field('Kata sandi'), password);
+    mail?.mark();
+    await tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+    expect(transport.log.where((line) => line == 'POST /me/email-change'), hasLength(1));
+    expect(find.text('Kode sudah dikirim ke $newEmail. Cek juga folder spam.'), findsOneWidget);
+    await tester.enterText(field('Kode dari email'), '000000');
+    await tap(find.widgetWithText(FilledButton, 'Ganti email'));
+    expect(find.text(wrongCode), findsOneWidget);
+    if (mail != null) {
+      step('Kode dari email baru: email akun berganti dan tetap terverifikasi');
+      final code = await tester.runAsync(() => mail.code(newEmail, MailLog.emailChange));
+      await tester.enterText(field('Kode dari email'), code!);
+      await tap(find.widgetWithText(FilledButton, 'Ganti email'));
+      expect(find.text('Email akunmu sekarang $newEmail.'), findsOneWidget);
+      final changed = (await server('/me'))['data'] as Map<String, dynamic>;
+      expect(changed['email'], newEmail);
+      expect(changed['email_verified_at'], isNotNull);
+      email = newEmail;
+      await tester.pump(const Duration(seconds: 5));
+      await net();
+    }
+    await go(Routes.settings);
+    await reveal(find.text('Belum berpasangan · ajak pasanganmu'), up: true);
 
     // ---------------------------------------------------------------- berpasangan
 

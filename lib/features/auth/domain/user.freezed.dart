@@ -17,7 +17,10 @@ T _$identity<T>(T value) => value;
 mixin _$User {
 
  String get id; String get name; String get email;/// Waktu email diverifikasi (v1.0), atau `null` selama belum. Tidak membatasi apa pun.
- DateTime? get emailVerifiedAt; String get color; String get timezone; String get locale; String get defaultCurrency;/// `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi.
+ DateTime? get emailVerifiedAt;/// `false` untuk akun dari Masuk dengan Google yang belum punya kata sandi (v1.x): ganti
+/// email dan buat kata sandi lalu dikonfirmasi dengan akun Google, bukan kata sandi. Profil
+/// yang tersimpan sebelum kolom ini ada dianggap punya kata sandi sampai diambil ulang.
+ bool get hasPassword; String get color; String get timezone; String get locale; String get defaultCurrency;/// `YYYY-MM-DD`, atau `--MM-DD` kalau tahun tidak diisi.
  String? get birthDate; NotificationPrefs get notificationPrefs; String? get avatarUrl; int get avatarVersion;/// Kode undangan yang masih berlaku, atau `null`.
  Invitation? get invitation; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of User
@@ -33,20 +36,20 @@ $UserCopyWith<User> get copyWith => _$UserCopyWithImpl<User>(this as User, _$ide
 @override
 bool operator ==(Object other) {
   final _this = this as User;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.emailVerifiedAt, _this.emailVerifiedAt) || other.emailVerifiedAt == _this.emailVerifiedAt)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.timezone, _this.timezone) || other.timezone == _this.timezone)&&(identical(other.locale, _this.locale) || other.locale == _this.locale)&&(identical(other.defaultCurrency, _this.defaultCurrency) || other.defaultCurrency == _this.defaultCurrency)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.notificationPrefs, _this.notificationPrefs) || other.notificationPrefs == _this.notificationPrefs)&&(identical(other.avatarUrl, _this.avatarUrl) || other.avatarUrl == _this.avatarUrl)&&(identical(other.avatarVersion, _this.avatarVersion) || other.avatarVersion == _this.avatarVersion)&&(identical(other.invitation, _this.invitation) || other.invitation == _this.invitation)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is User&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.email, _this.email) || other.email == _this.email)&&(identical(other.emailVerifiedAt, _this.emailVerifiedAt) || other.emailVerifiedAt == _this.emailVerifiedAt)&&(identical(other.hasPassword, _this.hasPassword) || other.hasPassword == _this.hasPassword)&&(identical(other.color, _this.color) || other.color == _this.color)&&(identical(other.timezone, _this.timezone) || other.timezone == _this.timezone)&&(identical(other.locale, _this.locale) || other.locale == _this.locale)&&(identical(other.defaultCurrency, _this.defaultCurrency) || other.defaultCurrency == _this.defaultCurrency)&&(identical(other.birthDate, _this.birthDate) || other.birthDate == _this.birthDate)&&(identical(other.notificationPrefs, _this.notificationPrefs) || other.notificationPrefs == _this.notificationPrefs)&&(identical(other.avatarUrl, _this.avatarUrl) || other.avatarUrl == _this.avatarUrl)&&(identical(other.avatarVersion, _this.avatarVersion) || other.avatarVersion == _this.avatarVersion)&&(identical(other.invitation, _this.invitation) || other.invitation == _this.invitation)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as User;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.email,_this.emailVerifiedAt,_this.color,_this.timezone,_this.locale,_this.defaultCurrency,_this.birthDate,_this.notificationPrefs,_this.avatarUrl,_this.avatarVersion,_this.invitation,_this.createdAt,_this.updatedAt);
+  return Object.hash(runtimeType,_this.id,_this.name,_this.email,_this.emailVerifiedAt,_this.hasPassword,_this.color,_this.timezone,_this.locale,_this.defaultCurrency,_this.birthDate,_this.notificationPrefs,_this.avatarUrl,_this.avatarVersion,_this.invitation,_this.createdAt,_this.updatedAt);
 }
 
 @override
 String toString() {
   final _this = this as User;
-  return 'User(id: ${_this.id}, name: ${_this.name}, email: ${_this.email}, emailVerifiedAt: ${_this.emailVerifiedAt}, color: ${_this.color}, timezone: ${_this.timezone}, locale: ${_this.locale}, defaultCurrency: ${_this.defaultCurrency}, birthDate: ${_this.birthDate}, notificationPrefs: ${_this.notificationPrefs}, avatarUrl: ${_this.avatarUrl}, avatarVersion: ${_this.avatarVersion}, invitation: ${_this.invitation}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
+  return 'User(id: ${_this.id}, name: ${_this.name}, email: ${_this.email}, emailVerifiedAt: ${_this.emailVerifiedAt}, hasPassword: ${_this.hasPassword}, color: ${_this.color}, timezone: ${_this.timezone}, locale: ${_this.locale}, defaultCurrency: ${_this.defaultCurrency}, birthDate: ${_this.birthDate}, notificationPrefs: ${_this.notificationPrefs}, avatarUrl: ${_this.avatarUrl}, avatarVersion: ${_this.avatarVersion}, invitation: ${_this.invitation}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -57,7 +60,7 @@ abstract mixin class $UserCopyWith<$Res>  {
   factory $UserCopyWith(User value, $Res Function(User) _then) = _$UserCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String email, DateTime? emailVerifiedAt, String color, String timezone, String locale, String defaultCurrency, String? birthDate, NotificationPrefs notificationPrefs, String? avatarUrl, int avatarVersion, Invitation? invitation, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, DateTime? emailVerifiedAt, bool hasPassword, String color, String timezone, String locale, String defaultCurrency, String? birthDate, NotificationPrefs notificationPrefs, String? avatarUrl, int avatarVersion, Invitation? invitation, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -74,13 +77,14 @@ class _$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? emailVerifiedAt = freezed,Object? color = null,Object? timezone = null,Object? locale = null,Object? defaultCurrency = null,Object? birthDate = freezed,Object? notificationPrefs = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? invitation = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? emailVerifiedAt = freezed,Object? hasPassword = null,Object? color = null,Object? timezone = null,Object? locale = null,Object? defaultCurrency = null,Object? birthDate = freezed,Object? notificationPrefs = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? invitation = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(User(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
+as DateTime?,hasPassword: null == hasPassword ? _self.hasPassword : hasPassword // ignore: cast_nullable_to_non_nullable
+as bool,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
 as String,timezone: null == timezone ? _self.timezone : timezone // ignore: cast_nullable_to_non_nullable
 as String,locale: null == locale ? _self.locale : locale // ignore: cast_nullable_to_non_nullable
 as String,defaultCurrency: null == defaultCurrency ? _self.defaultCurrency : defaultCurrency // ignore: cast_nullable_to_non_nullable
@@ -197,10 +201,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  DateTime? emailVerifiedAt,  String color,  String timezone,  String locale,  String defaultCurrency,  String? birthDate,  NotificationPrefs notificationPrefs,  String? avatarUrl,  int avatarVersion,  Invitation? invitation,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String email,  DateTime? emailVerifiedAt,  bool hasPassword,  String color,  String timezone,  String locale,  String defaultCurrency,  String? birthDate,  NotificationPrefs notificationPrefs,  String? avatarUrl,  int avatarVersion,  Invitation? invitation,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.color,_that.timezone,_that.locale,_that.defaultCurrency,_that.birthDate,_that.notificationPrefs,_that.avatarUrl,_that.avatarVersion,_that.invitation,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.hasPassword,_that.color,_that.timezone,_that.locale,_that.defaultCurrency,_that.birthDate,_that.notificationPrefs,_that.avatarUrl,_that.avatarVersion,_that.invitation,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -218,10 +222,10 @@ return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.colo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  DateTime? emailVerifiedAt,  String color,  String timezone,  String locale,  String defaultCurrency,  String? birthDate,  NotificationPrefs notificationPrefs,  String? avatarUrl,  int avatarVersion,  Invitation? invitation,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String email,  DateTime? emailVerifiedAt,  bool hasPassword,  String color,  String timezone,  String locale,  String defaultCurrency,  String? birthDate,  NotificationPrefs notificationPrefs,  String? avatarUrl,  int avatarVersion,  Invitation? invitation,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _User():
-return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.color,_that.timezone,_that.locale,_that.defaultCurrency,_that.birthDate,_that.notificationPrefs,_that.avatarUrl,_that.avatarVersion,_that.invitation,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.hasPassword,_that.color,_that.timezone,_that.locale,_that.defaultCurrency,_that.birthDate,_that.notificationPrefs,_that.avatarUrl,_that.avatarVersion,_that.invitation,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -238,10 +242,10 @@ return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.colo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  DateTime? emailVerifiedAt,  String color,  String timezone,  String locale,  String defaultCurrency,  String? birthDate,  NotificationPrefs notificationPrefs,  String? avatarUrl,  int avatarVersion,  Invitation? invitation,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String email,  DateTime? emailVerifiedAt,  bool hasPassword,  String color,  String timezone,  String locale,  String defaultCurrency,  String? birthDate,  NotificationPrefs notificationPrefs,  String? avatarUrl,  int avatarVersion,  Invitation? invitation,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _User() when $default != null:
-return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.color,_that.timezone,_that.locale,_that.defaultCurrency,_that.birthDate,_that.notificationPrefs,_that.avatarUrl,_that.avatarVersion,_that.invitation,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.hasPassword,_that.color,_that.timezone,_that.locale,_that.defaultCurrency,_that.birthDate,_that.notificationPrefs,_that.avatarUrl,_that.avatarVersion,_that.invitation,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -253,7 +257,7 @@ return $default(_that.id,_that.name,_that.email,_that.emailVerifiedAt,_that.colo
 @JsonSerializable()
 
 class _User extends User {
-  const _User({required this.id, required this.name, required this.email, this.emailVerifiedAt, required this.color, required this.timezone, required this.locale, required this.defaultCurrency, this.birthDate, required this.notificationPrefs, this.avatarUrl, this.avatarVersion = 0, this.invitation, required this.createdAt, required this.updatedAt}): super._();
+  const _User({required this.id, required this.name, required this.email, this.emailVerifiedAt, this.hasPassword = true, required this.color, required this.timezone, required this.locale, required this.defaultCurrency, this.birthDate, required this.notificationPrefs, this.avatarUrl, this.avatarVersion = 0, this.invitation, required this.createdAt, required this.updatedAt}): super._();
   factory _User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
 @override final  String id;
@@ -261,6 +265,10 @@ class _User extends User {
 @override final  String email;
 /// Waktu email diverifikasi (v1.0), atau `null` selama belum. Tidak membatasi apa pun.
 @override final  DateTime? emailVerifiedAt;
+/// `false` untuk akun dari Masuk dengan Google yang belum punya kata sandi (v1.x): ganti
+/// email dan buat kata sandi lalu dikonfirmasi dengan akun Google, bukan kata sandi. Profil
+/// yang tersimpan sebelum kolom ini ada dianggap punya kata sandi sampai diambil ulang.
+@override@JsonKey() final  bool hasPassword;
 @override final  String color;
 @override final  String timezone;
 @override final  String locale;
@@ -288,18 +296,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.emailVerifiedAt, emailVerifiedAt) || other.emailVerifiedAt == emailVerifiedAt)&&(identical(other.color, color) || other.color == color)&&(identical(other.timezone, timezone) || other.timezone == timezone)&&(identical(other.locale, locale) || other.locale == locale)&&(identical(other.defaultCurrency, defaultCurrency) || other.defaultCurrency == defaultCurrency)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.notificationPrefs, notificationPrefs) || other.notificationPrefs == notificationPrefs)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.avatarVersion, avatarVersion) || other.avatarVersion == avatarVersion)&&(identical(other.invitation, invitation) || other.invitation == invitation)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _User&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.emailVerifiedAt, emailVerifiedAt) || other.emailVerifiedAt == emailVerifiedAt)&&(identical(other.hasPassword, hasPassword) || other.hasPassword == hasPassword)&&(identical(other.color, color) || other.color == color)&&(identical(other.timezone, timezone) || other.timezone == timezone)&&(identical(other.locale, locale) || other.locale == locale)&&(identical(other.defaultCurrency, defaultCurrency) || other.defaultCurrency == defaultCurrency)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.notificationPrefs, notificationPrefs) || other.notificationPrefs == notificationPrefs)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.avatarVersion, avatarVersion) || other.avatarVersion == avatarVersion)&&(identical(other.invitation, invitation) || other.invitation == invitation)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,email,emailVerifiedAt,color,timezone,locale,defaultCurrency,birthDate,notificationPrefs,avatarUrl,avatarVersion,invitation,createdAt,updatedAt);
+    return Object.hash(runtimeType,id,name,email,emailVerifiedAt,hasPassword,color,timezone,locale,defaultCurrency,birthDate,notificationPrefs,avatarUrl,avatarVersion,invitation,createdAt,updatedAt);
 }
 
 @override
 String toString() {
-    return 'User(id: $id, name: $name, email: $email, emailVerifiedAt: $emailVerifiedAt, color: $color, timezone: $timezone, locale: $locale, defaultCurrency: $defaultCurrency, birthDate: $birthDate, notificationPrefs: $notificationPrefs, avatarUrl: $avatarUrl, avatarVersion: $avatarVersion, invitation: $invitation, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'User(id: $id, name: $name, email: $email, emailVerifiedAt: $emailVerifiedAt, hasPassword: $hasPassword, color: $color, timezone: $timezone, locale: $locale, defaultCurrency: $defaultCurrency, birthDate: $birthDate, notificationPrefs: $notificationPrefs, avatarUrl: $avatarUrl, avatarVersion: $avatarVersion, invitation: $invitation, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -310,7 +318,7 @@ abstract mixin class _$UserCopyWith<$Res> implements $UserCopyWith<$Res> {
   factory _$UserCopyWith(_User value, $Res Function(_User) _then) = __$UserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String email, DateTime? emailVerifiedAt, String color, String timezone, String locale, String defaultCurrency, String? birthDate, NotificationPrefs notificationPrefs, String? avatarUrl, int avatarVersion, Invitation? invitation, DateTime createdAt, DateTime updatedAt
+ String id, String name, String email, DateTime? emailVerifiedAt, bool hasPassword, String color, String timezone, String locale, String defaultCurrency, String? birthDate, NotificationPrefs notificationPrefs, String? avatarUrl, int avatarVersion, Invitation? invitation, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -327,13 +335,14 @@ class __$UserCopyWithImpl<$Res>
 
 /// Create a copy of User
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? emailVerifiedAt = freezed,Object? color = null,Object? timezone = null,Object? locale = null,Object? defaultCurrency = null,Object? birthDate = freezed,Object? notificationPrefs = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? invitation = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? emailVerifiedAt = freezed,Object? hasPassword = null,Object? color = null,Object? timezone = null,Object? locale = null,Object? defaultCurrency = null,Object? birthDate = freezed,Object? notificationPrefs = null,Object? avatarUrl = freezed,Object? avatarVersion = null,Object? invitation = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_User(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,emailVerifiedAt: freezed == emailVerifiedAt ? _self.emailVerifiedAt : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
+as DateTime?,hasPassword: null == hasPassword ? _self.hasPassword : hasPassword // ignore: cast_nullable_to_non_nullable
+as bool,color: null == color ? _self.color : color // ignore: cast_nullable_to_non_nullable
 as String,timezone: null == timezone ? _self.timezone : timezone // ignore: cast_nullable_to_non_nullable
 as String,locale: null == locale ? _self.locale : locale // ignore: cast_nullable_to_non_nullable
 as String,defaultCurrency: null == defaultCurrency ? _self.defaultCurrency : defaultCurrency // ignore: cast_nullable_to_non_nullable

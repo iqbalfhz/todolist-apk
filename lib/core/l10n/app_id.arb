@@ -857,6 +857,48 @@
   },
   "exportShare": "Bagikan file",
   "exportFirst": "Ekspor data dulu",
+  "settingsAccountData": "Akun dan data",
+  "settingsChangeEmail": "Ganti email",
+  "settingsChangePassword": "Ganti kata sandi",
+  "settingsChangePasswordSub": "Akunmu otomatis keluar dari HP lain",
+  "settingsCreatePassword": "Buat kata sandi",
+  "settingsCreatePasswordSub": "Supaya bisa masuk dengan email juga, tanpa Google",
+  "passwordChangeTitle": "Ganti kata sandi",
+  "passwordCreateTitle": "Buat kata sandi",
+  "passwordChangeIntro": "Setelah diganti, akunmu keluar dari HP lain. HP ini tetap masuk.",
+  "passwordCreateIntro": "Akunmu dibuat lewat Google. Buat kata sandi supaya bisa masuk dengan {email} dan kata sandi juga. Setelah itu, akunmu keluar dari HP lain, dan HP ini tetap masuk.",
+  "@passwordCreateIntro": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "fieldCurrentPassword": "Kata sandi saat ini",
+  "accountGoogleHint": "Pilih akun Google yang tersambung ke akun ini.",
+  "passwordChanged": "Kata sandi baru tersimpan. Akunmu sudah keluar dari HP lain.",
+  "passwordCreated": "Kata sandi tersimpan. Sekarang kamu juga bisa masuk dengan email dan kata sandi.",
+  "passwordTooOften": "Kata sandi sudah beberapa kali diganti. Coba lagi sekitar {minutes} menit lagi.",
+  "@passwordTooOften": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "emailChangeTitle": "Ganti email",
+  "emailChangeIntro": "Email akunmu sekarang {email}. Kami kirim kode 6 angka ke email baru untuk memastikan alamatnya benar.",
+  "@emailChangeIntro": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
+  "emailChangeGoogleNote": "Masuk dengan Google tetap memakai akun Google yang sama.",
+  "fieldNewEmail": "Email baru",
+  "errorEmailSame": "Email baru sama dengan email sekarang.",
+  "emailChangeConfirm": "Ganti email",
+  "emailChanged": "Email akunmu sekarang {email}.",
+  "@emailChanged": {
+    "placeholders": {
+      "email": {"type": "String"}
+    }
+  },
   "settingsDeleteAccount": "Hapus akun",
   "settingsDeleteAccountSub": "Hapus permanen akun dan semua datamu",
   "deleteAccountTitle": "Hapus akun",

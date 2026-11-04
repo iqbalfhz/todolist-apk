@@ -358,6 +358,39 @@ void main() {
       await tester.tap(find.text('Batal'));
       await settle(tester);
 
+      // Ganti kata sandi (v1.x): kedua isian dengan pesan error.
+      await visit(tester, container, Routes.changePassword);
+      await reveal(tester, find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Simpan kata sandi baru'));
+      await settle(tester);
+      expect(find.text('Kata sandi belum diisi.'), findsNWidgets(2));
+      await scrollThrough(tester);
+
+      // Ganti email (v1.x): email baru yang panjang, lalu isian kode dengan pesan error.
+      await visit(tester, container, Routes.changeEmail);
+      await reveal(tester, find.byType(TextField).at(0));
+      await tester.enterText(find.byType(TextField).at(0), 'alamat.email.yang.cukup.panjang.untuk.diuji@email.com');
+      await reveal(tester, find.byType(TextField).at(1));
+      await tester.enterText(find.byType(TextField).at(1), 'sandi-lama-123');
+      await reveal(tester, find.widgetWithText(FilledButton, 'Kirim kode'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Kirim kode'));
+      await settle(tester);
+      expect(find.textContaining('Kode sudah dikirim ke alamat.email'), findsOneWidget);
+      await reveal(tester, find.widgetWithText(FilledButton, 'Ganti email'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Ganti email'));
+      await settle(tester);
+      expect(find.text('Kodenya 6 angka, sesuai email yang kami kirim.'), findsOneWidget);
+      await scrollThrough(tester);
+
+      // Akun dari Google tanpa kata sandi: Buat kata sandi, dan ganti email lewat Google.
+      final me = (await h.account.profile.current())!;
+      await h.account.store.write(EntityType.me, me.copyWith(hasPassword: false).toJson());
+      await visit(tester, container, Routes.changePassword);
+      expect(find.text('Buat kata sandi'), findsOneWidget);
+      await visit(tester, container, Routes.changeEmail);
+      expect(find.byType(GoogleSignInButton), findsOneWidget);
+      await h.account.store.write(EntityType.me, me.toJson());
+
       // Ekspor data (v1.0): berkas tersimpan, lalu fotonya.
       h.api.exportFile = {
         'memory_photos': [

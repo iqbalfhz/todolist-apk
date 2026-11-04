@@ -15,6 +15,7 @@ import '../../features/memories/presentation/memory_gallery_screen.dart';
 import '../../features/savings/presentation/goal_detail_screen.dart';
 import '../../features/savings/presentation/savings_screen.dart';
 import '../../features/search/presentation/search_screen.dart';
+import '../../features/settings/presentation/account_security_screens.dart';
 import '../../features/settings/presentation/delete_account_screen.dart';
 import '../../features/settings/presentation/export_screen.dart';
 import '../../features/settings/presentation/profile_screen.dart';
@@ -94,6 +95,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(path: 'profil', builder: (_, _) => const ProfileScreen()),
           GoRoute(path: 'tanggal-penting', builder: (_, _) => const SpecialDatesScreen()),
+          GoRoute(path: 'email', builder: (_, _) => const ChangeEmailScreen()),
+          GoRoute(path: 'kata-sandi', builder: (_, _) => const ChangePasswordScreen()),
           GoRoute(path: 'hapus-akun', builder: (_, _) => const DeleteAccountScreen()),
           GoRoute(path: 'ekspor-data', builder: (_, _) => const ExportScreen()),
         ],

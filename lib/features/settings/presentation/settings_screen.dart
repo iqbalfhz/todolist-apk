@@ -173,7 +173,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const SizedBox(height: AppDimens.gap10),
           if (household == null) const SkeletonCard() else _NotificationSwitches(prefs: household.me.notificationPrefs),
           const SizedBox(height: AppDimens.gap16),
-          if (household != null)
+          if (household != null) ...[
             AppCard(
               padding: const EdgeInsets.symmetric(horizontal: AppDimens.cardPadding),
               child: Column(
@@ -185,6 +185,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const RowDivider(),
                   _NavRow(title: l10n.settingsWidget, subtitle: l10n.settingsWidgetSub, onTap: _pinWidget),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppDimens.gap10),
+            SectionTitle(l10n.settingsAccountData),
+            const SizedBox(height: AppDimens.gap10),
+            AppCard(
+              padding: const EdgeInsets.symmetric(horizontal: AppDimens.cardPadding),
+              child: Column(
+                children: [
+                  _NavRow(
+                    title: l10n.settingsChangeEmail,
+                    subtitle: household.me.email,
+                    onTap: () => context.push(Routes.changeEmail),
+                  ),
+                  const RowDivider(),
+                  // Akun dari Google tanpa kata sandi (v1.x) membuat kata sandi, bukan menggantinya.
+                  _NavRow(
+                    title: household.me.hasPassword ? l10n.settingsChangePassword : l10n.settingsCreatePassword,
+                    subtitle: household.me.hasPassword
+                        ? l10n.settingsChangePasswordSub
+                        : l10n.settingsCreatePasswordSub,
+                    onTap: () => context.push(Routes.changePassword),
+                  ),
                   const RowDivider(),
                   _NavRow(
                     title: l10n.settingsExport,
@@ -192,6 +216,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     onTap: () => context.push(Routes.exportData),
                   ),
                   const RowDivider(),
+                  _NavRow(
+                    title: l10n.settingsDeleteAccount,
+                    subtitle: l10n.settingsDeleteAccountSub,
+                    onTap: () => context.push(Routes.deleteAccount),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AppDimens.gap16),
+            AppCard(
+              padding: const EdgeInsets.symmetric(horizontal: AppDimens.cardPadding),
+              child: Column(
+                children: [
                   _NavRow(
                     title: l10n.policyPrivacy,
                     subtitle: l10n.settingsPrivacySub,
@@ -203,15 +240,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitle: l10n.settingsTermsSub,
                     onTap: () => openPolicyPage(context, ref, Env.termsUrl),
                   ),
-                  const RowDivider(),
-                  _NavRow(
-                    title: l10n.settingsDeleteAccount,
-                    subtitle: l10n.settingsDeleteAccountSub,
-                    onTap: () => context.push(Routes.deleteAccount),
-                  ),
                 ],
               ),
             ),
+          ],
           const SizedBox(height: AppDimens.gap20),
           OutlinedButton.icon(
             onPressed: _loggingOut ? null : _logout,

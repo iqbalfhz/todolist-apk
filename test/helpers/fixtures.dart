@@ -40,11 +40,13 @@ Map<String, dynamic> userJson({
   String name = 'Iqbal',
   String color = 'mawar',
   String? emailVerifiedAt = t0,
+  bool hasPassword = true,
 }) => {
   'id': id,
   'name': name,
   'email': 'nama@email.com',
   'email_verified_at': emailVerifiedAt,
+  'has_password': hasPassword,
   'color': color,
   'timezone': 'Asia/Jakarta',
   'locale': 'id',
