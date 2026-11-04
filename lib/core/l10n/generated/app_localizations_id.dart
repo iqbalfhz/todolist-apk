@@ -1376,6 +1376,80 @@ class AppLocalizationsId extends AppLocalizations {
   String get exportFirst => 'Ekspor data dulu';
 
   @override
+  String get settingsAccountData => 'Akun dan data';
+
+  @override
+  String get settingsChangeEmail => 'Ganti email';
+
+  @override
+  String get settingsChangePassword => 'Ganti kata sandi';
+
+  @override
+  String get settingsChangePasswordSub => 'Akunmu otomatis keluar dari HP lain';
+
+  @override
+  String get settingsCreatePassword => 'Buat kata sandi';
+
+  @override
+  String get settingsCreatePasswordSub => 'Supaya bisa masuk dengan email juga, tanpa Google';
+
+  @override
+  String get passwordChangeTitle => 'Ganti kata sandi';
+
+  @override
+  String get passwordCreateTitle => 'Buat kata sandi';
+
+  @override
+  String get passwordChangeIntro => 'Setelah diganti, akunmu keluar dari HP lain. HP ini tetap masuk.';
+
+  @override
+  String passwordCreateIntro(String email) {
+    return 'Akunmu dibuat lewat Google. Buat kata sandi supaya bisa masuk dengan $email dan kata sandi juga. Setelah itu, akunmu keluar dari HP lain, dan HP ini tetap masuk.';
+  }
+
+  @override
+  String get fieldCurrentPassword => 'Kata sandi saat ini';
+
+  @override
+  String get accountGoogleHint => 'Pilih akun Google yang tersambung ke akun ini.';
+
+  @override
+  String get passwordChanged => 'Kata sandi baru tersimpan. Akunmu sudah keluar dari HP lain.';
+
+  @override
+  String get passwordCreated => 'Kata sandi tersimpan. Sekarang kamu juga bisa masuk dengan email dan kata sandi.';
+
+  @override
+  String passwordTooOften(int minutes) {
+    return 'Kata sandi sudah beberapa kali diganti. Coba lagi sekitar $minutes menit lagi.';
+  }
+
+  @override
+  String get emailChangeTitle => 'Ganti email';
+
+  @override
+  String emailChangeIntro(String email) {
+    return 'Email akunmu sekarang $email. Kami kirim kode 6 angka ke email baru untuk memastikan alamatnya benar.';
+  }
+
+  @override
+  String get emailChangeGoogleNote => 'Masuk dengan Google tetap memakai akun Google yang sama.';
+
+  @override
+  String get fieldNewEmail => 'Email baru';
+
+  @override
+  String get errorEmailSame => 'Email baru sama dengan email sekarang.';
+
+  @override
+  String get emailChangeConfirm => 'Ganti email';
+
+  @override
+  String emailChanged(String email) {
+    return 'Email akunmu sekarang $email.';
+  }
+
+  @override
   String get settingsDeleteAccount => 'Hapus akun';
 
   @override

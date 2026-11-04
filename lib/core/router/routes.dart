@@ -25,6 +25,10 @@ abstract final class Routes {
   static const String profile = '/pengaturan/profil';
   static const String specialDates = '/pengaturan/tanggal-penting';
 
+  /// Ganti email dan ganti atau buat kata sandi (v1.x).
+  static const String changeEmail = '/pengaturan/email';
+  static const String changePassword = '/pengaturan/kata-sandi';
+
   /// Hapus akun (v1.0). Halaman publik `/hapus-akun` menyebut langkah "Pengaturan > Hapus akun".
   static const String deleteAccount = '/pengaturan/hapus-akun';
 

@@ -25,6 +25,9 @@ class MailLog {
   static const String passwordReset = 'Kode atur ulang kata sandi Denly Days';
   static const String verification = 'Kode verifikasi email Denly Days';
 
+  /// Subjek email kode ganti email (v1.x), dikirim ke email baru.
+  static const String emailChange = 'Kode ganti email Denly Days';
+
   final String path;
   int _offset = 0;
 

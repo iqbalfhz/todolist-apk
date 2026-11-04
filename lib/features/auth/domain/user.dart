@@ -15,6 +15,11 @@ abstract class User with _$User {
 
     /// Waktu email diverifikasi (v1.0), atau `null` selama belum. Tidak membatasi apa pun.
     DateTime? emailVerifiedAt,
+
+    /// `false` untuk akun dari Masuk dengan Google yang belum punya kata sandi (v1.x): ganti
+    /// email dan buat kata sandi lalu dikonfirmasi dengan akun Google, bukan kata sandi. Profil
+    /// yang tersimpan sebelum kolom ini ada dianggap punya kata sandi sampai diambil ulang.
+    @Default(true) bool hasPassword,
     required String color,
     required String timezone,
     required String locale,

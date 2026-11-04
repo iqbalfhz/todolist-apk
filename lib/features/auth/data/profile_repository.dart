@@ -70,6 +70,45 @@ class ProfileRepository {
     return User.fromJson(response.data);
   }
 
+  /// Ganti kata sandi, atau buat kata sandi untuk akun dari Google (v1.x). Dikonfirmasi dengan
+  /// [currentPassword] atau [idToken] dari akun Google yang tersambung; kalau keduanya ada,
+  /// server memakai kata sandi. Langsung, tidak lewat antrean.
+  ///
+  /// Server mengeluarkan akun dari HP lain beserta token FCM-nya; HP ini tetap masuk, dan
+  /// [fcmToken] HP ini tetap terdaftar. Balasannya 204, jadi `has_password` diisi sendiri.
+  Future<void> changePassword({
+    required String password,
+    String? currentPassword,
+    String? idToken,
+    String? fcmToken,
+  }) async {
+    await api.send(
+      'PUT',
+      '/me/password',
+      body: {'current_password': ?currentPassword, 'id_token': ?idToken, 'password': password, 'fcm_token': ?fcmToken},
+    );
+    await writer.store.patch(EntityType.me, '', {'has_password': true});
+  }
+
+  /// Minta kode untuk mengganti email (v1.x). Kode 6 angka dikirim ke [email] baru; emailnya
+  /// baru berganti setelah kode itu dikirim ke [confirmEmailChange]. Dikonfirmasi seperti
+  /// [changePassword]. Email yang tidak bisa dipakai ditolak 422 di `errors.email`.
+  Future<void> requestEmailChange({required String email, String? password, String? idToken}) async {
+    await api.send(
+      'POST',
+      '/me/email-change',
+      body: {'email': email.trim(), 'password': ?password, 'id_token': ?idToken},
+    );
+  }
+
+  /// Ganti email dengan kode dari email baru (v1.x). Balasannya profil dengan email baru yang
+  /// sudah terverifikasi; semua HP tetap masuk.
+  Future<User> confirmEmailChange(String code) async {
+    final response = await api.send('POST', '/me/email-change/confirm', body: {'code': code.trim()});
+    await applier.apply(EntityType.me, response.data);
+    return User.fromJson(response.data);
+  }
+
   /// Unggah foto profil yang sudah dipotong persegi dan dikecilkan ke 512 × 512 (JPEG).
   Future<User> uploadAvatar(Uint8List jpegBytes) async {
     final response = await api.send(
