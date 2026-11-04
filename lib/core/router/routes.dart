@@ -21,6 +21,9 @@ abstract final class Routes {
   /// Cari di semua modul (v1.x). Di luar tab bawah.
   static const String search = '/cari';
 
+  /// Feed aktivitas Ruang Bersama (v1.x), dari ikon lonceng di Beranda. Di luar tab bawah.
+  static const String activity = '/aktivitas';
+
   static const String settings = '/pengaturan';
   static const String profile = '/pengaturan/profil';
   static const String specialDates = '/pengaturan/tanggal-penting';

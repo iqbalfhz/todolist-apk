@@ -11,6 +11,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/dates.dart';
 import '../../../core/utils/money.dart';
 import '../../../core/widgets/widgets.dart';
+import '../../activity/domain/activity.dart';
 import '../../memories/domain/memory_views.dart';
 import '../../memories/presentation/memory_photo_view.dart';
 import '../../savings/domain/savings_views.dart';
@@ -107,6 +108,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               label: l10n.homeSearch,
               onPressed: () => context.push(Routes.search),
             ),
+            const _ActivityButton(),
             const SizedBox(width: AppDimens.gap4),
             _HeaderAvatars(household: household),
           ],
@@ -149,6 +151,46 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ],
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// Ikon lonceng ke feed aktivitas (v1.x), dengan titik kalau ada kegiatan pasangan sejak feed
+/// terakhir dibuka. Titiknya juga disebut di label pembaca layar.
+class _ActivityButton extends ConsumerWidget {
+  const _ActivityButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final palette = context.palette;
+    final unseen = ref.watch(activityUnseenProvider);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        AppIconButton(
+          icon: Symbols.notifications_rounded,
+          label: unseen ? l10n.homeActivityNew : l10n.homeActivity,
+          onPressed: () => context.push(Routes.activity),
+        ),
+        if (unseen)
+          Positioned(
+            top: AppDimens.gap8,
+            right: AppDimens.gap8,
+            child: IgnorePointer(
+              child: Container(
+                width: AppDimens.dotLarge,
+                height: AppDimens.dotLarge,
+                decoration: BoxDecoration(
+                  color: palette.primary,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: palette.bg, width: AppDimens.borderWidthStrong),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

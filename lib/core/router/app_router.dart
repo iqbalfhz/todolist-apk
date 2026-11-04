@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../features/activity/presentation/activity_screen.dart';
 import '../../features/auth/presentation/auth_screens.dart';
 import '../../features/auth/presentation/forgot_password_screen.dart';
 import '../../features/auth/presentation/notification_permission_screen.dart';
@@ -90,6 +91,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: Routes.notifications, builder: (_, _) => const NotificationPermissionScreen()),
       GoRoute(path: Routes.pairing, builder: (_, _) => const PairingScreen()),
       GoRoute(path: Routes.search, builder: (_, _) => const SearchScreen()),
+      GoRoute(path: Routes.activity, builder: (_, _) => const ActivityScreen()),
       GoRoute(
         path: Routes.settings,
         builder: (_, _) => const SettingsScreen(),

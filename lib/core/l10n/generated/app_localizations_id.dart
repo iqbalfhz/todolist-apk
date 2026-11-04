@@ -1732,6 +1732,136 @@ class AppLocalizationsId extends AppLocalizations {
   String get importDoneButton => 'Selesai';
 
   @override
+  String get homeActivity => 'Aktivitas';
+
+  @override
+  String get homeActivityNew => 'Aktivitas, ada kegiatan baru dari pasangan';
+
+  @override
+  String get activityTitle => 'Aktivitas';
+
+  @override
+  String get activityWindowNote =>
+      'Kegiatan di Ruang Bersama selama 30 hari terakhir. Perubahan dan penghapusan tidak dicatat.';
+
+  @override
+  String get activityAll => 'Semua';
+
+  @override
+  String get activityPartnerOnly => 'Pasangan saja';
+
+  @override
+  String get activityToday => 'Hari ini';
+
+  @override
+  String get activityYesterday => 'Kemarin';
+
+  @override
+  String get activityEmpty => 'Belum ada kegiatan di Ruang Bersama dalam 30 hari terakhir.';
+
+  @override
+  String activityEmptyPartner(String name) {
+    return 'Belum ada kegiatan $name dalam 30 hari terakhir.';
+  }
+
+  @override
+  String get activityUnpaired => 'Aktivitas berisi kegiatan kalian berdua di Ruang Bersama. Ajak pasanganmu dulu.';
+
+  @override
+  String get activityInvite => 'Ajak pasangan';
+
+  @override
+  String get activityYou => 'Kamu';
+
+  @override
+  String get activitySomeone => 'Seseorang';
+
+  @override
+  String activityTaskAdded(String actor, String title) {
+    return '$actor menambah tugas $title';
+  }
+
+  @override
+  String activityTaskAssignedToYou(String actor, String title) {
+    return '$actor menitipkan $title ke kamu';
+  }
+
+  @override
+  String activityTaskAssignedTo(String actor, String title, String person) {
+    return '$actor menitipkan $title ke $person';
+  }
+
+  @override
+  String activityTaskCompleted(String actor, String title) {
+    return '$actor menyelesaikan $title';
+  }
+
+  @override
+  String activityDeposit(String actor, String amount, String title) {
+    return '$actor menabung $amount untuk $title';
+  }
+
+  @override
+  String activityWithdrawal(String actor, String amount, String title) {
+    return '$actor mengambil $amount dari $title';
+  }
+
+  @override
+  String activityGoalCreated(String actor, String title) {
+    return '$actor membuat target $title';
+  }
+
+  @override
+  String activityGoalAchieved(String title) {
+    return '$title tercapai';
+  }
+
+  @override
+  String activityTripPlanned(String actor, String title) {
+    return '$actor merencanakan $title';
+  }
+
+  @override
+  String activityDateAdded(String actor, String title) {
+    return '$actor menambah tanggal penting $title';
+  }
+
+  @override
+  String activityMemorySaved(String actor, String title) {
+    return '$actor menyimpan kenangan $title';
+  }
+
+  @override
+  String activityPhotosAdded(String actor, int count, String title) {
+    return '$actor menambah $count foto ke $title';
+  }
+
+  @override
+  String activityCommented(String actor, String subject, String text) {
+    return '$actor mengomentari $subject: $text';
+  }
+
+  @override
+  String activityReacted(String actor, String emoji, String subject) {
+    return '$actor memberi reaksi $emoji ke $subject';
+  }
+
+  @override
+  String activityJoined(String actor) {
+    return '$actor bergabung ke Ruang Bersama';
+  }
+
+  @override
+  String activityEntrySubject(String amount) {
+    return 'setoran $amount';
+  }
+
+  @override
+  String activityWithdrawalSubject(String amount) {
+    return 'penarikan $amount';
+  }
+
+  @override
   String get settingsDeleteAccount => 'Hapus akun';
 
   @override

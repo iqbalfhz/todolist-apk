@@ -2977,6 +2977,192 @@ abstract class AppLocalizations {
   /// **'Selesai'**
   String get importDoneButton;
 
+  /// No description provided for @homeActivity.
+  ///
+  /// In id, this message translates to:
+  /// **'Aktivitas'**
+  String get homeActivity;
+
+  /// No description provided for @homeActivityNew.
+  ///
+  /// In id, this message translates to:
+  /// **'Aktivitas, ada kegiatan baru dari pasangan'**
+  String get homeActivityNew;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Aktivitas'**
+  String get activityTitle;
+
+  /// No description provided for @activityWindowNote.
+  ///
+  /// In id, this message translates to:
+  /// **'Kegiatan di Ruang Bersama selama 30 hari terakhir. Perubahan dan penghapusan tidak dicatat.'**
+  String get activityWindowNote;
+
+  /// No description provided for @activityAll.
+  ///
+  /// In id, this message translates to:
+  /// **'Semua'**
+  String get activityAll;
+
+  /// No description provided for @activityPartnerOnly.
+  ///
+  /// In id, this message translates to:
+  /// **'Pasangan saja'**
+  String get activityPartnerOnly;
+
+  /// No description provided for @activityToday.
+  ///
+  /// In id, this message translates to:
+  /// **'Hari ini'**
+  String get activityToday;
+
+  /// No description provided for @activityYesterday.
+  ///
+  /// In id, this message translates to:
+  /// **'Kemarin'**
+  String get activityYesterday;
+
+  /// No description provided for @activityEmpty.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada kegiatan di Ruang Bersama dalam 30 hari terakhir.'**
+  String get activityEmpty;
+
+  /// No description provided for @activityEmptyPartner.
+  ///
+  /// In id, this message translates to:
+  /// **'Belum ada kegiatan {name} dalam 30 hari terakhir.'**
+  String activityEmptyPartner(String name);
+
+  /// No description provided for @activityUnpaired.
+  ///
+  /// In id, this message translates to:
+  /// **'Aktivitas berisi kegiatan kalian berdua di Ruang Bersama. Ajak pasanganmu dulu.'**
+  String get activityUnpaired;
+
+  /// No description provided for @activityInvite.
+  ///
+  /// In id, this message translates to:
+  /// **'Ajak pasangan'**
+  String get activityInvite;
+
+  /// No description provided for @activityYou.
+  ///
+  /// In id, this message translates to:
+  /// **'Kamu'**
+  String get activityYou;
+
+  /// No description provided for @activitySomeone.
+  ///
+  /// In id, this message translates to:
+  /// **'Seseorang'**
+  String get activitySomeone;
+
+  /// No description provided for @activityTaskAdded.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menambah tugas {title}'**
+  String activityTaskAdded(String actor, String title);
+
+  /// No description provided for @activityTaskAssignedToYou.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menitipkan {title} ke kamu'**
+  String activityTaskAssignedToYou(String actor, String title);
+
+  /// No description provided for @activityTaskAssignedTo.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menitipkan {title} ke {person}'**
+  String activityTaskAssignedTo(String actor, String title, String person);
+
+  /// No description provided for @activityTaskCompleted.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menyelesaikan {title}'**
+  String activityTaskCompleted(String actor, String title);
+
+  /// No description provided for @activityDeposit.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menabung {amount} untuk {title}'**
+  String activityDeposit(String actor, String amount, String title);
+
+  /// No description provided for @activityWithdrawal.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} mengambil {amount} dari {title}'**
+  String activityWithdrawal(String actor, String amount, String title);
+
+  /// No description provided for @activityGoalCreated.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} membuat target {title}'**
+  String activityGoalCreated(String actor, String title);
+
+  /// No description provided for @activityGoalAchieved.
+  ///
+  /// In id, this message translates to:
+  /// **'{title} tercapai'**
+  String activityGoalAchieved(String title);
+
+  /// No description provided for @activityTripPlanned.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} merencanakan {title}'**
+  String activityTripPlanned(String actor, String title);
+
+  /// No description provided for @activityDateAdded.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menambah tanggal penting {title}'**
+  String activityDateAdded(String actor, String title);
+
+  /// No description provided for @activityMemorySaved.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menyimpan kenangan {title}'**
+  String activityMemorySaved(String actor, String title);
+
+  /// No description provided for @activityPhotosAdded.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} menambah {count} foto ke {title}'**
+  String activityPhotosAdded(String actor, int count, String title);
+
+  /// No description provided for @activityCommented.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} mengomentari {subject}: {text}'**
+  String activityCommented(String actor, String subject, String text);
+
+  /// No description provided for @activityReacted.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} memberi reaksi {emoji} ke {subject}'**
+  String activityReacted(String actor, String emoji, String subject);
+
+  /// No description provided for @activityJoined.
+  ///
+  /// In id, this message translates to:
+  /// **'{actor} bergabung ke Ruang Bersama'**
+  String activityJoined(String actor);
+
+  /// No description provided for @activityEntrySubject.
+  ///
+  /// In id, this message translates to:
+  /// **'setoran {amount}'**
+  String activityEntrySubject(String amount);
+
+  /// No description provided for @activityWithdrawalSubject.
+  ///
+  /// In id, this message translates to:
+  /// **'penarikan {amount}'**
+  String activityWithdrawalSubject(String amount);
+
   /// No description provided for @settingsDeleteAccount.
   ///
   /// In id, this message translates to:
