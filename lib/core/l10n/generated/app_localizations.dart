@@ -2380,14 +2380,8 @@ abstract class AppLocalizations {
   /// No description provided for @exportIntro.
   ///
   /// In id, this message translates to:
-  /// **'Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.'**
+  /// **'Simpan salinan semua data yang bisa kamu lihat di app: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.'**
   String get exportIntro;
-
-  /// No description provided for @exportPhotosNote.
-  ///
-  /// In id, this message translates to:
-  /// **'Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.'**
-  String get exportPhotosNote;
 
   /// No description provided for @exportServerNote.
   ///
@@ -2395,17 +2389,77 @@ abstract class AppLocalizations {
   /// **'Datamu juga tersimpan otomatis di server setiap kali online.'**
   String get exportServerNote;
 
-  /// No description provided for @exportButton.
+  /// No description provided for @exportZipTitle.
   ///
   /// In id, this message translates to:
-  /// **'Ekspor data'**
-  String get exportButton;
+  /// **'ZIP berisi foto'**
+  String get exportZipTitle;
 
-  /// No description provided for @exportAgain.
+  /// No description provided for @exportZipBody.
   ///
   /// In id, this message translates to:
-  /// **'Ekspor lagi'**
-  String get exportAgain;
+  /// **'Data dan semua foto dalam satu file, yang bisa diimpor lagi beserta fotonya.'**
+  String get exportZipBody;
+
+  /// No description provided for @exportZipEstimate.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =0{Belum ada foto, jadi isinya data saja.} other{{count} foto, kira-kira {size}.}}'**
+  String exportZipEstimate(int count, String size);
+
+  /// No description provided for @exportZipButton.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor ZIP'**
+  String get exportZipButton;
+
+  /// No description provided for @exportZipNoSpace.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang kosong di HP tinggal {free}, padahal ZIP-nya kira-kira {need}. Kosongkan sebagian penyimpanan, atau ekspor file JSON saja.'**
+  String exportZipNoSpace(String need, String free);
+
+  /// No description provided for @exportZipFailed.
+  ///
+  /// In id, this message translates to:
+  /// **'{failed} dari {total} foto gagal diunduh, jadi ZIP belum disimpan.'**
+  String exportZipFailed(int failed, int total);
+
+  /// No description provided for @exportWithoutPhotos.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor tanpa foto'**
+  String get exportWithoutPhotos;
+
+  /// No description provided for @exportZipFinishing.
+  ///
+  /// In id, this message translates to:
+  /// **'Menyimpan ZIP…'**
+  String get exportZipFinishing;
+
+  /// No description provided for @exportZipSaved.
+  ///
+  /// In id, this message translates to:
+  /// **'ZIP tersimpan'**
+  String get exportZipSaved;
+
+  /// No description provided for @exportJsonTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'File JSON saja'**
+  String get exportJsonTitle;
+
+  /// No description provided for @exportJsonBody.
+  ///
+  /// In id, this message translates to:
+  /// **'Tanpa foto, jadi ukurannya kecil. Fotonya bisa diunduh sesudahnya ke folder yang sama.'**
+  String get exportJsonBody;
+
+  /// No description provided for @exportJsonButton.
+  ///
+  /// In id, this message translates to:
+  /// **'Ekspor JSON'**
+  String get exportJsonButton;
 
   /// No description provided for @exportWorking.
   ///

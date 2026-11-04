@@ -190,7 +190,8 @@ void main() {
         );
       }
       final picker = FakePhotoPicker();
-      final container = await pumpApp(tester, h, photoPicker: picker);
+      final exportFiles = FakeExportFiles();
+      final container = await pumpApp(tester, h, photoPicker: picker, exportFiles: exportFiles);
       await apply(tester, size: size, textScale: textScale);
 
       await visit(tester, container, Routes.home);
@@ -398,7 +399,23 @@ void main() {
         ],
       };
       await visit(tester, container, Routes.exportData);
-      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor data'));
+      // ZIP berisi foto (v1.x): satu foto tetap gagal, lalu tawaran coba lagi atau tanpa foto.
+      exportFiles.failAlways.add('$photo2Id.jpg');
+      await reveal(tester, find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+      await settle(tester);
+      await tester.pump(const Duration(seconds: 7));
+      await settle(tester);
+      expect(find.text('1 dari 2 foto gagal diunduh, jadi ZIP belum disimpan.'), findsOneWidget);
+      await scrollThrough(tester);
+      exportFiles.failAlways.clear();
+      await reveal(tester, find.text('Coba lagi'));
+      await tester.tap(find.text('Coba lagi'));
+      await settle(tester);
+      expect(find.text('ZIP tersimpan'), findsOneWidget);
+      await scrollThrough(tester);
+      await reveal(tester, find.widgetWithText(OutlinedButton, 'Ekspor JSON'));
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Ekspor JSON'));
       await settle(tester);
       expect(find.text('File tersimpan'), findsOneWidget);
       await scrollThrough(tester);

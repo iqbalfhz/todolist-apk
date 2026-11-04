@@ -100,6 +100,29 @@ class DevicePlatform {
     }
   }
 
+  /// Ruang kosong di penyimpanan HP dalam byte (v1.x), atau `null` kalau tidak terbaca.
+  Future<int?> freeSpace() async {
+    try {
+      return await _channel.invokeMethod<int>('freeSpace');
+    } on MissingPluginException {
+      return null;
+    } on PlatformException {
+      return null;
+    }
+  }
+
+  /// Bagikan berkas di folder unduhan yang dibuat app ini, lewat alamat MediaStore-nya (v1.x).
+  /// `false` kalau tidak bisa, misalnya sebelum Android 10 yang tidak memakai MediaStore.
+  Future<bool> shareFile(String uri, String mimeType) async {
+    try {
+      return await _channel.invokeMethod<bool>('shareFile', {'uri': uri, 'mimeType': mimeType}) ?? false;
+    } on MissingPluginException {
+      return false;
+    } on PlatformException {
+      return false;
+    }
+  }
+
   /// Simpan berkas ekspor data (v1.0) ke `Download/Denly Days/{folder}` di HP. Mengembalikan
   /// letak foldernya untuk ditunjukkan ke pengguna; melempar [PlatformException] kalau gagal.
   Future<String> saveDownload({
@@ -115,6 +138,40 @@ class DevicePlatform {
         'bytes': bytes,
       }) ??
       folder;
+}
+
+/// ZIP ekspor data (v1.x) yang sedang ditulis di `Download/Denly Days` lewat `ExportZip.kt`.
+/// Selama belum [finish], berkasnya tersembunyi; [cancel] menghapusnya.
+class DeviceZip {
+  DeviceZip._(this._id);
+
+  final int _id;
+
+  static const MethodChannel _channel = DevicePlatform._channel;
+
+  /// Buka ZIP baru bernama [name]. Melempar [PlatformException] kalau gagal.
+  static Future<DeviceZip> start(String name) async =>
+      DeviceZip._((await _channel.invokeMethod<int>('zipStart', {'name': name}))!);
+
+  /// Tambahkan [entry]; foto sudah JPEG, jadi hanya data yang dikompres ([compress]).
+  Future<void> add(String entry, Uint8List bytes, {required bool compress}) =>
+      _channel.invokeMethod<void>('zipAdd', {'id': _id, 'entry': entry, 'bytes': bytes, 'compress': compress});
+
+  /// Tutup dan munculkan ZIP-nya: nama berkas, letak folder, dan `uri` (Android 10+) atau
+  /// `path` (sebelumnya) untuk dibagikan.
+  Future<Map<String, String>> finish() async =>
+      (await _channel.invokeMapMethod<String, String>('zipFinish', {'id': _id}))!;
+
+  /// Batalkan dan hapus berkasnya. Tidak pernah gagal.
+  Future<void> cancel() async {
+    try {
+      await _channel.invokeMethod<void>('zipCancel', {'id': _id});
+    } on PlatformException {
+      // Berkas tersembunyi yang tertinggal dihapus Android sendiri.
+    } on MissingPluginException {
+      // Tanpa kanal native.
+    }
+  }
 }
 
 /// Isi `photoInfo` dari `MainActivity.kt`.

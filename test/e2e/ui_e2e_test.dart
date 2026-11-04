@@ -241,6 +241,7 @@ void main() {
         accountFilesProvider.overrideWithValue(accountFiles),
         exportSaverProvider.overrideWithValue(exportFiles),
         exportPhotoFetcherProvider.overrideWithValue(exportFiles),
+        exportZipWriterProvider.overrideWithValue(exportFiles),
         // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
         mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
         googleAccountsProvider.overrideWithValue(google),
@@ -1587,7 +1588,7 @@ void main() {
 
     step('Ekspor data dari Pengaturan: berkas JSON dari server tersimpan apa adanya');
     await go(Routes.exportData);
-    await tap(find.widgetWithText(FilledButton, 'Ekspor data'));
+    await tap(find.widgetWithText(OutlinedButton, 'Ekspor JSON'));
     await net();
     expect(find.text('File tersimpan'), findsOneWidget);
     final exported = exportFiles.saved.entries.single;
@@ -1597,6 +1598,20 @@ void main() {
     expect([
       for (final task in exportedFile['tasks'] as List<dynamic>) (task as Map<String, dynamic>)['title'],
     ], contains('Beli galon'));
+
+    step('Ekspor ZIP (v1.x): data.json dari server di dalamnya');
+    await tap(find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+    await net();
+    await until(find.text('ZIP tersimpan'));
+    expect(find.text('ZIP tersimpan'), findsOneWidget);
+    final zip = exportFiles.zips.entries.single;
+    expect(zip.key, matches(RegExp(r'^denly-days-[\d-]+\.zip$')));
+    // Kenangan di tes ini tanpa foto (API lokal tanpa kunci R2), dan akunnya tanpa foto profil.
+    expect(zip.value.keys, ['data.json']);
+    expect(zip.value['data.json']!.compress, isTrue);
+    final zipped = jsonDecode(utf8.decode(zip.value['data.json']!.bytes)) as Map<String, dynamic>;
+    expect((zipped['user'] as Map<String, dynamic>)['email'], email);
+    expect(zipped['format_version'], 1);
 
     // ---------------------------------------------------------------- hapus akun (v1.0)
 
