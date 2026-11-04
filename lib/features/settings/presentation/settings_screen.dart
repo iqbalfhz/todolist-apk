@@ -217,6 +217,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const RowDivider(),
                   _NavRow(
+                    title: l10n.settingsImport,
+                    subtitle: l10n.settingsImportSub,
+                    onTap: () => context.push(Routes.importData),
+                  ),
+                  const RowDivider(),
+                  _NavRow(
                     title: l10n.settingsDeleteAccount,
                     subtitle: l10n.settingsDeleteAccountSub,
                     onTap: () => context.push(Routes.deleteAccount),

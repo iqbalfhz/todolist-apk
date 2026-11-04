@@ -926,6 +926,157 @@
       "email": {"type": "String"}
     }
   },
+  "settingsImport": "Impor data",
+  "settingsImportSub": "Salin isi file ekspor ke ruangmu",
+  "importTitle": "Impor data",
+  "importIntro": "Salin isi file ekspor Denly Days, JSON atau ZIP, ke Ruang Pribadi atau Ruang Bersama. Isinya ditambahkan sebagai data baru; yang sudah ada tidak berubah.",
+  "importNoteTwice": "Mengimpor file yang sama dua kali membuat salinannya dua kali.",
+  "importNotePhotos": "Foto hanya ikut dari file ZIP.",
+  "importNoteLeftOut": "Komentar, reaksi, dan profil tidak ikut diimpor.",
+  "importPick": "Pilih file",
+  "importPickOther": "Pilih file lain",
+  "importReading": "Membaca file…",
+  "importNotExport": "File ini bukan file ekspor Denly Days. Pilih file JSON atau ZIP dari Ekspor data.",
+  "importNewerVersion": "File ini dibuat versi Denly Days yang lebih baru. Perbarui app dulu, lalu coba lagi.",
+  "importUnreadable": "File tidak bisa dibaca. Coba pilih lagi.",
+  "importNothing": "File ini tidak berisi data yang bisa diimpor.",
+  "importFileZip": "{count, plural, =0{ZIP tanpa foto} other{ZIP berisi {count} foto}}",
+  "@importFileZip": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "importFileJson": "File JSON, tanpa foto",
+  "importSpacePersonal": "Ruang Pribadi",
+  "importSpaceShared": "Ruang Bersama",
+  "importSpaceSharedWith": "Ruang Bersama dengan {names}",
+  "@importSpaceSharedWith": {
+    "placeholders": {
+      "names": {"type": "String"}
+    }
+  },
+  "importWhere": "Simpan ke mana?",
+  "importSkip": "Lewati",
+  "importSharedVisible": "Isi yang diimpor ke Ruang Bersama juga terlihat oleh {name}.",
+  "@importSharedVisible": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "importPhotosLeftOut": "Foto tidak ikut, karena file ini JSON. Pilih file ZIP supaya fotonya ikut.",
+  "importStart": "Mulai impor",
+  "importConfirmTitle": "Impor sekarang?",
+  "importConfirmBody": "{count} data disalin sebagai data baru. Kalau file yang sama diimpor lagi, isinya menjadi salinan kedua.",
+  "@importConfirmBody": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "importConfirm": "Impor",
+  "importProgress": "Mengirim bagian {done} dari {total}",
+  "@importProgress": {
+    "placeholders": {
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "importFinishing": "Mengambil hasil impor…",
+  "importKeepOpen": "Biarkan layar ini terbuka sampai selesai. Kalau terputus, impor bisa dilanjutkan dari sini.",
+  "importPendingTitle": "Impor belum selesai",
+  "importPendingBody": "{file}: {done} dari {total} bagian sudah terkirim.",
+  "@importPendingBody": {
+    "placeholders": {
+      "file": {"type": "String"},
+      "done": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "importResume": "Lanjutkan impor",
+  "importCancel": "Batalkan impor",
+  "importCancelTitle": "Batalkan impor?",
+  "importCancelBody": "Yang sudah terkirim tetap tersimpan. Sisanya tidak dikirim, dan file perlu dipilih lagi kalau mau mengimpornya.",
+  "importKeepGoing": "Jangan dibatalkan",
+  "importRejected": "Server menolak isi file: {message}",
+  "@importRejected": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "importTooOften": "Impor dibatasi 30 bagian per jam. Lanjutkan sekitar {minutes} menit lagi.",
+  "@importTooOften": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "importDone": "Impor selesai",
+  "importCreated": "Dibuat: {summary}.",
+  "@importCreated": {
+    "placeholders": {
+      "summary": {"type": "String"}
+    }
+  },
+  "importCreatedNone": "Tidak ada data baru.",
+  "importSkipped": "{count} data dilewati karena sudah ada.",
+  "@importSkipped": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "importPhotosQueued": "{count} foto sedang diunggah lewat antrean.",
+  "@importPhotosQueued": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countTasks": "{count} tugas",
+  "@countTasks": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countLists": "{count} daftar",
+  "@countLists": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countGoals": "{count} target",
+  "@countGoals": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countEntries": "{count} setoran",
+  "@countEntries": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countTrips": "{count} perjalanan",
+  "@countTrips": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countDates": "{count} tanggal penting",
+  "@countDates": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countMemories": "{count} kenangan",
+  "@countMemories": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "countPhotos": "{count} foto",
+  "@countPhotos": {
+    "placeholders": {
+      "count": {"type": "int", "format": "decimalPattern"}
+    }
+  },
+  "importDoneButton": "Selesai",
   "settingsDeleteAccount": "Hapus akun",
   "settingsDeleteAccountSub": "Hapus permanen akun dan semua datamu",
   "deleteAccountTitle": "Hapus akun",

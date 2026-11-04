@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import '../../../core/api/api_error.dart';
 import '../../../core/api/api_transport.dart';
@@ -147,6 +148,38 @@ class MemoryRepository {
       position += positionStep;
     }
     return accepted.length;
+  }
+
+  /// Foto dari ZIP impor (v1.x). Sudah berupa versi penuh dari server, jadi diunggah apa adanya
+  /// dengan ID baru, dan posisi serta waktu ambil dari file ekspor.
+  Future<void> importPhoto({
+    required String id,
+    required String memoryId,
+    required String spaceId,
+    required num position,
+    required String? takenAt,
+    required int width,
+    required int height,
+    required Uint8List jpeg,
+  }) async {
+    final nowIso = writer.nowIso();
+    await files.save(id, jpeg);
+
+    final payload = <String, dynamic>{'memory_id': memoryId, 'position': position, 'taken_at': takenAt};
+    final row = <String, dynamic>{
+      ...payload,
+      'id': id,
+      'space_id': spaceId,
+      'uploaded_by': userId,
+      'width': width,
+      'height': height,
+      'url': null,
+      'thumb_url': null,
+      'created_at': nowIso,
+      'updated_at': nowIso,
+      'deleted_at': null,
+    };
+    await writer.upload(EntityType.memoryPhoto, row, payload);
   }
 
   /// "Jadikan sampul": pindahkan foto ke depan, sebelum foto pertama kenangannya.

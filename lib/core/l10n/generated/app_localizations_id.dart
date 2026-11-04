@@ -1489,6 +1489,249 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String get settingsImport => 'Impor data';
+
+  @override
+  String get settingsImportSub => 'Salin isi file ekspor ke ruangmu';
+
+  @override
+  String get importTitle => 'Impor data';
+
+  @override
+  String get importIntro =>
+      'Salin isi file ekspor Denly Days, JSON atau ZIP, ke Ruang Pribadi atau Ruang Bersama. Isinya ditambahkan sebagai data baru; yang sudah ada tidak berubah.';
+
+  @override
+  String get importNoteTwice => 'Mengimpor file yang sama dua kali membuat salinannya dua kali.';
+
+  @override
+  String get importNotePhotos => 'Foto hanya ikut dari file ZIP.';
+
+  @override
+  String get importNoteLeftOut => 'Komentar, reaksi, dan profil tidak ikut diimpor.';
+
+  @override
+  String get importPick => 'Pilih file';
+
+  @override
+  String get importPickOther => 'Pilih file lain';
+
+  @override
+  String get importReading => 'Membaca file…';
+
+  @override
+  String get importNotExport => 'File ini bukan file ekspor Denly Days. Pilih file JSON atau ZIP dari Ekspor data.';
+
+  @override
+  String get importNewerVersion =>
+      'File ini dibuat versi Denly Days yang lebih baru. Perbarui app dulu, lalu coba lagi.';
+
+  @override
+  String get importUnreadable => 'File tidak bisa dibaca. Coba pilih lagi.';
+
+  @override
+  String get importNothing => 'File ini tidak berisi data yang bisa diimpor.';
+
+  @override
+  String importFileZip(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ZIP berisi $countString foto',
+      zero: 'ZIP tanpa foto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importFileJson => 'File JSON, tanpa foto';
+
+  @override
+  String get importSpacePersonal => 'Ruang Pribadi';
+
+  @override
+  String get importSpaceShared => 'Ruang Bersama';
+
+  @override
+  String importSpaceSharedWith(String names) {
+    return 'Ruang Bersama dengan $names';
+  }
+
+  @override
+  String get importWhere => 'Simpan ke mana?';
+
+  @override
+  String get importSkip => 'Lewati';
+
+  @override
+  String importSharedVisible(String name) {
+    return 'Isi yang diimpor ke Ruang Bersama juga terlihat oleh $name.';
+  }
+
+  @override
+  String get importPhotosLeftOut => 'Foto tidak ikut, karena file ini JSON. Pilih file ZIP supaya fotonya ikut.';
+
+  @override
+  String get importStart => 'Mulai impor';
+
+  @override
+  String get importConfirmTitle => 'Impor sekarang?';
+
+  @override
+  String importConfirmBody(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString data disalin sebagai data baru. Kalau file yang sama diimpor lagi, isinya menjadi salinan kedua.';
+  }
+
+  @override
+  String get importConfirm => 'Impor';
+
+  @override
+  String importProgress(int done, int total) {
+    return 'Mengirim bagian $done dari $total';
+  }
+
+  @override
+  String get importFinishing => 'Mengambil hasil impor…';
+
+  @override
+  String get importKeepOpen =>
+      'Biarkan layar ini terbuka sampai selesai. Kalau terputus, impor bisa dilanjutkan dari sini.';
+
+  @override
+  String get importPendingTitle => 'Impor belum selesai';
+
+  @override
+  String importPendingBody(String file, int done, int total) {
+    return '$file: $done dari $total bagian sudah terkirim.';
+  }
+
+  @override
+  String get importResume => 'Lanjutkan impor';
+
+  @override
+  String get importCancel => 'Batalkan impor';
+
+  @override
+  String get importCancelTitle => 'Batalkan impor?';
+
+  @override
+  String get importCancelBody =>
+      'Yang sudah terkirim tetap tersimpan. Sisanya tidak dikirim, dan file perlu dipilih lagi kalau mau mengimpornya.';
+
+  @override
+  String get importKeepGoing => 'Jangan dibatalkan';
+
+  @override
+  String importRejected(String message) {
+    return 'Server menolak isi file: $message';
+  }
+
+  @override
+  String importTooOften(int minutes) {
+    return 'Impor dibatasi 30 bagian per jam. Lanjutkan sekitar $minutes menit lagi.';
+  }
+
+  @override
+  String get importDone => 'Impor selesai';
+
+  @override
+  String importCreated(String summary) {
+    return 'Dibuat: $summary.';
+  }
+
+  @override
+  String get importCreatedNone => 'Tidak ada data baru.';
+
+  @override
+  String importSkipped(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString data dilewati karena sudah ada.';
+  }
+
+  @override
+  String importPhotosQueued(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString foto sedang diunggah lewat antrean.';
+  }
+
+  @override
+  String countTasks(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString tugas';
+  }
+
+  @override
+  String countLists(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString daftar';
+  }
+
+  @override
+  String countGoals(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString target';
+  }
+
+  @override
+  String countEntries(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString setoran';
+  }
+
+  @override
+  String countTrips(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString perjalanan';
+  }
+
+  @override
+  String countDates(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString tanggal penting';
+  }
+
+  @override
+  String countMemories(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString kenangan';
+  }
+
+  @override
+  String countPhotos(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.decimalPattern(localeName);
+    final String countString = countNumberFormat.format(count);
+
+    return '$countString foto';
+  }
+
+  @override
+  String get importDoneButton => 'Selesai';
+
+  @override
   String get settingsDeleteAccount => 'Hapus akun';
 
   @override

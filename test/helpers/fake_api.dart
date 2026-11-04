@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/api/api_transport.dart';
+import 'package:todolist/features/settings/data/data_import.dart';
 
 import 'fixtures.dart';
 
@@ -97,6 +98,9 @@ class FakeApi implements ApiTransport {
       throw apiError(422, ApiErrorCode.googleTokenInvalid, message: 'Pilih akun Google yang tersambung ke akun ini.');
     }
   }
+
+  /// Baris yang masuk lewat `POST /me/import` (v1.x), per koleksi lalu per ID.
+  final Map<String, Map<String, Map<String, dynamic>>> imported = {};
 
   /// Isi `GET /me/export` (v1.0), dan teks mentahnya kalau berbeda dari JSON yang ditulis ulang.
   Map<String, dynamic>? exportFile;
@@ -200,6 +204,30 @@ class FakeApi implements ApiTransport {
       if (request.body?['code'] != emailCode) throw _codeRejected();
       me = {...?me, 'email_verified_at': stamp(), 'updated_at': stamp()};
       return ApiResponse(status: 200, body: {'data': me});
+    }
+
+    // Impor data (v1.x): ID yang sudah ada dilewati, seperti server.
+    if (segments.first == 'me' && segments.length > 1 && segments[1] == 'import') {
+      final created = {for (final key in importCollections) key: 0};
+      final skipped = {for (final key in importCollections) key: 0};
+      for (final key in importCollections) {
+        for (final row in request.body?[key] as List<dynamic>? ?? const []) {
+          final data = row as Map<String, dynamic>;
+          final table = imported.putIfAbsent(key, () => {});
+          if (table.containsKey(data['id'])) {
+            skipped[key] = skipped[key]! + 1;
+          } else {
+            table[data['id'] as String] = data;
+            created[key] = created[key]! + 1;
+          }
+        }
+      }
+      return ApiResponse(
+        status: 200,
+        body: {
+          'data': {'created': created, 'skipped': skipped},
+        },
+      );
     }
 
     // Ganti atau buat kata sandi (v1.x): 204, dan HP ini tetap masuk.

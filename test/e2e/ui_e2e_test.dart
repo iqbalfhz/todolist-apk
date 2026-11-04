@@ -50,6 +50,7 @@ import 'package:todolist/features/auth/data/auth_repository.dart';
 import 'package:todolist/features/auth/data/google_accounts.dart';
 import 'package:todolist/features/auth/presentation/google_sign_in_button.dart';
 import 'package:todolist/features/auth/domain/user.dart';
+import 'package:todolist/features/settings/data/data_import.dart';
 import 'package:todolist/features/comments/domain/comment.dart';
 import 'package:todolist/features/memories/domain/memory.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
@@ -208,6 +209,8 @@ void main() {
     final accountFiles = FakeAccountFiles();
     // Ekspor data (v1.0) tidak menulis ke folder unduhan sungguhan.
     final exportFiles = FakeExportFiles();
+    // Impor data (v1.x): pemilih berkas palsu, diisi berkas ekspor dari langkah sebelumnya.
+    final importFiles = FakeImportFiles();
     // Pilihan akun Google palsu: ID token sungguhan hanya bisa didapat dari Google.
     final google = FakeGoogleAccounts();
 
@@ -242,6 +245,7 @@ void main() {
         exportSaverProvider.overrideWithValue(exportFiles),
         exportPhotoFetcherProvider.overrideWithValue(exportFiles),
         exportZipWriterProvider.overrideWithValue(exportFiles),
+        importFilePickerProvider.overrideWithValue(importFiles),
         // Ubin peta tidak diunduh dari OpenStreetMap selama tes.
         mapTileProviderProvider.overrideWithValue(FakeTileProvider()),
         googleAccountsProvider.overrideWithValue(google),
@@ -1612,6 +1616,37 @@ void main() {
     final zipped = jsonDecode(utf8.decode(zip.value['data.json']!.bytes)) as Map<String, dynamic>;
     expect((zipped['user'] as Map<String, dynamic>)['email'], email);
     expect(zipped['format_version'], 1);
+
+    // ---------------------------------------------------------------- impor data (v1.x)
+
+    step('Impor data: berkas JSON tadi ke Ruang Pribadi, Ruang Bersama dilewati; isinya menjadi salinan baru');
+    final myPersonal = container.read(householdProvider)!.personal!.id;
+    Future<List<Map<String, dynamic>>> personalLists() async => [
+      for (final row in await serverRows('task_lists'))
+        if (row['space_id'] == myPersonal && row['deleted_at'] == null) row,
+    ];
+    final listsBefore = await personalLists();
+    expect(listsBefore, isNotEmpty);
+    importFiles.results.add(
+      PickedImportFile(name: exported.key.split('/').last, isZip: false, json: utf8.decode(exported.value)),
+    );
+    await go(Routes.importData);
+    await tap(find.widgetWithText(FilledButton, 'Pilih file'));
+    expect(find.text('Ruang Bersama dengan Sari'), findsOneWidget);
+    final sharedChoice = find.ancestor(of: find.text('Ruang Bersama dengan Sari'), matching: find.byType(AppCard));
+    await tap(find.descendant(of: sharedChoice, matching: find.text('Lewati')));
+    await tap(find.widgetWithText(FilledButton, 'Mulai impor'));
+    await tap(find.widgetWithText(TextButton, 'Impor'));
+    await until(find.text('Impor selesai'));
+    expect(find.text('Impor selesai'), findsOneWidget);
+    expect(transport.log.where((line) => line == 'POST /me/import'), hasLength(1));
+    final listsAfter = await personalLists();
+    expect(listsAfter, hasLength(listsBefore.length * 2));
+    // Salinannya ber-ID baru dengan nama dan waktu dibuat yang sama.
+    final copies = listsAfter.where((row) => !listsBefore.any((before) => before['id'] == row['id'])).toList();
+    expect({for (final row in copies) row['name']}, {for (final row in listsBefore) row['name']});
+    expect({for (final row in copies) row['created_at']}, {for (final row in listsBefore) row['created_at']});
+    expect(await container.read(accountProvider)!.imports.pending(), isNull);
 
     // ---------------------------------------------------------------- hapus akun (v1.0)
 

@@ -2659,6 +2659,324 @@ abstract class AppLocalizations {
   /// **'Email akunmu sekarang {email}.'**
   String emailChanged(String email);
 
+  /// No description provided for @settingsImport.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor data'**
+  String get settingsImport;
+
+  /// No description provided for @settingsImportSub.
+  ///
+  /// In id, this message translates to:
+  /// **'Salin isi file ekspor ke ruangmu'**
+  String get settingsImportSub;
+
+  /// No description provided for @importTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor data'**
+  String get importTitle;
+
+  /// No description provided for @importIntro.
+  ///
+  /// In id, this message translates to:
+  /// **'Salin isi file ekspor Denly Days, JSON atau ZIP, ke Ruang Pribadi atau Ruang Bersama. Isinya ditambahkan sebagai data baru; yang sudah ada tidak berubah.'**
+  String get importIntro;
+
+  /// No description provided for @importNoteTwice.
+  ///
+  /// In id, this message translates to:
+  /// **'Mengimpor file yang sama dua kali membuat salinannya dua kali.'**
+  String get importNoteTwice;
+
+  /// No description provided for @importNotePhotos.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto hanya ikut dari file ZIP.'**
+  String get importNotePhotos;
+
+  /// No description provided for @importNoteLeftOut.
+  ///
+  /// In id, this message translates to:
+  /// **'Komentar, reaksi, dan profil tidak ikut diimpor.'**
+  String get importNoteLeftOut;
+
+  /// No description provided for @importPick.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih file'**
+  String get importPick;
+
+  /// No description provided for @importPickOther.
+  ///
+  /// In id, this message translates to:
+  /// **'Pilih file lain'**
+  String get importPickOther;
+
+  /// No description provided for @importReading.
+  ///
+  /// In id, this message translates to:
+  /// **'Membaca file…'**
+  String get importReading;
+
+  /// No description provided for @importNotExport.
+  ///
+  /// In id, this message translates to:
+  /// **'File ini bukan file ekspor Denly Days. Pilih file JSON atau ZIP dari Ekspor data.'**
+  String get importNotExport;
+
+  /// No description provided for @importNewerVersion.
+  ///
+  /// In id, this message translates to:
+  /// **'File ini dibuat versi Denly Days yang lebih baru. Perbarui app dulu, lalu coba lagi.'**
+  String get importNewerVersion;
+
+  /// No description provided for @importUnreadable.
+  ///
+  /// In id, this message translates to:
+  /// **'File tidak bisa dibaca. Coba pilih lagi.'**
+  String get importUnreadable;
+
+  /// No description provided for @importNothing.
+  ///
+  /// In id, this message translates to:
+  /// **'File ini tidak berisi data yang bisa diimpor.'**
+  String get importNothing;
+
+  /// No description provided for @importFileZip.
+  ///
+  /// In id, this message translates to:
+  /// **'{count, plural, =0{ZIP tanpa foto} other{ZIP berisi {count} foto}}'**
+  String importFileZip(int count);
+
+  /// No description provided for @importFileJson.
+  ///
+  /// In id, this message translates to:
+  /// **'File JSON, tanpa foto'**
+  String get importFileJson;
+
+  /// No description provided for @importSpacePersonal.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Pribadi'**
+  String get importSpacePersonal;
+
+  /// No description provided for @importSpaceShared.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Bersama'**
+  String get importSpaceShared;
+
+  /// No description provided for @importSpaceSharedWith.
+  ///
+  /// In id, this message translates to:
+  /// **'Ruang Bersama dengan {names}'**
+  String importSpaceSharedWith(String names);
+
+  /// No description provided for @importWhere.
+  ///
+  /// In id, this message translates to:
+  /// **'Simpan ke mana?'**
+  String get importWhere;
+
+  /// No description provided for @importSkip.
+  ///
+  /// In id, this message translates to:
+  /// **'Lewati'**
+  String get importSkip;
+
+  /// No description provided for @importSharedVisible.
+  ///
+  /// In id, this message translates to:
+  /// **'Isi yang diimpor ke Ruang Bersama juga terlihat oleh {name}.'**
+  String importSharedVisible(String name);
+
+  /// No description provided for @importPhotosLeftOut.
+  ///
+  /// In id, this message translates to:
+  /// **'Foto tidak ikut, karena file ini JSON. Pilih file ZIP supaya fotonya ikut.'**
+  String get importPhotosLeftOut;
+
+  /// No description provided for @importStart.
+  ///
+  /// In id, this message translates to:
+  /// **'Mulai impor'**
+  String get importStart;
+
+  /// No description provided for @importConfirmTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor sekarang?'**
+  String get importConfirmTitle;
+
+  /// No description provided for @importConfirmBody.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} data disalin sebagai data baru. Kalau file yang sama diimpor lagi, isinya menjadi salinan kedua.'**
+  String importConfirmBody(int count);
+
+  /// No description provided for @importConfirm.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor'**
+  String get importConfirm;
+
+  /// No description provided for @importProgress.
+  ///
+  /// In id, this message translates to:
+  /// **'Mengirim bagian {done} dari {total}'**
+  String importProgress(int done, int total);
+
+  /// No description provided for @importFinishing.
+  ///
+  /// In id, this message translates to:
+  /// **'Mengambil hasil impor…'**
+  String get importFinishing;
+
+  /// No description provided for @importKeepOpen.
+  ///
+  /// In id, this message translates to:
+  /// **'Biarkan layar ini terbuka sampai selesai. Kalau terputus, impor bisa dilanjutkan dari sini.'**
+  String get importKeepOpen;
+
+  /// No description provided for @importPendingTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor belum selesai'**
+  String get importPendingTitle;
+
+  /// No description provided for @importPendingBody.
+  ///
+  /// In id, this message translates to:
+  /// **'{file}: {done} dari {total} bagian sudah terkirim.'**
+  String importPendingBody(String file, int done, int total);
+
+  /// No description provided for @importResume.
+  ///
+  /// In id, this message translates to:
+  /// **'Lanjutkan impor'**
+  String get importResume;
+
+  /// No description provided for @importCancel.
+  ///
+  /// In id, this message translates to:
+  /// **'Batalkan impor'**
+  String get importCancel;
+
+  /// No description provided for @importCancelTitle.
+  ///
+  /// In id, this message translates to:
+  /// **'Batalkan impor?'**
+  String get importCancelTitle;
+
+  /// No description provided for @importCancelBody.
+  ///
+  /// In id, this message translates to:
+  /// **'Yang sudah terkirim tetap tersimpan. Sisanya tidak dikirim, dan file perlu dipilih lagi kalau mau mengimpornya.'**
+  String get importCancelBody;
+
+  /// No description provided for @importKeepGoing.
+  ///
+  /// In id, this message translates to:
+  /// **'Jangan dibatalkan'**
+  String get importKeepGoing;
+
+  /// No description provided for @importRejected.
+  ///
+  /// In id, this message translates to:
+  /// **'Server menolak isi file: {message}'**
+  String importRejected(String message);
+
+  /// No description provided for @importTooOften.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor dibatasi 30 bagian per jam. Lanjutkan sekitar {minutes} menit lagi.'**
+  String importTooOften(int minutes);
+
+  /// No description provided for @importDone.
+  ///
+  /// In id, this message translates to:
+  /// **'Impor selesai'**
+  String get importDone;
+
+  /// No description provided for @importCreated.
+  ///
+  /// In id, this message translates to:
+  /// **'Dibuat: {summary}.'**
+  String importCreated(String summary);
+
+  /// No description provided for @importCreatedNone.
+  ///
+  /// In id, this message translates to:
+  /// **'Tidak ada data baru.'**
+  String get importCreatedNone;
+
+  /// No description provided for @importSkipped.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} data dilewati karena sudah ada.'**
+  String importSkipped(int count);
+
+  /// No description provided for @importPhotosQueued.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} foto sedang diunggah lewat antrean.'**
+  String importPhotosQueued(int count);
+
+  /// No description provided for @countTasks.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} tugas'**
+  String countTasks(int count);
+
+  /// No description provided for @countLists.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} daftar'**
+  String countLists(int count);
+
+  /// No description provided for @countGoals.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} target'**
+  String countGoals(int count);
+
+  /// No description provided for @countEntries.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} setoran'**
+  String countEntries(int count);
+
+  /// No description provided for @countTrips.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} perjalanan'**
+  String countTrips(int count);
+
+  /// No description provided for @countDates.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} tanggal penting'**
+  String countDates(int count);
+
+  /// No description provided for @countMemories.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} kenangan'**
+  String countMemories(int count);
+
+  /// No description provided for @countPhotos.
+  ///
+  /// In id, this message translates to:
+  /// **'{count} foto'**
+  String countPhotos(int count);
+
+  /// No description provided for @importDoneButton.
+  ///
+  /// In id, this message translates to:
+  /// **'Selesai'**
+  String get importDoneButton;
+
   /// No description provided for @settingsDeleteAccount.
   ///
   /// In id, this message translates to:

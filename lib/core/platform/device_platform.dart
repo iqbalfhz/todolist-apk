@@ -123,6 +123,23 @@ class DevicePlatform {
     }
   }
 
+  /// Pilih berkas ekspor untuk diimpor (v1.x) lewat pemilih berkas Android. Foto dari ZIP disalin
+  /// ke folder impor [token]. `null` kalau ditutup; melempar [PlatformException] kalau berkasnya
+  /// tidak bisa dibaca.
+  Future<Map<String, Object?>?> pickImportFile(String token) =>
+      _channel.invokeMapMethod<String, Object?>('pickImportFile', {'token': token});
+
+  /// Hapus salinan foto impor [token]. Tidak pernah gagal.
+  Future<void> discardImport(String token) async {
+    try {
+      await _channel.invokeMethod<void>('discardImport', {'token': token});
+    } on MissingPluginException {
+      // Tanpa kanal native.
+    } on PlatformException {
+      // Folder yang tertinggal hanya berisi salinan foto, di folder app sendiri.
+    }
+  }
+
   /// Simpan berkas ekspor data (v1.0) ke `Download/Denly Days/{folder}` di HP. Mengembalikan
   /// letak foldernya untuk ditunjukkan ke pengguna; melempar [PlatformException] kalau gagal.
   Future<String> saveDownload({
