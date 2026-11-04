@@ -29,7 +29,7 @@ Dua tema, Mawar dan Anggrek, masing-masing punya mode terang dan gelap. Setiap k
 | scrim | rgba(43,26,34,0.45) | rgba(43,26,34,0.45) | rgba(0,0,0,0.55) | rgba(0,0,0,0.55) | Latar redup di belakang lembar bawah dan dialog (`scrim`) |
 | ok | #2E7D4F | #2E7D4F | #7FD3A0 | #7FD3A0 | Status berhasil, selalu dengan ikon |
 | warn | #9A5B00 | #9A5B00 | #F0B45C | #F0B45C | Status peringatan dan label "Terlewat", selalu dengan ikon |
-| danger | #B3261E | #B3261E | belum ditetapkan | belum ditetapkan | Hapus dan error; versi gelap harus lebih terang, cek kontras dulu |
+| danger | #B3261E | #B3261E | #FFB4AB | #FFB4AB | Hapus dan error; versi gelap disahkan pemilik 4 November 2026 |
 
 Aturan:
 
@@ -45,14 +45,14 @@ Enam kunci yang sama dipakai untuk warna diri (`color` milik user: avatar inisia
 
 | Kunci | Terang | Gelap |
 | --- | --- | --- |
-| `mawar` | #CB2F69 | belum ditetapkan |
+| `mawar` | #CB2F69 | #E38BB3 |
 | `ungu` | #5B57A6 | #A9A3F0 |
-| `toska` | #2E7D73 | belum ditetapkan |
-| `bata` | #B4541F | belum ditetapkan |
-| `biru` | #3567B5 | belum ditetapkan |
-| `lavender` | #8A4FA0 | belum ditetapkan |
+| `toska` | #2E7D73 | #7FCFC4 |
+| `bata` | #B4541F | #F0A27A |
+| `biru` | #3567B5 | #9BB8F2 |
+| `lavender` | #8A4FA0 | #D3A6E8 |
 
-Versi gelap yang belum ditetapkan: pakai varian yang lebih terang dan cek kontrasnya terhadap `surface` gelap.
+Versi gelap selain `ungu` adalah varian yang lebih terang, disahkan pemilik pada 4 November 2026. Kontrasnya terhadap `surface` gelap dijaga `test/core/theme_test.dart`.
 
 Di mockup, warna milikmu memakai `{{t.brand}}`, warna pasangan `{{t.p2}}` (ungu), dan titik daftar `{{t.sw1}}` sampai `{{t.sw3}}`. Di app, semuanya diambil dari `color` orang atau daftar itu. Penanggung jawab "Kita" menampilkan dua titik.
 

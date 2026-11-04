@@ -155,7 +155,7 @@ class AppPalette extends ThemeExtension<AppPalette> {
     danger: _dangerDark,
   );
 
-  /// `danger` gelap belum ditetapkan di tema.md. Dipilih varian yang lebih terang;
+  /// `danger` gelap dari tema.md, sama untuk kedua tema (disahkan pemilik 4 November 2026);
   /// kontrasnya terhadap `surface` dan `bg` gelap dijaga `test/core/theme_test.dart`.
   static const Color _dangerDark = Color(0xFFFFB4AB);
 
@@ -213,8 +213,8 @@ abstract final class PersonColors {
     'lavender': Color(0xFF8A4FA0),
   };
 
-  /// Hanya `ungu` yang ditetapkan di tema.md. Sisanya varian yang lebih terang;
-  /// kontrasnya terhadap `surface` gelap dijaga `test/core/theme_test.dart`.
+  /// Versi gelap dari tema.md (disahkan pemilik 4 November 2026); kontrasnya terhadap
+  /// `surface` gelap dijaga `test/core/theme_test.dart`.
   static const Map<String, Color> _dark = {
     'mawar': Color(0xFFE38BB3),
     'ungu': Color(0xFFA9A3F0),
