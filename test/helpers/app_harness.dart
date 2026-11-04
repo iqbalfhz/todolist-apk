@@ -15,6 +15,7 @@ import 'package:todolist/core/platform/device_platform.dart';
 import 'package:todolist/core/providers.dart';
 import 'package:todolist/core/session/account_files.dart';
 import 'package:todolist/features/settings/data/data_export.dart';
+import 'package:todolist/features/settings/data/data_import.dart';
 import 'package:todolist/core/session/session.dart';
 import 'package:todolist/core/time/space_clock.dart';
 import 'package:todolist/features/memories/presentation/memory_map.dart';
@@ -60,6 +61,7 @@ Future<ProviderContainer> pumpApp(
   FakeGoogleAccounts? google,
   FakeAccountFiles? accountFiles,
   FakeExportFiles? exportFiles,
+  FakeImportFiles? importFiles,
 }) async {
   tester.view
     ..physicalSize = const Size(390, 844)
@@ -104,6 +106,8 @@ Future<ProviderContainer> pumpApp(
       exportSaverProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
       exportPhotoFetcherProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
       exportZipWriterProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
+      // Impor data (v1.x) tidak membuka pemilih berkas sungguhan di tes.
+      importFilePickerProvider.overrideWithValue(importFiles ?? FakeImportFiles()),
       revocationTransportProvider.overrideWithValue((token) {
         harness.revocationTokens.add(token);
         return harness.api;
@@ -202,6 +206,31 @@ class _FakeZipSession implements ExportZipSession {
 
   @override
   Future<void> cancel() async => files.cancelledZips.add(name);
+}
+
+/// Pemilih berkas impor palsu (v1.x): setiap [pick] memakai hasil berikutnya di [results].
+class FakeImportFiles implements ImportFilePicker {
+  FakeImportFiles([List<Object?>? results]) : results = results ?? [];
+
+  /// [PickedImportFile], `null` (pemilih ditutup), atau error yang dilempar. Kalau habis,
+  /// pemilihnya dianggap ditutup.
+  final List<Object?> results;
+
+  /// Folder foto yang diminta setiap kali memilih, dan yang sudah dihapus.
+  final List<String> tokens = [];
+  final List<String> discarded = [];
+
+  @override
+  Future<PickedImportFile?> pick(String token) async {
+    tokens.add(token);
+    if (results.isEmpty) return null;
+    final next = results.removeAt(0);
+    if (next is Exception) throw next;
+    return next as PickedImportFile?;
+  }
+
+  @override
+  Future<void> discard(String token) async => discarded.add(token);
 }
 
 /// Berkas akun palsu: mencatat akun yang berkasnya dihapus.

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,6 +23,7 @@ import 'package:todolist/features/savings/presentation/goal_form_sheet.dart';
 import 'package:todolist/features/savings/presentation/reminder_sheet.dart';
 import 'package:todolist/features/savings/presentation/savings_screen.dart';
 import 'package:todolist/features/search/domain/search.dart';
+import 'package:todolist/features/settings/data/data_import.dart';
 import 'package:todolist/features/special_dates/presentation/special_date_sheet.dart';
 import 'package:todolist/features/special_dates/presentation/special_dates_screen.dart';
 import 'package:todolist/features/tasks/presentation/list_form_sheet.dart';
@@ -191,7 +193,14 @@ void main() {
       }
       final picker = FakePhotoPicker();
       final exportFiles = FakeExportFiles();
-      final container = await pumpApp(tester, h, photoPicker: picker, exportFiles: exportFiles);
+      final importFiles = FakeImportFiles();
+      final container = await pumpApp(
+        tester,
+        h,
+        photoPicker: picker,
+        exportFiles: exportFiles,
+        importFiles: importFiles,
+      );
       await apply(tester, size: size, textScale: textScale);
 
       await visit(tester, container, Routes.home);
@@ -391,6 +400,91 @@ void main() {
       await visit(tester, container, Routes.changeEmail);
       expect(find.byType(GoogleSignInButton), findsOneWidget);
       await h.account.store.write(EntityType.me, me.toJson());
+
+      // Impor data (v1.x): nama berkas dan nama anggota yang panjang, pilihan tujuan, lalu hasilnya.
+      Map<String, dynamic> fileRow(String id, String space, Map<String, dynamic> fields) => {
+        'id': id,
+        'space_id': space,
+        ...fields,
+        'created_by': meId,
+        'created_at': t0,
+        'updated_at': t0,
+        'deleted_at': null,
+      };
+      importFiles.results.add(
+        PickedImportFile(
+          name: 'denly-days-2026-11-03-salinan-dari-hp-lama-yang-namanya-cukup-panjang.json',
+          isZip: false,
+          json: jsonEncode({
+            'app': 'Denly Days',
+            'format_version': 1,
+            'user': userJson(),
+            'spaces': [
+              {
+                'id': 'ruang-pribadi',
+                'type': 'personal',
+                'members': [
+                  {'id': meId, 'name': 'Iqbal'},
+                ],
+              },
+              {
+                'id': 'ruang-bersama',
+                'type': 'shared',
+                'members': [
+                  {'id': meId, 'name': 'Iqbal'},
+                  {'id': partnerId, 'name': 'Sari Kusumawardhani Putri Ramadhani'},
+                ],
+              },
+            ],
+            'savings_goals': [
+              fileRow('target', 'ruang-bersama', {'name': 'Dana Liburan', 'target_amount': 1000000, 'currency': 'IDR'}),
+            ],
+            'task_lists': [
+              fileRow('daftar', 'ruang-pribadi', {'name': 'Tugas'}),
+              fileRow('daftar-2', 'ruang-bersama', {'name': 'Belanja'}),
+            ],
+            'tasks': [
+              for (var i = 0; i < 12; i++)
+                fileRow('tugas-$i', 'ruang-bersama', {'task_list_id': 'daftar-2', 'title': 'Tugas $i'}),
+              fileRow('tugas-pribadi', 'ruang-pribadi', {'task_list_id': 'daftar', 'title': 'Tugas pribadi'}),
+            ],
+            'savings_entries': [
+              for (var i = 0; i < 40; i++)
+                fileRow('setoran-$i', 'ruang-bersama', {
+                  'savings_goal_id': 'target',
+                  'type': 'deposit',
+                  'amount': 1000,
+                }),
+            ],
+            'special_dates': [
+              fileRow('hari-jadi', 'ruang-bersama', {'type': 'anniversary', 'title': 'Jadian', 'date': '2020-02-14'}),
+            ],
+            'trips': [
+              fileRow('perjalanan', 'ruang-bersama', {'title': 'Bali'}),
+            ],
+            'memories': [
+              fileRow('kenangan', 'ruang-bersama', {'title': 'Kuta', 'visited_on': '2026-06-20'}),
+            ],
+            'memory_photos': [
+              {'id': 'foto', 'memory_id': 'kenangan', 'space_id': 'ruang-bersama', 'deleted_at': null},
+            ],
+          }),
+        ),
+      );
+      await visit(tester, container, Routes.importData);
+      await reveal(tester, find.widgetWithText(FilledButton, 'Pilih file'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Pilih file'));
+      await settle(tester);
+      expect(find.text('Ruang Bersama dengan Sari Kusumawardhani Putri Ramadhani'), findsOneWidget);
+      await scrollThrough(tester);
+      await reveal(tester, find.widgetWithText(FilledButton, 'Mulai impor'));
+      await tester.tap(find.widgetWithText(FilledButton, 'Mulai impor'));
+      await settle(tester);
+      expect(find.text('Impor sekarang?'), findsOneWidget);
+      await tester.tap(find.widgetWithText(TextButton, 'Impor'));
+      await settle(tester);
+      expect(find.text('Impor selesai'), findsOneWidget);
+      await scrollThrough(tester);
 
       // Ekspor data (v1.0): berkas tersimpan, lalu fotonya.
       h.api.exportFile = {

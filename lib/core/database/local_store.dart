@@ -37,6 +37,10 @@ abstract final class MetaKeys {
   /// menyimpannya (untuk batas sekali per 6 jam).
   static const String exchangeRates = 'exchange_rates';
   static const String exchangeRatesSavedAt = 'exchange_rates_saved_at';
+
+  /// Rencana impor data yang belum selesai (v1.x) sebagai JSON: baris dengan ID baru dan sampai
+  /// mana sudah terkirim.
+  static const String importPlan = 'import_plan';
 }
 
 /// Satu-satunya pintu ke cache lokal.

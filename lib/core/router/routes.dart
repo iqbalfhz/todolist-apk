@@ -35,6 +35,9 @@ abstract final class Routes {
   /// Ekspor data (v1.0), juga disebut di halaman publik `/hapus-akun`.
   static const String exportData = '/pengaturan/ekspor-data';
 
+  /// Impor data dari file ekspor (v1.x).
+  static const String importData = '/pengaturan/impor-data';
+
   /// Parameter kueri penanda layar asal, supaya tombol kembali pulang ke Beranda.
   static const String fromParam = 'dari';
   static const String fromHome = 'beranda';

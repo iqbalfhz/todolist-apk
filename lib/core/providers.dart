@@ -6,6 +6,7 @@ import '../features/auth/data/auth_repository.dart';
 import '../features/auth/data/google_accounts.dart';
 import '../features/auth/domain/user.dart';
 import '../features/settings/data/data_export.dart';
+import '../features/settings/data/data_import.dart';
 import '../features/comments/domain/comment.dart';
 import '../features/memories/domain/memory.dart';
 import '../features/memories/domain/memory_photo.dart';
@@ -100,6 +101,11 @@ final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
 
 /// Tempat menyimpan hasil ekspor data di HP (v1.0). Ditimpa di tes.
 final exportSaverProvider = Provider<ExportSaver>((ref) => DeviceExportSaver(ref.watch(devicePlatformProvider)));
+
+/// Pemilih berkas untuk impor data (v1.x).
+final importFilePickerProvider = Provider<ImportFilePicker>(
+  (ref) => DeviceImportFilePicker(ref.watch(devicePlatformProvider)),
+);
 
 /// ZIP ekspor berisi foto (v1.x), ditulis langsung ke folder unduhan.
 final exportZipWriterProvider = Provider<ExportZipWriter>(

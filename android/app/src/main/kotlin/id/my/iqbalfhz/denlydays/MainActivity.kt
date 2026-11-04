@@ -14,11 +14,18 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
-    /** ZIP ekspor (v1.x) ditulis berurutan di satu thread latar, karena isinya bisa ratusan MB. */
-    private val zipThread = Executors.newSingleThreadExecutor()
+    /**
+     * ZIP ekspor dan berkas impor (v1.x) ditulis dan dibaca berurutan di satu thread latar,
+     * karena isinya bisa ratusan MB.
+     */
+    private val fileThread = Executors.newSingleThreadExecutor()
 
-    private fun onZipThread(result: MethodChannel.Result, work: () -> Any?) {
-        zipThread.execute {
+    /** Pemilih berkas impor yang sedang terbuka, dan folder foto untuk hasilnya. */
+    private var pendingImport: MethodChannel.Result? = null
+    private var pendingImportToken: String? = null
+
+    private fun onFileThread(result: MethodChannel.Result, work: () -> Any?) {
+        fileThread.execute {
             try {
                 val value = work()
                 runOnUiThread { result.success(value) }
@@ -91,7 +98,7 @@ class MainActivity : FlutterActivity() {
 
                 // ZIP ekspor data (v1.x): dibuka, diisi satu berkas demi satu berkas, lalu ditutup
                 // atau dibatalkan. Selama belum selesai, berkasnya tersembunyi.
-                "zipStart" -> onZipThread(result) {
+                "zipStart" -> onFileThread(result) {
                     ExportZip.start(applicationContext, call.argument<String>("name").orEmpty())
                 }
 
@@ -103,21 +110,47 @@ class MainActivity : FlutterActivity() {
                     if (bytes == null) {
                         result.error("invalid", "Isi berkas kosong", null)
                     } else {
-                        onZipThread(result) {
+                        onFileThread(result) {
                             ExportZip.add(id, entry, bytes, compress)
                             null
                         }
                     }
                 }
 
-                "zipFinish" -> onZipThread(result) { ExportZip.finish(applicationContext, call.argument<Int>("id") ?: -1) }
+                "zipFinish" -> onFileThread(result) { ExportZip.finish(applicationContext, call.argument<Int>("id") ?: -1) }
 
-                "zipCancel" -> onZipThread(result) {
+                "zipCancel" -> onFileThread(result) {
                     ExportZip.cancel(applicationContext, call.argument<Int>("id") ?: -1)
                     null
                 }
 
-                "freeSpace" -> onZipThread(result) { ExportZip.freeSpace(applicationContext) }
+                "freeSpace" -> onFileThread(result) { ExportZip.freeSpace(applicationContext) }
+
+                // Impor data (v1.x): pilih file JSON atau ZIP. Isinya dibaca di thread latar setelah
+                // pemilih berkas ditutup (onActivityResult).
+                "pickImportFile" -> {
+                    if (pendingImport != null) {
+                        result.error("busy", "Pemilih berkas sudah terbuka", null)
+                    } else {
+                        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                            addCategory(Intent.CATEGORY_OPENABLE)
+                            type = "*/*"
+                        }
+                        pendingImport = result
+                        pendingImportToken = call.argument<String>("token").orEmpty()
+                        try {
+                            startActivityForResult(intent, REQUEST_IMPORT)
+                        } catch (_: ActivityNotFoundException) {
+                            pendingImport = null
+                            result.success(null)
+                        }
+                    }
+                }
+
+                "discardImport" -> onFileThread(result) {
+                    ImportFiles.discard(applicationContext, call.argument<String>("token").orEmpty())
+                    null
+                }
 
                 // Bagikan berkas di folder unduhan yang dibuat app ini (v1.x). Hanya alamat
                 // MediaStore, supaya kanal ini tidak bisa dipakai membagikan berkas lain.
@@ -142,6 +175,31 @@ class MainActivity : FlutterActivity() {
                 }
 
                 else -> result.notImplemented()
+            }
+        }
+    }
+
+    @Deprecated("Pemilih berkas impor memakai startActivityForResult bawaan Activity")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQUEST_IMPORT) return
+
+        val result = pendingImport ?: return
+        val token = pendingImportToken.orEmpty()
+        pendingImport = null
+        pendingImportToken = null
+
+        val uri = data?.data
+        if (resultCode != RESULT_OK || uri == null) {
+            result.success(null)
+            return
+        }
+        fileThread.execute {
+            try {
+                val picked = ImportFiles.read(applicationContext, uri, token)
+                runOnUiThread { result.success(picked) }
+            } catch (error: Exception) {
+                runOnUiThread { result.error("read_failed", error.message, null) }
             }
         }
     }
@@ -171,5 +229,6 @@ class MainActivity : FlutterActivity() {
 
     private companion object {
         const val CHANNEL = "todolist/device"
+        const val REQUEST_IMPORT = 4021
     }
 }
