@@ -1077,6 +1077,146 @@
     }
   },
   "importDoneButton": "Selesai",
+  "homeActivity": "Aktivitas",
+  "homeActivityNew": "Aktivitas, ada kegiatan baru dari pasangan",
+  "activityTitle": "Aktivitas",
+  "activityWindowNote": "Kegiatan di Ruang Bersama selama 30 hari terakhir. Perubahan dan penghapusan tidak dicatat.",
+  "activityAll": "Semua",
+  "activityPartnerOnly": "Pasangan saja",
+  "activityToday": "Hari ini",
+  "activityYesterday": "Kemarin",
+  "activityEmpty": "Belum ada kegiatan di Ruang Bersama dalam 30 hari terakhir.",
+  "activityEmptyPartner": "Belum ada kegiatan {name} dalam 30 hari terakhir.",
+  "@activityEmptyPartner": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "activityUnpaired": "Aktivitas berisi kegiatan kalian berdua di Ruang Bersama. Ajak pasanganmu dulu.",
+  "activityInvite": "Ajak pasangan",
+  "activityYou": "Kamu",
+  "activitySomeone": "Seseorang",
+  "activityTaskAdded": "{actor} menambah tugas {title}",
+  "@activityTaskAdded": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityTaskAssignedToYou": "{actor} menitipkan {title} ke kamu",
+  "@activityTaskAssignedToYou": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityTaskAssignedTo": "{actor} menitipkan {title} ke {person}",
+  "@activityTaskAssignedTo": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"},
+      "person": {"type": "String"}
+    }
+  },
+  "activityTaskCompleted": "{actor} menyelesaikan {title}",
+  "@activityTaskCompleted": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityDeposit": "{actor} menabung {amount} untuk {title}",
+  "@activityDeposit": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "amount": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityWithdrawal": "{actor} mengambil {amount} dari {title}",
+  "@activityWithdrawal": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "amount": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityGoalCreated": "{actor} membuat target {title}",
+  "@activityGoalCreated": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityGoalAchieved": "{title} tercapai",
+  "@activityGoalAchieved": {
+    "placeholders": {
+      "title": {"type": "String"}
+    }
+  },
+  "activityTripPlanned": "{actor} merencanakan {title}",
+  "@activityTripPlanned": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityDateAdded": "{actor} menambah tanggal penting {title}",
+  "@activityDateAdded": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityMemorySaved": "{actor} menyimpan kenangan {title}",
+  "@activityMemorySaved": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityPhotosAdded": "{actor} menambah {count} foto ke {title}",
+  "@activityPhotosAdded": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "count": {"type": "int"},
+      "title": {"type": "String"}
+    }
+  },
+  "activityCommented": "{actor} mengomentari {subject}: {text}",
+  "@activityCommented": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "subject": {"type": "String"},
+      "text": {"type": "String"}
+    }
+  },
+  "activityReacted": "{actor} memberi reaksi {emoji} ke {subject}",
+  "@activityReacted": {
+    "placeholders": {
+      "actor": {"type": "String"},
+      "emoji": {"type": "String"},
+      "subject": {"type": "String"}
+    }
+  },
+  "activityJoined": "{actor} bergabung ke Ruang Bersama",
+  "@activityJoined": {
+    "placeholders": {
+      "actor": {"type": "String"}
+    }
+  },
+  "activityEntrySubject": "setoran {amount}",
+  "@activityEntrySubject": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
+  "activityWithdrawalSubject": "penarikan {amount}",
+  "@activityWithdrawalSubject": {
+    "placeholders": {
+      "amount": {"type": "String"}
+    }
+  },
   "settingsDeleteAccount": "Hapus akun",
   "settingsDeleteAccountSub": "Hapus permanen akun dan semua datamu",
   "deleteAccountTitle": "Hapus akun",

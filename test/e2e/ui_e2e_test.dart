@@ -1368,6 +1368,20 @@ void main() {
     ];
     expect(reactions, ['❤️', '❤️']);
 
+    step('Aktivitas (v1.x): lonceng Beranda bertitik; feed menyebut komentar dan reaksi pasangan');
+    await go(Routes.home);
+    await tap(find.byTooltip('Aktivitas, ada kegiatan baru dari pasangan'));
+    expect(find.text('Hari ini'), findsOneWidget);
+    expect(find.text('Sari mengomentari Beli galon: Siap, nanti sore'), findsOneWidget);
+    expect(find.text('Sari memberi reaksi ❤️ ke Beli galon'), findsOneWidget);
+    expect(find.text('Kamu mengomentari Beli galon: Galonnya yang 19 liter, ya'), findsOneWidget);
+    await tap(find.text('Pasangan saja'));
+    expect(find.text('Kamu mengomentari Beli galon: Galonnya yang 19 liter, ya'), findsNothing);
+    await tap(find.text('Sari mengomentari Beli galon: Siap, nanti sore'));
+    expect(container.read(routerProvider).state.uri.toString(), Routes.task(sharedTaskId, comments: true));
+    await go(Routes.home);
+    expect(find.byTooltip('Aktivitas'), findsOneWidget);
+
     step('Setahun lalu, hari ini: kenangan pasangan dari tanggal yang sama tahun lalu');
     final lastYear = '${int.parse(today().substring(0, 4)) - 1}${today().substring(4)}';
     // 29 Februari tidak ada di tahun lalu; langkah ini dilewati di hari itu.

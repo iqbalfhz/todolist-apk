@@ -212,6 +212,13 @@ void main() {
       container.read(searchTextProvider.notifier).set('hujan');
       await visit(tester, container, Routes.search);
 
+      // Aktivitas (v1.x): feed dari data yang ramai, lalu saringan pasangan saja.
+      await visit(tester, container, Routes.activity);
+      await reveal(tester, find.text('Pasangan saja'));
+      await tester.tap(find.text('Pasangan saja'));
+      await settle(tester);
+      await scrollThrough(tester);
+
       await visit(tester, container, Routes.tasks);
       await tester.tap(find.textContaining('Selesai ('));
       await settle(tester);
