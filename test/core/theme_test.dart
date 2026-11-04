@@ -114,6 +114,14 @@ void main() {
     expect(PersonColors.resolve('ungu', Brightness.light), const Color(0xFF5B57A6));
     expect(PersonColors.resolve('ungu', Brightness.dark), const Color(0xFFA9A3F0));
     expect(PersonColors.resolve('tidak-ada', Brightness.light), const Color(0xFFCB2F69));
+    // Versi gelap yang disahkan pemilik pada 4 November 2026.
+    expect(AppPalette.mawarDark.danger, const Color(0xFFFFB4AB));
+    expect(AppPalette.anggrekDark.danger, const Color(0xFFFFB4AB));
+    expect(PersonColors.resolve('mawar', Brightness.dark), const Color(0xFFE38BB3));
+    expect(PersonColors.resolve('toska', Brightness.dark), const Color(0xFF7FCFC4));
+    expect(PersonColors.resolve('bata', Brightness.dark), const Color(0xFFF0A27A));
+    expect(PersonColors.resolve('biru', Brightness.dark), const Color(0xFF9BB8F2));
+    expect(PersonColors.resolve('lavender', Brightness.dark), const Color(0xFFD3A6E8));
   });
 
   test('ok di atas bg: Anggrek terang sedikit di bawah 4.5:1, jadi ok hanya dipakai di atas surface', () {
