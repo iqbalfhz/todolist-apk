@@ -1,16 +1,33 @@
 package id.my.iqbalfhz.denlydays
 
 import android.content.ActivityNotFoundException
+import android.content.ClipData
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.util.concurrent.Executors
 
 class MainActivity : FlutterActivity() {
+    /** ZIP ekspor (v1.x) ditulis berurutan di satu thread latar, karena isinya bisa ratusan MB. */
+    private val zipThread = Executors.newSingleThreadExecutor()
+
+    private fun onZipThread(result: MethodChannel.Result, work: () -> Any?) {
+        zipThread.execute {
+            try {
+                val value = work()
+                runOnUiThread { result.success(value) }
+            } catch (error: Exception) {
+                runOnUiThread { result.error("save_failed", error.message, null) }
+            }
+        }
+    }
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -69,6 +86,58 @@ class MainActivity : FlutterActivity() {
                                 runOnUiThread { result.error("save_failed", error.message, null) }
                             }
                         }.start()
+                    }
+                }
+
+                // ZIP ekspor data (v1.x): dibuka, diisi satu berkas demi satu berkas, lalu ditutup
+                // atau dibatalkan. Selama belum selesai, berkasnya tersembunyi.
+                "zipStart" -> onZipThread(result) {
+                    ExportZip.start(applicationContext, call.argument<String>("name").orEmpty())
+                }
+
+                "zipAdd" -> {
+                    val id = call.argument<Int>("id") ?: -1
+                    val entry = call.argument<String>("entry").orEmpty()
+                    val compress = call.argument<Boolean>("compress") ?: false
+                    val bytes = call.argument<ByteArray>("bytes")
+                    if (bytes == null) {
+                        result.error("invalid", "Isi berkas kosong", null)
+                    } else {
+                        onZipThread(result) {
+                            ExportZip.add(id, entry, bytes, compress)
+                            null
+                        }
+                    }
+                }
+
+                "zipFinish" -> onZipThread(result) { ExportZip.finish(applicationContext, call.argument<Int>("id") ?: -1) }
+
+                "zipCancel" -> onZipThread(result) {
+                    ExportZip.cancel(applicationContext, call.argument<Int>("id") ?: -1)
+                    null
+                }
+
+                "freeSpace" -> onZipThread(result) { ExportZip.freeSpace(applicationContext) }
+
+                // Bagikan berkas di folder unduhan yang dibuat app ini (v1.x). Hanya alamat
+                // MediaStore, supaya kanal ini tidak bisa dipakai membagikan berkas lain.
+                "shareFile" -> {
+                    val uri = Uri.parse(call.argument<String>("uri").orEmpty())
+                    if (uri.scheme != "content" || uri.authority != MediaStore.AUTHORITY) {
+                        result.success(false)
+                    } else {
+                        val send = Intent(Intent.ACTION_SEND).apply {
+                            type = call.argument<String>("mimeType") ?: "application/octet-stream"
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            clipData = ClipData.newRawUri(null, uri)
+                            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        try {
+                            startActivity(Intent.createChooser(send, null))
+                            result.success(true)
+                        } catch (_: ActivityNotFoundException) {
+                            result.success(false)
+                        }
                     }
                 }
 

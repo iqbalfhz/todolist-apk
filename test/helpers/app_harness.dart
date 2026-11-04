@@ -103,6 +103,7 @@ Future<ProviderContainer> pumpApp(
       // Ekspor data (v1.0) tidak menulis ke folder unduhan sungguhan di tes.
       exportSaverProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
       exportPhotoFetcherProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
+      exportZipWriterProvider.overrideWithValue(exportFiles ?? FakeExportFiles()),
       revocationTransportProvider.overrideWithValue((token) {
         harness.revocationTokens.add(token);
         return harness.api;
@@ -124,13 +125,28 @@ Future<ProviderContainer> pumpApp(
 
 ProviderContainer? _container;
 
-/// Folder unduhan dan foto palsu untuk ekspor data (v1.0).
-class FakeExportFiles implements ExportSaver, ExportPhotoFetcher {
+/// Folder unduhan dan foto palsu untuk ekspor data (v1.0) dan ZIP-nya (v1.x).
+class FakeExportFiles implements ExportSaver, ExportPhotoFetcher, ExportZipWriter {
   /// Berkas yang tersimpan, per `{folder}/{nama}`.
   final Map<String, Uint8List> saved = {};
 
   /// Nama berkas foto yang gagal diunduh sekali.
   final Set<String> failOnce = {};
+
+  /// Nama berkas foto yang selalu gagal diunduh (v1.x).
+  final Set<String> failAlways = {};
+
+  /// ZIP yang tersimpan, per nama berkas: isi ZIP beserta dikompres atau tidak (v1.x).
+  final Map<String, Map<String, ({Uint8List bytes, bool compress})>> zips = {};
+
+  /// Nama ZIP yang dibatalkan sebelum selesai.
+  final List<String> cancelledZips = [];
+
+  /// ZIP yang dibagikan.
+  final List<SavedZip> shared = [];
+
+  /// Ruang kosong di HP; `null` berarti tidak terbaca.
+  int? freeBytes;
 
   /// Selama menyala, menyimpan gagal seperti penyimpanan penuh.
   bool full = false;
@@ -149,9 +165,43 @@ class FakeExportFiles implements ExportSaver, ExportPhotoFetcher {
 
   @override
   Future<Uint8List> fetch(ExportPhoto photo) async {
-    if (failOnce.remove(photo.fileName)) throw const SocketException('Tanpa koneksi');
+    if (failAlways.contains(photo.fileName) || failOnce.remove(photo.fileName)) {
+      throw const SocketException('Tanpa koneksi');
+    }
     return Uint8List.fromList(utf8.encode(photo.url));
   }
+
+  @override
+  Future<int?> freeSpace() async => freeBytes;
+
+  @override
+  Future<ExportZipSession> start(String name) async => _FakeZipSession(this, name);
+
+  @override
+  Future<void> share(SavedZip zip) async => shared.add(zip);
+}
+
+class _FakeZipSession implements ExportZipSession {
+  _FakeZipSession(this.files, this.name);
+
+  final FakeExportFiles files;
+  final String name;
+  final Map<String, ({Uint8List bytes, bool compress})> entries = {};
+
+  @override
+  Future<void> add(String entry, Uint8List bytes, {required bool compress}) async {
+    if (files.full) throw PlatformException(code: 'save_failed', message: 'Penyimpanan penuh');
+    entries[entry] = (bytes: bytes, compress: compress);
+  }
+
+  @override
+  Future<SavedZip> finish() async {
+    files.zips[name] = entries;
+    return SavedZip(name: name, location: 'Download/Denly Days', uri: 'content://media/external/downloads/7');
+  }
+
+  @override
+  Future<void> cancel() async => files.cancelledZips.add(name);
 }
 
 /// Berkas akun palsu: mencatat akun yang berkasnya dihapus.

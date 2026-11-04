@@ -101,6 +101,11 @@ final accountFactoryProvider = Provider<Account Function(String userId)>((ref) {
 /// Tempat menyimpan hasil ekspor data di HP (v1.0). Ditimpa di tes.
 final exportSaverProvider = Provider<ExportSaver>((ref) => DeviceExportSaver(ref.watch(devicePlatformProvider)));
 
+/// ZIP ekspor berisi foto (v1.x), ditulis langsung ke folder unduhan.
+final exportZipWriterProvider = Provider<ExportZipWriter>(
+  (ref) => DeviceExportZipWriter(ref.watch(devicePlatformProvider)),
+);
+
 /// Pengambil foto yang ikut diekspor (v1.0). Ditimpa di tes.
 final exportPhotoFetcherProvider = Provider<ExportPhotoFetcher>(
   (ref) => CachedExportPhotoFetcher(DevicePhotoCache.instance),

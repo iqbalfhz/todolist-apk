@@ -808,11 +808,38 @@
   "settingsPrivacySub": "Data yang dipakai Denly Days dan hakmu",
   "settingsTermsSub": "Aturan memakai Denly Days",
   "exportTitle": "Ekspor data",
-  "exportIntro": "Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.",
-  "exportPhotosNote": "Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.",
+  "exportIntro": "Simpan salinan semua data yang bisa kamu lihat di app: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.",
   "exportServerNote": "Datamu juga tersimpan otomatis di server setiap kali online.",
-  "exportButton": "Ekspor data",
-  "exportAgain": "Ekspor lagi",
+  "exportZipTitle": "ZIP berisi foto",
+  "exportZipBody": "Data dan semua foto dalam satu file, yang bisa diimpor lagi beserta fotonya.",
+  "exportZipEstimate": "{count, plural, =0{Belum ada foto, jadi isinya data saja.} other{{count} foto, kira-kira {size}.}}",
+  "@exportZipEstimate": {
+    "placeholders": {
+      "count": {"type": "int"},
+      "size": {"type": "String"}
+    }
+  },
+  "exportZipButton": "Ekspor ZIP",
+  "exportZipNoSpace": "Ruang kosong di HP tinggal {free}, padahal ZIP-nya kira-kira {need}. Kosongkan sebagian penyimpanan, atau ekspor file JSON saja.",
+  "@exportZipNoSpace": {
+    "placeholders": {
+      "need": {"type": "String"},
+      "free": {"type": "String"}
+    }
+  },
+  "exportZipFailed": "{failed} dari {total} foto gagal diunduh, jadi ZIP belum disimpan.",
+  "@exportZipFailed": {
+    "placeholders": {
+      "failed": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+  "exportWithoutPhotos": "Ekspor tanpa foto",
+  "exportZipFinishing": "Menyimpan ZIP…",
+  "exportZipSaved": "ZIP tersimpan",
+  "exportJsonTitle": "File JSON saja",
+  "exportJsonBody": "Tanpa foto, jadi ukurannya kecil. Fotonya bisa diunduh sesudahnya ke folder yang sama.",
+  "exportJsonButton": "Ekspor JSON",
   "exportWorking": "Menyiapkan file…",
   "exportSaved": "File tersimpan",
   "exportSavedIn": "Di folder {location}",

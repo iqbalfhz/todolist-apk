@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:todolist/core/api/api_error.dart';
 import 'package:todolist/core/router/app_router.dart';
 import 'package:todolist/core/router/routes.dart';
+import 'package:todolist/core/database/entity_type.dart';
+import 'package:todolist/core/utils/file_sizes.dart';
 import 'package:todolist/features/settings/data/data_export.dart';
 import 'package:todolist/features/settings/presentation/export_screen.dart';
 
@@ -12,7 +15,7 @@ import 'helpers/app_harness.dart';
 import 'helpers/fake_api.dart';
 import 'helpers/fixtures.dart';
 
-/// Ekspor data (v1.0).
+/// Ekspor data (v1.0) dan ZIP berisi foto (v1.x).
 void main() {
   setUpAll(prepareAppTests);
 
@@ -94,7 +97,7 @@ void main() {
       await settle(tester);
       expect(find.byType(ExportScreen), findsOneWidget);
 
-      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor data'));
+      await tester.tap(find.widgetWithText(OutlinedButton, 'Ekspor JSON'));
       await settle(tester);
 
       expect(files.saved.keys, ['denly-days-2026-10-08/denly-days-2026-10-08.json']);
@@ -129,7 +132,7 @@ void main() {
       await settle(tester);
 
       Future<void> export() async {
-        await tester.tap(find.widgetWithText(FilledButton, 'Ekspor data'));
+        await tester.tap(find.widgetWithText(OutlinedButton, 'Ekspor JSON'));
         await settle(tester);
       }
 
@@ -156,6 +159,219 @@ void main() {
       );
       expect(files.saved, isEmpty);
       expect(find.text('File tersimpan'), findsNothing);
+
+      await disposeApp(tester, h);
+    });
+  });
+
+  group('ZIP berisi foto', () {
+    test('ukuran berkas: dibulatkan ke atas', () {
+      expect(formatFileSize(300), '1 KB');
+      expect(formatFileSize(850 * 1024), '850 KB');
+      expect(formatFileSize(120 * 1024 * 1024 + 1), '121 MB');
+      expect(formatFileSize(1024 * 1024 * 1024), '1 GB');
+      expect(formatFileSize(1288490188), '1,2 GB');
+    });
+
+    test(
+      'data.json dikompres, foto apa adanya di foto-kenangan/ dan foto-profil.jpg; yang gagal dicoba lagi',
+      () async {
+        final files = FakeExportFiles()..failOnce.add('$photoId.jpg');
+        final export = DataExport(
+          fileName: 'denly-days-2026-11-03.json',
+          bytes: Uint8List.fromList(utf8.encode('{"app":"Denly Days"}')),
+          photos: exportPhotos(exportFile()),
+        );
+        expect(export.zipName, 'denly-days-2026-11-03.zip');
+        expect(export.zipSizeEstimate, 20 + 3 * 1024 * 1024);
+
+        final job = ExportZipJob(
+          export: export,
+          session: await files.start(export.zipName),
+          fetcher: files,
+          retryDelays: const [Duration.zero, Duration.zero],
+        );
+        await job.addData();
+        final progress = <int>[];
+        expect(await job.addPhotos(onProgress: progress.add), isEmpty);
+        await job.finish();
+
+        expect(progress, [1, 2, 3]);
+        final zip = files.zips['denly-days-2026-11-03.zip']!;
+        expect(zip.keys, ['data.json', 'foto-profil.jpg', 'foto-kenangan/$photoId.jpg', 'foto-kenangan/$photo2Id.jpg']);
+        expect([for (final entry in zip.values) entry.compress], [true, false, false, false]);
+        expect(utf8.decode(zip['data.json']!.bytes), '{"app":"Denly Days"}');
+      },
+    );
+
+    test(
+      'foto yang tetap gagal setelah dicoba ulang: ZIP tidak disimpan, dan hanya foto itu yang dicoba lagi',
+      () async {
+        final files = FakeExportFiles()..failAlways.add('$photo2Id.jpg');
+        final export = DataExport(
+          fileName: 'denly-days-2026-11-03.json',
+          bytes: Uint8List.fromList(utf8.encode('{}')),
+          photos: exportPhotos(exportFile()),
+        );
+        final job = ExportZipJob(
+          export: export,
+          session: await files.start(export.zipName),
+          fetcher: files,
+          retryDelays: const [Duration.zero, Duration.zero],
+        );
+        await job.addData();
+
+        final failed = await job.addPhotos();
+        expect([for (final photo in failed) photo.fileName], ['$photo2Id.jpg']);
+        expect(files.zips, isEmpty);
+
+        files.failAlways.clear();
+        final progress = <int>[];
+        expect(await job.addPhotos(onProgress: progress.add), isEmpty);
+        expect(progress, [1]);
+        await job.finish();
+        expect(files.zips['denly-days-2026-11-03.zip']!.keys, contains('foto-kenangan/$photo2Id.jpg'));
+      },
+    );
+
+    testWidgets('ZIP tersimpan di Download/Denly Days, lalu dibagikan; jumlah fotonya disebut sebelum mulai', (
+      tester,
+    ) async {
+      final h = Harness();
+      await h.seed();
+      // Dua foto kenangan yang sudah terunggah dan satu yang belum, ditambah foto profil.
+      final withAvatar = {...userJson(), 'avatar_url': 'https://r2.contoh/avatar.jpg'};
+      await h.account.store.write(EntityType.me, withAvatar);
+      h.api.me = withAvatar;
+      await h.account.store.write(EntityType.memory, memoryJson(), serverUpdatedAt: t0);
+      for (final (id, url) in [(photoId, 'https://r2.contoh/1.jpg'), (photo2Id, 'https://r2.contoh/2.jpg')]) {
+        await h.account.store.write(EntityType.memoryPhoto, {
+          ...memoryPhotoJson(id: id),
+          'url': url,
+          'thumb_url': url,
+        }, serverUpdatedAt: t0);
+      }
+      await h.account.store.write(EntityType.memoryPhoto, {
+        ...memoryPhotoJson(id: '01m4drb7k0qz3n8st5vw2hx4cz'),
+        'url': null,
+        'thumb_url': null,
+      }, serverUpdatedAt: t0);
+      h.api.exportFile = exportFile();
+      final files = FakeExportFiles()..freeBytes = 4 * 1024 * 1024 * 1024;
+      final container = await pumpApp(tester, h, exportFiles: files);
+      container.read(routerProvider).go(Routes.exportData);
+      await settle(tester);
+
+      expect(find.text('3 foto, kira-kira 3 MB.'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+      await settle(tester);
+
+      expect(files.zips.keys, ['denly-days-2026-10-08.zip']);
+      expect(files.zips.values.single.keys, [
+        'data.json',
+        'foto-profil.jpg',
+        'foto-kenangan/$photoId.jpg',
+        'foto-kenangan/$photo2Id.jpg',
+      ]);
+      expect(jsonDecode(utf8.decode(files.zips.values.single['data.json']!.bytes)), exportFile());
+      expect(find.text('ZIP tersimpan'), findsOneWidget);
+      expect(find.text('denly-days-2026-10-08.zip'), findsOneWidget);
+      expect(find.text('Di folder Download/Denly Days'), findsOneWidget);
+      expect(files.saved, isEmpty);
+
+      await tester.ensureVisible(find.text('Bagikan file'));
+      await tester.tap(find.text('Bagikan file'));
+      await settle(tester);
+      expect(files.shared.single.uri, 'content://media/external/downloads/7');
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('foto yang tetap gagal: coba lagi, atau ekspor tanpa foto (berkas JSON dari ekspor yang sama)', (
+      tester,
+    ) async {
+      final h = Harness();
+      await h.seed();
+      h.api.exportFile = exportFile();
+      final files = FakeExportFiles()..failAlways.add('$photo2Id.jpg');
+      final container = await pumpApp(tester, h, exportFiles: files);
+      container.read(routerProvider).go(Routes.exportData);
+      await settle(tester);
+
+      Future<void> exportZip() async {
+        await tester.tap(find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+        await settle(tester);
+        // Dua kali dicoba ulang, dengan jeda 2 dan 4 detik.
+        await tester.pump(const Duration(seconds: 7));
+        await settle(tester);
+      }
+
+      await exportZip();
+      expect(find.text('1 dari 3 foto gagal diunduh, jadi ZIP belum disimpan.'), findsOneWidget);
+      expect(files.zips, isEmpty);
+
+      // Masih gagal: tetap ditawarkan.
+      await tester.tap(find.text('Coba lagi'));
+      await settle(tester);
+      await tester.pump(const Duration(seconds: 7));
+      await settle(tester);
+      expect(find.text('1 dari 1 foto gagal diunduh, jadi ZIP belum disimpan.'), findsOneWidget);
+
+      await tester.tap(find.text('Ekspor tanpa foto'));
+      await settle(tester);
+      expect(files.cancelledZips, ['denly-days-2026-10-08.zip']);
+      expect(files.saved.keys, ['denly-days-2026-10-08/denly-days-2026-10-08.json']);
+      expect(find.text('File tersimpan'), findsOneWidget);
+      expect(h.api.requests.where((request) => request.path == '/me/export'), hasLength(1));
+
+      // ZIP baru, dan kali ini fotonya berhasil setelah dicoba lagi.
+      await exportZip();
+      files.failAlways.clear();
+      await tester.tap(find.text('Coba lagi'));
+      await settle(tester);
+      expect(find.text('ZIP tersimpan'), findsOneWidget);
+      expect(files.zips.values.single.keys, hasLength(4));
+
+      await disposeApp(tester, h);
+    });
+
+    testWidgets('ruang kosong di HP kurang: ZIP tidak dimulai; layar ditutup di tengah jalan: ZIP dibuang', (
+      tester,
+    ) async {
+      final h = Harness();
+      await h.seed();
+      h.api.exportFile = exportFile();
+      final files = FakeExportFiles()
+        ..freeBytes = 20 * 1024 * 1024
+        ..failAlways.add('$photo2Id.jpg');
+      final container = await pumpApp(tester, h, exportFiles: files);
+      container.read(routerProvider).go(Routes.exportData);
+      await settle(tester);
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+      await settle(tester);
+      expect(
+        find.text(
+          'Ruang kosong di HP tinggal 20 MB, padahal ZIP-nya kira-kira 4 MB. Kosongkan sebagian penyimpanan, '
+          'atau ekspor file JSON saja.',
+        ),
+        findsOneWidget,
+      );
+      expect(files.zips, isEmpty);
+      expect(files.cancelledZips, isEmpty);
+
+      files.freeBytes = null;
+      await tester.tap(find.widgetWithText(FilledButton, 'Ekspor ZIP'));
+      await settle(tester);
+      await tester.pump(const Duration(seconds: 7));
+      await settle(tester);
+      expect(find.text('Ekspor tanpa foto'), findsOneWidget);
+
+      container.read(routerProvider).go(Routes.settings);
+      await settle(tester);
+      expect(files.cancelledZips, ['denly-days-2026-10-08.zip']);
+      expect(files.zips, isEmpty);
 
       await disposeApp(tester, h);
     });

@@ -1316,19 +1316,58 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get exportIntro =>
-      'Simpan salinan semua data yang bisa kamu lihat di app sebagai satu file JSON: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.';
-
-  @override
-  String get exportPhotosNote => 'Foto tidak ikut di dalam file, tapi bisa diunduh sesudahnya ke folder yang sama.';
+      'Simpan salinan semua data yang bisa kamu lihat di app: profil, Ruang Pribadi, dan Ruang Bersama beserta isinya, termasuk yang dibuat pasangan.';
 
   @override
   String get exportServerNote => 'Datamu juga tersimpan otomatis di server setiap kali online.';
 
   @override
-  String get exportButton => 'Ekspor data';
+  String get exportZipTitle => 'ZIP berisi foto';
 
   @override
-  String get exportAgain => 'Ekspor lagi';
+  String get exportZipBody => 'Data dan semua foto dalam satu file, yang bisa diimpor lagi beserta fotonya.';
+
+  @override
+  String exportZipEstimate(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count foto, kira-kira $size.',
+      zero: 'Belum ada foto, jadi isinya data saja.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get exportZipButton => 'Ekspor ZIP';
+
+  @override
+  String exportZipNoSpace(String need, String free) {
+    return 'Ruang kosong di HP tinggal $free, padahal ZIP-nya kira-kira $need. Kosongkan sebagian penyimpanan, atau ekspor file JSON saja.';
+  }
+
+  @override
+  String exportZipFailed(int failed, int total) {
+    return '$failed dari $total foto gagal diunduh, jadi ZIP belum disimpan.';
+  }
+
+  @override
+  String get exportWithoutPhotos => 'Ekspor tanpa foto';
+
+  @override
+  String get exportZipFinishing => 'Menyimpan ZIP…';
+
+  @override
+  String get exportZipSaved => 'ZIP tersimpan';
+
+  @override
+  String get exportJsonTitle => 'File JSON saja';
+
+  @override
+  String get exportJsonBody => 'Tanpa foto, jadi ukurannya kecil. Fotonya bisa diunduh sesudahnya ke folder yang sama.';
+
+  @override
+  String get exportJsonButton => 'Ekspor JSON';
 
   @override
   String get exportWorking => 'Menyiapkan file…';
